@@ -1,11 +1,11 @@
-import { waffle, artifacts } from 'hardhat'
+import { waffle, artifacts, ethers } from 'hardhat'
 import { Contract } from 'ethers'
 import { use, expect } from 'chai'
 import { solidity } from 'ethereum-waffle'
 import { deployMockContract } from '@ethereum-waffle/mock-contract'
-import { Keypair } from 'maci-domainobjs'
+import { Keypair } from '@clrfund/maci-utils'
 
-import { getGasUsage } from '../utils/contracts'
+import { getEventArg, getGasUsage } from '../utils/contracts'
 import { deployMaciFactory } from '../utils/deployment'
 import { MaciParameters } from '../utils/maci'
 
@@ -117,5 +117,47 @@ describe('MACI factory', () => {
         coordinatorPubKey
       )
     ).to.be.revertedWith('Ownable: caller is not the owner')
+  })
+
+  it('links with PoseidonT3 correctly', async () => {
+    const deployTx = await maciFactory.deployMaci(
+      signUpGatekeeper.address,
+      initialVoiceCreditProxy.address,
+      coordinator.address,
+      coordinatorPubKey
+    )
+
+    const maciAddress = await getEventArg(
+      deployTx,
+      maciFactory,
+      'MaciDeployed',
+      '_maci'
+    )
+    const maciContract = await ethers.getContractAt('MACI', maciAddress)
+    const hash = await maciContract.hashLeftRight(0, 0)
+    expect(hash.toString()).to.eq(
+      '14744269619966411208579211824598458697587494354926760081771325075741142829156'
+    )
+  })
+
+  it('links with PoseidonT6 correctly', async () => {
+    const deployTx = await maciFactory.deployMaci(
+      signUpGatekeeper.address,
+      initialVoiceCreditProxy.address,
+      coordinator.address,
+      coordinatorPubKey
+    )
+
+    const maciAddress = await getEventArg(
+      deployTx,
+      maciFactory,
+      'MaciDeployed',
+      '_maci'
+    )
+    const maciContract = await ethers.getContractAt('MACI', maciAddress)
+    const hash = await maciContract.hash5([0, 0, 0, 0, 0])
+    expect(hash.toString()).to.eq(
+      '14655542659562014735865511769057053982292279840403315552050801315682099828156'
+    )
   })
 })

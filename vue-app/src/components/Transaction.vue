@@ -3,18 +3,10 @@
     <template v-if="error">
       <div class="error">{{ error }}</div>
       <div class="btn-row">
-        <button
-          v-if="displayCloseBtn"
-          class="btn-secondary close-btn"
-          @click="$emit('close')"
-        >
+        <button v-if="displayCloseBtn" class="btn-secondary close-btn" @click="$emit('close')">
           {{ $t('transactions.button1') }}
         </button>
-        <button
-          v-if="displayRetryBtn"
-          class="btn-primary close-btn"
-          @click="$emit('retry')"
-        >
+        <button v-if="displayRetryBtn" class="btn-primary close-btn" @click="$emit('retry')">
           {{ $t('transactions.button2') }}
         </button>
       </div>
@@ -34,51 +26,41 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
+<script setup lang="ts">
 import Loader from '@/components/Loader.vue'
-import Links from '@/components/Links.vue'
 import TransactionReceipt from '@/components/TransactionReceipt.vue'
 
-@Component({
-  components: {
-    Loader,
-    Links,
-    TransactionReceipt,
-  },
-  watch: {
-    hash: {
-      handler: function () {
-        // Every time the hash changes, restart the timer to display the warning
-        // message to the user
-        clearTimeout(this.$data.waitingWarningTimeout)
-        this.$data.displayWarning = false
-
-        this.$data.waitingWarningTimeout = setTimeout(() => {
-          this.$data.displayWarning = true
-        }, 30000)
-      },
-      immediate: true,
-    },
-  },
-})
-export default class Transaction extends Vue {
-  waitingWarningTimeout
-  displayWarning = false
-
-  @Prop()
-  hash!: string
-
-  @Prop()
-  error!: string
-
-  @Prop({ default: true })
-  displayCloseBtn!: boolean
-
-  @Prop({ default: false }) displayRetryBtn!: boolean
+interface Props {
+  hash: string
+  error: string
+  displayCloseBtn?: boolean
+  displayRetryBtn?: boolean
 }
+
+const props = withDefaults(defineProps<Props>(), {
+  displayCloseBtn: true,
+  displayRetryBtn: false,
+})
+
+const displayWarning = ref(false)
+
+let waitingWarningTimeout: any
+watch(
+  () => props.hash,
+  () => {
+    // Every time the hash changes, restart the timer to display the warning
+    // message to the user
+    clearTimeout(waitingWarningTimeout)
+    displayWarning.value = false
+
+    waitingWarningTimeout = setTimeout(() => {
+      displayWarning.value = true
+    }, 30000)
+  },
+  {
+    immediate: true,
+  },
+)
 </script>
 
 <style scoped lang="scss">
@@ -88,6 +70,7 @@ export default class Transaction extends Vue {
   color: var(--error-color);
   overflow: hidden;
   text-overflow: ellipsis;
+  max-height: 200px;
 }
 
 .close-btn {
@@ -99,7 +82,7 @@ export default class Transaction extends Vue {
   margin: 1rem 0;
   margin-top: 1.5rem;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 1rem;
 }
 </style>

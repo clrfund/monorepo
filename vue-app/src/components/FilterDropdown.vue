@@ -1,17 +1,11 @@
 <template>
-  <div class="category-filter" v-click-outside="closeDropdown">
+  <div v-click-outside="closeDropdown" class="category-filter">
     <div class="filter-btn" @click="toggleDropdown">
       <span class="filter-text">
-        Filter
-        <span v-if="selectedCategories.length"
-          >({{ selectedCategories.length }})</span
-        >
+        {{ $t('filter') }}
+        <span v-if="selectedCategories.length">({{ selectedCategories.length }})</span>
       </span>
-      <img
-        src="@/assets/chevron-down.svg"
-        alt="Down arrow"
-        :class="{ 'filter-chevron-open': visible }"
-      />
+      <img src="@/assets/chevron-down.svg" alt="Down arrow" :class="{ 'filter-chevron-open': visible }" />
     </div>
     <div class="selector-wrapper" :class="{ show: visible }">
       <div
@@ -23,48 +17,45 @@
         }"
         @click="handleFilterClick(category)"
       >
-        {{ category }}
-        <img
-          v-if="selectedCategories.includes(category)"
-          class="close"
-          src="@/assets/close.svg"
-        />
+        {{ $t(appStore.categoryLocaleKey(category)) }}
+        <img v-if="selectedCategories.includes(category)" class="close" src="@/assets/close.svg" />
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useAppStore } from '@/stores'
 
-import ClickOutside from '@/directives/ClickOutside'
+const appStore = useAppStore()
 
-@Component({
-  directives: {
-    ClickOutside,
-  },
+interface Props {
+  categories: string[]
+  selectedCategories: string[]
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  categories: () => [],
+  selectedCategories: () => [],
 })
-export default class FilterDropdown extends Vue {
-  @Prop({ default: [] }) categories!: string[]
-  @Prop({ default: [] }) selectedCategories!: string[]
 
-  private visible = false
+const emit = defineEmits(['change'])
 
-  toggleDropdown(): void {
-    this.visible = !this.visible
+const visible = ref(false)
+
+function toggleDropdown(): void {
+  visible.value = !visible.value
+}
+
+function closeDropdown(event: any): void {
+  if (!event.target.matches('.close')) {
+    visible.value = false
   }
+}
 
-  closeDropdown(event): void {
-    if (!event.target.matches('.close')) {
-      this.visible = false
-    }
-  }
-
-  handleFilterClick(selection: string): void {
-    this.$emit('change', selection)
-  }
+function handleFilterClick(selection: string): void {
+  emit('change', selection)
 }
 </script>
 
@@ -76,7 +67,6 @@ export default class FilterDropdown extends Vue {
   width: 140px;
   grid-area: filter;
   position: relative;
-
   .filter-btn {
     background: none;
     cursor: pointer;
@@ -102,7 +92,6 @@ export default class FilterDropdown extends Vue {
       filter: var(--img-filter, invert(1));
     }
   }
-
   .selector-wrapper {
     display: none;
     position: absolute;

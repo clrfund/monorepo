@@ -1,20 +1,8 @@
 <template>
   <div class="tx-container">
-    <div
-      :class="
-        isWaiting
-          ? 'recipient-submission-widget shine'
-          : 'recipient-submission-widget'
-      "
-    >
+    <div :class="isWaiting ? 'recipient-submission-widget shine' : 'recipient-submission-widget'">
       <loader v-if="isLoading" />
-      <div
-        :class="
-          isWaiting || txError
-            ? 'tx-progress-area'
-            : 'tx-progress-area-no-notice'
-        "
-      >
+      <div :class="isWaiting || txError ? 'tx-progress-area' : 'tx-progress-area-no-notice'">
         <loader class="button-loader" v-if="isWaiting" />
         <div v-if="isWaiting" class="tx-notice">
           <div v-if="!!txHash">{{ $t('recipientSubmissionWidget.div1') }}</div>
@@ -22,8 +10,7 @@
         </div>
         <div v-if="hasTxError" class="warning-icon">⚠️</div>
         <div v-if="hasTxError" class="warning-text">
-          {{ $t('recipientSubmissionWidget.div3_t1', { txError: txError })
-          }}<br />
+          {{ $t('recipientSubmissionWidget.div3_t1', { txError: txError }) }}<br />
           {{
             $t('recipientSubmissionWidget.div3_t2', {
               blockExplorerLabel: blockExplorerLabel,
@@ -37,7 +24,6 @@
           <img
             v-tooltip="{
               content: $t('recipientSubmissionWidget.tooltip1'),
-              trigger: 'hover click',
             }"
             src="@/assets/info.svg"
           />
@@ -60,12 +46,7 @@
           </p>
           <p class="m05">
             {{ depositAmount }} {{ depositToken }}
-            <span class="o5"
-              >({{ fiatSign
-              }}{{
-                calculateFiatFee($store.state.recipientRegistryInfo.deposit)
-              }})</span
-            >
+            <span class="o5">({{ fiatSign }}{{ fiatFee }})</span>
           </p>
         </div>
       </div>
@@ -73,79 +54,69 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
-import { BigNumber } from 'ethers'
-import { EthPrice, fetchCurrentEthPrice } from '@/api/price'
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
+import { type EthPrice, fetchCurrentEthPrice } from '@/api/price'
 import { chain } from '@/api/core'
-
 import Loader from '@/components/Loader.vue'
-import Transaction from '@/components/Transaction.vue'
-
 import { formatAmount } from '@/utils/amounts'
+import { useUserStore, useRecipientStore } from '@/stores'
 
-@Component({
-  components: {
-    Loader,
-    Transaction,
-  },
-})
-export default class RecipientSubmissionWidget extends Vue {
-  @Prop() isWaiting!: boolean
-  @Prop() txHash!: string
-  @Prop() txError!: string
-  isLoading = true
-  ethPrice: EthPrice | null = null
-  fiatFee = '-'
-  fiatSign = '$'
-
-  async created() {
-    this.ethPrice = await fetchCurrentEthPrice()
-    this.isLoading = false
-  }
-
-  get blockExplorerLabel(): string {
-    return chain.explorerLabel
-  }
-
-  get hasTxError(): boolean {
-    return !!this.txError
-  }
-
-  get txHasDeposit(): boolean {
-    return !!this.$store.state.recipientRegistryInfo?.deposit
-  }
-
-  get depositAmount(): string {
-    return this.$store.state.recipientRegistryInfo
-      ? formatAmount(this.$store.state.recipientRegistryInfo.deposit, 18)
-      : '...'
-  }
-
-  get hasLowFunds(): boolean {
-    const { currentUser, recipientRegistryInfo } = this.$store.state
-
-    if (currentUser?.etherBalance && recipientRegistryInfo?.deposit) {
-      return currentUser.etherBalance.lt(recipientRegistryInfo.deposit)
-    }
-    return false
-  }
-
-  get depositToken(): string {
-    return this.$store.state.recipientRegistryInfo?.depositToken ?? ''
-  }
-
-  public calculateFiatFee(ethAmount: BigNumber): string {
-    if (this.$store.state.recipientRegistryInfo && this.ethPrice) {
-      return Number(
-        this.ethPrice.ethereum.usd * Number(formatAmount(ethAmount, 18))
-      ).toFixed(2)
-    }
-    return '-'
-  }
+interface Props {
+  isWaiting: boolean
+  txHash: string
+  txError: string
 }
+
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
+const recipientStore = useRecipientStore()
+const { recipientRegistryInfo } = storeToRefs(recipientStore)
+const props = defineProps<Props>()
+
+const isLoading = ref(true)
+const ethPrice = ref<EthPrice | null>(null)
+const fiatSign = ref('$')
+
+const blockExplorerLabel = computed(() => {
+  return chain.explorerLabel
+})
+
+const hasTxError = computed(() => {
+  return !!props.txError
+})
+
+const txHasDeposit = computed(() => {
+  return !!recipientRegistryInfo.value?.deposit
+})
+
+const depositAmount = computed(() => {
+  return recipientRegistryInfo.value ? formatAmount(recipientRegistryInfo.value.deposit, 18) : '...'
+})
+
+const hasLowFunds = computed(() => {
+  if (currentUser.value?.etherBalance && recipientRegistryInfo.value?.deposit) {
+    return currentUser.value.etherBalance.lt(recipientRegistryInfo.value.deposit)
+  }
+  return false
+})
+
+const depositToken = computed(() => {
+  return recipientRegistryInfo.value?.depositToken ?? ''
+})
+
+const fiatFee = computed(() => {
+  if (recipientRegistryInfo.value && ethPrice.value) {
+    const { deposit } = recipientRegistryInfo.value
+    return Number(ethPrice.value.ethereum.usd * Number(formatAmount(deposit, 18))).toFixed(2)
+  }
+  return '-'
+})
+
+onMounted(async () => {
+  ethPrice.value = await fetchCurrentEthPrice()
+  isLoading.value = false
+})
 </script>
 
 <style scoped lang="scss">
@@ -161,7 +132,7 @@ export default class RecipientSubmissionWidget extends Vue {
 .recipient-submission-widget {
   display: flex;
   flex-direction: column;
-  background: var(--bg-primary-color);
+  background: var(--bg-secondary-color);
   border-radius: 1rem;
   border: 1px solid var(--border-color);
   align-items: center;
@@ -279,7 +250,7 @@ export default class RecipientSubmissionWidget extends Vue {
 }
 
 .total-title {
-  color: var(--text-color);
+  color: var(--text-body);
   font-size: 16px;
   font-weight: 400;
   line-height: 100%;
@@ -289,7 +260,7 @@ export default class RecipientSubmissionWidget extends Vue {
   display: flex;
   width: fit-content;
   padding: 0.5rem;
-  background: var(--bg-light-color);
+  background: var(--bg-primary-color);
   border-radius: 2rem;
   gap: 0.25rem;
   margin-bottom: 0.5rem;
@@ -307,6 +278,8 @@ export default class RecipientSubmissionWidget extends Vue {
 
 .warning-text {
   font-size: 14px;
+  overflow-y: hidden;
+  max-height: 200px;
 }
 
 .warning-text,
@@ -315,5 +288,8 @@ export default class RecipientSubmissionWidget extends Vue {
   color: var(--attention-color);
   text-transform: uppercase;
   text-align: center;
+  word-break: break-all;
+  max-height: 100px;
+  overflow: scroll;
 }
 </style>

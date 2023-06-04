@@ -1,9 +1,4 @@
 {
-  "lang": {
-    "en": "🇺🇸 English",
-    "es": "🇪🇸 Español",
-    "tw": "🇨🇳 繁體中文"
-  },
   "about": {
     "heading": {
       "title": "About"
@@ -27,7 +22,7 @@
       "paragraph-1": "Clr.fund instances also have a number of other special properties:",
       "li-1-text-1": "Decentralization — Major pieces of clr.fund's infrastructure are built on",
       "li-1-link-1": "Ethereum",
-      "li-1-text-2": "A programmable blockchain that provides a reliable, censorship-resistant ledger for clr.fund's voting and funding transactions.",
+      "li-1-text-2": ", A programmable blockchain that provides a reliable, censorship-resistant ledger for clr.fund's voting and funding transactions.",
       "li-1-link-2": "Read more on clr.fund's decentralization.",
       "li-2-text-1": "Scalability — Because using Ethereum can be expensive for users, clr.fund uses",
       "li-2-layer2-1": "\"layer 2\"",
@@ -83,7 +78,7 @@
       "li-3-link": "Browse projects",
       "li-3-text": " and add some to your cart, adjusting your contributions to the amount of {nativeTokenSymbol} you want.",
       "li-4": "When you're ready, open your cart, click contribute, and confirm the transactions to complete your contributions!",
-      "paragraph": "Note: you can only contribute once. After submitting your contributions, you can reallocate them as much as you would like before of the reallocation phase but you cannot add more funds to your total contribution amount.",
+      "paragraph": "Note: you can only contribute once. After submitting your contributions, you can reallocate them as much as you would like before the reallocation phase but you cannot add more funds to your total contribution amount.",
       "li-5": "You can add and remove projects.",
       "li-6": " Your reallocation total must be less than or equal to the total (if it's less, the rest will go to the matching pool)."
     },
@@ -117,9 +112,9 @@
       "li-3": "the sybil-resistant registry of users qualified to contribute to individual projects",
       "li-4": "the funds from and encrypted information about contributions to individual projects",
       "li-5": "the mechanism for distributing funds once a round's results are finalized",
-      "paragraph-2-text-1": "Each of these pieces exists in an Ethereum smart contract (see the code",
-      "paragraph-link": "here",
-      "paragraph-2-text-2": ", meaning its functionality is maintained by Ethereum miners, a decentralized group."
+      "exists_in_code": "Each of these pieces exists in an Ethereum smart contract (see the code",
+      "here": "here",
+      "maintained_by_miner": ", meaning its functionality is maintained by Ethereum miners, a decentralized group."
     },
     "why": {
       "title": "Why is clr.fund decentralized?",
@@ -178,7 +173,7 @@
         "li-3": "The maximum contribution amount is {maxContributionAmount} {nativeTokenSymbol}.",
         "li-4": "Your total contribution amount is final. You can't increase it by contributing an additional time."
       },
-      "paragraph-2": "If you dont contribute in the contribution phase, the round is over for   you once this phase ends."
+      "paragraph-2": "If you don't contribute in the contribution phase, the round is over for   you once this phase ends."
     },
     "reallocation": {
       "title": "Reallocation phase",
@@ -227,7 +222,7 @@
       "title": "Layer 2s for Scalability",
       "p1": "The main Ethereum blockchain, \"layer 1\", may be upgraded to reduce costs in the future (this is one of the goals for the future of Ethereum, which clr.fund is helping realize!).",
       "p2": "In the immediate term, though, \"layer 2\" solutions are already helping dramatically reduce costs. Most layer 2s are \"rollups\", blockchain-esque systems that are maintained, like Ethereum, by a decentralized group of nodes. Rollups periodically \"roll up\" all their recent transactions into a single transaction that is recorded on layer 1, Ethereum, allowing them to inherit much of Ethereum's security.",
-      "p3": "Transactions on layer 2s are orders offorge test magnitude cheaper than on layer 1, since rollups can process a high rate of transactions and transaction traffic is now diluted across the many layer 2 options.",
+      "p3": "Transactions on layer 2s are orders of magnitude cheaper than on layer 1, since rollups can process a high rate of transactions and transaction traffic is now diluted across the many layer 2 options.",
       "p4_t1": "Read more on",
       "p4_l1": "Ethereum Layer 2 technologies."
     },
@@ -364,7 +359,8 @@
       "p1": "Public goods are often underfunded because of something called the free rider problem: since public goods are always free and accessible for members of the public, people have little reason to contribute to their creation and maintenance. Instead, they can choose to be \"free riders\": using the public good but depending on others to build and maintain it.",
       "p2": "The free rider problem is quite present in open-source software, which is chronically underfunded despite being a core component of nearly all popular software products today.",
       "p3": "Clr.fund is an attempt to address the free rider problem for the Ethereum community, with the hope that this infrastructure may be useful for other publics in the future. By design, the funding rounds on clr.fund seek to involve members of the public from inception, and are allocating both decision making power and the exponential power to increase funding via the",
-      "link": "quadratic funding mechanism."
+      "link": "quadratic funding mechanism.",
+      "exponential_power": ""
     }
   },
   "quadratic_funding": {
@@ -374,7 +370,9 @@
       "p1": "Clr.fund is an implementation of quadratic funding, also called CLR (Capital-constrained Liberal Radicalism). Quadratic funding is made up of:",
       "li1": "a pool of funds to be distributed",
       "li2": "a voting system for distributing those funds",
-      "p2": "Two common voting systems you may have used are 1-person-1-vote and 1-dollar-1-vote. Quadratic funding is a best-of-both-worlds solution where users vote with the <b>square root</b> of the money they spend — read on to learn more."
+      "p2": "Two common voting systems you may have used are 1-person-1-vote and 1-dollar-1-vote. Quadratic funding is a best-of-both-worlds solution where users vote with the",
+      "sqrt": " square root",
+      "more": " of the money they spend — read on to learn more."
     },
     "problems": {
       "h2": "Problems with Existing Funding Mechanisms",
@@ -405,13 +403,13 @@
       "p3": "Compared to 1-person-1-vote, quadratic funding lets the person who lives in Florida full-time, and cares twice as much about the vote's outcome than the person who lives in Florida half-time, have more influence:",
       "li3": "1-person-1-vote: the two Florida voters have equal influence",
       "li4": "  Quadratic funding: the full-time Florida resident, who cares twice as much, pays twice as much, and as a result gets 2^(1/2) times the influence of the half-time resident",
-      "p4": " (It's important to note that while these example are a good demonstration of the argument for quadratic funding, they do over-simplify these situations, which are as sociological as they are mathematical.)"
+      "p4": " (It's important to note that while these examples are a good demonstration of the argument for quadratic funding, they do over-simplify these situations, which are as sociological as they are mathematical.)"
     },
     "resources": {
       "h2": "Quadratic Funding Resources",
       "li1": "Quadratic Payments: A Primer",
       "li2": "Liberal Radicalism: A Flexible Design For Philanthropic Matching Funds",
-      "li3": "Quadratic Payments: A Primer",
+      "li3": "Plural Voting",
       "li4": "WTF is QF"
     }
   },
@@ -445,7 +443,7 @@
       "li4": "With the forms finished, you can finish your submission:",
       "li5": "Connect to the right network via your wallet of choice.",
       "li6": "Send a transaction (with a deposit of {depositAmount} {depositToken}) to the registry contract.",
-      "p4": "Projects are accepted by default, but the registry admin may remove projects that don't meet the criteria.",
+      "p4": "The registry admin will review project submissions and accept/reject projects according to the criteria.",
       "p5": "In any case, your {depositToken} will be returned once your application has been either accepted or denied. Note that metadata pointing to all your project information (but not contact information) will be stored publicly on-chain."
     },
     "claim": {
@@ -483,44 +481,14 @@
       "li1_link1": "iOS",
       "li1_t2": "or",
       "li1_link2": "Android",
-      "li2": "Get verified in BrightID so we know you're a human and not a bot.",
-      "li3_t1": "Submit a transaction for clr.fund to sponsor you in BrightID.",
+      "li2": "Get verified in BrightID so we know you're a human and not a bot",
+      "li3_t1": "Submit a transaction for clr.fund to sponsor you in BrightID",
       "li3_link1": "More on BrightID sponsorship",
-      "li4": "Link your wallet to your BrightID profile, so you can't use multiple Ethereum addresses to sway voting.",
+      "li4": "Link your wallet to your BrightID profile, so you can't use multiple Ethereum addresses to sway voting",
       "li5_t1": "Add yourself to the clr.fund user registry. This is a requirement for",
       "li5_link1": "MACI, our anti-bribery tech",
-      "p2": "Note that you should only link one Ethereum address to your BrightID profile. If you repeat our verification process and add another Ethereum address, all contributions from you previous address will be ignored by the matching pool. This is again to avoid sybil attacks."
+      "p2": ""
     }
-  },
-  "brightIDGuide": {
-    "heading": {
-      "h2": "Get verified",
-      "p": "BrightID verification helps prove that you’re a unique human. To get verified, you need to join a BrightId party where other members can verify you're \"not a bot\"."
-    },
-    "accordion": {
-      "fastest": {
-        "tag": "🚀 Fastest",
-        "header": "Join a BrightId party",
-        "content": "BrightID run verification parties regularly. Join the call, meet other new users, and they'll verify you’re a human and not a bot. Quick and painless, even for you introverts out there.",
-        "linkButton": "View party schedule"
-      },
-      "luckiest": {
-        "tag": "🎰 Luckiest",
-        "header": "Connect with 2 verified humans",
-        "content": "Know anyone that's contributed to Gitcoin Grants or clr.fund rounds? may already be verified. Hit them up and see if they can verify you!"
-      }
-    }
-  },
-  "brightIDSponsor": {
-    "h2": "Get sponsored",
-    "p": "You need a sponsorship token to become BrightID verified. This helps support BrightID as a decentralized platform. You’ll only ever need to do this once and it covers you for any other app that works with BrightID. Check the BrightID mobile app to see if you're sponsored. If you're not, click the button below to submit a sponsorship request.",
-    "cta": "Get sponsored"
-  },
-  "brightIDSponsored": {
-    "h1": "You're sponsored!",
-    "subtitle": "You’re almost ready to contribute to your favorite projects! If you're verified for BrightID, link your wallet to your BrightID profile and start contributing.",
-    "link1": "Link BrightId",
-    "link2": "Go home"
   },
   "join": {
     "title": {
@@ -546,13 +514,9 @@
       "error4": "Your project needs a description. What are you raising money for?",
       "label4": "Category",
       "p4": "Choose the best fit.",
-      "input4": "Tooling",
       "label5": "Tools",
-      "input5": "Content",
       "label6": "Content",
-      "input6": "Research",
       "label7": "Research",
-      "input7": "Data",
       "label8": "Data",
       "error5": "You need to choose a category",
       "label9": "Problem space",
@@ -578,7 +542,7 @@
       "p1": "Tell us about the folks behind your project.",
       "label1": "Contact email",
       "description1": "For important updates about your project and the funding round.",
-      "input1": "example: doge@goodboi.com",
+      "input1": "example: doge{'@'}goodboi.com",
       "notice1": "We won't display this publicly or add it to the on-chain registry.",
       "error1": "This doesn't look like an email.",
       "label2": "Team name (optional)",
@@ -638,17 +602,10 @@
       "h4_8": "Contact email",
       "notice1": "This information won't be added to the smart contract.",
       "h4_9": "Team name",
-      "notice2": "Not provided",
       "h4_10": "Team description",
-      "notice3": "Not provided",
       "h3_4": "Links",
       "edit4": "Edit",
-      "notice4": "Not provided",
-      "notice5": "Not provided",
       "h4_12": "Website",
-      "notice6": "Not provided",
-      "notice7": "Not provided",
-      "notice8": "Not provided",
       "h3_5": "Images",
       "edit5": "Edit",
       "h4_13": "Banner",
@@ -657,59 +614,47 @@
     "step6": {
       "h2": "Submit project",
       "p1": "This is a blockchain transaction that will add your project information to the funding round."
+    },
+    "error": {
+      "not_provided": "Not provided"
     }
   },
   "joinLanding": {
     "loading": "Fetching round data...",
+    "check_out_these": "Check out these",
+    "other_ways_to_source_funding": "other ways to source funding",
+    "or_follow_us_on_twitter": ". Or follow us on Twitter for updates about future rounds:",
+    "need_info_about_your_project": "We’ll need some information about your project and a",
+    "security_deposit": " security deposit.",
+    "cap_on_projects": "The round only accepts a total of {maxRecipients} projects, so apply now while there’s still room!",
+    "time_to_complete": "Time to complete",
+    "15_minutes_ish": "15 minutes (ish)",
+    "see_round_criteria": "See round criteria",
     "closed": {
       "h1": "Sorry, it's too late to join",
-      "subtitle1": "The round is closed for new projects. It's now too late to get on board.",
-      "subtitle2_t1": "Check out these",
-      "link1": "other ways to source funding",
-      "subtitle2_t2": ". Or follow us on Twitter for updates about future rounds:",
-      "link2": "Home"
+      "subtitle1": "The round is closed for new projects. It's now too late to get on board."
     },
     "full": {
       "h1": "Sorry, the round is full",
-      "subtitle1": "The tech we use to protect you from bribery and collusion, MACI, limits the number of projects right now. Unfortunately we've hit the cap and there's no more room on board.",
-      "subtitle2_t1": "Check out these",
-      "link1": "other ways to source funding",
-      "subtitle2_t2": ". Or follow us on Twitter for updates about future rounds:",
-      "link2": "Home",
-      "link3": "More on MACI"
+      "subtitle1": "The tech we use to protect you from bribery and collusion, MACI, limits the number of projects right now. Unfortunately we've hit the cap and there's no more room on board."
     },
     "open": {
       "h1": "Join the funding round",
-      "subtitle1_t1": "We’ll need some information about your project and a",
-      "subtitle1_t2": " security deposit.",
-      "subtitle2": "The round only accepts a total of {maxRecipients} projects, so apply now while there’s still room!",
       "div1": "Time left to join",
-      "div2": "Time to complete",
-      "div3": "15 minutes (ish)",
       "div4": " {spacesRemainingString} left, hurry!",
       "div5": "MACI, our anti-bribery tech, currently limits the amount of projects allowed per round.",
-      "link1": "More on MACI",
-      "p1": "You will get your deposit back if you don’t make it into the round this time.",
-      "button1": "See round criteria",
-      "link2": "Add project"
+      "p1": "You will get your deposit back if you don’t make it into the round this time."
     },
     "join": {
-      "h1": "Join the next funding round",
-      "subtitle1_t1": "We’ll need some information about your project and a",
-      "subtitle1_t2": " security deposit.",
-      "subtitle2": "The round only accepts a total of {maxRecipients} projects, so apply now while there’s still room!",
-      "div1": "Time to complete",
-      "div2": "15 minutes (ish)",
-      "button1": "See round criteria",
-      "link2": "Add project"
+      "h1": "Join the next funding round"
     }
   },
   "landing": {
     "hero": {
       "title": "Send your favorite projects to the moon!",
       "subtitle": "Every project you contribute to gets a portion of extra funding.",
-      "action": "Get started",
-      "info": "How it works"
+      "info": "How it works",
+      "action": "Get Started"
     },
     "callout": {
       "title": "Join the funding round",
@@ -756,7 +701,8 @@
       "link-6": "GitHub",
       "link-7": "Discord",
       "link-8": "Forum",
-      "link-9": "More on Ethereum"
+      "link-9": "More on Ethereum",
+      "link-blog": "Blog"
     }
   },
   "profile": {
@@ -771,9 +717,6 @@
     "btn2_1": "Preview",
     "btn2_2": "View",
     "div2": "You haven't submitted any projects"
-  },
-  "project": {
-    "p": "✔️ You have contributed to this project!"
   },
   "projectAdded": {
     "h1": "Project submitted!",
@@ -791,6 +734,23 @@
     "link1": "Add project",
     "div1": "😢 No projects match your search. Try using the filter to narrow down what you're looking for."
   },
+  "leaderboard": {
+    "no_round": "Something went wrong! Round information not found. Please report if issue persists.",
+    "no_project": "No projects in this round",
+    "more": "more",
+    "less": "less",
+    "header": "Leaderboard",
+    "heading": {
+      "project": "Project",
+      "votes": "Votes",
+      "donation": "Contributions",
+      "total": "Total"
+    },
+    "message": "The funding amount for each project is calculated using the quadratic funding formula and represents the total amount awarded to the project. The contributions to the project come from the community donations. The number of votes a project receives is determined by taking the sum of the square root of each donation, scaled by the MACI voice credit factor and the token decimal."
+  },
+  "leaderboardSimpleView": {
+    "funded": "{tokenSymbol} funded"
+  },
   "recipientRegistry": {
     "h2": "Recipient registry",
     "th1": "Project",
@@ -807,13 +767,13 @@
   },
   "roundList": {
     "h1": "Rounds",
-    "link1": "Round {index}",
-    "link2": "Round {index}"
+    "link1": "Round {index}"
   },
   "transactionSuccess": {
     "p1": "reallocated!",
     "p2": "You just contributed!",
     "p3": "Your choices have been updated! You can update your choices again any time in the next",
+    "p4": ".",
     "p4_t1": "Thanks for contributing to the Ethereum ecosystem. If you change your mind, you have",
     "p4_t2": " to reallocate your contributions.",
     "btn": "OK"
@@ -828,37 +788,44 @@
   "verify": {
     "subtitle": " Step {currentStep} of {steps}",
     "p1": "Step {currentStep} of {steps}",
-    "link1": "Cancel",
     "h1": "Set up BrightID",
-    "link2": "Cancel",
     "h2_1": "Connect",
     "p2": "You need to connect your BrightID account with your wallet address.",
-    "p3": "Once this app is linked in your BrightID app, we'll automatically transition you to the next step. It may take a minute for us to verify the connection - please wait.",
+    "click_next": "Once this app is linked in your BrightID app, click the 'Next' button to transition to the next step.",
     "p4": "Scan this QR code with your BrightID app",
     "p5": "Follow this link to connect your wallet to your BrightID app",
     "p6": "This link might look scary but it just makes a connection between your connected wallet address, our app, and BrightID. If clicking the link does not open the BrightId app, try manually copying the link to a browser.",
     "h2_2": "Register",
     "p7": "To protect the round from bribery and fraud, you need to add your wallet address to a smart contract registry. Once you’re done, you can join the funding round!",
-    "btn": " Become a contributor"
+    "btn": " Become a contributor",
+    "next": "Next",
+    "previous": "Previous",
+    "copy_link": "Copy Link",
+    "verification_status": "Your wallet address is not linked with BrightID. It may take a few minutes to verify the connection, please wait and click the button later to check the status.",
+    "skip_sponsorship": "Skip",
+    "get_sponsored_header": "Get sponsored",
+    "get_sponsored_text": "You need a sponsorship token to connect your wallet address with BrightID. This helps support BrightID as a decentralized platform. You’ll only ever need to do this once and it covers you for any other app that works with BrightID. Check the BrightID mobile app to see if you're sponsored. Get sponsored by submitting a sponsorship transaction or skip to the next step.",
+    "get_sponsored_cta": "Get Sponsored"
   },
   "verifyLanding": {
     "h1": "Prove you’re only using one account",
     "subtitle": "We use BrightID to stop bots and cheaters, and make our funding more democratic.",
     "h2": "What you'll need",
-    "tooltip": "If you've previously donated to a CLR round, use the same wallet to bypass some BrightID steps",
     "li1_t1": "BrightID – available on",
     "li1_link1": "iOS",
     "li1_t2": "or",
     "li1_link2": "Android",
-    "li2": "Get sponsored",
-    "li3": "Get verified",
-    "li4": "An Ethereum wallet, with enough gas for two transactions",
-    "li5": "Access to Zoom or Google Meet",
+    "join": "Join a ",
+    "brightid_party_link": "BrightId party",
+    "get_verified": " to get verified",
+    "li_wallet": "An Ethereum wallet, with some funds for transaction gas.",
+    "unitap_gas_tokens": "You may be able to get some free gas tokens from ",
+    "unitap_link": "Unitap",
+    "unitap_extra_text": ".",
     "link1": "Why is this important?",
-    "div1": "There's not yet an open funding round. Please check back later.",
     "div2": "The current round is no longer accepting new contributions. Please try again next round.",
     "div3": "Contributions closed early – you can no longer donate! Due to the community's generosity and some technical constraints we had to close the round earlier than expected. If you already contributed, you still have time to reallocate if you need to. If you didn't get a chance to contribute, you can still help by donating to the matching pool",
-    "link2": "I have BrightID installed",
+    "link2": "I am BrightID verified",
     "link3": "Go back"
   },
   "addToCartButton": {
@@ -887,6 +854,9 @@
     "link2": "Continue setup"
   },
   "cart": {
+    "sign": "Sign",
+    "connect": "Connect",
+    "sign_the_message_to_see_your_cart": "Please sign the message to see your cart",
     "h3_1": "Connect to see your cart",
     "div1": "You’ve already contributed this round. You can edit your choices and add new projects, but your cart total must always equal your original contribution amount.",
     "link1": "Why?",
@@ -914,7 +884,7 @@
     "div11": "Can't",
     "div11_if2": "reallocate",
     "div11_if3": "contribute",
-    "div12": "Funds you don't contribute to projects ({total} { tokenSymbol}) will be sent to the matching pool at the end of the round. Your cart must add up to your original {contribution} {tokenSymbol} donation.",
+    "div12": "Funds you don't contribute to projects ({total} {tokenSymbol}) will be sent to the matching pool at the end of the round. Your cart must add up to your original {contribution} {tokenSymbol} donation.",
     "link3": "Verify with BrightID",
     "template1": "Contribute {total} {tokenSymbol} to {cart} projects",
     "template2": "Finish contribution",
@@ -922,16 +892,14 @@
     "div13": "Time left:",
     "span3": "Projects",
     "span4": "Matching Pool",
-    "span5": "Total",
-    "div14": "No current round.",
-    "link4": "Verify with BrightID while you wait"
+    "span5": "Total"
   },
   "cartItems": {
     "button1": "Amount"
   },
   "claimButton": {
-    "p": "✔️ {allocatedAmount} { tokenSymbol } claimed",
-    "button": "Claim { allocatedAmount } { tokenSymbol }"
+    "p": "✔️ {allocatedAmount} {tokenSymbol} claimed",
+    "button": "Claim {allocatedAmount} {tokenSymbol}"
   },
   "claimModal": {
     "h2_1": "Claim funds",
@@ -941,20 +909,21 @@
     "button1": "Done"
   },
   "contributionModal": {
-    "h2_1": " Confirm {renderTotal} {nativeTokenSymbol} contribution",
-    "p1_t1": " Your",
-    "p1_t2": "contribution total is final. You won't be able to increase this amount. Make sure this is the maximum you might want to spend on contributions.",
-    "button1": "Cancel",
-    "button2": "Continue",
-    "h2_2": "Approve {renderTotal} {nativeTokenSymbol}",
-    "p2": " This gives this app permission to withdraw {renderTotal} {nativeTokenSymbol} from your wallet for your contribution.",
-    "h2_3": " Send {renderTotal} {nativeTokenSymbol} contribution",
-    "p3": " This transaction sends out your {renderTotal} {nativeTokenSymbol} contribution to your chosen projects.",
-    "h2_4": "Matching pool magic ✨",
-    "p4": "This transaction lets the matching pool know how much {nativeTokenSymbol } to send to your favorite projects based on your contributions."
+    "confirm": " Confirm {renderTotal} {nativeTokenSymbol} contribution",
+    "your": " Your",
+    "contribution_final": "contribution total is final. You won't be able to increase this amount. Make sure this is the maximum you might want to spend on contributions.",
+    "btn_cancel": "Cancel",
+    "btn_continue": "Continue",
+    "approve": "Approve {renderTotal} {nativeTokenSymbol}",
+    "permission": " This gives this app permission to withdraw {renderTotal} {nativeTokenSymbol} from your wallet for your contribution.",
+    "send_contribution": " Send {renderTotal} {nativeTokenSymbol} contribution",
+    "send_tx": " This transaction sends out your {renderTotal} {nativeTokenSymbol} contribution to your chosen projects.",
+    "magic": "Matching pool magic ✨",
+    "how_much": "This transaction lets the matching pool know how much {nativeTokenSymbol} to send to your favorite projects based on your contributions."
   },
   "copyButton": {
-    "tooltip1": "Copied!"
+    "tooltip1": "Copied!",
+    "copy": "Copy"
   },
   "criterialModal": {
     "h2": "Round criteria",
@@ -967,7 +936,7 @@
   "formNavigation": {
     "button1": "Previous",
     "button2_1": "Confirm",
-    "button2:_2": "Next"
+    "button2_2": "Next"
   },
   "formProgressWidget": {
     "p1": "Step {currentStep} of {steps}",
@@ -979,11 +948,11 @@
     "span1_l2": "L2",
     "span1_t2": "funds!",
     "p1": " ⚠️ You need both some ETH for gas, and {nativeTokenSymbol} to contribute",
-    "link1": " Get help bridging { singleTokenNeeded } to Layer 2",
-    "link2": " Bridge {singleTokenNeeded} to { chain}"
+    "link1": " Get help bridging {singleTokenNeeded} to Layer 2",
+    "link2": " Bridge {singleTokenNeeded} to {chain}"
   },
   "ipfsCopyWidget": {
-    "tooltip1": "'View IPFS link'"
+    "tooltip1": "View IPFS link"
   },
   "ipfsImageUpload": {
     "button1_1": "Uploading...",
@@ -995,21 +964,19 @@
   "linkBox": {
     "h2": "Check them out",
     "link1": "GitHub repo",
-    "link2": "@Twitter"
+    "link2": "{'@'}Twitter"
   },
-  "matchigFundsModal": {
-    "h3_1_t1": "Contribute { tokenSymbol } to the matching pool",
-    "h3_div": "The funds will be distributed to all projects based on the contributions they receive from the community",
-    "div1": " ⚠️ You only have { renderBalance } { tokenSymbol }",
-    "button1": "Cancel",
+  "matchingFundsModal": {
+    "title": "Contribute {tokenSymbol} to the matching pool",
+    "div1": " ⚠️ You only have {renderBalance} {tokenSymbol}",
     "button2": "Contribute",
-    "h3_2_t1": " Contribute { renderContributionAmount } { tokenSymbol } to the matching pool",
-    "h3_3": " You just topped up the pool by { renderContributionAmount } { tokenSymbol }!",
+    "h3_2_t1": " Contribute {renderContributionAmount} {tokenSymbol} to the matching pool",
+    "h3_3": " You just topped up the pool by {renderContributionAmount} {tokenSymbol}!",
+    "fund_distribution_message": "The funds will be distributed to all projects based on the contributions they receive from the community",
     "div2": "Thanks for helping out all our projects.",
     "button3": "Done"
   },
   "navBar": {
-    "language": "Language",
     "app": "App",
     "dropdown": {
       "home": "Home",
@@ -1019,7 +986,8 @@
       "sybil": "Sybil resistance",
       "code": "Code",
       "recipients": "Recipients",
-      "layer2": "Layer 2"
+      "layer2": "Layer 2",
+      "rounds": "Rounds"
     }
   },
   "projectListItem": {
@@ -1029,7 +997,7 @@
     "info1": "This is what your contributors will see when they visit your project page.",
     "div1": " tag",
     "div2": "Team: ",
-    "p1": "✔️ You have contributed to this project!",
+    "p1": "You have contributed to this project!",
     "h2_1": "About the project",
     "h2_2": "The problem it solves",
     "h2_3": "Funding plans",
@@ -1044,11 +1012,11 @@
   "recipientSubmissionWidget": {
     "div1": "Waiting for transaction to be mined...",
     "div2": "Check your wallet for a prompt...",
-    "div3_t1": "Something failed: { txError }",
-    "div3_t2": "Check your wallet or { blockExplorerLabel } for more info.",
+    "div3_t1": "Something failed: {txError}",
+    "div3_t2": "Check your wallet or {blockExplorerLabel} for more info.",
     "div4": "Total to submit",
     "tooltip1": "Estimate – this total may be slightly different in your wallet.",
-    "div5_t1": " Not enough { depositToken } in your wallet.",
+    "div5_t1": " Not enough {depositToken} in your wallet.",
     "div5_t2": "Top up or connect a different wallet.",
     "p1": "Security deposit"
   },
@@ -1057,8 +1025,9 @@
     "div1": "Cancelled",
     "div2": "Open",
     "div3": "Closed",
-    "p1": "he round is officially closed",
-    "p2": "It's now too late to contribute or reallocate your donations! Due to the community's generosity and some technical constraints we had to close the round earlier than expected. You can still help by donating to the matching pool.",
+    "p1": "The round is officially closed",
+    "p2": "It's now too late to contribute or reallocate your donations!",
+    "max_messages_reached": "Due to the community's generosity and some technical constraints we had to close the round earlier than expected. You can still help by donating to the matching pool.",
     "div4": "Great!",
     "div5": "⏱️ Round opening",
     "div6": "Time left to contribute",
@@ -1081,18 +1050,20 @@
     "tooltip7": "This total includes the funds in the matching pool and all contributions from the community.",
     "div16": "Matching pool",
     "tooltip8": "These are the funds that will be distributed to all the projects based on the contributions they receive from the community.",
-    "tooltip9": "'Add matching funds'",
+    "tooltip9": "Add matching funds",
     "span1": "Add funds",
     "div17": "Contributions total",
     "div18": "Contributors",
     "div19": "legend",
     "div20": "No scheduled round",
-    "div21": "We haven't yet scheduled a funding round. Stay tuned!"
+    "div21": "We haven't yet scheduled a funding round. Stay tuned!",
+    "pluralism": "s",
+    "more": "More on"
   },
   "roundStatusBanner": {
-    "span1": "Funding starts 🗓 { startDate }.",
+    "span1": "Funding starts 🗓 {startDate}.",
     "span2": "Project applications are closed.",
-    "span3": "Hurry, only { recipientSpacesRemainingString } left!",
+    "span3": "Hurry, only {recipientSpacesRemainingString} left!",
     "span4": "Time left to add a project:",
     "span5_t1": "⌛️ The round will close in",
     "span5_t2": ". Get your contributions in now!",
@@ -1114,7 +1085,7 @@
     "button1": "Close"
   },
   "transactionReceipt": {
-    "tooltip1": "'Awaiting transaction confirmation'",
+    "tooltip1": "Awaiting transaction confirmation",
     "tooltip2": "'Transaction confirmed'",
     "tooltip3": "View on {blockExplorer}",
     "button1": "hash"
@@ -1134,5 +1105,109 @@
     "h3_2": "Success!",
     "div1": "You have successfully withdrawn your contribution.",
     "button1": "OK"
-  }
+  },
+  "recipientProfile": {
+    "not_found": "Recipient not found!"
+  },
+  "dynamic": {
+    "appLink": {
+      "getStarted": "Get Started",
+      "leaderboard": "View Results"
+    },
+    "category": {
+      "tooling": "Tools",
+      "content": "Content",
+      "data": "Data",
+      "research": "Research",
+      "other": "Other"
+    },
+    "timeleft": {
+      "unit": {
+        "days": "days",
+        "day": "day",
+        "hours": "hours",
+        "hour": "hour",
+        "minutes": "minutes",
+        "minute": "minute",
+        "seconds": "seconds",
+        "second": "second"
+      }
+    },
+    "criteria": {
+      "free_open_source": {
+        "tagline": "Free and open source",
+        "description": "Your project must be free to use and any code associated with your project should be available to anyone under an open source license."
+      },
+      "no_clones": {
+        "tagline": "No clones",
+        "description": "If you've forked code, you must provide additional, unique value to the ecosystem."
+      },
+      "project_ownership": {
+        "tagline": "Project ownership",
+        "description": "The project you submit must be yours or you must have permission from the project owner."
+      },
+      "no_scams": {
+        "tagline": "No scams",
+        "description": "Obviously, your project must not put anyone's funds or information at risk."
+      }
+    },
+    "cart": {
+      "error": {
+        "reached_contribution_limit": "The limit on the number of contributions has been reached",
+        "connect_wallet": "Please connect your wallet",
+        "incorrect_network": "Please change network to {chain} network.",
+        "need_to_setup_brightid": "To contribute, you need to set up BrightID.",
+        "invalid_contribution_amount": "Include valid contribution amount.",
+        "exceeded_max_cart_size": "Your cart can't include over {maxCartSize} projects.",
+        "round_cancelled": "Sorry, we've had to cancel this funding round.",
+        "round_ended": "The funding round has ended.",
+        "cart_changes_exceed_cap": "Cart changes will exceed contribution capacity of this round",
+        "contributions_over": "Contributions are over for this funding round.",
+        "reached_contributor_limit": "The limit on the number of contributors has been reached",
+        "must_be_gt_zero": "Your total must be more than 0 {nativeTokenSymbol}",
+        "not_enough_funds": "Not enough funds. Your balance is {balance} {nativeTokenSymbol}.",
+        "too_generous": "Your contribution is too generous. The max contribution is {maxAmount} {nativeTokenSymbol}.",
+        "need_gas_payment": "You need some ETH to pay for gas",
+        "contributor_key_missing": "Contributor key is not found. Refresh and try again and/or make sure you're using the same browser/machine as the one you contributed with.",
+        "more_than_original_contribution": "Your new total can't be more than your original {total} {tokenSymbol} contribution"
+      },
+      "action": {
+        "remove_all": "Remove all",
+        "split_evenly": "Split evenly"
+      }
+    },
+    "verify": {
+      "step": {
+        "sponsorship": "Sponsorship",
+        "connect": "Connect",
+        "registration": "Get registered"
+      }
+    },
+    "progress": {
+      "step": {
+        "project": "About the project",
+        "donation": "Donation details",
+        "team": "Team details",
+        "links": "Links",
+        "images": "Images",
+        "review": "Review",
+        "submit": "Submit"
+      }
+    },
+    "mobile": {
+      "tab": {
+        "Cart": "Cart",
+        "Round": "Round",
+        "Projects": "Projects"
+      }
+    }
+  },
+  "filter": "Filter",
+  "home": "Home",
+  "cancel": "Cancel",
+  "copied": "Copied!",
+  "more_on_maci": "More on MACI",
+  "add_project": "Add project",
+  "close": "Close",
+  "please_sign_message": "Please sign the message in your wallet"
 }

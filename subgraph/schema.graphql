@@ -3,6 +3,7 @@ type FundingRoundFactory @entity {
   owner: Bytes
   coordinator: Bytes
   nativeToken: Bytes
+  nativeTokenInfo: Token
   contributorRegistry: ContributorRegistry
   contributorRegistryAddress: Bytes
   recipientRegistry: RecipientRegistry
@@ -37,7 +38,10 @@ type Message @entity {
   iv: BigInt!
   publicKey: PublicKey
   fundingRound: FundingRound 
+  submittedBy: Bytes
   timestamp: String
+  blockNumber: BigInt!
+  transactionIndex: BigInt!
 }
 
 type PublicKey @entity {
@@ -60,6 +64,7 @@ type FundingRound @entity {
   contributorRegistry: ContributorRegistry
   contributorRegistryAddress: Bytes
   nativeToken: Bytes
+  nativeTokenInfo: Token
   startTime: BigInt
   signUpDeadline: BigInt
   votingDeadline: BigInt
@@ -115,7 +120,6 @@ type Recipient @entity {
   requestSubmittedHash: Bytes
 
   fundingRounds: [FundingRound!]
-  donations: [Donation!] @derivedFrom(field: "recipient")
   
   createdAt: String
   lastUpdatedAt: String
@@ -178,7 +182,7 @@ type Vote @entity {
 
 type Donation @entity {
   id: ID!
-  recipient: Recipient
+  recipient: Bytes
   fundingRound: FundingRound
   amount: BigInt
   voteOptionIndex: BigInt

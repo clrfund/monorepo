@@ -1,4 +1,4 @@
-import { log } from '@graphprotocol/graph-ts'
+import { log, ByteArray, crypto, BigInt } from '@graphprotocol/graph-ts'
 import { PublishMessage, SignUp } from '../generated/templates/MACI/MACI'
 
 import { FundingRound, Message, PublicKey } from '../generated/schema'
@@ -19,16 +19,25 @@ import { FundingRound, Message, PublicKey } from '../generated/schema'
 // - contract.verifications(...)
 // - contract.verifier(...)
 
+function makePubKeyId(x: BigInt, y: BigInt): string {
+  let pubKeyX = x.toString()
+  let pubKeyY = y.toString()
+  let pubKeyXY = ByteArray.fromUTF8(pubKeyX + '.' + pubKeyY)
+  let publicKeyId = crypto.keccak256(pubKeyXY).toHexString()
+  return publicKeyId
+}
+
 export function handlePublishMessage(event: PublishMessage): void {
-  const fundingRoundId = event.transaction.to.toHexString()
-  if (fundingRoundId == null) {
+  if (!event.transaction.to) {
     log.error(
       'Error: handlePublishMessage failed fundingRound not registered',
       []
     )
     return
   }
-  const fundingRound = FundingRound.load(fundingRoundId)
+
+  let fundingRoundId = event.transaction.to!.toHex()
+  let fundingRound = FundingRound.load(fundingRoundId)
   if (fundingRound == null) {
     log.error(
       'Error: handlePublishMessage failed fundingRound not registered',
@@ -37,30 +46,36 @@ export function handlePublishMessage(event: PublishMessage): void {
     return
   }
 
-  const messageID = event.transaction.hash.toHexString()
+  let messageID =
+    event.transaction.hash.toHexString() +
+    '-' +
+    event.transactionLogIndex.toString()
 
-  const timestamp = event.block.timestamp.toString()
-  const message = new Message(messageID)
+  let timestamp = event.block.timestamp.toString()
+  let message = new Message(messageID)
   message.data = event.params._message.data
   message.iv = event.params._message.iv
+  message.blockNumber = event.block.number
+  message.transactionIndex = event.transaction.index
+  message.submittedBy = event.transaction.from
 
-  const publicKeyId = event.transaction.from.toHexString()
-  const publicKey = PublicKey.load(publicKeyId)
+  let publicKeyId = makePubKeyId(
+    event.params._encPubKey.x,
+    event.params._encPubKey.y
+  )
+  let publicKey = PublicKey.load(publicKeyId)
 
   //NOTE: If the public keys aren't being tracked initialize them
   if (publicKey == null) {
-    const publicKey = new PublicKey(publicKeyId)
+    let publicKey = new PublicKey(publicKeyId)
     publicKey.x = event.params._encPubKey.x
     publicKey.y = event.params._encPubKey.y
-
-    const _messages = [messageID] as string[]
-    publicKey.messages = _messages
     publicKey.fundingRound = fundingRoundId
 
     publicKey.save()
   }
 
-  message.publicKey = publicKeyId as string
+  message.publicKey = publicKeyId
   message.timestamp = timestamp
   message.fundingRound = fundingRoundId
   message.save()
@@ -68,18 +83,30 @@ export function handlePublishMessage(event: PublishMessage): void {
 }
 
 export function handleSignUp(event: SignUp): void {
-  const publicKeyId = event.transaction.from.toHexString()
-  const publicKey = PublicKey.load(publicKeyId)
+  let publicKeyId = makePubKeyId(
+    event.params._userPubKey.x,
+    event.params._userPubKey.y
+  )
+  let publicKey = PublicKey.load(publicKeyId)
 
   //NOTE: If the public keys aren't being tracked initialize them
   if (publicKey == null) {
-    const publicKey = new PublicKey(publicKeyId)
+    let publicKey = new PublicKey(publicKeyId)
     publicKey.x = event.params._userPubKey.x
     publicKey.y = event.params._userPubKey.y
     publicKey.stateIndex = event.params._stateIndex
 
     publicKey.voiceCreditBalance = event.params._voiceCreditBalance
 
+    let fundingRoundAddress = event.transaction.to!
+    let fundingRoundId = fundingRoundAddress.toHex()
+    let fundingRound = FundingRound.load(fundingRoundId)
+    if (fundingRound == null) {
+      log.error('Error: handleSignUp failed, fundingRound not registered', [])
+      return
+    }
+
+    publicKey.fundingRound = fundingRoundId
     publicKey.save()
   }
 

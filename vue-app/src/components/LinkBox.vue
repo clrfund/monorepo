@@ -1,5 +1,5 @@
 <template>
-  <div class="link-box">
+  <div v-if="haveLink" class="link-box">
     <h2 class="link-title">{{ $t('linkBox.h2') }}</h2>
     <div v-if="project.githubUrl" class="link-row">
       <img src="@/assets/GitHub.svg" />
@@ -16,17 +16,19 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
-import { Project } from '@/api/projects'
+<script setup lang="ts">
+import type { Project } from '@/api/projects'
 import Links from '@/components/Links.vue'
 
-@Component({ components: { Links } })
-export default class extends Vue {
-  @Prop() project!: Project
+interface Props {
+  project: Project
 }
+
+const props = defineProps<Props>()
+
+const haveLink = computed(() => {
+  return Boolean(props.project.websiteUrl || props.project.twitterUrl || props.project.githubUrl)
+})
 </script>
 
 <style scoped lang="scss">
@@ -34,7 +36,7 @@ export default class extends Vue {
 @import '../styles/theme';
 
 .link-box {
-  background: var(--bg-primary-color);
+  background: var(--bg-secondary-color);
   padding: 1.5rem;
   border-radius: 1rem;
   box-shadow: var(--box-shadow);

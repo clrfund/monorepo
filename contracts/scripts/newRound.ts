@@ -17,10 +17,6 @@ async function main() {
     throw new Error('Environment variable FACTORY_ADDRESS is not setup')
   }
 
-  if (!userRegistryType) {
-    throw new Error('Environment variable USER_REGISTRY_TYPE is not setup')
-  }
-
   if (userRegistryType === 'brightid') {
     if (!brightIdSponsor) {
       throw new Error('Environment variable BRIGHTID_SPONSOR is not setup')
@@ -60,6 +56,7 @@ async function main() {
       'BrightIdUserRegistry',
       deployer
     )
+
     const userRegistry = await BrightIdUserRegistry.deploy(
       utils.formatBytes32String(process.env.BRIGHTID_CONTEXT || 'clr.fund'),
       brightIdVerifier,

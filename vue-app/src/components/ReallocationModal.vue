@@ -1,101 +1,99 @@
 <template>
-  <div class="modal-body">
-    <div v-if="step === 1">
-      <h3>{{ $t('reallocationModal.h3') }}</h3>
-      <transaction
-        :hash="voteTxHash"
-        :error="voteTxError"
-        @close="$emit('close')"
-        @retry="
-          () => {
-            this.voteTxError = ''
-            vote()
-          }
-        "
-        :displayRetryBtn="true"
-      ></transaction>
+  <vue-final-modal class="modal-container">
+    <div class="modal-body">
+      <div v-if="step === 1">
+        <h3>{{ $t('reallocationModal.h3') }}</h3>
+        <transaction
+          :hash="voteTxHash"
+          :error="voteTxError"
+          @close="emit('close')"
+          @retry="
+            () => {
+              voteTxError = ''
+              vote()
+            }
+          "
+          :displayRetryBtn="true"
+        ></transaction>
+      </div>
     </div>
-  </div>
+  </vue-final-modal>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
+<script lang="ts" setup>
 import { BigNumber, Contract } from 'ethers'
-import { PubKey, Message } from 'maci-domainobjs'
-
+import type { PubKey, Message } from 'maci-domainobjs'
 import Transaction from '@/components/Transaction.vue'
-import { SAVE_COMMITTED_CART_DISPATCH } from '@/store/action-types'
 import { waitForTransaction } from '@/utils/contracts'
-import { createMessage } from '@/utils/maci'
+import { createMessage } from '@clrfund/maci-utils'
+import { VueFinalModal } from 'vue-final-modal'
 
 import { FundingRound } from '@/api/abi'
+import { useAppStore, useUserStore } from '@/stores'
+import { useRouter } from 'vue-router'
 
-@Component({
-  components: {
-    Transaction,
-  },
+interface Props {
+  votes: [number, BigNumber][]
+}
+
+const props = defineProps<Props>()
+const emit = defineEmits(['close'])
+
+const router = useRouter()
+const appStore = useAppStore()
+const userStore = useUserStore()
+
+const step = ref(1)
+const voteTxHash = ref('')
+const voteTxError = ref('')
+
+onMounted(() => {
+  vote()
 })
-export default class ReallocationModal extends Vue {
-  @Prop()
-  votes!: [number, BigNumber][]
 
-  step = 1
-
-  voteTxHash = ''
-  voteTxError = ''
-
-  mounted() {
-    this.vote()
+async function vote() {
+  const contributor = appStore.contributor
+  const { coordinatorPubKey, fundingRoundAddress } = appStore.currentRound!
+  const fundingRound = new Contract(fundingRoundAddress, FundingRound, userStore.signer)
+  const messages: Message[] = []
+  const encPubKeys: PubKey[] = []
+  let nonce = 1
+  for (const [recipientIndex, voiceCredits] of props.votes) {
+    const [message, encPubKey] = createMessage(
+      contributor!.stateIndex,
+      contributor!.keypair,
+      null,
+      coordinatorPubKey,
+      recipientIndex,
+      voiceCredits,
+      nonce,
+    )
+    messages.push(message)
+    encPubKeys.push(encPubKey)
+    nonce += 1
   }
-
-  private async vote() {
-    const signer = this.$store.state.currentUser.walletProvider.getSigner()
-    const contributor = this.$store.state.contributor
-    const { coordinatorPubKey, fundingRoundAddress } =
-      this.$store.state.currentRound
-    const fundingRound = new Contract(fundingRoundAddress, FundingRound, signer)
-    const messages: Message[] = []
-    const encPubKeys: PubKey[] = []
-    let nonce = 1
-    for (const [recipientIndex, voiceCredits] of this.votes) {
-      const [message, encPubKey] = createMessage(
-        contributor.stateIndex,
-        contributor.keypair,
-        null,
-        coordinatorPubKey,
-        recipientIndex,
-        voiceCredits,
-        nonce
-      )
-      messages.push(message)
-      encPubKeys.push(encPubKey)
-      nonce += 1
-    }
-    try {
-      await waitForTransaction(
-        fundingRound.submitMessageBatch(
-          messages.reverse().map((msg) => msg.asContractParam()),
-          encPubKeys.reverse().map((key) => key.asContractParam())
-        ),
-        (hash) => (this.voteTxHash = hash)
-      )
-      this.$store.dispatch(SAVE_COMMITTED_CART_DISPATCH)
-      this.$emit('close')
-      this.$router.push({
-        name: `transaction-success`,
-        params: {
-          type: 'reallocation',
-          hash: this.voteTxHash,
-        },
-      })
-    } catch (error) {
-      this.voteTxError = error.message
-      return
-    }
-    this.step += 1
+  try {
+    await waitForTransaction(
+      fundingRound.submitMessageBatch(
+        messages.reverse().map(msg => msg.asContractParam()),
+        encPubKeys.reverse().map(key => key.asContractParam()),
+      ),
+      hash => (voteTxHash.value = hash),
+    )
+    appStore.saveCommittedCart()
+    emit('close')
+    router.push({
+      name: `transaction-success`,
+      params: {
+        type: 'reallocation',
+        hash: voteTxHash.value,
+      },
+    })
+  } catch (error: any) {
+    voteTxError.value = error.message
+    return
   }
+  step.value += 1
 }
 </script>
 

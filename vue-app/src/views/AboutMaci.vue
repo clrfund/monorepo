@@ -17,9 +17,7 @@
     </p>
     <p>
       {{ $t('maci.quadratic.p2_t1') }}
-      <links to="/about/quadratic-funding">{{
-        $t('maci.quadratic.p2_link')
-      }}</links>
+      <links to="/about/quadratic-funding">{{ $t('maci.quadratic.p2_link') }}</links>
     </p>
     <p>
       {{ $t('maci.quadratic.p3') }}
@@ -84,10 +82,9 @@
     </p>
     <p>
       {{ $t('maci.helps.how.p3_t1') }}
-      <links
-        to="https://github.com/appliedzkp/maci/blob/master/specs/01_introduction.md"
-        >{{ $t('maci.helps.how.p3_link') }}</links
-      >
+      <links to="https://github.com/appliedzkp/maci/blob/master/specs/01_introduction.md">{{
+        $t('maci.helps.how.p3_link')
+      }}</links>
     </p>
     <blockquote>
       <p>
@@ -111,9 +108,7 @@
     </blockquote>
 
     <p>
-      <links to="https://github.com/appliedzkp/maci/tree/master/specs">{{
-        $t('maci.helps.how.link')
-      }}</links>
+      <links to="https://github.com/appliedzkp/maci/tree/master/specs">{{ $t('maci.helps.how.link') }}</links>
     </p>
 
     <h3>{{ $t('maci.constraints.h3') }}</h3>
@@ -132,44 +127,25 @@
     <h3>{{ $t('maci.more.h3_1') }}</h3>
     <ul>
       <li>
-        <links
-          to="https://ethresear.ch/t/minimal-anti-collusion-infrastructure/541"
-          >{{ $t('maci.more.l1') }}</links
-        >
+        <links to="https://ethresear.ch/t/minimal-anti-collusion-infrastructure/541">{{ $t('maci.more.l1') }}</links>
       </li>
       <li>
-        <links to="https://github.com/appliedzkp/maci">{{
-          $t('maci.more.l2')
+        <links to="https://github.com/appliedzkp/maci">{{ $t('maci.more.l2') }}</links>
+      </li>
+      <li>
+        <links to="https://github.com/appliedzkp/maci/blob/master/specs/01_introduction.md">{{
+          $t('maci.more.l3')
         }}</links>
-      </li>
-      <li>
-        <links
-          to="https://github.com/appliedzkp/maci/blob/master/specs/01_introduction.md"
-          >{{ $t('maci.more.l3') }}</links
-        >
       </li>
     </ul>
     <h3>{{ $t('maci.more.h3_2') }}</h3>
     <ul>
       <li>
-        <links to="https://www.youtube.com/watch?v=ooxgPzdaZ_s">{{
-          $t('maci.more.li4')
-        }}</links>
+        <links to="https://www.youtube.com/watch?v=ooxgPzdaZ_s">{{ $t('maci.more.li4') }}</links>
       </li>
       <li>
-        <links to="https://www.youtube.com/watch?v=sKuNj_IQVYI">{{
-          $t('maci.more.li5')
-        }}</links>
+        <links to="https://www.youtube.com/watch?v=sKuNj_IQVYI">{{ $t('maci.more.li5') }}</links>
       </li>
     </ul>
   </div>
 </template>
-
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import Links from '@/components/Links.vue'
-
-@Component({ components: { Links } })
-export default class AboutMaci extends Vue {}
-</script>

@@ -1,32 +1,33 @@
-import Vue from 'vue'
-import App from './App.vue'
-import router from './router'
-import store from './store'
-import Web3 from './plugins/Web3'
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+import router from '@/router'
+import App from '@/App.vue'
+import { createMetaManager } from 'vue-meta'
+import FloatingVue from 'floating-vue'
+import 'floating-vue/dist/style.css'
+import i18n from '@/plugins/i18n'
+import { createVfm } from 'vue-final-modal'
+import 'vue-final-modal/style.css'
+import ClickOutside from '@/directives/ClickOutside'
 
-// import i18n from './plugins/i18n'
+const pinia = createPinia()
+const app = createApp(App)
+const vfm = createVfm()
 
-import Meta from 'vue-meta'
-import VModal from 'vue-js-modal'
-import VTooltip from 'v-tooltip'
-import i18n from './plugins/i18n'
+app.use(pinia)
+app.use(router)
+app.use(createMetaManager())
+app.use(i18n)
+app.use(vfm)
+app.directive('click-outside', ClickOutside)
 
-Vue.use(Meta)
-Vue.use(VModal, {
-  dynamicDefaults: {
-    adaptive: true,
-    height: '100%',
-    width: 450,
+app.use(FloatingVue, {
+  themes: {
+    'contract-popover': {
+      $extend: 'dropdown',
+      $resetCss: true,
+    },
   },
 })
-Vue.use(Web3)
-Vue.use(VTooltip)
 
-Vue.config.productionTip = false
-
-new Vue({
-  router,
-  store,
-  i18n,
-  render: (h) => h(App),
-}).$mount('#app')
+app.mount('#app')

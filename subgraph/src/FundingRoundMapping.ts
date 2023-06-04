@@ -154,49 +154,19 @@ export function handleFundsClaimed(event: FundsClaimed): void {
   let recipientRegistryId = recipientRegistryAddress.toHexString()
 
   //DONE: Retroactively register here as there are no events emitted in registration function
-  let recipientAddress = event.params._recipient
-  let recipientId = recipientAddress.toHexString()
-  let recipient = Recipient.load(recipientId)
-  let donationId = fundingRoundId.concat('-contribution-').concat(recipientId)
-
-  //NOTE: If the contracts aren't being tracked initialize them
-  if (recipient == null) {
-    let recipient = new Recipient(recipientId)
-
-    let _fundingRounds = [fundingRoundId] as string[]
-    recipient.fundingRounds = _fundingRounds
-
-    recipient.recipientRegistry = recipientRegistryId
-    recipient.verified = true
-    recipient.rejected = false
-    recipient.voteOptionIndex = event.params._voteOptionIndex
-
-    recipient.save()
-
-    //NOTE: Update Funding Round recipientCount
-  } else {
-    let fundingRounds = recipient.fundingRounds
-    if (fundingRounds) {
-      fundingRounds.push(fundingRoundId)
-      recipient.fundingRounds = fundingRounds
-    } else {
-      let _fundingRounds = [fundingRoundId] as string[]
-      recipient.fundingRounds = _fundingRounds
-    }
-
-    recipient.recipientRegistry = recipientRegistryId
-    recipient.verified = true
-    recipient.rejected = false
-    recipient.voteOptionIndex = event.params._voteOptionIndex
-
-    recipient.save()
-  }
+  let recipient = event.params._recipient
+  let voteOptionIndex = event.params._voteOptionIndex
+  let donationId = fundingRoundId
+    .concat('-contribution-')
+    .concat(recipient.toHex())
+    .concat('-')
+    .concat(voteOptionIndex.toString())
 
   let donation = new Donation(donationId)
   donation.fundingRound = fundingRoundId
-  donation.recipient = recipientId
+  donation.recipient = recipient
   donation.amount = event.params._amount
-  donation.voteOptionIndex = event.params._voteOptionIndex
+  donation.voteOptionIndex = voteOptionIndex
   donation.createdAt = timestamp
 
   fundingRound.recipientCount = fundingRound.recipientCount.plus(

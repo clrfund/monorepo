@@ -15,44 +15,37 @@
         </p>
         <p>
           {{ $t('criterialModal.p3') }}
-          <links to="/about/how-it-works/recipients">{{
-            $t('criterialModal.link1')
-          }}</links
+          <links to="/about/how-it-works/recipients">{{ $t('criterialModal.link1') }}</links
           >.
         </p>
         <div class="content">
-          <div
-            v-for="({ emoji, criterion, description }, idx) in criteria"
-            :key="idx"
-            class="criterion-point"
-          >
+          <div v-for="({ emoji, translationKey }, idx) in criteria" :key="idx" class="criterion-point">
             <div class="emoji" aria-hidden="true">{{ emoji }}</div>
             <div>
-              <h3 class="no-margin">{{ criterion }}</h3>
-              <p class="no-margin">{{ description }}</p>
+              <h3 class="no-margin">
+                {{ $t(getCriterion(translationKey)) }}
+              </h3>
+              <p class="no-margin">
+                {{ $t(getDescription(translationKey)) }}
+              </p>
             </div>
           </div>
         </div>
       </div>
-      <links to="/join/project" class="btn-primary fit-content">{{
-        $t('criterialModal.link2')
-      }}</links>
+      <links to="/join/project" class="btn-primary fit-content">{{ $t('criterialModal.link2') }}</links>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import Links from '@/components/Links.vue'
+<script setup lang="ts">
+import { criteria } from '@/plugins/round/criteria'
 
-import { criteria, Criterion } from '@/plugins/round/criteria'
+function getCriterion(key: string): string {
+  return `dynamic.criteria.${key}.tagline`
+}
 
-@Component({ components: { Links } })
-export default class CriteriaModal extends Vue {
-  get criteria(): Criterion[] {
-    return criteria
-  }
+function getDescription(key: string): string {
+  return `dynamic.criteria.${key}.description`
 }
 </script>
 
@@ -63,7 +56,7 @@ export default class CriteriaModal extends Vue {
 .close-btn {
   display: flex;
   gap: 0.5rem;
-  color: var(--text-color);
+  color: var(--text-body);
   text-decoration: underline;
   font-size: 1rem;
   cursor: pointer;
@@ -104,7 +97,7 @@ export default class CriteriaModal extends Vue {
     flex-direction: column;
     padding: 3rem 2rem;
     overflow: scroll;
-    background: var(--bg-secondary-color);
+    background: var(--bg-primary-color);
     @media (max-width: $breakpoint-m) {
       box-sizing: border-box;
       width: 100%;
@@ -126,8 +119,8 @@ export default class CriteriaModal extends Vue {
     font-size: 14px;
     line-height: 150%;
     border-radius: 16px;
-    color: white;
-    background: var(--bg-light-accent);
+    color: var(--text-body);
+    background: var(--bg-secondary-color);
     padding: 1.5rem 1rem;
     margin-bottom: 3rem;
     margin-top: 2rem;

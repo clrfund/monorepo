@@ -1,9 +1,4 @@
-import {
-  ipfsPinningUrl,
-  ipfsPinningJwt,
-  ipfsApiKey,
-  ipfsSecretApiKey,
-} from './core'
+import { ipfsPinningUrl, ipfsPinningJwt, ipfsApiKey, ipfsSecretApiKey } from './core'
 
 export class IPFS {
   url: string

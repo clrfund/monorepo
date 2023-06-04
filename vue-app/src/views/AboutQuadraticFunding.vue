@@ -12,6 +12,8 @@
     </ol>
     <p>
       {{ $t('quadratic_funding.heading.p2') }}
+      <b>{{ $t('quadratic_funding.heading.sqrt') }}</b>
+      {{ $t('quadratic_funding.heading.more') }}
     </p>
     <h2>{{ $t('quadratic_funding.problems.h2') }}</h2>
     <p>
@@ -82,10 +84,9 @@
         }}</links>
       </li>
       <li>
-        <links
-          to="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3243656"
-          >{{ $t('quadratic_funding.resources.li2') }}</links
-        >
+        <links to="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3243656">{{
+          $t('quadratic_funding.resources.li2')
+        }}</links>
       </li>
       <li>
         <links to="https://www.radicalxchange.org/concepts/quadratic-voting/">{{
@@ -93,20 +94,10 @@
         }}</links>
       </li>
       <li>
-        <links
-          to="https://wtfisqf.com/?grant=10&grant=5,5&grant=2,2,2,2,2&grant=1,1,1,1,1,1,1,1,1,1&match=1000"
-          >{{ $t('quadratic_funding.resources.li4') }}</links
-        >
+        <links to="https://wtfisqf.com/?grant=10&grant=5,5&grant=2,2,2,2,2&grant=1,1,1,1,1,1,1,1,1,1&match=1000">{{
+          $t('quadratic_funding.resources.li4')
+        }}</links>
       </li>
     </ul>
   </div>
 </template>
-
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import Links from '@/components/Links.vue'
-
-@Component({ components: { Links } })
-export default class AboutQuadraticFunding extends Vue {}
-</script>

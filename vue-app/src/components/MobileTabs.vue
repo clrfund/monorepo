@@ -1,7 +1,7 @@
 <template>
   <div :class="`tab-container ${isOnCartOrRoundPage ? 'mobile-l' : 'mobile'}`">
     <links
-      v-for="({ icon, title, to }, idx) of tabs"
+      v-for="({ iconUrl, title, to }, idx) of tabs"
       :key="idx"
       :class="{
         'tab-item': true,
@@ -10,88 +10,85 @@
       :to="to"
     >
       <div class="icon">
-        <img :src="require(`@/assets/${icon}`)" :alt="title" width="16px" />
+        <img :src="iconUrl" :alt="title" width="16" />
         <transition name="pulse" mode="out-in">
           <div
+            v-if="title === 'Cart' && isCartBadgeShown"
             :key="cart.length"
             :class="[cart.length ? 'circle cart-indicator' : 'cart-indicator']"
-            v-if="title === 'Cart' && isCartBadgeShown"
           >
             {{ cart.length }}
           </div>
         </transition>
       </div>
-      <span class="tab-title">{{ title }}</span>
+      <span class="tab-title">{{ $t(`dynamic.mobile.tab.${title}`) }}</span>
     </links>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { CartItem } from '@/api/contributions'
+<script setup lang="ts">
+import { computed, ref } from 'vue'
+import type { CartItem } from '@/api/contributions'
 import Links from '@/components/Links.vue'
+import { useAppStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+import { useRoute } from 'vue-router'
 
-@Component({ components: { Links } })
-export default class MobileTabs extends Vue {
-  tabs = [
-    {
-      icon: 'timer.svg',
-      title: 'Round',
-      to: '/round-information',
-    },
-    {
-      icon: 'projects.svg',
-      title: 'Projects',
-      to: '/projects',
-    },
-    {
-      icon: 'cart.svg',
-      title: 'Cart',
-      to: '/cart',
-    },
-  ]
+const route = useRoute()
+const appStore = useAppStore()
+const { hasReallocationPhaseEnded, committedCart, canUserReallocate, isRoundContributionPhase } = storeToRefs(appStore)
 
-  private get cart(): CartItem[] {
-    return this.$store.state.cart
+const tabs = ref([
+  {
+    iconUrl: new URL('/src/assets/timer.svg', import.meta.url).href,
+    title: 'Round',
+    to: '/round-information',
+  },
+  {
+    iconUrl: new URL('/src/assets/projects.svg', import.meta.url).href,
+    title: 'Projects',
+    to: '/projects',
+  },
+  {
+    iconUrl: new URL('/src/assets/cart.svg', import.meta.url).href,
+    title: 'Cart',
+    to: '/cart',
+  },
+])
+
+const cart = computed<CartItem[]>(() => {
+  return appStore.cart
+})
+
+const isCartEmpty = computed(() => {
+  return cart.value.length === 0
+})
+
+const activeTab = computed(() => {
+  return route.path
+})
+
+const filteredCart = computed(() => {
+  // Once reallocation phase ends, use committedCart for cart items
+  if (hasReallocationPhaseEnded.value) {
+    return committedCart
   }
 
-  get isCartEmpty(): boolean {
-    return this.cart.length === 0
-  }
+  // Hide cleared items
+  return cart.value.filter(item => !item.isCleared)
+})
 
-  get activeTab(): string {
-    return this.$route.path
-  }
+const isCartBadgeShown = computed(() => {
+  /**
+   * Only show cart badge counter if there are new/changed items present
+   * and the user is still able to contribute/reallocate these changes.
+   */
+  return (canUserReallocate.value || isRoundContributionPhase.value) && !isCartEmpty.value
+})
 
-  get filteredCart(): CartItem[] {
-    // Once reallocation phase ends, use committedCart for cart items
-    if (this.$store.getters.hasReallocationPhaseEnded) {
-      return this.$store.state.committedCart
-    }
-
-    // Hide cleared items
-    return this.cart.filter((item) => !item.isCleared)
-  }
-
-  get isCartBadgeShown(): boolean {
-    /**
-     * Only show cart badge counter if there are new/changed items present
-     * and the user is still able to contribute/reallocate these changes.
-     */
-    return (
-      (this.$store.getters.canUserReallocate ||
-        this.$store.getters.isRoundContributionPhase) &&
-      !this.isCartEmpty
-    )
-  }
-
-  get isOnCartOrRoundPage(): boolean {
-    return (
-      this.$route.name === 'cart' || this.$route.name === 'round-information'
-    )
-  }
-}
+const isOnCartOrRoundPage = computed(() => {
+  return route.name === 'cart' || route.name === 'round-information'
+})
 </script>
 
 <style lang="scss" scoped>
@@ -123,7 +120,7 @@ export default class MobileTabs extends Vue {
   margin-top: -0.75rem;
   font-size: 14px;
   text-transform: uppercase;
-  color: var(--text-color);
+  color: var(--text-body);
 }
 
 .cart-indicator {

@@ -1,96 +1,97 @@
 <template>
   <div id="banner" class="caps">
     <div class="marquee-content">
-      <div v-if="$store.getters.isJoinOnlyPhase" class="messsage">
-        <span class="label">{{
-          $t('roundStatusBanner.span1', { startDate: startDate })
-        }}</span>
-        <span v-if="$store.getters.isRecipientRegistryFull" class="label">
-          {{ $t('roundStatusBanner.span2') }}</span
-        >
-        <span v-if="$store.getters.isRecipientRegistryFillingUp" class="label">
+      <div v-if="isRoundJoinOnlyPhase" class="messsage">
+        <span class="label">{{ $t('roundStatusBanner.span1', { startDate: startDate }) }}</span>
+        <span v-if="isRecipientRegistryFull" class="label"> {{ $t('roundStatusBanner.span2') }}</span>
+        <span v-if="isRecipientRegistryFillingUp" class="label">
           {{
             $t('roundStatusBanner.span3', {
               recipientSpacesRemainingString: recipientSpacesRemainingString,
             })
           }}
         </span>
-        <span v-if="!$store.getters.isRecipientRegistryFull" class="label">
+        <span v-if="!isRecipientRegistryFull" class="label">
           {{ $t('roundStatusBanner.span4') }}
-          <time-left
-            unitClass="none"
-            valueClass="none"
-            :date="$store.getters.recipientJoinDeadline"
-          />
+          <time-left v-if="recipientJoinDeadline" unitClass="none" valueClass="none" :date="recipientJoinDeadline" />
         </span>
       </div>
-      <div v-if="$store.getters.isRoundContributionPhase" class="messsage">
-        <span
-          v-if="$store.getters.isRoundContributionPhaseEnding"
-          class="label"
-        >
+      <div v-if="isRoundContributionPhase" class="messsage">
+        <span v-if="isRoundContributionPhaseEnding" class="label">
           {{ $t('roundStatusBanner.span5_t1') }}
           <time-left
+            v-if="currentRound?.signUpDeadline"
             unitClass="none"
             valueClass="none"
-            :date="$store.state.currentRound.signUpDeadline"
+            :date="currentRound?.signUpDeadline"
           />{{ $t('roundStatusBanner.span5_t2') }}
         </span>
         <span v-else class="label"
           >{{ $t('roundStatusBanner.span6_t1') }}
           <time-left
+            v-if="currentRound?.signUpDeadline"
             unitClass="none"
             valueClass="none"
-            :date="$store.state.currentRound.signUpDeadline"
+            :date="currentRound?.signUpDeadline"
           />
           {{ $t('roundStatusBanner.span6_t2') }}
         </span>
       </div>
-      <div v-if="$store.getters.isRoundReallocationPhase" class="messsage">
+      <div v-if="isRoundReallocationPhase" class="messsage">
         <span class="label">
           {{ $t('roundStatusBanner.span7_t1') }}
           <time-left
+            v-if="currentRound?.votingDeadline"
             unitClass="none"
             valueClass="none"
-            :date="$store.state.currentRound.votingDeadline"
+            :date="currentRound?.votingDeadline"
           />
           {{ $t('roundStatusBanner.span7_t2') }}
         </span>
       </div>
-      <div v-if="$store.getters.isRoundTallying" class="messsage">
+      <div v-if="isRoundTallying" class="messsage">
         <span class="label">{{ $t('roundStatusBanner.span8') }} </span>
       </div>
-      <div v-if="$store.getters.isRoundFinalized" class="messsage">
+      <div v-if="isRoundFinalized" class="messsage">
         <span class="label"
-          >{{ $t('roundStatusBanner.span9') }}
-          <links to="/projects">{{
-            $t('roundStatusBanner.link1')
-          }}</links></span
+          >{{ $t('roundStatusBanner.span9') }} <links to="/projects">{{ $t('roundStatusBanner.link1') }}</links></span
         >
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
+<script setup lang="ts">
+import { computed } from 'vue'
 
 import { formatDate } from '@/utils/dates'
 import TimeLeft from '@/components/TimeLeft.vue'
 import Links from '@/components/Links.vue'
+import { useAppStore } from '@/stores/app'
+import { storeToRefs } from 'pinia'
 
-@Component({ components: { TimeLeft, Links } })
-export default class RoundStatusBanner extends Vue {
-  get startDate(): string {
-    return formatDate(this.$store.state.currentRound?.startTime)
-  }
+const appStore = useAppStore()
+const {
+  currentRound,
+  recipientSpacesRemaining,
+  recipientJoinDeadline,
+  isRoundJoinOnlyPhase,
+  isRecipientRegistryFull,
+  isRecipientRegistryFillingUp,
+  isRoundContributionPhase,
+  isRoundContributionPhaseEnding,
+  isRoundReallocationPhase,
+  isRoundTallying,
+  isRoundFinalized,
+} = storeToRefs(appStore)
 
-  get recipientSpacesRemainingString(): string {
-    const spaces: number = this.$store.getters.recipientSpacesRemaining
-    return `${spaces} project space${spaces !== 1 && 's'}`
-  }
-}
+const startDate = computed(() => {
+  return formatDate(currentRound.value!.startTime)
+})
+const recipientSpacesRemainingString = computed(() => {
+  const spaces: number = recipientSpacesRemaining.value!
+  return `${spaces} project space${spaces !== 1 && 's'}`
+})
 </script>
 
 <style lang="scss" scoped>
@@ -102,6 +103,7 @@ export default class RoundStatusBanner extends Vue {
   animation: marquee 20s linear infinite;
   padding-left: 100%;
   margin: 1rem 0;
+  color: var(--text-body);
 
   @media (max-width: $breakpoint-m) {
     animation: marquee 10s linear infinite;

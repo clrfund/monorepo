@@ -11,14 +11,10 @@
     >
       {{ $t('walletWidget.button1') }}
     </button>
-    <div
-      v-else-if="currentUser && !isActionButton"
-      class="profile-info"
-      @click="toggleProfile"
-    >
+    <div v-else-if="currentUser && !isActionButton" class="profile-info" @click="toggleProfile">
       <div class="profile-info-balance">
-        <img v-if="showEth" :src="require(`@/assets/${chainCurrencyLogo}`)" />
-        <img v-else :src="require(`@/assets/${tokenLogo}`)" />
+        <img v-if="showEth" :src="chainCurrencyLogoUrl" />
+        <img v-else :src="tokenLogoUrl" />
         <div v-if="showEth" class="balance">{{ etherBalance }}</div>
         <div v-else class="balance">{{ balance }}</div>
       </div>
@@ -29,124 +25,77 @@
         <img v-if="profileImageUrl" :src="profileImageUrl" />
       </div>
     </div>
-    <profile
-      v-if="showProfilePanel"
-      :balance="balance"
-      :etherBalance="etherBalance"
-      @close="toggleProfile"
-    />
+    <profile v-if="showProfilePanel" :balance="balance" :ether-balance="etherBalance" @close="toggleProfile" />
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop, Watch } from 'vue-property-decorator'
-import { BigNumber } from 'ethers'
-
+<script setup lang="ts">
+import { computed, ref, onMounted } from 'vue'
+import type { BigNumber } from 'ethers'
 import { formatAmount } from '@/utils/amounts'
-import { getTokenLogo } from '@/utils/tokens'
-import { User, getProfileImageUrl } from '@/api/user'
-import { chain } from '@/api/core'
-import WalletModal from '@/components/WalletModal.vue'
-import { LOGOUT_USER } from '@/store/action-types'
 import Profile from '@/views/Profile.vue'
+import WalletModal from '@/components/WalletModal.vue'
+import { useAppStore, useUserStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+import { useModal } from 'vue-final-modal'
 
-@Component({ components: { Profile, WalletModal } })
-export default class WalletWidget extends Vue {
-  private showProfilePanel: boolean | null = null
-  profileImageUrl: string | null = null
-  @Prop() showEth!: boolean
+interface Props {
   // Boolean to only show Connect button, styled like an action button,
   // which hides the widget that would otherwise display after connecting
-  @Prop() isActionButton!: boolean
+  showEth?: boolean
+  isActionButton?: boolean
   // Boolean to allow connect button to be full width
-  @Prop() fullWidthMobile!: boolean
+  fullWidthMobile?: boolean
+}
 
-  toggleProfile(): void {
-    this.showProfilePanel = !this.showProfilePanel
+withDefaults(defineProps<Props>(), {
+  showEth: false,
+  isActionButton: false,
+  fullWidthMobile: false,
+})
+
+const appStore = useAppStore()
+const { tokenLogoUrl, chainCurrencyLogoUrl, nativeTokenDecimals } = storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
+
+const { open: showModal, close } = useModal({
+  component: WalletModal,
+  attrs: {
+    onClose() {
+      close()
+    },
+  },
+})
+
+const showProfilePanel = ref<boolean | null>(null)
+const profileImageUrl = ref<string | null>(null)
+
+const etherBalance = computed(() => {
+  const etherBalance = currentUser.value?.etherBalance
+  if (etherBalance === null || typeof etherBalance === 'undefined') {
+    return '0'
   }
+  return formatAmount(etherBalance, 'ether', 4)
+})
 
-  get currentUser(): User | null {
-    return this.$store.state.currentUser
-  }
+const balance = computed(() => {
+  const balance: BigNumber | null | undefined = currentUser.value?.balance
+  if (balance === null || typeof balance === 'undefined') return '0'
+  return formatAmount(balance, nativeTokenDecimals.value, 4)
+})
 
-  get walletChainId(): number | null {
-    return this.$web3.chainId
-  }
+const displayAddress = computed<string | null>(() => {
+  if (!currentUser.value) return null
+  return currentUser.value.ensName ?? currentUser.value.walletAddress
+})
 
-  get nativeTokenSymbol(): string {
-    return this.$store.getters.nativeTokenSymbol
-  }
+onMounted(() => {
+  showProfilePanel.value = false
+})
 
-  get nativeTokenDecimals(): number | undefined {
-    return this.$store.getters.nativeTokenDecimals
-  }
-
-  get etherBalance(): string | null {
-    const etherBalance = this.currentUser?.etherBalance
-    if (etherBalance === null || typeof etherBalance === 'undefined') {
-      return null
-    }
-    return formatAmount(etherBalance, 'ether', 4)
-  }
-
-  get balance(): string | null {
-    const balance: BigNumber | null | undefined = this.currentUser?.balance
-    if (balance === null || typeof balance === 'undefined') return null
-    return formatAmount(balance, this.nativeTokenDecimals, 4)
-  }
-
-  async mounted() {
-    this.showProfilePanel = false
-    this.$web3.$on('disconnect', () => {
-      this.$store.dispatch(LOGOUT_USER)
-    })
-
-    // TODO: refactor, move `chainChanged` and `accountsChanged` from here to an
-    // upper level where we hear this events only once (there are other
-    // components that do the same).
-    this.$web3.$on('chainChanged', () => {
-      if (this.currentUser) {
-        // Log out user to prevent interactions with incorrect network
-        this.$store.dispatch(LOGOUT_USER)
-      }
-    })
-
-    let accounts: string[]
-    this.$web3.$on('accountsChanged', (_accounts: string[]) => {
-      if (_accounts !== accounts) {
-        // Log out user if wallet account changes
-        this.$store.dispatch(LOGOUT_USER)
-      }
-      accounts = _accounts
-    })
-  }
-
-  async showModal(): Promise<void> {
-    this.$modal.show(WalletModal, {}, { width: 400, top: 20 })
-  }
-
-  @Watch('$web3.user')
-  async updateProfileImage(currentUser: User): Promise<void> {
-    if (currentUser) {
-      const url = await getProfileImageUrl(currentUser.walletAddress)
-      this.profileImageUrl = url
-    }
-  }
-
-  get displayAddress(): string | null {
-    if (!this.currentUser) return null
-    return this.currentUser.ensName ?? this.currentUser.walletAddress
-  }
-
-  get tokenLogo(): string {
-    return getTokenLogo(this.nativeTokenSymbol)
-  }
-
-  get chainCurrencyLogo(): string {
-    return getTokenLogo(chain.currency)
-  }
+function toggleProfile(): void {
+  showProfilePanel.value = !showProfilePanel.value
 }
 </script>
 
@@ -217,7 +166,7 @@ export default class WalletWidget extends Vue {
     border-radius: 32px;
     margin: 0.25rem;
     margin-right: 0;
-    color: var(--text-color);
+    color: var(--text-body);
   }
 
   .profile-info-balance img {

@@ -9,18 +9,16 @@
   >
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
+<script setup lang="ts">
 import Links from '@/components/Links.vue'
 
-@Component({ components: { Links } })
-export default class extends Vue {
-  @Prop() alsoShowOnMobile!: boolean
-  @Prop() to!: string
-  @Prop() text!: string
+interface Props {
+  alsoShowOnMobile: boolean
+  to: string
+  text: string
 }
+
+defineProps<Props>()
 </script>
 
 <style lang="scss" scoped>

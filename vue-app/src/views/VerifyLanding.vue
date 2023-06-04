@@ -1,7 +1,6 @@
-@ -0,0 +1,36 @@
 <template>
   <div>
-    <round-status-banner v-if="$store.state.currentRound" />
+    <round-status-banner v-if="currentRound" />
     <loader v-if="loading" />
     <div v-if="!loading">
       <div class="gradient">
@@ -20,52 +19,32 @@
         </div>
         <h2>
           {{ $t('verifyLanding.h2') }}
-          <img
-            v-tooltip="{
-              content: $t('verifyLanding.tooltip'),
-              trigger: 'hover click',
-            }"
-            width="16px"
-            src="@/assets/info.svg"
-            class="info-icon"
-          />
         </h2>
         <ul>
           <li>
             {{ $t('verifyLanding.li1_t1') }}
-            <a
-              href="https://apps.apple.com/us/app/brightid/id1428946820"
-              target="_blank"
-            >
+            <a href="https://apps.apple.com/us/app/brightid/id1428946820" target="_blank">
               {{ $t('verifyLanding.li1_link1') }}</a
             >
             {{ $t('verifyLanding.li1_t2') }}
-            <a
-              href="https://play.google.com/store/apps/details?id=org.brightid"
-              target="_blank"
-              >{{ $t('verifyLanding.li1_link2') }}</a
-            >
-            <ul>
-              <li>
-                <links to="/brightid/sponsor">{{
-                  $t('verifyLanding.li2')
-                }}</links>
-              </li>
-              <li>
-                <links to="/brightid">{{ $t('verifyLanding.li3') }}</links>
-              </li>
-            </ul>
+            <a href="https://play.google.com/store/apps/details?id=org.brightid" target="_blank">{{
+              $t('verifyLanding.li1_link2')
+            }}</a>
           </li>
-          <li>{{ $t('verifyLanding.li4') }}</li>
-          <li>{{ $t('verifyLanding.li5') }}</li>
+          <li>
+            {{ $t('verifyLanding.join') }}
+            <links to="https://meet.brightid.org">{{ $t('verifyLanding.brightid_party_link') }}</links>
+            {{ $t('verifyLanding.get_verified') }}
+          </li>
+          <li>
+            {{ $t('verifyLanding.li_wallet') }}
+            {{ $t('verifyLanding.unitap_gas_tokens')
+            }}<links to="https://unitap.app/">{{ $t('verifyLanding.unitap_link') }}</links
+            >{{ $t('verifyLanding.unitap_extra_text') }}
+          </li>
         </ul>
-        <links to="/about/sybil-resistance">{{
-          $t('verifyLanding.link1')
-        }}</links>
-        <div v-if="!hasRoundStarted" class="join-message">
-          {{ $t('verifyLanding.div1') }}
-        </div>
-        <div v-else-if="isRoundOver" class="warning-message">
+        <links to="/about/sybil-resistance">{{ $t('verifyLanding.link1') }}</links>
+        <div v-if="isRoundOver" class="warning-message">
           {{ $t('verifyLanding.div2') }}
         </div>
         <div v-else-if="isRoundFull" class="warning-message">
@@ -73,95 +52,76 @@
         </div>
         <div class="btn-container mt2">
           <div v-if="!isRoundOver">
-            <wallet-widget
-              v-if="!currentUser"
-              :isActionButton="true"
-              :fullWidthMobile="true"
-            />
-            <links
-              v-if="showBrightIdButton"
-              to="/verify/connect"
-              class="btn-primary"
-            >
+            <wallet-widget v-if="!currentUser" :isActionButton="true" :fullWidthMobile="true" />
+            <button v-else-if="showBrightIdButton" @click="handleBrightIdButtonClicked" class="btn-primary">
               {{ $t('verifyLanding.link2') }}
-            </links>
+            </button>
           </div>
-          <links to="/projects" class="btn-secondary">{{
-            $t('verifyLanding.link3')
-          }}</links>
+          <links to="/projects" class="btn-secondary">{{ $t('verifyLanding.link3') }}</links>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import * as humanizeDuration from 'humanize-duration'
-import { commify, formatUnits } from '@ethersproject/units'
-
+<script setup lang="ts">
+import { onMounted, ref, computed } from 'vue'
 import { getCurrentRound } from '@/api/round'
-import { User } from '@/api/user'
 
 import Breadcrumbs from '@/components/Breadcrumbs.vue'
 import Links from '@/components/Links.vue'
 import Loader from '@/components/Loader.vue'
-import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import WalletWidget from '@/components/WalletWidget.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
+import { useAppStore, useUserStore } from '@/stores'
+import { useRouter } from 'vue-router'
+import { useModal } from 'vue-final-modal'
+import SignatureModal from '@/components/SignatureModal.vue'
 
-@Component({
-  components: {
-    Breadcrumbs,
-    Links,
-    Loader,
-    ProgressBar,
-    RoundStatusBanner,
-    WalletWidget,
-    ImageResponsive,
-  },
+const router = useRouter()
+const appStore = useAppStore()
+const { isRoundContributorLimitReached, hasContributionPhaseEnded } = storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
+
+const loading = ref(true)
+const currentRound = ref<string | null>(null)
+
+onMounted(async () => {
+  currentRound.value = await getCurrentRound()
+  loading.value = false
 })
-export default class VerifyLanding extends Vue {
-  loading = true
-  currentRound: string | null = null
 
-  async created() {
-    this.currentRound = await getCurrentRound()
-    this.loading = false
+const isRoundFull = computed(() => isRoundContributorLimitReached.value)
+const isRoundOver = computed(() => !currentRound.value || hasContributionPhaseEnded.value)
+const showBrightIdButton = computed(() => currentUser.value?.isRegistered === false)
+
+async function promptSignagure() {
+  const { open, close } = useModal({
+    component: SignatureModal,
+    attrs: {
+      onClose() {
+        close().then(() => {
+          gotoVerify()
+        })
+      },
+    },
+  })
+  open()
+}
+
+function handleBrightIdButtonClicked() {
+  if (currentUser.value && !currentUser.value.encryptionKey) {
+    promptSignagure()
+  } else {
+    gotoVerify()
   }
+}
 
-  get currentUser(): User | null {
-    return this.$store.state.currentUser
-  }
-
-  get balance(): string | null {
-    const balance = this.currentUser?.balance
-    if (balance === null || typeof balance === 'undefined') {
-      return null
-    }
-    return commify(formatUnits(balance, 18))
-  }
-
-  get hasRoundStarted(): boolean {
-    return !!this.currentRound
-  }
-
-  get isRoundFull(): boolean {
-    return this.$store.getters.isRoundContributorLimitReached
-  }
-
-  get isRoundOver(): boolean {
-    return this.$store.getters.hasContributionPhaseEnded
-  }
-
-  get showBrightIdButton(): boolean {
-    return this.currentUser?.isRegistered === false
-  }
-
-  formatDuration(value: number): string {
-    return humanizeDuration(value * 1000, { largest: 1 })
+function gotoVerify() {
+  if (currentUser.value?.encryptionKey) {
+    router.push({ name: 'verify-step', params: { step: 'connect' } })
   }
 }
 </script>
@@ -204,7 +164,7 @@ ul {
 }
 
 .gradient {
-  background: var(--bg-gradient);
+  background: var(--bg-primary-color);
   position: fixed;
   top: 0;
   right: 0;
@@ -217,6 +177,7 @@ ul {
     right: 1rem;
     mix-blend-mode: exclusion;
   }
+
   .hero {
     display: flex;
     position: fixed;
@@ -224,7 +185,6 @@ ul {
     right: 0;
     height: 100%;
     width: 100%;
-    background: var(--bg-gradient-hero);
     @media (max-width: $breakpoint-m) {
       padding: 2rem 0rem;
       padding-bottom: 0rem;
@@ -234,7 +194,6 @@ ul {
       position: absolute;
       bottom: 0;
       right: 0;
-      mix-blend-mode: exclusion;
       width: 66%;
       @media (max-width: $breakpoint-m) {
         right: 0;

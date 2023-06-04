@@ -1,31 +1,17 @@
 <template>
   <div v-if="project" class="project-page">
-    <info
-      v-if="previewMode"
-      class="info"
-      :message="$t('projectProfile.info1')"
-    />
-    <img
-      v-if="previewMode"
-      class="project-image"
-      :src="project.bannerImageUrl"
-      :alt="project.name"
-    />
+    <info v-if="previewMode" class="info" :message="$t('projectProfile.info1')" />
+    <img v-if="previewMode" class="project-image" :src="project.bannerImageUrl" :alt="project.name" />
     <div class="about">
-      <h1
-        class="project-name"
-        :title="addressName"
-        :project-index="project.index"
-      >
-        <links v-if="klerosCurateUrl" :to="klerosCurateUrl">{{
-          project.name
-        }}</links>
+      <h1 class="project-name" :title="addressName" :project-index="project.index">
+        <links v-if="klerosCurateUrl" :to="klerosCurateUrl">{{ project.name }}</links>
         <span v-else> {{ project.name }} </span>
       </h1>
       <p class="tagline">{{ project.tagline }}</p>
       <div class="subtitle">
-        <div class="tag">
-          {{ project.category }} {{ $t('projectProfile.div1') }}
+        <div v-if="project.category" class="tag">
+          {{ $t(categoryLocaleKey(project.category)) }}
+          {{ $t('projectProfile.div1') }}
         </div>
         <div class="team-byline" v-if="!!project.teamName">
           {{ $t('projectProfile.div2') }}
@@ -33,17 +19,9 @@
         </div>
       </div>
       <div class="mobile mb2">
-        <add-to-cart-button
-          v-if="shouldShowCartInput && hasContributeBtn()"
-          :project="project"
-        />
+        <add-to-cart-button v-if="shouldShowCartInput && hasContributeBtn()" :project="project" />
         <claim-button :project="project" />
-        <p
-          v-if="
-            $store.getters.hasUserContributed &&
-            !$store.getters.canUserReallocate
-          "
-        >
+        <p v-if="hasUserContributed && !canUserReallocate">
           {{ $t('projectProfile.p1') }}
         </p>
       </div>
@@ -53,11 +31,11 @@
       </div>
       <div class="project-section">
         <h2>{{ $t('projectProfile.h2_2') }}</h2>
-        <markdown :raw="project.problemSpace" />
+        <markdown :raw="project.problemSpace || ''" />
       </div>
       <div class="project-section">
         <h2>{{ $t('projectProfile.h2_3') }}</h2>
-        <markdown :raw="project.plans" />
+        <markdown :raw="project.plans || ''" />
       </div>
       <div
         :class="{
@@ -81,41 +59,27 @@
           <links
             class="explorerLink"
             :to="blockExplorer.url"
-            :title="
-              $t('projectProfile.link1', { blockExplorer: blockExplorer.label })
-            "
+            :title="$t('projectProfile.link1', { blockExplorer: blockExplorer.label })"
             :hideArrow="true"
           >
-            <img
-              class="icon"
-              :src="require(`@/assets/${blockExplorer.logo}`)"
-            />
+            <img class="icon" :src="logoUrl" />
           </links>
         </div>
       </div>
       <hr v-if="project.teamName || project.teamDescription" />
-      <div
-        id="team"
-        v-if="project.teamName || project.teamDescription"
-        class="team"
-      >
+      <div id="team" v-if="project.teamName || project.teamDescription" class="team">
         <h2>{{ $t('projectProfile.h2_4') }} {{ project.teamName }}</h2>
-        <markdown :raw="project.teamDescription" />
+        <markdown :raw="project.teamDescription || ''" />
       </div>
     </div>
     <link-box v-if="previewMode" :project="project" class="mt2" />
   </div>
 </template>
 
-<script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
-import { DateTime } from 'luxon'
-import { Project } from '@/api/projects'
-import { DEFAULT_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
-import { RoundStatus } from '@/api/round'
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
+import type { Project } from '@/api/projects'
 import { chain } from '@/api/core'
-import { SAVE_CART } from '@/store/action-types'
-import { ADD_CART_ITEM } from '@/store/mutation-types'
 import { ensLookup } from '@/utils/accounts'
 import Info from '@/components/Info.vue'
 import Markdown from '@/components/Markdown.vue'
@@ -124,100 +88,62 @@ import LinkBox from '@/components/LinkBox.vue'
 import Links from '@/components/Links.vue'
 import AddToCartButton from '@/components/AddToCartButton.vue'
 import ClaimButton from '@/components/ClaimButton.vue'
+import { useAppStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+import { useRoute } from 'vue-router'
+import { getAssetsUrl } from '@/utils/url'
 
-@Component({
-  components: {
-    Markdown,
-    Info,
-    LinkBox,
-    CopyButton,
-    Links,
-    AddToCartButton,
-    ClaimButton,
-  },
+interface Props {
+  project: Project
+  klerosCurateUrl?: string | null
+  previewMode: boolean
+}
+
+const props = defineProps<Props>()
+const route = useRoute()
+const appStore = useAppStore()
+const {
+  currentRound,
+  currentRoundAddress,
+  isRoundContributionPhase,
+  canUserReallocate,
+  hasUserContributed,
+  categoryLocaleKey,
+} = storeToRefs(appStore)
+
+const ens = ref<string | null>(null)
+
+onMounted(async () => {
+  if (props.project.address) {
+    ens.value = await ensLookup(props.project.address)
+  }
 })
-export default class ProjectProfile extends Vue {
-  @Prop() project!: Project
-  @Prop() klerosCurateUrl!: string | null
-  @Prop() previewMode!: boolean
 
-  contributionAmount: number | null = DEFAULT_CONTRIBUTION_AMOUNT
-  ens: string | null = null
-
-  async mounted() {
-    if (this.project.address) {
-      this.ens = await ensLookup(this.project.address)
-    }
+const blockExplorer = computed<{ label: string; url: string; logo: string }>(() => {
+  return {
+    label: chain.explorerLabel,
+    url: `${chain.explorer}/address/${props.project.address}`,
+    logo: chain.explorerLogo,
   }
+})
 
-  get inCart(): boolean {
-    const project = this.project
-    if (project === null) {
-      return false
-    }
-    const index = this.$store.state.cart.findIndex((item: CartItem) => {
-      // Ignore cleared items
-      return item.id === project.id && !item.isCleared
-    })
-    return index !== -1
-  }
+const addressName = computed<string>(() => {
+  return ens.value || props.project.address
+})
 
-  hasContributeBtn(): boolean {
-    return (
-      this.isCurrentRound &&
-      this.$store.state.currentRound &&
-      this.project !== null &&
-      this.project.index !== 0
-    )
-  }
+const isCurrentRound = computed<boolean>(() => {
+  const roundAddress = route.params.address || currentRoundAddress.value
+  return appStore.isCurrentRound(roundAddress as string)
+})
 
-  canContribute(): boolean {
-    return (
-      this.hasContributeBtn() &&
-      this.$store.state.currentUser &&
-      DateTime.local() < this.$store.state.currentRound.votingDeadline &&
-      this.$store.state.currentRound.status !== RoundStatus.Cancelled &&
-      this.project !== null &&
-      !this.project.isLocked
-    )
-  }
+const shouldShowCartInput = computed<boolean>(() => {
+  return isCurrentRound.value && (isRoundContributionPhase.value || canUserReallocate.value)
+})
+const logoUrl = computed(() => getAssetsUrl(blockExplorer.value.logo))
 
-  contribute() {
-    if (!this.contributionAmount) {
-      return
-    }
-    this.$store.commit(ADD_CART_ITEM, {
-      ...this.project,
-      amount: this.contributionAmount.toString(),
-      isCleared: false,
-    })
-    this.$store.dispatch(SAVE_CART)
-  }
-
-  get blockExplorer(): { label: string; url: string; logo: string } {
-    return {
-      label: chain.explorerLabel,
-      url: `${chain.explorer}/address/${this.project.address}`,
-      logo: chain.explorerLogo,
-    }
-  }
-
-  get addressName(): string {
-    return this.ens || this.project.address
-  }
-
-  get isCurrentRound(): boolean {
-    const roundAddress =
-      this.$route.params.address || this.$store.state.currentRoundAddress
-    return this.$store.getters.isCurrentRound(roundAddress)
-  }
-
-  get shouldShowCartInput(): boolean {
-    const { isRoundContributionPhase, canUserReallocate } = this.$store.getters
-    return (
-      this.isCurrentRound && (isRoundContributionPhase || canUserReallocate)
-    )
-  }
+function hasContributeBtn(): boolean {
+  // eslint-disable-next-line
+  return isCurrentRound.value! && currentRound.value! && props.project !== null && props.project.index !== 0
 }
 </script>
 

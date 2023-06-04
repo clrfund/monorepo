@@ -1,12 +1,13 @@
 name: Build and test contracts
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'contracts/**'
 
 env:
-  NODE_VERSION: 12.x
+  NODE_VERSION: 16.x
 
 jobs:
   test-contracts:

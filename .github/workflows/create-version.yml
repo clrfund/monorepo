@@ -1,0 +1,58 @@
+name: Create Version
+
+on: 
+  workflow_dispatch:
+    inputs:
+      version:
+        type: choice
+        description: major, minor, or patch version
+        options:
+        - patch
+        - minor
+        - major
+
+env:
+  NODE_VERSION: 16.x
+  VITE_CLRFUND_FACTORY_ADDRESS: "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707"
+  VITE_ETHEREUM_API_CHAINID: 1
+  VITE_ETHEREUM_API_URL: "dummy"
+  VITE_IPFS_PINNING_JWT: "dummy"
+  VITE_IPFS_PINNING_URL: "dummy"
+  VITE_RECIPIENT_REGISTRY_TYPE: "simple"
+  VITE_USER_REGISTRY_TYPE: "simple"
+
+jobs:
+  createVersion:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Use Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    - name: Checkout source code
+      uses: actions/checkout@v3
+    - name: Install dependencies
+      run: |
+        yarn && yarn build
+    - name: setup git config
+      run: |
+        # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
+        git config user.name "GitHub Actions Bot"
+        git config user.email "<>"
+    - name: Create new version
+      run: |
+        echo "Version: ${{ github.event.inputs.version }}" 
+        cd contracts
+        npm version ${{ github.event.inputs.version }}
+        cd ../subgraph
+        npm version ${{ github.event.inputs.version }}
+        cd ../vue-app
+        npm version ${{ github.event.inputs.version }}
+        export VERSION_NUMBER=$(node -e "const pkg=require('./package.json'); console.log(pkg.version)")
+        cd ..
+        export VERSION="v${VERSION_NUMBER}"
+        git add contracts/package.json vue-app/package.json subgraph/package.json
+        git commit -m "${VERSION}"
+        git push origin
+        git tag -a "${VERSION}" -m "${VERSION}"
+        git push origin --tags

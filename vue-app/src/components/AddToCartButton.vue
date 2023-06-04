@@ -2,15 +2,16 @@
   <div>
     <input-button
       v-if="!inCart && canContribute()"
-      v-model="amount"
+      :modelValue="amount"
       :input="{
-        placeholder: defaultAmount,
-        class: { invalid: !isAmountValid },
+        placeholder: defaultAmount.toString(),
+        class: `{ invalid: ${!isAmountValid} }`,
       }"
       :button="{
         text: $t('addToCartButton.input1'),
-        disabled: !isAmountValid,
+        disabled: !isAmountValid || isRequestingSignature,
       }"
+      @update:model-value="newValue => (amount = newValue)"
       @click="handleSubmit"
     />
     <input-button
@@ -24,121 +25,125 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import { Component, Prop } from 'vue-property-decorator'
+<script setup lang="ts">
+import { computed } from 'vue'
 import { DateTime } from 'luxon'
 
-import { SAVE_CART } from '@/store/action-types'
-import {
-  ADD_CART_ITEM,
-  TOGGLE_SHOW_CART_PANEL,
-  TOGGLE_EDIT_SELECTION,
-} from '@/store/mutation-types'
-import {
-  DEFAULT_CONTRIBUTION_AMOUNT,
-  isContributionAmountValid,
-} from '@/api/contributions'
-import { User } from '@/api/user'
-import { Project } from '@/api/projects'
+import { DEFAULT_CONTRIBUTION_AMOUNT, isContributionAmountValid } from '@/api/contributions'
+
+import type { Project } from '@/api/projects'
 import { RoundStatus } from '@/api/round'
-import { CartItem } from '@/api/contributions'
-import WalletModal from '@/components/WalletModal.vue'
+import type { CartItem } from '@/api/contributions'
 import InputButton from '@/components/InputButton.vue'
+import { useAppStore, useUserStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+import { useModal } from 'vue-final-modal'
+import WalletModal from './WalletModal.vue'
+import SignatureModal from './SignatureModal.vue'
 
-@Component({
-  components: {
-    WalletModal,
-    InputButton,
-  },
+const amount = ref(DEFAULT_CONTRIBUTION_AMOUNT.toString())
+
+interface Props {
+  project: Project
+}
+
+const props = defineProps<Props>()
+
+const appStore = useAppStore()
+const { currentRound, cart } = storeToRefs(appStore)
+
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
+
+const isRequestingSignature = ref(false)
+
+const inCart = computed(() => {
+  const index = cart.value.findIndex((item: CartItem) => {
+    // Ignore cleared items
+    return item.id === props.project.id && !item.isCleared
+  })
+  return index !== -1
 })
-export default class AddToCartButton extends Vue {
-  amount = DEFAULT_CONTRIBUTION_AMOUNT
+const defaultAmount = computed(() => {
+  return DEFAULT_CONTRIBUTION_AMOUNT
+})
 
-  @Prop() project!: Project
+const isAmountValid = computed(() => {
+  return isContributionAmountValid(amount.value, currentRound.value!)
+})
 
-  get currentUser(): User | null {
-    return this.$store.state.currentUser
-  }
+function hasContributeBtn(): boolean {
+  return !!currentRound.value && props.project.index !== 0
+}
 
-  get inCart(): boolean {
-    const index = this.$store.state.cart.findIndex((item: CartItem) => {
-      // Ignore cleared items
-      return item.id === this.project.id && !item.isCleared
-    })
-    return index !== -1
-  }
+function canContribute(): boolean {
+  return (
+    hasContributeBtn() &&
+    !!currentRound.value &&
+    DateTime.local() < currentRound.value.votingDeadline &&
+    currentRound.value.status !== RoundStatus.Cancelled &&
+    props.project.isHidden === false &&
+    props.project.isLocked === false
+  )
+}
 
-  get defaultAmount() {
-    return DEFAULT_CONTRIBUTION_AMOUNT
-  }
+function contribute() {
+  appStore.addCartItem({
+    ...props.project,
+    amount: amount.value,
+    isCleared: false,
+  })
+  appStore.saveCart()
+  appStore.toggleEditSelection(true)
+  appStore.toggleShowCartPanel(true)
+}
 
-  hasContributeBtn(): boolean {
-    return (
-      this.$store.state.currentRound &&
-      this.project !== null &&
-      this.project.index !== 0
-    )
-  }
-
-  canContribute(): boolean {
-    const { currentRound } = this.$store.state
-
-    return (
-      this.hasContributeBtn() &&
-      currentRound &&
-      DateTime.local() < currentRound.votingDeadline &&
-      currentRound.status !== RoundStatus.Cancelled &&
-      this.project.isHidden === false &&
-      this.project.isLocked === false
-    )
-  }
-
-  contribute() {
-    this.$store.commit(ADD_CART_ITEM, {
-      ...this.project,
-      amount: this.amount.toString(),
-      isCleared: false,
-    })
-    this.$store.dispatch(SAVE_CART)
-    this.$store.commit(TOGGLE_EDIT_SELECTION, true)
-  }
-
-  get isAmountValid(): boolean {
-    const currentRound = this.$store.state.currentRound
-    return isContributionAmountValid(this.amount.toString(), currentRound)
-  }
-
-  handleSubmit(): void {
-    if (this.hasContributeBtn() && this.currentUser) {
-      this.contribute()
-      return
+function handleSubmit(): void {
+  if (hasContributeBtn() && currentUser.value) {
+    if (currentUser.value.encryptionKey) {
+      contribute()
+    } else {
+      promptSignagure()
     }
-
-    this.promptConnection()
+    return
   }
 
-  promptConnection(): void {
-    return this.$modal.show(
-      WalletModal,
-      {},
-      { width: 400, top: 20 },
-      {
-        closed: this.handleWalletModalClose,
-      }
-    )
-  }
+  promptConnection()
+}
 
-  handleWalletModalClose(): void {
-    // The modal can be closed by clicking in Cancel or when the user is
-    // connected successfully. Hence, this checks if we are in the latter case
-    if (this.currentUser) {
-      this.contribute()
-    }
-  }
+function promptSignagure(): void {
+  const { open, close } = useModal({
+    component: SignatureModal,
+    attrs: {
+      onClose() {
+        close().then(() => {
+          if (currentUser.value?.encryptionKey) {
+            contribute()
+          }
+        })
+      },
+    },
+  })
+  open()
+}
 
-  toggleCartPanel() {
-    this.$store.commit(TOGGLE_SHOW_CART_PANEL, true)
-  }
+function promptConnection(): void {
+  const { open, close } = useModal({
+    component: WalletModal,
+    attrs: {
+      onClose() {
+        close().then(() => {
+          if (currentUser.value?.walletAddress) {
+            promptSignagure()
+          }
+        })
+      },
+    },
+  })
+  open()
+}
+
+function toggleCartPanel() {
+  appStore.toggleShowCartPanel(true)
 }
 </script>

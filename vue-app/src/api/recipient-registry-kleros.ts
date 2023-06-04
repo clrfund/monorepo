@@ -1,13 +1,12 @@
-import { Contract, Event, Signer } from 'ethers'
-import { TransactionResponse } from '@ethersproject/abstract-provider'
+import { Contract, type Event, Signer } from 'ethers'
+import type { TransactionResponse } from '@ethersproject/abstract-provider'
 import { gtcrDecode } from '@kleros/gtcr-encoder'
 
 import { KlerosGTCR, KlerosGTCRAdapter } from './abi'
 import { provider, ipfsGatewayUrl } from './core'
-import { Project } from './projects'
+import type { Project } from './projects'
 
-const KLEROS_CURATE_URL =
-  'https://curate.kleros.io/tcr/0x2E3B10aBf091cdc53cC892A50daBDb432e220398'
+const KLEROS_CURATE_URL = 'https://curate.kleros.io/tcr/0x2E3B10aBf091cdc53cC892A50daBDb432e220398'
 
 export enum TcrItemStatus {
   Absent = 0,
@@ -34,7 +33,7 @@ async function getTcrColumns(tcr: Contract): Promise<TcrColumn[]> {
 
 function decodeTcrItemData(
   columns: TcrColumn[],
-  data: any[]
+  data: any[],
 ): {
   address: string
   name: string
@@ -67,25 +66,15 @@ function decodeRecipientAdded(event: Event, columns: TcrColumn[]): Project {
   }
 }
 
-export async function getProjects(
-  registryAddress: string,
-  startTime?: number,
-  endTime?: number
-): Promise<Project[]> {
+export async function getProjects(registryAddress: string, startTime?: number, endTime?: number): Promise<Project[]> {
   const registry = new Contract(registryAddress, KlerosGTCRAdapter, provider)
   const tcrAddress = await registry.tcr()
   const tcr = new Contract(tcrAddress, KlerosGTCR, provider)
   const tcrColumns = await getTcrColumns(tcr)
   const recipientAddedFilter = registry.filters.RecipientAdded()
-  const recipientAddedEvents = await registry.queryFilter(
-    recipientAddedFilter,
-    0
-  )
+  const recipientAddedEvents = await registry.queryFilter(recipientAddedFilter, 0)
   const recipientRemovedFilter = registry.filters.RecipientRemoved()
-  const recipientRemovedEvents = await registry.queryFilter(
-    recipientRemovedFilter,
-    0
-  )
+  const recipientRemovedEvents = await registry.queryFilter(recipientRemovedFilter, 0)
   const projects: Project[] = []
   for (const event of recipientAddedEvents) {
     const project = decodeRecipientAdded(event, tcrColumns)
@@ -94,7 +83,7 @@ export async function getProjects(
       // Hide recipient if it is added after the end of round.
       project.isHidden = true
     }
-    const removed = recipientRemovedEvents.find((event) => {
+    const removed = recipientRemovedEvents.find(event => {
       return (event.args as any)._tcrItemId === project.id
     })
     if (removed) {
@@ -114,13 +103,10 @@ export async function getProjects(
   // Unregistered recipients are always visible,
   // even if item is submitted after the end of round.
   const tcrItemSubmittedFilter = tcr.filters.ItemSubmitted()
-  const tcrItemSubmittedEvents = await tcr.queryFilter(
-    tcrItemSubmittedFilter,
-    0
-  )
+  const tcrItemSubmittedEvents = await tcr.queryFilter(tcrItemSubmittedFilter, 0)
   for (const event of tcrItemSubmittedEvents) {
     const tcrItemId = (event.args as any)._itemID
-    const registered = projects.find((item) => item.id === tcrItemId)
+    const registered = projects.find(item => item.id === tcrItemId)
     if (registered) {
       // Already registered (or registered and removed)
       continue
@@ -146,10 +132,7 @@ export async function getProjects(
   return projects
 }
 
-export async function getProject(
-  registryAddress: string,
-  recipientId: string
-): Promise<Project | null> {
+export async function getProject(registryAddress: string, recipientId: string): Promise<Project | null> {
   const registry = new Contract(registryAddress, KlerosGTCRAdapter, provider)
   const tcrAddress = await registry.tcr()
   const tcr = new Contract(tcrAddress, KlerosGTCR, provider)
@@ -172,19 +155,13 @@ export async function getProject(
     },
   }
   const recipientAddedFilter = registry.filters.RecipientAdded(recipientId)
-  const recipientAddedEvents = await registry.queryFilter(
-    recipientAddedFilter,
-    0
-  )
+  const recipientAddedEvents = await registry.queryFilter(recipientAddedFilter, 0)
   if (recipientAddedEvents.length !== 0) {
     const recipientAddedEvent = recipientAddedEvents[0]
     project.index = (recipientAddedEvent.args as any)._index.toNumber()
   }
   const recipientRemovedFilter = registry.filters.RecipientRemoved(recipientId)
-  const recipientRemovedEvents = await registry.queryFilter(
-    recipientRemovedFilter,
-    0
-  )
+  const recipientRemovedEvents = await registry.queryFilter(recipientRemovedFilter, 0)
   if (recipientRemovedEvents.length !== 0) {
     // Disallow contributions to removed recipient
     project.isLocked = true
@@ -195,7 +172,7 @@ export async function getProject(
 export async function registerProject(
   registryAddress: string,
   recipientId: string,
-  signer: Signer
+  signer: Signer,
 ): Promise<TransactionResponse> {
   const registry = new Contract(registryAddress, KlerosGTCRAdapter, signer)
   const transaction = await registry.addRecipient(recipientId)

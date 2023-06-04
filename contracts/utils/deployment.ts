@@ -1,9 +1,11 @@
-import { ethers } from 'hardhat'
+import { ethers, config } from 'hardhat'
 import { Libraries } from 'hardhat/types/runtime'
 import { Signer, Contract } from 'ethers'
 import { link } from 'ethereum-waffle'
+import path from 'path'
 
 import { MaciParameters } from './maci'
+import { readFileSync } from 'fs'
 
 export function linkBytecode(
   bytecode: string,
@@ -18,8 +20,6 @@ export function linkBytecode(
 }
 
 // custom configuration for MACI parameters.
-// If tally and message batch sizes are not configured here,
-// they will take the default size of 8
 export const CIRCUITS: { [name: string]: any } = {
   test: {
     batchUstVerifier: 'BatchUpdateStateTreeVerifier',
@@ -28,6 +28,10 @@ export const CIRCUITS: { [name: string]: any } = {
       stateTreeDepth: 4,
       messageTreeDepth: 4,
       voteOptionTreeDepth: 2,
+    },
+    batchSizes: {
+      tallyBatchSize: 4,
+      messageBatchSize: 4,
     },
   },
   small: {
@@ -38,6 +42,10 @@ export const CIRCUITS: { [name: string]: any } = {
       messageTreeDepth: 11,
       voteOptionTreeDepth: 3,
     },
+    batchSizes: {
+      tallyBatchSize: 4,
+      messageBatchSize: 4,
+    },
   },
   medium: {
     batchUstVerifier: 'BatchUpdateStateTreeVerifierMedium',
@@ -47,6 +55,10 @@ export const CIRCUITS: { [name: string]: any } = {
       messageTreeDepth: 13,
       voteOptionTreeDepth: 3,
     },
+    batchSizes: {
+      tallyBatchSize: 4,
+      messageBatchSize: 4,
+    },
   },
   x32: {
     batchUstVerifier: 'BatchUpdateStateTreeVerifier32',
@@ -55,6 +67,10 @@ export const CIRCUITS: { [name: string]: any } = {
       stateTreeDepth: 32,
       messageTreeDepth: 32,
       voteOptionTreeDepth: 3,
+    },
+    batchSizes: {
+      tallyBatchSize: 8,
+      messageBatchSize: 8,
     },
   },
   prod: {
@@ -70,6 +86,42 @@ export const CIRCUITS: { [name: string]: any } = {
       messageBatchSize: 64,
     },
   },
+}
+
+type PoseidonName = 'PoseidonT3' | 'PoseidonT6'
+
+/**
+ * Deploy the PoseidonT3 or PoseidonT6 contracts. These 2 contracts
+ * have a custom artifact location that the hardhat library cannot
+ * retrieve using the standard getContractFactory() function, so, we manually
+ * read the artifact content and pass to the getContractFactory function
+ *
+ * NOTE: there are 2 copies of the Poseidon artifacts, the one in the build/contracts
+ * folder has the actual contract bytecode, the other one in the build/contracts/maci-contracts
+ * only has the library interface. If the wrong bytecode is used to deploy the contract,
+ * the hash functions will always return 0.
+ *
+ * @param account the account that deploys the contract
+ * @param contractName PoseidonT3 or PoseidonT6
+ * @returns contract object
+ */
+export async function deployPoseidon(
+  account: Signer,
+  contractName: PoseidonName
+): Promise<Contract> {
+  const artifact = JSON.parse(
+    readFileSync(
+      path.join(config.paths.artifacts, `${contractName}.json`)
+    ).toString()
+  )
+
+  const Poseidon = await ethers.getContractFactory(
+    artifact.abi,
+    artifact.bytecode,
+    account
+  )
+
+  return Poseidon.deploy()
 }
 
 export async function deployContract(
@@ -100,12 +152,10 @@ export async function deployMaciFactory(
   }: MaciFactoryDependencies = {}
 ): Promise<Contract> {
   if (!poseidonT3) {
-    const PoseidonT3 = await ethers.getContractFactory(':PoseidonT3', account)
-    poseidonT3 = await PoseidonT3.deploy()
+    poseidonT3 = await deployPoseidon(account, 'PoseidonT3')
   }
   if (!poseidonT6) {
-    const PoseidonT6 = await ethers.getContractFactory(':PoseidonT6', account)
-    poseidonT6 = await PoseidonT6.deploy()
+    poseidonT6 = await deployPoseidon(account, 'PoseidonT6')
   }
   if (!batchUstVerifier) {
     const BatchUstVerifier = await ethers.getContractFactory(

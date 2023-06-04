@@ -1,178 +1,148 @@
 <template>
   <nav id="nav-bar">
     <links to="/">
-      <img
-        class="clr-logo"
-        :alt="$store.getters.operator"
-        src="@/assets/clr.svg"
-      />
+      <img class="clr-logo" :alt="operator" src="@/assets/logo.svg" />
     </links>
     <div class="btn-row">
       <div>
-        <img
-          @click="toggleTheme()"
-          class="navbar-btn"
-          :src="require(`@/assets/${themeIcon}`)"
-        />
+        <img class="navbar-btn" :src="sunImageUrl" @click="toggleTheme()" />
       </div>
-      <div class="help-dropdown" v-click-outside="closeHelpDropdown">
-        <img
-          @click="toggleHelpDropdown()"
-          class="navbar-btn"
-          src="@/assets/help.svg"
-        />
-        <div id="myHelpDropdown" class="button-menu" v-if="showHelpDropdown">
-          <div
-            v-for="({ to, text, emoji }, idx) of dropdownItems"
-            :key="idx"
-            class="dropdown-item"
-            @click="closeHelpDropdown"
-          >
-            <links :to="to">
-              <div class="emoji-wrapper">{{ emoji }}</div>
-              <p class="item-text">{{ $t(text) }}</p>
+      <div v-click-outside="closeHelpDropdown" class="help-dropdown">
+        <img class="navbar-btn" src="@/assets/help.svg" @click="toggleHelpDropdown()" />
+        <div v-if="showHelpDropdown" id="myHelpDropdown" class="button-menu">
+          <div class="dropdown-item" @click="closeHelpDropdown">
+            <links to="/">
+              <div class="emoji-wrapper">🏠</div>
+              <p class="item-text">{{ $t('navBar.dropdown.home') }}</p>
             </links>
           </div>
-        </div>
-      </div>
-      <wallet-widget class="wallet-widget" v-if="inApp" />
-      <links v-if="!inApp" to="/projects" class="app-btn">{{
-        $t('app')
-      }}</links>
-      <!-- lang -->
-      <div class="lang-dropdown">
-        <div @click="toggleLangDropdown()" class="dropdown-btn">
-          {{ currentLocale.toUpperCase() }}
-        </div>
-        <div class="button-menu" v-if="showLangDropdown">
-          <div class="dropdown-title">{{ $t('language') }}</div>
-          <div
-            @click="changeLang(lang)"
-            v-for="(lang, idx) of langs"
-            :key="idx"
-            class="dropdown-item"
-          >
-            <p class="item-text">
-              {{ $t('lang.' + lang) }}
-            </p>
+          <div class="dropdown-item" @click="closeHelpDropdown">
+            <links to="/about">
+              <div class="emoji-wrapper">ℹ️</div>
+              <p class="item-text">{{ $t('navBar.dropdown.about') }}</p>
+            </links>
+          </div>
+
+          <div class="dropdown-item" @click="closeHelpDropdown">
+            <links to="/about/how-it-works">
+              <div class="emoji-wrapper">⚙️</div>
+              <p class="item-text">{{ $t('navBar.dropdown.how') }}</p>
+            </links>
+          </div>
+          <div class="dropdown-item" @click="closeHelpDropdown">
+            <links to="/about/maci">
+              <div class="emoji-wrapper">🤑</div>
+              <p class="item-text">{{ $t('navBar.dropdown.maci') }}</p>
+            </links>
+          </div>
+          <div class="dropdown-item" @click="closeHelpDropdown">
+            <links to="/about/sybil-resistance">
+              <div class="emoji-wrapper">👤</div>
+              <p class="item-text">{{ $t('navBar.dropdown.sybil') }}</p>
+            </links>
+          </div>
+          <div v-if="chain.isLayer2" class="dropdown-item" @click="closeHelpDropdown">
+            <links to="/about/layer-2">
+              <div class="emoji-wrapper">🚀</div>
+              <p class="item-text">{{ $t('navBar.dropdown.layer2') }}</p>
+            </links>
+          </div>
+          <div class="dropdown-item" @click="closeHelpDropdown">
+            <links to="/rounds">
+              <div class="emoji-wrapper">⏰</div>
+              <p class="item-text">{{ $t('navBar.dropdown.rounds') }}</p>
+            </links>
+          </div>
+          <div class="dropdown-item" @click="closeHelpDropdown">
+            <links to="/recipients">
+              <div class="emoji-wrapper">💎</div>
+              <p class="item-text">{{ $t('navBar.dropdown.recipients') }}</p>
+            </links>
+          </div>
+          <div class="dropdown-item" @click="closeHelpDropdown">
+            <links to="https://github.com/clrfund/monorepo/">
+              <div class="emoji-wrapper">👾</div>
+              <p class="item-text">{{ $t('navBar.dropdown.code') }}</p>
+            </links>
+          </div>
+          <!-- language -->
+          <div v-if="languages.length > 1">
+            <div class="hr"></div>
+            <div @click="onChangeLang(lang.locale)" v-for="lang of languages" :key="lang.locale" class="dropdown-item">
+              <a>
+                <div class="emoji-wrapper">{{ lang.emoji }}</div>
+                <p class="item-text">
+                  {{ lang.description }}
+                </p>
+                <div v-if="locale === lang.locale">✔️</div>
+              </a>
+            </div>
           </div>
         </div>
       </div>
+      <wallet-widget v-if="inApp" class="wallet-widget" />
+      <links v-if="!inApp" to="/projects" class="app-btn">{{ $t('navBar.app') }}</links>
     </div>
   </nav>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
-
-import WalletWidget from './WalletWidget.vue'
-import CartWidget from './CartWidget.vue'
-import Links from './Links.vue'
+<script setup lang="ts">
 import { chain, ThemeMode } from '@/api/core'
-import Trans from '@/plugins/i18n/translations'
-import { TOGGLE_THEME } from '@/store/mutation-types'
 import { lsGet, lsSet } from '@/utils/localStorage'
-import { isValidTheme, getOsColorScheme } from '@/utils/theme'
-import ClickOutside from '@/directives/ClickOutside'
+import { isValidTheme, getDefaultColorScheme } from '@/utils/theme'
+import { useAppStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+import { languages, isLocaleSupported } from '@/plugins/i18n'
+import { useI18n } from 'vue-i18n'
+import { getAssetsUrl } from '@/utils/url'
 
-@Component({
-  components: { WalletWidget, CartWidget, Links },
-  directives: {
-    ClickOutside,
-  },
+const { locale } = useI18n()
+
+const appStore = useAppStore()
+const { operator } = storeToRefs(appStore)
+
+interface Props {
+  inApp: any
+}
+
+defineProps<Props>()
+
+const showHelpDropdown = ref(false)
+const themeIcon = computed<string>(() => {
+  return appStore.theme === ThemeMode.LIGHT ? 'half-moon.svg' : 'sun.svg'
 })
-export default class NavBar extends Vue {
-  @Prop() inApp
-  showHelpDropdown = false
-  profileImageUrl: string | null = null
+const sunImageUrl = computed(() => getAssetsUrl(themeIcon.value))
+const themeKey = computed<string>(() => 'theme')
+const languageKey = 'language'
 
-  dropdownItems: { to?: string; text: string; emoji: string }[] = [
-    { to: '/', text: 'navBar.dropdown.home', emoji: '🏠' },
-    {
-      to: '/about',
-      text: 'navBar.dropdown.about',
-      emoji: 'ℹ️',
-    },
-    {
-      to: '/about/how-it-works',
-      text: 'navBar.dropdown.how',
-      emoji: '⚙️',
-    },
-    {
-      to: '/about/maci',
-      text: 'navBar.dropdown.maci',
-      emoji: '🤑',
-    },
-    {
-      to: '/about/sybil-resistance',
-      text: 'navBar.dropdown.sybil',
-      emoji: '👤',
-    },
-    {
-      to: 'https://github.com/clrfund/monorepo/',
-      text: 'navBar.dropdown.code',
-      emoji: '👾',
-    },
-    {
-      to: '/recipients',
-      text: 'navBar.dropdown.recipients',
-      emoji: '🚀',
-    },
-  ]
-  showLangDropdown = false
-  langs: string[] = Trans.supportedLocales
+onMounted(() => {
+  const savedTheme = lsGet(themeKey.value)
+  const theme = isValidTheme(savedTheme) ? savedTheme : getDefaultColorScheme()
+  appStore.toggleTheme(theme)
 
-  created() {
-    const savedTheme = lsGet(this.themeKey)
-    const theme = isValidTheme(savedTheme) ? savedTheme : getOsColorScheme()
-    this.$store.commit(TOGGLE_THEME, theme)
-
-    if (chain.isLayer2) {
-      this.dropdownItems.splice(-1, 0, {
-        to: '/about/layer-2',
-        text: 'navBar.dropdown.layer2',
-        emoji: '🚀',
-      })
-    }
+  const savedLanguage = lsGet(languageKey)
+  if (isLocaleSupported(savedLanguage)) {
+    locale.value = savedLanguage
+    lsSet(languageKey, locale.value)
   }
+})
 
-  closeHelpDropdown(): void {
-    this.showHelpDropdown = false
-  }
+function onChangeLang(lang: string) {
+  locale.value = lang
+  lsSet(languageKey, locale.value)
+}
 
-  toggleHelpDropdown(): void {
-    this.showHelpDropdown = !this.showHelpDropdown
-  }
+function closeHelpDropdown(): void {
+  showHelpDropdown.value = false
+}
 
-  toggleTheme(): void {
-    this.$store.commit(TOGGLE_THEME)
-    lsSet(this.themeKey, this.$store.state.theme)
-  }
+function toggleHelpDropdown(): void {
+  showHelpDropdown.value = !showHelpDropdown.value
+}
 
-  get themeIcon(): string {
-    return this.$store.state.theme === ThemeMode.LIGHT
-      ? 'half-moon.svg'
-      : 'sun.svg'
-  }
-
-  get themeKey(): string {
-    return 'theme'
-  }
-
-  get currentLocale(): string {
-    return Trans.currentLocale
-  }
-
-  toggleLangDropdown(): void {
-    this.showLangDropdown = !this.showLangDropdown
-  }
-
-  changeLang(lang: string): void {
-    Trans.changeLocale(lang)
-    this.showLangDropdown = false
-  }
+function toggleTheme(): void {
+  appStore.toggleTheme()
+  lsSet(themeKey.value, appStore.theme)
 }
 </script>
 
@@ -189,7 +159,7 @@ export default class NavBar extends Vue {
   height: 64px;
   justify-content: space-between;
   align-items: center;
-  background: $clr-black;
+  background: var(--bg-secondary-color);
   box-shadow: $box-shadow-nav-bar;
   @media (max-width: $breakpoint-m) {
     padding: 0 1rem;
@@ -249,8 +219,13 @@ export default class NavBar extends Vue {
 
         .item-text {
           margin: 0;
-          color: var(--text-color);
+          color: var(--text-body);
         }
+      }
+      .hr {
+        width: 100%;
+        border-bottom: 1px solid rgba($border-light, 0.3);
+        margin: 10px 0;
       }
     }
   }

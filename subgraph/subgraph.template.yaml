@@ -1,4 +1,4 @@
-specVersion: 0.0.2
+specVersion: 0.0.4
 description: clr.fund
 repository: https://github.com/clrfund/monorepo
 schema:
@@ -13,13 +13,14 @@ dataSources:
       startBlock: {{factoryStartBlock}}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - FundingRoundFactory
         - RecipientRegistry
         - ContributorRegistry
         - FundingRound
+        - Token
       abis:
         - name: FundingRoundFactory
           file: ./abis/FundingRoundFactory.json
@@ -31,6 +32,8 @@ dataSources:
           file: ./abis/OptimisticRecipientRegistry.json
         - name: BrightIdUserRegistry
           file: ./abis/BrightIdUserRegistry.json
+        - name: Token
+          file: ./abis/Token.json
       eventHandlers:
         - event: CoordinatorChanged(address)
           handler: handleCoordinatorChanged
@@ -55,7 +58,7 @@ dataSources:
       startBlock: {{recipientRegistryStartBlock}}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - RecipientRegistry
@@ -79,7 +82,7 @@ templates:
       abi: FundingRound
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - FundingRound
@@ -115,7 +118,7 @@ templates:
       abi: OptimisticRecipientRegistry
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - RecipientRegistry
@@ -138,7 +141,7 @@ templates:
       abi: BrightIdUserRegistry
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - ContributorRegistry
@@ -159,7 +162,7 @@ templates:
       abi: MACI
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - MACI

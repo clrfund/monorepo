@@ -33,7 +33,11 @@
       </p>
       <p v-if="chain.isLayer2">
         {{ $t('recipients.funds.p3', { chain: chain.label }) }}
-        <links to="about/layer-2">
+        <links
+          :to="{
+            name: 'about-layer-2',
+          }"
+        >
           {{ $t('recipients.funds.link2') }}
         </links>
       </p>
@@ -53,8 +57,7 @@
     <h3>{{ $t('recipients.register.h3') }}</h3>
     <ol>
       <li>
-        {{ $t('recipients.register.li1')
-        }}<links to="/join">{{ $t('recipients.register.li1_link') }}</links>
+        {{ $t('recipients.register.li1') }}<links to="/join">{{ $t('recipients.register.li1_link') }}</links>
       </li>
       <li>
         {{ $t('recipients.register.li2') }}
@@ -97,32 +100,22 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import Links from '@/components/Links.vue'
+<script setup lang="ts">
 import { chain } from '@/api/core'
-import { ChainInfo } from '@/plugins/Web3/constants/chains'
 import { formatAmount } from '@/utils/amounts'
+import { useAppStore, useRecipientStore } from '@/stores'
+import { storeToRefs } from 'pinia'
 
-@Component({ components: { Links } })
-export default class AboutRecipients extends Vue {
-  get chain(): ChainInfo {
-    return chain
-  }
+const appStore = useAppStore()
+const { maxRecipients } = storeToRefs(appStore)
+const recipientStore = useRecipientStore()
+const { recipientRegistryInfo } = storeToRefs(recipientStore)
 
-  get depositAmount(): string {
-    return this.$store.state.recipientRegistryInfo
-      ? formatAmount(this.$store.state.recipientRegistryInfo.deposit, 18)
-      : '...'
-  }
+const depositAmount = computed(() => {
+  return recipientRegistryInfo.value ? formatAmount(recipientRegistryInfo.value.deposit, 18) : '...'
+})
 
-  get depositToken(): string {
-    return this.$store.state.recipientRegistryInfo?.depositToken ?? ''
-  }
-
-  get maxRecipients(): number | undefined {
-    return this.$store.getters.maxRecipients
-  }
-}
+const depositToken = computed(() => {
+  return recipientRegistryInfo.value?.depositToken ?? ''
+})
 </script>

@@ -8,7 +8,7 @@ export async function getAllocatedAmount(
   fundingRoundAddress: string,
   tokenDecimals: number,
   result: string,
-  spent: string
+  spent: string,
 ): Promise<FixedNumber> {
   const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
   const allocatedAmount = await fundingRound.getAllocatedAmount(result, spent)
@@ -17,11 +17,13 @@ export async function getAllocatedAmount(
 
 export async function isFundsClaimed(
   fundingRoundAddress: string,
-  recipientAddress: string
+  recipientAddress: string,
+  recipientIndex: number,
 ): Promise<boolean> {
   const data = await sdk.GetRecipientDonations({
     fundingRoundAddress: fundingRoundAddress.toLowerCase(),
     recipientAddress,
+    recipientIndex,
   })
 
   return !!data.donations.length

@@ -1,11 +1,11 @@
 <template>
   <div>
-    <round-status-banner v-if="$store.state.currentRound" />
+    <round-status-banner v-if="currentRound" />
     <div id="page">
       <div id="hero">
         <img src="@/assets/moon.png" id="moon" />
         <div class="image-wrapper">
-          <image-responsive title="docking" />
+          <image-responsive title="docking" alt="Image of docking spaceship" />
         </div>
         <div>
           <div class="hero-content">
@@ -14,30 +14,22 @@
               {{ $t('landing.hero.subtitle') }}
             </div>
             <div class="btn-group">
-              <links to="/projects" class="btn-action">
-                {{ $t('landing.hero.action') }}</links
-              >
+              <div v-if="currentRound" class="btn-action" @click="gotoLeaderboardOrProjectsPage">
+                {{ $t('landing.hero.action') }}
+              </div>
               <div class="btn-info" @click="scrollToHowItWorks">
                 {{ $t('landing.hero.info') }}
               </div>
             </div>
           </div>
-          <div
-            class="apply-callout"
-            v-if="
-              $store.getters.isRoundJoinPhase &&
-              !$store.getters.isRecipientRegistryFull
-            "
-          >
+          <div class="apply-callout" v-if="(!currentRound || isRoundJoinPhase) && !isRecipientRegistryFull">
             <div class="column">
               <h2>{{ $t('landing.callout.title') }}</h2>
               <p>
                 {{ $t('landing.callout.paragraph') }}
               </p>
               <div class="button-group">
-                <links to="/join" class="btn-primary w100">{{
-                  $t('landing.callout.action')
-                }}</links>
+                <links to="/join" class="btn-primary w100">{{ $t('landing.callout.action') }}</links>
                 <div v-if="signUpDeadline">
                   <time-left unitClass="none" :date="signUpDeadline" />
                   {{ $t('landing.callout.deadline') }}
@@ -67,9 +59,7 @@
           <h2>{{ $t('landing.how.subtitle') }}</h2>
           <ol>
             <li>
-              {{
-                $t('landing.how.list-1', { operator: $store.getters.operator })
-              }}
+              {{ $t('landing.how.list-1', { operator: operator }) }}
             </li>
             <li>
               {{ $t('landing.how.list-2') }}
@@ -79,9 +69,7 @@
               <strong>{{ $t('landing.how.list-3-strong') }}.</strong>
             </li>
           </ol>
-          <links class="btn-secondary" to="/about/how-it-works">{{
-            $t('landing.how.action')
-          }}</links>
+          <links class="btn-secondary" to="/about/how-it-works">{{ $t('landing.how.action') }}</links>
         </div>
       </div>
       <div class="section-header">
@@ -90,12 +78,9 @@
       <div id="what-you-will-need">
         <div class="pre-req">
           <div class="icon-row">
-            <img :src="require(`@/assets/${chain.logo}`)" id="chain-icon" />
+            <img :src="chainIconUrl" id="chain-icon" />
             <p>
-              <b
-                >{{ $t('landing.req.chain', { chain: chain.label }) }}
-                {{ chain.label }}</b
-              >
+              <b>{{ $t('landing.req.chain', { chain: chain.label }) }}</b>
             </p>
           </div>
           <links v-if="chain.isLayer2" to="/about/layer-2" class="btn-action">
@@ -109,9 +94,7 @@
               <b>{{ $t('landing.req.bright') }}</b>
             </p>
           </div>
-          <links to="/about/sybil-resistance" class="btn-primary">{{
-            $t('landing.req.bright-cta')
-          }}</links>
+          <links to="/about/sybil-resistance" class="btn-primary">{{ $t('landing.req.bright-cta') }}</links>
         </div>
       </div>
       <div class="section-header">
@@ -124,9 +107,7 @@
             {{ $t('landing.about.paragraph-1') }}
           </p>
           <p>
-            <links to="/about/quadratic-funding">{{
-              $t('landing.about.link-1')
-            }}</links>
+            <links to="/about/quadratic-funding">{{ $t('landing.about.link-1') }}</links>
           </p>
         </div>
         <div id="about-2">
@@ -150,77 +131,82 @@
           <links to="/about">{{ $t('landing.footer.link-1') }}</links>
         </div>
         <div class="link-li">
-          <links to="/about/how-it-works">{{
-            $t('landing.footer.link-2')
-          }}</links>
+          <links to="/about/how-it-works">{{ $t('landing.footer.link-2') }}</links>
         </div>
         <div class="link-li" v-if="chain.isLayer2">
-          <links to="/about/layer-2">{{
-            $t('landing.footer.link-3', { chain: chain.label })
-          }}</links>
+          <links to="/about/layer-2">{{ $t('landing.footer.link-3', { chain: chain.label }) }}</links>
         </div>
         <div class="link-li">
           <links to="/about/maci">{{ $t('landing.footer.link-4') }}</links>
         </div>
         <div class="link-li">
-          <links to="/about/sybil-resistance">{{
-            $t('landing.footer.link-5')
-          }}</links>
+          <links to="/about/sybil-resistance">{{ $t('landing.footer.link-5') }}</links>
         </div>
         <div class="link-li">
-          <links to="https://github.com/clrfund/monorepo/">{{
-            $t('landing.footer.link-6')
-          }}</links>
+          <links to="https://github.com/clrfund/monorepo/">{{ $t('landing.footer.link-6') }}</links>
         </div>
         <div class="link-li">
-          <links to="https://discord.gg/ZnsYPV6dCv">{{
-            $t('landing.footer.link-7')
-          }}</links>
+          <links to="https://discord.gg/ZnsYPV6dCv">{{ $t('landing.footer.link-7') }}</links>
         </div>
         <div class="link-li">
-          <links to="https://forum.clr.fund/">{{
-            $t('landing.footer.link-8')
-          }}</links>
+          <links to="https://twitter.com/clrfund">Twitter</links>
         </div>
         <div class="link-li">
-          <links to="https://ethereum.org/">{{
-            $t('landing.footer.link-9')
-          }}</links>
+          <links to="https://blog.clr.fund/">{{ $t('landing.footer.link-blog') }} </links>
+        </div>
+        <div class="link-li">
+          <links to="https://forum.clr.fund/">{{ $t('landing.footer.link-8') }}</links>
+        </div>
+        <div class="link-li">
+          <links to="https://ethereum.org/">{{ $t('landing.footer.link-9') }}</links>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { DateTime } from 'luxon'
-
+<script setup lang="ts">
 import { chain } from '@/api/core'
-import { ChainInfo } from '@/plugins/Web3/constants/chains'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import Links from '@/components/Links.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
+import { useAppStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+import { getAssetsUrl } from '@/utils/url'
+import router from '@/router'
 
-@Component({
-  components: { RoundStatusBanner, TimeLeft, Links, ImageResponsive },
-})
-export default class Landing extends Vue {
-  get signUpDeadline(): DateTime {
-    return this.$store.state.currentRound?.signUpDeadline
+const appStore = useAppStore()
+const { operator, isRoundJoinPhase, isRecipientRegistryFull, currentRound, currentRoundAddress } = storeToRefs(appStore)
+
+const signUpDeadline = computed(() => appStore.currentRound?.signUpDeadline)
+
+function scrollToHowItWorks() {
+  document.getElementById('section-how-it-works')?.scrollIntoView({ behavior: 'smooth' })
+}
+const chainIconUrl = getAssetsUrl(chain.logo)
+
+async function gotoLeaderboardOrProjectsPage() {
+  if (currentRoundAddress.value) {
+    let data
+    try {
+      data = await appStore.getLeaderboardData(currentRoundAddress.value)
+    } catch {
+      // ignore error and do not display leaderboard
+    }
+    if (data) {
+      router.push({
+        name: 'leaderboard',
+        params: {
+          address: currentRoundAddress.value,
+        },
+      })
+
+      return
+    }
   }
 
-  scrollToHowItWorks() {
-    document
-      .getElementById('section-how-it-works')
-      ?.scrollIntoView({ behavior: 'smooth' })
-  }
-
-  get chain(): ChainInfo {
-    return chain
-  }
+  router.push({ name: 'projects' })
 }
 </script>
 
@@ -231,14 +217,12 @@ export default class Landing extends Vue {
 #page {
   background: var(--bg-primary-color);
 }
-
 #page > div {
   padding: $content-space (2 * $content-space);
   @media (max-width: $breakpoint-m) {
     padding: $content-space;
   }
 }
-
 h1 {
   font-family: Glacial Indifference;
   font-style: normal;
@@ -246,7 +230,6 @@ h1 {
   font-size: 40px;
   line-height: 120%;
 }
-
 h2 {
   font-family: 'Glacial Indifference', sans-serif;
   font-weight: bold;
@@ -254,18 +237,15 @@ h2 {
   letter-spacing: -0.015em;
   margin: 1rem 0;
 }
-
 p {
   font-size: 16px;
   line-height: 30px;
 }
-
 ol {
   list-style: none;
   counter-reset: li-counter;
   padding-left: 3rem;
 }
-
 ol li {
   margin: 0 0 2rem 0;
   counter-increment: li-counter;
@@ -293,7 +273,6 @@ ol li::before {
   padding-top: 0.375rem;
   /* vertical-align: baseline; */
 }
-
 .button-group {
   display: flex;
   gap: 1rem;
@@ -306,17 +285,14 @@ ol li::before {
     margin: 0.5rem 0;
   }
 }
-
 .link-li {
   text-decoration: underline;
   margin-bottom: 1rem;
   font-size: 16px;
 }
-
 #bright-id {
   background: var(--bright-id-bg);
 }
-
 #chain-icon,
 #bright-id-icon {
   box-sizing: border-box;
@@ -324,12 +300,10 @@ ol li::before {
   width: auto;
   border-radius: 1rem;
 }
-
 #bright-id-icon {
   padding: 0.5rem;
   background: var(--bright-id-icon-bg);
 }
-
 .pre-req,
 #about-1,
 #about-2,
@@ -337,7 +311,6 @@ ol li::before {
   padding: $content-space;
   flex: 1;
 }
-
 #page > #what-you-will-need,
 #page > #about-section {
   display: flex;
@@ -348,11 +321,9 @@ ol li::before {
     gap: 0;
   }
 }
-
 #page > .section-header {
   padding-bottom: 0;
 }
-
 #hero {
   position: relative;
   overflow: hidden;
@@ -361,11 +332,9 @@ ol li::before {
   min-height: 639px; /* This is the height when adding in the callout */
   display: flex;
   flex-flow: wrap;
-
   @media (max-width: $breakpoint-m) {
     flex-flow: column;
   }
-
   .image-wrapper img {
     position: absolute;
     mix-blend-mode: exclusion;
@@ -381,7 +350,6 @@ ol li::before {
       right: -100px;
     }
   }
-
   .hero-content {
     position: relative;
     max-width: 40%;
@@ -402,14 +370,12 @@ ol li::before {
       );
     }
   }
-
   #moon {
     position: absolute;
     top: 0;
     right: 0;
     mix-blend-mode: exclusion;
   }
-
   .btn-group {
     display: flex;
     gap: 1rem;
@@ -417,7 +383,6 @@ ol li::before {
       flex-direction: column;
     }
   }
-
   .apply-callout {
     background: var(--bg-transparent);
     border: 2px solid $highlight-color;
@@ -440,7 +405,6 @@ ol li::before {
     }
   }
 }
-
 .pre-req {
   display: flex;
   gap: 1rem;
@@ -452,7 +416,6 @@ ol li::before {
     border-radius: 0;
   }
 }
-
 .icon-row {
   display: flex;
   gap: $content-space;
@@ -481,6 +444,7 @@ ol li::before {
 #about-3 {
   background: var(--bg-light-color);
   border-radius: 0.5rem;
+
   @media (max-width: $breakpoint-l) {
     border-radius: 0;
   }
@@ -488,7 +452,6 @@ ol li::before {
     color: var(--link-color);
   }
 }
-
 #about-1 {
   @media (max-width: $breakpoint-l) {
     background: none;
@@ -542,9 +505,11 @@ ol li::before {
     /* width: 40%; */
     border-radius: 1rem;
     padding: 2rem;
+
     & > img {
       display: none;
     }
+
     @media (max-width: $breakpoint-l) {
       width: 100%;
       border-radius: 0;

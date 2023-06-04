@@ -27,7 +27,7 @@ Some helpful blogposts to explain the clr.fund project:
 
 - https://blog.clr.fund/clr-fund-explained-pt-1/
 - https://blog.clr.fund/clr-fund-explained-pt-2/
-- https://blog.clr.fund/clr-fund-explained-pt-3/
+- https://blog.clr.fund/clr-fund-explained-part-3/
 
 ### Limitations
 
@@ -43,7 +43,7 @@ Several solutions have been suggested, such as having the operator’s private k
 
 #### Single Token
 
-For simplicity's sake in the contract, the zk-SNARK, and the user interface, clr.fund selects an ERC20 token as it's native token (set by the contract owner), which is the only token that the funding round contract interacts with. This is an issue given our goal of being agnostic to the funding source.
+For simplicity's sake in the contract, the zk-SNARK, and the user interface, clr.fund selects an ERC20 token as its native token (set by the contract owner), which is the only token that the funding round contract interacts with. This is an issue given our goal of being agnostic to the funding source.
 
 For example, block reward funding would be in ETH, while many users may want to contribute DAI or other ERC20 tokens.
 
@@ -51,13 +51,13 @@ In a future version, we plan to address this by routing ETH and token contributi
 
 ## Documentation
 
-- [Running clr.fund instance](docs/admin.md)
+- [BrightId setup](docs/brightid.md)
+- [Deployment](docs/deployment.md)
 - [Providing matching funds](docs/funding-source.md)
 - [How to tally votes and verify results](docs/tally-verify.md)
 - [Running the subgraph](docs/subgraph.md)
 - [Sitemap](docs/sitemap.md)
 - [Website theme and customization](docs/theme.md)
-- [Deployment](docs/deployment.md)
 
 ## Development
 
@@ -116,7 +116,7 @@ docker-compose up
 And finally, in a 3rd terminal
 
 ```sh
-# this will complie and deploy the contracts + deploy the subgraph + build and run the vue app
+# this will compile and deploy the contracts + deploy the subgraph + build and run the vue app
 yarn start:dev
 ```
 
@@ -169,10 +169,11 @@ to run `yarn test` or `yarn test:contracts`.
   - [Hardhat](https://hardhat.org/)
   - [Openzeppelin](https://openzeppelin.com/)
 - `/vue-app`
-  - [Vuex](https://vuex.vuejs.org/)
-  - [Vue class component](https://class-component.vuejs.org/)
+  - [Vue](https://vuejs.org)
+  - [Pinia](https://pinia.vuejs.org)
+  - [vue-i18n](https://kazupon.github.io/vue-i18n/)
   - [Vuelidate](https://vuelidate-next.netlify.app/)
-  - [Vue js modal](http://vue-js-modal.yev.io/)
+  - [vue-final-modal](https://vue-final-modal.org)
   - [Ethers](https://docs.ethers.io/v5/)
   - [Gun](https://gun.eco/docs/)
 

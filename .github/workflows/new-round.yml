@@ -1,0 +1,28 @@
+name: Create new round
+
+on: workflow_dispatch
+
+env:
+  NODE_VERSION: 16.x
+  SUBGRPAH_URL: "https://api.thegraph.com/subgraphs/name/clrfund/clrfund-arbitrum-goerli"
+  WALLET_PRIVATE_KEY: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_WALLET_PRIVATE_KEY }}
+
+jobs:
+  create-new-round:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Use Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    - name: Checkout source code
+      uses: actions/checkout@v3
+    - name: Build CLR
+      run: |
+        yarn && yarn build
+    - name: Run create new round script
+      run: |
+        cd contracts
+        export FACTORY=$(curl -X POST -d '{"query":"{fundingRoundFactories {id}}"}' $SUBGRPAH_URL)
+        export FACTORY_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.FACTORY).data.fundingRoundFactories[0].id)')
+        yarn hardhat run scripts/newRound.ts --network arbitrum-goerli

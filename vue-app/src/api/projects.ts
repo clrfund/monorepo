@@ -1,11 +1,24 @@
-import { Contract, Signer } from 'ethers'
-import { TransactionResponse } from '@ethersproject/abstract-provider'
+import { BigNumber, Contract, Signer } from 'ethers'
+import type { TransactionResponse } from '@ethersproject/abstract-provider'
 import { FundingRound } from './abi'
-import { factory, provider, recipientRegistryType } from './core'
+import { factory, provider, recipientRegistryType, ipfsGatewayUrl } from './core'
 
 import SimpleRegistry from './recipient-registry-simple'
 import OptimisticRegistry from './recipient-registry-optimistic'
 import KlerosRegistry from './recipient-registry-kleros'
+import sdk from '@/graphql/sdk'
+
+export interface LeaderboardProject {
+  id: string // Address or another ID depending on registry implementation
+  name: string
+  index: number
+  bannerImageUrl?: string
+  thumbnailImageUrl?: string
+  imageUrl?: string
+  allocatedAmount: BigNumber
+  votes: BigNumber
+  donation: BigNumber
+}
 
 export interface Project {
   id: string // Address or another ID depending on registry implementation
@@ -35,9 +48,7 @@ export interface Project {
 
 //TODO: update anywhere this is called to take factory address as a parameter
 //NOTE: why isn't this included in the vuex state schema?
-export async function getRecipientRegistryAddress(
-  roundAddress: string | null
-): Promise<string> {
+export async function getRecipientRegistryAddress(roundAddress: string | null): Promise<string> {
   if (roundAddress !== null) {
     const fundingRound = new Contract(roundAddress, FundingRound, provider)
     return await fundingRound.recipientRegistry()
@@ -47,19 +58,11 @@ export async function getRecipientRegistryAddress(
   }
 }
 
-export async function getProjects(
-  registryAddress: string,
-  startTime?: number,
-  endTime?: number
-): Promise<Project[]> {
+export async function getProjects(registryAddress: string, startTime?: number, endTime?: number): Promise<Project[]> {
   if (recipientRegistryType === 'simple') {
     return await SimpleRegistry.getProjects(registryAddress, startTime, endTime)
   } else if (recipientRegistryType === 'optimistic') {
-    return await OptimisticRegistry.getProjects(
-      registryAddress,
-      startTime,
-      endTime
-    )
+    return await OptimisticRegistry.getProjects(registryAddress, startTime, endTime)
   } else if (recipientRegistryType === 'kleros') {
     return await KlerosRegistry.getProjects(registryAddress, startTime, endTime)
   } else {
@@ -67,10 +70,7 @@ export async function getProjects(
   }
 }
 
-export async function getProject(
-  registryAddress: string,
-  recipientId: string
-): Promise<Project | null> {
+export async function getProject(registryAddress: string, recipientId: string): Promise<Project | null> {
   if (recipientRegistryType === 'simple') {
     return await SimpleRegistry.getProject(registryAddress, recipientId)
   } else if (recipientRegistryType === 'optimistic') {
@@ -85,21 +85,93 @@ export async function getProject(
 export async function registerProject(
   registryAddress: string,
   recipientId: string,
-  signer: Signer
+  signer: Signer,
 ): Promise<TransactionResponse> {
   if (recipientRegistryType === 'optimistic') {
-    return await OptimisticRegistry.registerProject(
-      registryAddress,
-      recipientId,
-      signer
-    )
+    return await OptimisticRegistry.registerProject(registryAddress, recipientId, signer)
   } else if (recipientRegistryType === 'kleros') {
-    return await KlerosRegistry.registerProject(
-      registryAddress,
-      recipientId,
-      signer
-    )
+    return await KlerosRegistry.registerProject(registryAddress, recipientId, signer)
   } else {
     throw new Error('invalid recipient registry type')
+  }
+}
+
+/**
+ * Get project information by recipient index
+ * @param registryAddress recipient registry contract address
+ * @param recipientIndex recipient index
+ * @returns Project | null
+ */
+export async function getProjectByIndex(
+  registryAddress: string,
+  recipientIndex: number,
+): Promise<Partial<Project> | null> {
+  const result = await sdk.GetRecipientByIndex({
+    registryAddress: registryAddress.toLowerCase(),
+    recipientIndex,
+  })
+
+  if (!result.recipients?.length) {
+    return null
+  }
+
+  const [recipient] = result.recipients
+  let metadata
+  try {
+    metadata = JSON.parse(recipient.recipientMetadata || '')
+  } catch {
+    metadata = {}
+  }
+
+  const thumbnailImageUrl = metadata.thumbnailImageHash
+    ? `${ipfsGatewayUrl}/ipfs/${metadata.thumbnailImageHash}`
+    : `${ipfsGatewayUrl}/ipfs/${metadata.imageUrl}`
+
+  return {
+    id: recipient.id,
+    address: recipient.recipientAddress || '',
+    name: metadata.name,
+    description: metadata.description,
+    tagline: metadata.tagline,
+    thumbnailImageUrl,
+    index: recipient.recipientIndex,
+  }
+}
+
+/**
+ * Check if the recipient with the submission hash exists in the subgraph
+ * @param transactionHash recipient submission hash
+ * @returns true if recipients with the submission hash was found
+ */
+export async function recipientExists(transactionHash: string): Promise<boolean> {
+  const data = await sdk.GetRecipientBySubmitHash({ transactionHash })
+  return data.recipients.length > 0
+}
+
+/**
+ * Return the recipient for the given submission hash
+ * @param transactionHash recipient submission hash
+ * @returns project or null for not found
+ */
+export async function getRecipientBySubmitHash(transactionHash: string): Promise<Project | null> {
+  try {
+    const data = await sdk.GetRecipientBySubmitHash({ transactionHash })
+    const exists = data.recipients.length > 0
+    return exists ? OptimisticRegistry.decodeProject(data.recipients[0]) : null
+  } catch {
+    return null
+  }
+}
+
+export function toLeaderboardProject(project: any): LeaderboardProject {
+  const imageUrl = `${ipfsGatewayUrl}/ipfs/${project.metadata.imageHash || project.metadata.thumbnailImageHash}`
+  return {
+    id: project.id,
+    name: project.name,
+    index: project.recipientIndex,
+    imageUrl,
+    allocatedAmount: BigNumber.from(project.allocatedAmount || '0'),
+    votes: BigNumber.from(project.tallyResult || '0'),
+    donation: BigNumber.from(project.spentVoiceCredits || '0'),
   }
 }

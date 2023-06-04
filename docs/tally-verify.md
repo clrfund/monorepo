@@ -233,6 +233,21 @@ From the clrfund contracts folder, run the following command to verify the resul
 yarn ts-node scripts/verify.ts tally.json
 ```
 
+# How to enable the leaderboard view
+
+After finalizing the round, enable the leaderboard view in the vue-app by exporting the round information as follow:
+
+1) Set the etherscan API key in the hardhat.config.ts file in the contracts folder
+2) Export the round and tally result
+
+```sh
+cd contracts
+
+yarn hardhat fetch-round --output-dir ../vue-app/src/rounds --network xdai --round-address <round address>
+
+```
+
+
 
 ## Troubleshooting
 If you encountered `core dumped` while running the genProofs script as seen in this [issue](https://github.com/clrfund/monorepo/issues/383), make sure the files are not corrupted due to disk space issue, e.g. check file sizes, checksum, and missing files.

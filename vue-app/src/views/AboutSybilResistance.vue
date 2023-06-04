@@ -5,9 +5,7 @@
     <h2>{{ $t('sybilResistance.heading.h2') }}</h2>
     <p>
       {{ $t('sybilResistance.heading.p1_t1') }}
-      <links to="/about/quadratic-funding">{{
-        $t('sybilResistance.heading.p1_link')
-      }}</links
+      <links to="/about/quadratic-funding">{{ $t('sybilResistance.heading.p1_link') }}</links
       >{{ $t('sybilResistance.heading.p1_t2') }}
     </p>
     <p>
@@ -31,16 +29,13 @@
 
     <h2 id="howto-brightid">{{ $t('sybilResistance.how.h2') }}</h2>
     <p>
-      {{ $t('sybilResistance.how.p1_t1')
-      }}<links to="/verify">{{ $t('sybilResistance.how.p1_link1') }}</links
+      {{ $t('sybilResistance.how.p1_t1') }}<links to="/verify">{{ $t('sybilResistance.how.p1_link1') }}</links
       >{{ $t('sybilResistance.how.p1_t2') }}
     </p>
     <ol>
       <li>
         {{ $t('sybilResistance.how.li1_t1') }}
-        <links to="https://apps.apple.com/us/app/how/id1428946820">{{
-          $t('sybilResistance.how.li1_link1')
-        }}</links>
+        <links to="https://apps.apple.com/us/app/how/id1428946820">{{ $t('sybilResistance.how.li1_link1') }}</links>
         {{ $t('sybilResistance.how.li1_t2') }}
         <links to="https://play.google.com/store/apps/details?id=org.how">{{
           $t('sybilResistance.how.li1_link2')
@@ -58,8 +53,7 @@
       </li>
       <li>
         {{ $t('sybilResistance.how.li5_t1') }}
-        <links to="/about/maci">{{ $t('sybilResistance.how.li5_link1') }}</links
-        >.
+        <links to="/about/maci">{{ $t('sybilResistance.how.li5_link1') }}</links>
       </li>
     </ol>
     <p>
@@ -68,18 +62,12 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import Links from '@/components/Links.vue'
-
-@Component({ components: { Links } })
-export default class AboutSybilResistance extends Vue {
-  mounted() {
-    if (this.$route.hash) {
-      const hash = this.$route.hash.replace('#', '')
-      document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth' })
-    }
+<script setup lang="ts">
+const route = useRoute()
+onMounted(() => {
+  if (route.hash) {
+    const hash = route.hash.replace('#', '')
+    document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth' })
   }
-}
+})
 </script>

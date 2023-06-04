@@ -7,8 +7,8 @@
           {{ header }}
         </h3>
       </div>
-      <img @click="toggleIsOpen" v-if="isOpen" src="@/assets/chevron-up.svg" />
-      <img @click="toggleIsOpen" v-else src="@/assets/chevron-down.svg" />
+      <img v-if="isOpen" src="@/assets/chevron-up.svg" @click="toggleIsOpen" />
+      <img v-else src="@/assets/chevron-down.svg" @click="toggleIsOpen" />
     </div>
     <div v-if="isOpen">
       <p v-if="isOpen">{{ content }}</p>
@@ -19,26 +19,32 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
+<script setup lang="ts">
+import { ref } from 'vue'
 
-@Component
-export default class Accordion extends Vue {
-  @Prop() tag
-  @Prop() header
-  @Prop() content
-  @Prop() linkButton!: { link: string; text: string }
-  @Prop({ default: false }) open!: boolean
-  isOpen = Boolean(this.open)
+interface Props {
+  tag: string
+  header: string
+  content: string
+  linkButton?: { link: string; text: string }
+  open?: boolean
+}
 
-  toggleIsOpen() {
-    this.isOpen = !this.isOpen
-  }
+const props = withDefaults(defineProps<Props>(), {
+  tag: undefined,
+  header: undefined,
+  content: undefined,
+})
 
-  openTab() {
-    window.open(this.linkButton.link, '_blank')
+const isOpen = ref(props.open)
+
+function toggleIsOpen() {
+  isOpen.value = !isOpen.value
+}
+
+function openTab() {
+  if (props.linkButton) {
+    window.open(props.linkButton.link, '_blank')
   }
 }
 </script>
