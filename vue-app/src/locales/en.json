@@ -794,7 +794,7 @@
     "click_next": "Once this app is linked in your BrightID app, click the 'Next' button to transition to the next step.",
     "p4": "Scan this QR code with your BrightID app",
     "p5": "Follow this link to connect your wallet to your BrightID app",
-    "p6": "This link might look scary but it just makes a connection between your connected wallet address, our app, and BrightID. If clicking the link does not open the BrightId app, try manually copying the link to a browser.",
+    "p6": "This link might look scary but it just makes a connection between your connected wallet address, our app, and BrightID. Make sure your address looks correct.",
     "h2_2": "Register",
     "p7": "To protect the round from bribery and fraud, you need to add your wallet address to a smart contract registry. Once you’re done, you can join the funding round!",
     "btn": " Become a contributor",
