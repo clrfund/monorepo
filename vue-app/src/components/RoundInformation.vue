@@ -272,6 +272,7 @@ import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import { useModal } from 'vue-final-modal'
 import WalletModal from './WalletModal.vue'
+import { getRouteParamValue } from '@/utils/route'
 
 const showNotice = ref(false)
 const appStore = useAppStore()
@@ -335,7 +336,8 @@ async function loadRoundInfo() {
     const routeName = route.name?.toString() || ''
     try {
       if (routeName.startsWith('leaderboard')) {
-        roundInfo.value = await getLeaderboardRoundInfo(roundAddress.value)
+        const network = getRouteParamValue(route.params.network)
+        roundInfo.value = await getLeaderboardRoundInfo(roundAddress.value, network)
       } else {
         roundInfo.value = await getRoundInfo(roundAddress.value, currentRound.value)
       }

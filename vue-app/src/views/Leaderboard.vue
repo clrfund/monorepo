@@ -43,6 +43,7 @@ import type { RoundInfo } from '@/api/round'
 import type { LeaderboardProject } from '@/api/projects'
 import { toLeaderboardProject } from '@/api/projects'
 import { getLeaderboardData } from '@/api/leaderboard'
+import { getRouteParamValue } from '@/utils/route'
 
 const router = useRouter()
 const route = useRoute()
@@ -65,8 +66,9 @@ onMounted(async () => {
     return
   }
 
-  const { address, network } = route.params
-  const data = await loadLeaderboard(address as string, network as string)
+  const address = getRouteParamValue(route.params.address)
+  const network = getRouteParamValue(route.params.network)
+  const data = await loadLeaderboard(address, network)
 
   // redirect to projects view if not finalized or no static round data for leaderboard
   if (!data?.projects) {

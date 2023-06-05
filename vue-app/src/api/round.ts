@@ -135,14 +135,15 @@ export async function getRoundInfo(
   fundingRoundAddress: string,
   cachedRound?: RoundInfo | null,
 ): Promise<RoundInfo | null> {
-  if (cachedRound && isSameAddress(fundingRoundAddress, cachedRound.fundingRoundAddress)) {
+  const roundAddress = fundingRoundAddress || ''
+  if (cachedRound && isSameAddress(roundAddress, cachedRound.fundingRoundAddress)) {
     // the requested round matches the cached round, quick return
     return cachedRound
   }
 
   const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
   const data = await sdk.GetRoundInfo({
-    fundingRoundAddress: fundingRoundAddress.toLowerCase(),
+    fundingRoundAddress: roundAddress.toLowerCase(),
   })
 
   if (!data.fundingRound) {

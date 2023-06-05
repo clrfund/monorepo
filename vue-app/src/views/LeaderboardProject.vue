@@ -22,6 +22,7 @@ import { useMeta } from 'vue-meta'
 import { useRoute, useRouter } from 'vue-router'
 import { operator } from '@/api/core'
 import { getLeaderboardProject } from '@/api/projects'
+import { getRouteParamValue } from '@/utils/route'
 
 const route = useRoute()
 const router = useRouter()
@@ -31,9 +32,10 @@ const project = ref<Project | null>(null)
 const isLoading = ref(true)
 
 onMounted(async () => {
-  if (!route.params.id) {
-    const network = route.params.network as string
-    const address = route.params.address as string
+  const network = getRouteParamValue(route.params.network)
+  const address = getRouteParamValue(route.params.address)
+  const projectId = getRouteParamValue(route.params.id)
+  if (!projectId) {
     if (network && address) {
       router.push({ name: 'leaderboard', params: { network, address } })
     } else {
@@ -41,9 +43,7 @@ onMounted(async () => {
     }
     return
   }
-  roundAddress.value = (route.params.address as string) || ''
-  const projectId = route.params.id as string
-  const network = route.params.network as string
+  roundAddress.value = address
 
   const _project = await getLeaderboardProject(roundAddress.value, projectId, network)
   if (_project === null) {
