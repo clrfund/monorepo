@@ -650,11 +650,14 @@
     }
   },
   "landing": {
+    "button": {
+      "getStarted": "开始吧！",
+      "leaderboard": "排行榜"
+    },
     "hero": {
       "title": "将您最喜欢的项目送往月球！",
       "subtitle": "您捐赠的每个项目都将获得额外资金。",
-      "info": "如何运作",
-      "action": "开始"
+      "info": "如何运作"
     },
     "callout": {
       "title": "参加筹款",
