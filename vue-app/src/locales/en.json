@@ -1152,6 +1152,11 @@
       "no_scams": {
         "tagline": "No scams",
         "description": "Obviously, your project must not put anyone's funds or information at risk."
+      },
+      "humanbound": {
+        "tagline": "Humanbound",
+        "description": "The project's receiving address must hold a ",
+        "link": "humanbound SBT."
       }
     },
     "cart": {
