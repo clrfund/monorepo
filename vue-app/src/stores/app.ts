@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import type { BigNumber } from 'ethers'
-import { utils } from 'ethers'
 import {
   type CartItem,
   type Contributor,
@@ -21,7 +20,7 @@ import { storage } from '@/api/storage'
 import { getSecondsFromNow, hasDateElapsed } from '@/utils/dates'
 import { useRecipientStore } from './recipient'
 import { useUserStore } from './user'
-import { getAssetsUrl, getRoundsUrl } from '@/utils/url'
+import { getAssetsUrl } from '@/utils/url'
 import { getTokenLogo } from '@/utils/tokens'
 import { assert, ASSERT_MISSING_ROUND, ASSERT_MISSING_SIGNATURE, ASSERT_NOT_CONNECTED_WALLET } from '@/utils/assert'
 import { Keypair } from '@clrfund/maci-utils'
@@ -249,18 +248,6 @@ export const useAppStore = defineStore('app', {
   actions: {
     setHasVote(hasVoted: boolean) {
       this.hasVoted = hasVoted
-    },
-    async getLeaderboardData(roundAddress: string): Promise<any | null> {
-      try {
-        const url = await getRoundsUrl(roundAddress)
-        if (!url) {
-          return null
-        }
-        const data = await utils.fetchJson(url)
-        return data
-      } catch {
-        return null
-      }
     },
     toggleLeaderboardView() {
       this.showSimpleLeaderboard = !this.showSimpleLeaderboard

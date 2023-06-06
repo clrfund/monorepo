@@ -49,9 +49,9 @@
           <p v-if="isMaxMessagesReached">
             {{ $t('roundInfo.max_messages_reached') }}
           </p>
-          <p v-if="blogUrl">
+          <p v-if="roundInfo.blogUrl">
             {{ $t('roundInfo.more') }}
-            <links :to="blogUrl">{{ blogUrl }}</links>
+            <links :to="roundInfo.blogUrl">{{ roundInfo.blogUrl }}</links>
           </p>
 
           <div class="dismiss-btn" @click="toggleNotice">
@@ -258,7 +258,7 @@
 import { ref, onMounted, computed, watch } from 'vue'
 import type { BigNumber, FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
-import { type RoundInfo, getRoundInfo } from '@/api/round'
+import { type RoundInfo, getRoundInfo, getLeaderboardRoundInfo } from '@/api/round'
 import { chain } from '@/api/core'
 import { lsGet, lsSet } from '@/utils/localStorage'
 import { formatAmount as _formatAmount } from '@/utils/amounts'
@@ -272,6 +272,7 @@ import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import { useModal } from 'vue-final-modal'
 import WalletModal from './WalletModal.vue'
+import { getRouteParamValue } from '@/utils/route'
 
 const showNotice = ref(false)
 const appStore = useAppStore()
@@ -279,7 +280,6 @@ const route = useRoute()
 // state
 const isLoading = ref(true)
 const roundInfo = ref<RoundInfo | null>(null)
-const blogUrl = ref<string | null>(null)
 const {
   operator,
   currentRoundAddress,
@@ -315,7 +315,7 @@ const formatTotalInRound = computed(() => {
 })
 
 const haveNotice = computed(() => {
-  return (isCurrentRound.value && isMaxMessagesReached.value) || blogUrl.value !== null
+  return (isCurrentRound.value && isMaxMessagesReached.value) || Boolean(roundInfo.value?.blogUrl)
 })
 
 onMounted(async () => {
@@ -333,7 +333,18 @@ async function loadRoundInfo() {
   roundInfo.value = null
   isLoading.value = true
   if (roundAddress.value) {
-    roundInfo.value = await getRoundInfo(roundAddress.value, currentRound.value)
+    const routeName = route.name?.toString() || ''
+    try {
+      if (routeName.startsWith('leaderboard')) {
+        const network = getRouteParamValue(route.params.network)
+        roundInfo.value = await getLeaderboardRoundInfo(roundAddress.value, network)
+      } else {
+        roundInfo.value = await getRoundInfo(roundAddress.value, currentRound.value)
+      }
+    } catch (err) {
+      /* eslint-disable-next-line no-console */
+      console.warn('Failed to get round information', roundAddress.value, err)
+    }
     showNotice.value = !lsGet(lsIsNoticeHiddenKey.value, false)
   }
   isLoading.value = false

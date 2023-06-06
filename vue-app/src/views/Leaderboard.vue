@@ -42,6 +42,8 @@ import { useRouter, useRoute } from 'vue-router'
 import type { RoundInfo } from '@/api/round'
 import type { LeaderboardProject } from '@/api/projects'
 import { toLeaderboardProject } from '@/api/projects'
+import { getLeaderboardData } from '@/api/leaderboard'
+import { getRouteParamValue } from '@/utils/route'
 
 const router = useRouter()
 const route = useRoute()
@@ -53,19 +55,24 @@ const projects = ref<LeaderboardProject[] | null>(null)
 const appStore = useAppStore()
 const { showSimpleLeaderboard } = storeToRefs(appStore)
 
-async function loadLeaderboard(address: string) {
-  const data = await appStore.getLeaderboardData(address)
+async function loadLeaderboard(address: string, network: string) {
+  const data = await getLeaderboardData(address, network)
   return data
 }
 
 onMounted(async () => {
-  const { address } = route.params
+  if (!route.params.address || !route.params.network) {
+    router.push({ name: 'rounds' })
+    return
+  }
 
-  const data = await loadLeaderboard(address as string)
+  const address = getRouteParamValue(route.params.address)
+  const network = getRouteParamValue(route.params.network)
+  const data = await loadLeaderboard(address, network)
 
   // redirect to projects view if not finalized or no static round data for leaderboard
-  if (!data.projects) {
-    router.push({ name: 'round', params: route.params })
+  if (!data?.projects) {
+    router.push({ name: 'round' })
     return
   }
 
@@ -74,7 +81,7 @@ onMounted(async () => {
     .map(project => toLeaderboardProject(project))
     .sort((p1: LeaderboardProject, p2: LeaderboardProject) => p2.allocatedAmount.sub(p1.allocatedAmount))
 
-  round.value = { ...data.round, fundingRoundAddress: data.round.address }
+  round.value = { ...data.round, fundingRoundAddress: data.round.address, network }
 
   isLoading.value = false
 })

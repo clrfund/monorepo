@@ -57,7 +57,6 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import type { FixedNumber } from 'ethers'
 
 import { getCurrentRound, getRoundInfo } from '@/api/round'
 import { type Project, getProjects } from '@/api/projects'
@@ -119,6 +118,10 @@ onMounted(async () => {
 
 async function loadProjects(roundAddress: string) {
   const round = await getRoundInfo(roundAddress, currentRound.value)
+  if (!round) {
+    return
+  }
+
   const _projects = await getProjects(
     round.recipientRegistryAddress,
     round.startTime.toSeconds(),
@@ -129,14 +132,6 @@ async function loadProjects(roundAddress: string) {
   })
   shuffleArray(visibleProjects)
   projects.value = visibleProjects
-}
-
-function formatIntegerPart(value: FixedNumber): string {
-  if (value._value === '0.0') {
-    return '0'
-  }
-  const integerPart = value.toString().split('.')[0]
-  return integerPart + (value.round(0) === value ? '' : '.')
 }
 
 const filteredProjects = computed(() => {
