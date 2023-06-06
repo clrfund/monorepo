@@ -1152,6 +1152,11 @@
       "no_scams": {
         "tagline": "无欺诈",
         "description": "显然，您的项目不应欺诈何人的资金或信息。"
+      },
+      "humanbound": {
+        "tagline": "人类绑定",
+        "description": "项目的接收地址必须持有一个与",
+        "link": "人类绑定的 SBT。"
       }
     },
     "cart": {
