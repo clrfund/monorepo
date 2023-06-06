@@ -975,7 +975,7 @@
     "button2": "Contribuir",
     "h3_2_t1": " Contribuir {renderContributionAmount} {tokenSymbol} a la fondo de coincidencia",
     "h3_3": "¡Acabas de aumentar el fondo en {renderContributionAmount} {tokenSymbol}!",
-    "fund_distribution_message": "The funds will be distributed to all projects based on the contributions they receive from the community",
+    "fund_distribution_message": "Los fondos se distribuirán a todos los proyectos en función de las contribuciones que reciban de la comunidad",
     "div2": "Gracias por ayudar a todos nuestros proyectos.",
     "button3": "Listo"
   },
@@ -1061,7 +1061,7 @@
     "div20": "Sin ronda programada",
     "div21": "Aún no hemos programado una ronda de financiamiento. ¡Mantente atento/a!",
     "pluralism": "s",
-    "more": "Mas"
+    "more": "Más"
   },
   "roundStatusBanner": {
     "span1": "Comienza la financiación 🗓 {startDate}.",
@@ -1126,8 +1126,8 @@
     },
     "timeleft": {
       "unit": {
-        "days": "dias",
-        "day": "dia",
+        "days": "días",
+        "day": "día",
         "hours": "horas",
         "hour": "hora",
         "minutes": "minutos",
