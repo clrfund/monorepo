@@ -1,9 +1,4 @@
 {
-  "lang": {
-    "en": "🇺🇸 English",
-    "es": "🇪🇸 Español",
-    "tw": "🇨🇳 繁體中文"
-  },
   "about": {
     "heading": {
       "title": "Acerca de"
@@ -339,11 +334,13 @@
       "h2": "Más",
       "h3_1": "Lecturas adicionales",
       "p1": "Si quieres saber más sobre MACI, puedes consultar los siguientes recursos:",
-      "li1": "Artículo técnico sobre MACI en el blog de clr.fund",
-      "li2": "Documentación completa de MACI en GitHub",
+      "l1": "Artículo técnico sobre MACI en el blog de clr.fund",
+      "l2": "Documentación completa de MACI en GitHub",
+      "l3": "Artículo técnico",
       "h3_2": "Fuentes",
       "p2": "La información proporcionada anteriormente se basa en mi conocimiento actual y en los siguientes recursos:",
-      "li3": "Documentación oficial de clr.fund sobre MACI"
+      "li4": "Documentación oficial de clr.fund sobre MACI",
+      "li5": "Artículo técnico"
     }
   },
   "public_goods": {
@@ -578,7 +575,7 @@
       "p1": "Cuéntanos acerca de las personas detrás de tu proyecto.",
       "label1": "Correo electrónico de contacto",
       "description1": "Para actualizaciones importantes sobre tu proyecto y la ronda de financiamiento.",
-      "input1": "ejemplo: perro@buenchico.com",
+      "input1": "ejemplo: perro{'@'}buenchico.com",
       "notice1": "No mostraremos esto públicamente ni lo agregaremos al registro en cadena.",
       "error1": "Esto no parece ser un correo electrónico válido.",
       "label2": "Nombre del equipo (opcional)",
@@ -995,7 +992,7 @@
   "linkBox": {
     "h2": "Échales un vistazo",
     "link1": "Repositorio de GitHub",
-    "link2": "@Twitter"
+    "link2": "{'@'}Twitter"
   },
   "matchigFundsModal": {
     "h3_1_t1": "Contribuir {tokenSymbol} a la",
