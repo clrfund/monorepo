@@ -3,7 +3,7 @@ import { ethers } from 'ethers'
 import { FundingRoundFactory } from './abi'
 import { CHAIN_INFO } from '@/utils/chains'
 
-import leaderboardRounds from '@/rounds/rounds.json'
+import historicalRounds from '@/rounds/rounds.json'
 
 export const rpcUrl = import.meta.env.VITE_ETHEREUM_API_URL
 if (!rpcUrl) {
@@ -73,5 +73,12 @@ export const brightIdSponsorUrl = import.meta.env.VITE_BRIGHTID_SPONSOR_API_URL
 
 // wait for data to sync with the subgraph
 export const MAX_WAIT_DEPTH = Number(import.meta.env.VITE_MAX_WAIT_DEPTH) || 15
+
+export type LeaderboardRound = {
+  address: string
+  network: string
+}
+
+const leaderboardRounds = historicalRounds as LeaderboardRound[]
 
 export { leaderboardRounds }

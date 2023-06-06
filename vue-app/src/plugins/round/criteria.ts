@@ -1,6 +1,7 @@
 export interface Criterion {
   emoji: string
   translationKey: string
+  link?: string
 }
 
 const CRITERIA: Criterion[] = [
@@ -19,6 +20,11 @@ const CRITERIA: Criterion[] = [
   {
     emoji: '👺',
     translationKey: 'no_scams',
+  },
+  {
+    emoji: '🛡️',
+    translationKey: 'humanbound',
+    link: 'https://app.humanbound.xyz',
   },
 ]
 
