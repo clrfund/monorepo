@@ -112,9 +112,9 @@
       "li-3": "el registro resistente a ataques Sybil de usuarios calificados para contribuir a proyectos individuales",
       "li-4": "los fondos y la información encriptada sobre las contribuciones a proyectos individuales",
       "li-5": "el mecanismo para distribuir fondos una vez que se finalizan los resultados de una ronda",
-      "paragraph-2-text-1": "Cada una de estas partes existe en un contrato inteligente de Ethereum (ver el código",
-      "paragraph-link": "aquí",
-      "paragraph-2-text-2": "), lo que significa que su funcionalidad es mantenida por los mineros de Ethereum, un grupo descentralizado."
+      "exists_in_code": "Cada una de estas partes existe en un contrato inteligente de Ethereum (ver el código",
+      "here": "aquí",
+      "maintained_by_miner": "), lo que significa que su funcionalidad es mantenida por los mineros de Ethereum, un grupo descentralizado."
     },
     "why": {
       "title": "¿Por qué es clr.fund descentralizado?",
@@ -333,14 +333,12 @@
     "more": {
       "h2": "Más",
       "h3_1": "Lecturas adicionales",
-      "p1": "Si quieres saber más sobre MACI, puedes consultar los siguientes recursos:",
       "l1": "Artículo técnico sobre MACI en el blog de clr.fund",
       "l2": "Documentación completa de MACI en GitHub",
-      "l3": "Artículo técnico",
+      "l3": "La especificación técnica",
       "h3_2": "Fuentes",
-      "p2": "La información proporcionada anteriormente se basa en mi conocimiento actual y en los siguientes recursos:",
       "li4": "Documentación oficial de clr.fund sobre MACI",
-      "li5": "Artículo técnico"
+      "li5": "Introducción técnica de MACI"
     }
   },
   "public_goods": {
@@ -361,7 +359,8 @@
       "p1": "Los bienes públicos a menudo tienen un financiamiento insuficiente debido a un problema llamado 'problema del pasajero gratuito': dado que los bienes públicos siempre son gratuitos y accesibles para los miembros del público, las personas tienen pocas razones para contribuir a su creación y mantenimiento. En su lugar, pueden elegir ser 'pasajeros gratuitos': usar el bien público pero depender de otros para construirlo y mantenerlo.",
       "p2": "El problema del pasajero gratuito está bastante presente en el software de código abierto, que sufre de un financiamiento crónico a pesar de ser un componente fundamental de casi todos los productos de software populares en la actualidad.",
       "p3": "Clr.fund es un intento de abordar el problema del pasajero gratuito para la comunidad de Ethereum, con la esperanza de que esta infraestructura pueda ser útil para otros públicos en el futuro. Diseñados específicamente, las rondas de financiamiento en clr.fund buscan involucrar a los miembros del público desde el inicio, asignando tanto el poder de toma de decisiones como el poder exponencial para aumentar la financiación a través del mecanismo de",
-      "link": "financiamiento cuadrático."
+      "link": "financiamiento cuadrático.",
+      "exponential_power": ""
     }
   },
   "quadratic_funding": {
@@ -371,7 +370,9 @@
       "p1": "Clr.fund es una implementación de la financiación cuadrática, también conocida como CLR (Liberal Radicalismo con Restricción de Capital). La financiación cuadrática está compuesta por:",
       "li1": "un fondo de fondos para distribuir",
       "li2": "un sistema de votación para distribuir esos fondos",
-      "p2": "Dos sistemas de votación comunes que es posible que hayas usado son 1-persona-1-voto y 1-dólar-1-voto. La financiación cuadrática es una solución que combina lo mejor de ambos mundos, donde los usuarios votan con la <b>raíz cuadrada</b> del dinero que gastan. Sigue leyendo para obtener más información."
+      "p2": "Dos sistemas de votación comunes que es posible que hayas usado son 1-persona-1-voto y 1-dólar-1-voto. La financiación cuadrática es una solución que combina lo mejor de ambos mundos, donde los usuarios votan con la ",
+      "sqrt": "raíz cuadrada",
+      "more": " del dinero que gastan. Sigue leyendo para obtener más información."
     },
     "problems": {
       "h2": "Problemas con los Mecanismos de Financiación Existentes",
@@ -489,36 +490,6 @@
       "p2": "Ten en cuenta que solo debes vincular una dirección de Ethereum a tu perfil de BrightID. Si repites nuestro proceso de verificación y agregas otra dirección de Ethereum, todas las contribuciones de tu dirección anterior serán ignoradas por el grupo de coincidencia. Esto es nuevamente para evitar ataques Sybil."
     }
   },
-  "brightIDGuide": {
-    "heading": {
-      "h2": "Verificación BrightID",
-      "p": "La verificación de BrightID ayuda a demostrar que eres un ser humano único. Para obtener la verificación, necesitas que suficientes personas confirmen que te han conocido y eres una persona real. Hay un par de formas de hacerlo:"
-    },
-    "accordion": {
-      "fastest": {
-        "tag": "🚀 Más rápido",
-        "header": "Únete a una fiesta de BrightID",
-        "content": "BrightID organiza fiestas de verificación regularmente. Únete a la llamada, conoce a otros usuarios nuevos y ellos te verificarán como humano y no como un bot. Rápido y sin complicaciones, incluso para los introvertidos.",
-        "linkButton": "Ver el horario de las fiestas"
-      },
-      "luckiest": {
-        "tag": "🎰 La más afortunada",
-        "header": "Conecta con 2 seres humanos verificados",
-        "content": "¿Conoces a alguien que haya contribuido a Gitcoin Grants o rondas de clr.fund? Es posible que ya estén verificados. ¡Contáctalos y ve si pueden verificarte!"
-      }
-    }
-  },
-  "brightIDSponsor": {
-    "h2": "Obtén un patrocinio",
-    "p": "Necesitas un token de patrocinio para convertirte en verificado de BrightID. Esto ayuda a apoyar a BrightID como una plataforma descentralizada. Solo necesitarás hacer esto una vez y te cubrirá para cualquier otra aplicación que funcione con BrightID. Verifica en la aplicación móvil de BrightID si tienes un patrocinio. Si no lo tienes, haz clic en el botón a continuación para enviar una solicitud de patrocinio.",
-    "cta": "Obtener patrocinio"
-  },
-  "brightIDSponsored": {
-    "h1": "¡Tienes un patrocinio!",
-    "subtitle": "¡Estás casi listo para contribuir a tus proyectos favoritos! Si estás verificado en BrightID, vincula tu billetera a tu perfil de BrightID y comienza a contribuir.",
-    "link1": "Vincular BrightId",
-    "link2": "Ir a la página principal"
-  },
   "join": {
     "title": {
       "h1": "Únete a la ronda",
@@ -543,13 +514,9 @@
       "error4": "Tu proyecto necesita una descripción. ¿Para qué estás recaudando dinero?",
       "label4": "Categoría",
       "p4": "Elige la mejor opción.",
-      "input4": "Herramientas",
       "label5": "Herramientas",
-      "input5": "Contenido",
       "label6": "Contenido",
-      "input6": "Investigación",
       "label7": "Investigación",
-      "input7": "Datos",
       "label8": "Datos",
       "error5": "Debes elegir una categoría",
       "label9": "Área problemática",
@@ -635,17 +602,10 @@
       "h4_8": "Correo electrónico de contacto",
       "notice1": "Esta información no se agregará al contrato inteligente.",
       "h4_9": "Nombre del equipo",
-      "notice2": "No proporcionado",
       "h4_10": "Descripción del equipo",
-      "notice3": "No proporcionado",
       "h3_4": "Enlaces",
       "edit4": "Editar",
-      "notice4": "No proporcionado",
-      "notice5": "No proporcionado",
       "h4_12": "Sitio web",
-      "notice6": "No proporcionado",
-      "notice7": "No proporcionado",
-      "notice8": "No proporcionado",
       "h3_5": "Imágenes",
       "edit5": "Editar",
       "h4_13": "Banner",
@@ -654,58 +614,49 @@
     "step6": {
       "h2": "Enviar proyecto",
       "p1": "Esta es una transacción de blockchain que agregará la información de tu proyecto a la ronda de financiamiento."
+    },
+    "error": {
+      "not_provided": "No proporcionado"
     }
   },
   "joinLanding": {
     "loading": "Obteniendo datos de la ronda...",
+    "check_out_these": "Consulta estas",
+    "other_ways_to_source_funding": "otras formas de obtener financiamiento",
+    "or_follow_us_on_twitter": ". O síguenos en Twitter para recibir actualizaciones sobre futuras rondas:",
+    "need_info_about_your_project": "Necesitaremos información sobre tu proyecto y un",
+    "security_deposit": " depósito de seguridad.",
+    "cap_on_projects": "La ronda solo acepta un total de {maxRecipients} proyectos, ¡así que aplica ahora mientras aún haya espacio disponible!",
+    "time_to_complete": "Tiempo para completar",
+    "15_minutes_ish": "15 minutos (aproximadamente)",
+    "see_round_criteria": "Ver criterios de la ronda",
     "closed": {
       "h1": "Lo siento, es demasiado tarde para unirse",
-      "subtitle1": "La ronda está cerrada para nuevos proyectos. Ahora es demasiado tarde para unirse.",
-      "subtitle2_t1": "Consulta estas",
-      "link1": "otras formas de obtener financiamiento",
-      "subtitle2_t2": ". O síguenos en Twitter para recibir actualizaciones sobre futuras rondas:",
-      "link2": "Inicio"
+      "subtitle1": "La ronda está cerrada para nuevos proyectos. Ahora es demasiado tarde para unirse."
     },
     "full": {
       "h1": "Lo siento, la ronda está completa",
-      "subtitle1": "La tecnología que utilizamos para protegerte contra el soborno y la colusión, MACI, limita la cantidad de proyectos en este momento. Desafortunadamente, hemos alcanzado el límite y no hay más espacio disponible.",
-      "subtitle2_t1": "Consulta estas",
-      "link1": "otras formas de obtener financiamiento",
-      "subtitle2_t2": ". O síguenos en Twitter para recibir actualizaciones sobre futuras rondas:",
-      "link2": "Inicio",
-      "link3": "Más sobre MACI"
+      "subtitle1": "La tecnología que utilizamos para protegerte contra el soborno y la colusión, MACI, limita la cantidad de proyectos en este momento. Desafortunadamente, hemos alcanzado el límite y no hay más espacio disponible."
     },
     "open": {
       "h1": "Únete a la ronda de financiamiento",
-      "subtitle1_t1": "Necesitaremos información sobre tu proyecto y un",
-      "subtitle1_t2": " depósito de seguridad.",
-      "subtitle2": "La ronda solo acepta un total de {maxRecipients} proyectos, ¡así que aplica ahora mientras aún haya espacio disponible!",
       "div1": "Tiempo restante para unirse",
-      "div2": "Tiempo para completar",
-      "div3": "15 minutos (aproximadamente)",
       "div4": " {spacesRemainingString} restantes, ¡date prisa!",
       "div5": "MACI, nuestra tecnología contra el soborno, limita actualmente la cantidad de proyectos permitidos por ronda.",
-      "link1": "Más sobre MACI",
-      "p1": "Recuperarás tu depósito si no logras entrar en la ronda en esta ocasión.",
-      "button1": "Ver criterios de la ronda",
-      "link2": "Agregar proyecto"
+      "p1": "Recuperarás tu depósito si no logras entrar en la ronda en esta ocasión."
     },
     "join": {
-      "h1": "Únete a la próxima ronda de financiamiento",
-      "subtitle1_t1": "Necesitaremos información sobre tu proyecto y un",
-      "subtitle1_t2": " depósito de seguridad.",
-      "subtitle2": "La ronda solo acepta un total de {maxRecipients} proyectos, ¡así que aplica ahora mientras aún haya espacio disponible!",
-      "div1": "Tiempo para completar",
-      "div2": "15 minutos (aproximadamente)",
-      "button1": "Ver criterios de la ronda",
-      "link2": "Agregar proyecto"
+      "h1": "Únete a la próxima ronda de financiamiento"
     }
   },
   "landing": {
+    "button": {
+      "getStarted": "Comenzar",
+      "leaderboard": "Ver resultados"
+    },
     "hero": {
       "title": "¡Envía tus proyectos favoritos a la Luna!",
       "subtitle": "Cada proyecto al que contribuyas obtiene una parte de financiamiento adicional.",
-      "action": "Comenzar",
       "info": "Cómo funciona"
     },
     "callout": {
@@ -753,7 +704,8 @@
       "link-6": "GitHub",
       "link-7": "Discord",
       "link-8": "Foro",
-      "link-9": "Más sobre Ethereum"
+      "link-9": "Más sobre Ethereum",
+      "link-blog": "Blog"
     }
   },
   "profile": {
@@ -768,9 +720,6 @@
     "btn2_1": "Vista previa",
     "btn2_2": "Ver",
     "div2": "No has enviado ningún proyecto"
-  },
-  "project": {
-    "p": "✔️ ¡Has contribuido a este proyecto!"
   },
   "projectAdded": {
     "h1": "¡Proyecto enviado!",
@@ -788,6 +737,23 @@
     "link1": "Agregar proyecto",
     "div1": "😢 No hay proyectos que coincidan con tu búsqueda. Intenta usar el filtro para reducir lo que estás buscando."
   },
+  "leaderboard": {
+    "no_round": "¡Algo salió mal! No se encontró información de la ronda. Por favor, informa si el problema persiste.",
+    "no_project": "No hay proyecto en esta ronda",
+    "more": "mas",
+    "less": "menos",
+    "header": "Clasificación de líderes",
+    "heading": {
+      "project": "Proyecto",
+      "votes": "Votos",
+      "donation": "Contribuciones",
+      "total": "Total"
+    },
+    "message": "La cantidad de financiamiento para cada proyecto se calcula utilizando la fórmula de financiamiento cuadrático y representa el monto total otorgado al proyecto. Las contribuciones al proyecto provienen de las donaciones de la comunidad. El número de votos que recibe un proyecto se determina tomando la suma de la raíz cuadrada de cada donación, escalada por el factor de crédito de voz de MACI y el decimal del token."
+  },
+  "leaderboardSimpleView": {
+    "funded": "{tokenSymbol} financiados"
+  },
   "recipientRegistry": {
     "h2": "Registro de destinatarios",
     "th1": "Proyecto",
@@ -804,13 +770,13 @@
   },
   "roundList": {
     "h1": "Rondas",
-    "link1": "Ronda {index}",
-    "link2": "Ronda {index}"
+    "link1": "Ronda {index}"
   },
   "transactionSuccess": {
     "p1": "¡reubicado!",
     "p2": "¡Acabas de contribuir!",
     "p3": "¡Tus elecciones se han actualizado! Puedes actualizar tus elecciones nuevamente en cualquier momento en los próximos",
+    "p4": ".",
     "p4_t1": "Gracias por contribuir al ecosistema de Ethereum. Si cambias de opinión, tienes",
     "p4_t2": " para reasignar tus contribuciones.",
     "btn": "OK"
@@ -825,34 +791,41 @@
   "verify": {
     "subtitle": "Paso {currentStep} de {steps}",
     "p1": "Paso {currentStep} de {steps}",
-    "link1": "Cancelar",
     "h1": "Configurar BrightID",
-    "link2": "Cancelar",
     "h2_1": "Conectar",
     "p2": "Necesitas conectar tu cuenta de BrightID con la dirección de tu billetera.",
-    "p3": "Una vez que esta aplicación esté vinculada en tu aplicación BrightID, te llevaremos automáticamente al siguiente paso. Puede tomar un minuto verificar la conexión, por favor espera.",
+    "click_next": "Una vez que esta aplicación esté vinculada en tu aplicación BrightID, Haz clic en el botón 'Siguiente' para pasar al siguiente paso.",
     "p4": "Escanea este código QR con tu aplicación BrightID",
     "p5": "Sigue este enlace para conectar tu billetera con tu aplicación BrightID",
     "p6": "Este enlace puede parecer intimidante, pero solo establece una conexión entre tu dirección de billetera conectada, nuestra aplicación y BrightID. Asegúrate de que tu dirección sea correcta.",
     "h2_2": "Registrarse",
     "p7": "Para proteger la ronda de sobornos y fraudes, debes agregar la dirección de tu billetera a un registro de contrato inteligente. ¡Una vez que hayas terminado, puedes unirte a la ronda de financiamiento!",
-    "btn": "Conviértete en colaborador"
+    "btn": "Conviértete en colaborador",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "copy_link": "Copiar Enlace",
+    "verification_status": "Tu dirección de billetera no está vinculada con BrightID. Puede tomar unos minutos verificar la conexión, por favor espera y haz clic en el botón más tarde para verificar el estado.",
+    "skip_sponsorship": "Saltar",
+    "get_sponsored_header": "Obtén un patrocinio",
+    "get_sponsored_text": "Necesitas un token de patrocinio para conectar tu dirección de billetera con BrightID. Esto ayuda a apoyar a BrightID como una plataforma descentralizada. Solo necesitarás hacer esto una vez y te cubrirá para cualquier otra aplicación que funcione con BrightID. Verifica en la aplicación móvil de BrightID si estás patrocinado. Obtén patrocinio al enviar una transacción de patrocinio o salta al siguiente paso.",
+    "get_sponsored_cta": "Obtener Patrocinio"
   },
   "verifyLanding": {
     "h1": "Demuestra que solo usas una cuenta",
     "subtitle": "Usamos BrightID para detener bots y tramposos, y hacer nuestra financiación más democrática.",
     "h2": "Lo que necesitarás",
-    "tooltip": "Si has donado previamente a una ronda CLR, usa la misma billetera para evitar algunos pasos de BrightID",
     "li1_t1": "BrightID: disponible en",
     "li1_link1": "iOS",
     "li1_t2": "o",
     "li1_link2": "Android",
-    "li2": "Obtener patrocinio",
-    "li3": "Verificación",
-    "li4": "Una billetera de Ethereum, con suficiente gas para dos transacciones",
-    "li5": "Acceso a Zoom o Google Meet",
+    "join": "Unirse a una fiesta de ",
+    "brightid_party_link": "BrightId",
+    "get_verified": " para ser verificado",
+    "li_wallet": "Una billetera de Ethereum, con suficiente gas para transacciones.",
+    "unitap_gas_tokens": "Puede que puedas obtener algunos tokens de gas gratis de ",
+    "unitap_link": "Unitap",
+    "unitap_extra_text": ".",
     "link1": "¿Por qué es importante?",
-    "div1": "Todavía no hay una ronda de financiamiento abierta. Vuelve más tarde para verificar.",
     "div2": "La ronda actual ya no acepta nuevas contribuciones. Por favor, intenta nuevamente en la siguiente ronda.",
     "div3": "Las contribuciones se cerraron anticipadamente, ¡ya no puedes donar! Debido a la generosidad de la comunidad y algunas limitaciones técnicas, tuvimos que cerrar la ronda antes de lo previsto. Si ya has contribuido, todavía tienes tiempo para reasignar si es necesario. Si no tuviste la oportunidad de contribuir, aún puedes ayudar donando al fondo de concordancia",
     "link2": "Tengo BrightID instalado",
@@ -884,6 +857,9 @@
     "link2": "Continuar configuración"
   },
   "cart": {
+    "sign": "Firmar",
+    "connect": "Conéctate",
+    "sign_the_message_to_see_your_cart": "Por favor, firmar el mesaje para ver tu carrito",
     "h3_1": "Conéctate para ver tu carrito",
     "div1": "Ya has contribuido en esta ronda. Puedes editar tus elecciones y agregar nuevos proyectos, pero el total de tu carrito siempre debe ser igual a la cantidad original de tu contribución.",
     "link1": "¿Por qué?",
@@ -919,9 +895,7 @@
     "div13": "Tiempo restante:",
     "span3": "Proyectos",
     "span4": "Fondo de Concordancia",
-    "span5": "Total",
-    "div14": "No hay una ronda actual.",
-    "link4": "Verificar con BrightID mientras esperas"
+    "span5": "Total"
   },
   "cartItems": {
     "button1": "Cantidad"
@@ -938,20 +912,21 @@
     "button1": "Listo"
   },
   "contributionModal": {
-    "h2_1": "Confirmar contribución de {renderTotal} {nativeTokenSymbol}",
-    "p1_t1": "Tu",
-    "p1_t2": "total de contribución es definitivo. No podrás aumentar esta cantidad. Asegúrate de que sea la cantidad máxima que podrías gastar en contribuciones.",
-    "button1": "Cancelar",
-    "button2": "Continuar",
-    "h2_2": "Aprobar {renderTotal} {nativeTokenSymbol}",
-    "p2": "Esto le otorga a esta aplicación el permiso para retirar {renderTotal} {nativeTokenSymbol} de tu billetera para tu contribución.",
-    "h2_3": "Enviar contribución de {renderTotal} {nativeTokenSymbol}",
-    "p3": "Esta transacción envía tu contribución de {renderTotal} {nativeTokenSymbol} a los proyectos que elijas.",
-    "h2_4": "Magia del fondo de concordancia ✨",
-    "p4": "Esta transacción le permite al fondo de concordancia saber cuánto {nativeTokenSymbol} enviar a tus proyectos favoritos en función de tus contribuciones."
+    "confirm": "Confirmar contribución de {renderTotal} {nativeTokenSymbol}",
+    "your": "Tu",
+    "contribution_final": "total de contribución es definitivo. No podrás aumentar esta cantidad. Asegúrate de que sea la cantidad máxima que podrías gastar en contribuciones.",
+    "btn_cancel": "Cancelar",
+    "btn_continue": "Continuar",
+    "approve": "Aprobar {renderTotal} {nativeTokenSymbol}",
+    "permission": "Esto le otorga a esta aplicación el permiso para retirar {renderTotal} {nativeTokenSymbol} de tu billetera para tu contribución.",
+    "send_contribution": "Enviar contribución de {renderTotal} {nativeTokenSymbol}",
+    "send_tx": "Esta transacción envía tu contribución de {renderTotal} {nativeTokenSymbol} a los proyectos que elijas.",
+    "magic": "Magia del fondo de concordancia ✨",
+    "how_much": "Esta transacción le permite al fondo de concordancia saber cuánto {nativeTokenSymbol} enviar a tus proyectos favoritos en función de tus contribuciones."
   },
   "copyButton": {
-    "tooltip1": "¡Copiado!"
+    "tooltip1": "¡Copiado!",
+    "copy": "Copiar"
   },
   "criterialModal": {
     "h2": "Criterios de la ronda",
@@ -964,7 +939,7 @@
   "formNavigation": {
     "button1": "Anterior",
     "button2_1": "Confirmar",
-    "button2:_2": "Siguiente"
+    "button2_2": "Siguiente"
   },
   "formProgressWidget": {
     "p1": "Paso {currentStep} de {steps}",
@@ -994,24 +969,17 @@
     "link1": "Repositorio de GitHub",
     "link2": "{'@'}Twitter"
   },
-  "matchigFundsModal": {
-    "h3_1_t1": "Contribuir {tokenSymbol} a la",
-    "h3_1_if1": "siguiente",
-    "h3_1_if2": "actual",
-    "h3_1_t2": "ronda",
+  "matchingFundsModal": {
+    "title": "Contribuir {tokenSymbol} a al fondo de coincidencia",
     "div1": "⚠️ Solo tienes {renderBalance} {tokenSymbol}",
-    "button1": "Cancelar",
     "button2": "Contribuir",
-    "h3_2_t1": "Contribuir {renderContributionAmount} {tokenSymbol} a la",
-    "h3_2_if1": "siguiente",
-    "h3_2_if2": "actual",
-    "h3_2_t2": "ronda",
+    "h3_2_t1": " Contribuir {renderContributionAmount} {tokenSymbol} a la fondo de coincidencia",
     "h3_3": "¡Acabas de aumentar el fondo en {renderContributionAmount} {tokenSymbol}!",
+    "fund_distribution_message": "The funds will be distributed to all projects based on the contributions they receive from the community",
     "div2": "Gracias por ayudar a todos nuestros proyectos.",
     "button3": "Listo"
   },
   "navBar": {
-    "language": "Idioma",
     "app": "Aplicación",
     "dropdown": {
       "home": "Inicio",
@@ -1021,7 +989,8 @@
       "sybil": "Resistencia a Sybil",
       "code": "Código",
       "recipients": "Destinatarios",
-      "layer2": "Capa 2"
+      "layer2": "Capa 2",
+      "rounds": "Rondas"
     }
   },
   "projectListItem": {
@@ -1060,7 +1029,8 @@
     "div2": "Abierto",
     "div3": "Cerrado",
     "p1": "La ronda está oficialmente cerrada",
-    "p2": "¡Ya es demasiado tarde para contribuir o reasignar tus donaciones! Debido a la generosidad de la comunidad y algunas limitaciones técnicas, tuvimos que cerrar la ronda antes de lo esperado. Aún puedes ayudar donando al fondo de contribución.",
+    "p2": "¡Ya es demasiado tarde para contribuir o reasignar tus donaciones!",
+    "max_messages_reached": "Debido a la generosidad de la comunidad y algunas limitaciones técnicas, tuvimos que cerrar la ronda antes de lo esperado. Aún puedes ayudar donando al fondo de contribución.",
     "div4": "¡Excelente!",
     "div5": "⏱️ Apertura de la ronda",
     "div6": "Tiempo restante para contribuir",
@@ -1083,13 +1053,15 @@
     "tooltip7": "Este total incluye los fondos en el fondo de contribución y todas las contribuciones de la comunidad.",
     "div16": "Fondo de contribución",
     "tooltip8": "Estos son los fondos que se distribuirán a todos los proyectos según las contribuciones que reciban de la comunidad.",
-    "tooltip9": "'Agregar fondos de contribución'",
+    "tooltip9": "Agregar fondos de contribución",
     "span1": "Agregar fondos",
     "div17": "Total de contribuciones",
     "div18": "Contribuyentes",
     "div19": "leyenda",
     "div20": "Sin ronda programada",
-    "div21": "Aún no hemos programado una ronda de financiamiento. ¡Mantente atento/a!"
+    "div21": "Aún no hemos programado una ronda de financiamiento. ¡Mantente atento/a!",
+    "pluralism": "s",
+    "more": "Mas"
   },
   "roundStatusBanner": {
     "span1": "Comienza la financiación 🗓 {startDate}.",
@@ -1136,5 +1108,114 @@
     "h3_2": "¡Éxito!",
     "div1": "Has retirado tu contribución exitosamente.",
     "button1": "OK"
-  }
+  },
+  "recipientProfile": {
+    "not_found": "Destinatario no encontrado!"
+  },
+  "dynamic": {
+    "appLink": {
+      "getStarted": "Comenzar",
+      "leaderboard": "Ver resultados"
+    },
+    "category": {
+      "tooling": "Herramientas",
+      "content": "Contenido",
+      "data": "Datos",
+      "research": "Investigación",
+      "other": "Otro"
+    },
+    "timeleft": {
+      "unit": {
+        "days": "dias",
+        "day": "dia",
+        "hours": "horas",
+        "hour": "hora",
+        "minutes": "minutos",
+        "minute": "minuto",
+        "seconds": "segundos",
+        "second": "segundo"
+      }
+    },
+    "criteria": {
+      "free_open_source": {
+        "tagline": "Libre y de código abierto",
+        "description": "Tu proyecto debe ser de uso gratuito y cualquier código asociado a tu proyecto debe estar disponible para cualquier persona bajo una licencia de código abierto."
+      },
+      "no_clones": {
+        "tagline": "Sin clones",
+        "description": "Si has bifurcado código, debes proporcionar un valor adicional y único al ecosistema."
+      },
+      "project_ownership": {
+        "tagline": "Propiedad del proyecto",
+        "description": "El proyecto que envíes debe ser tuyo o debes tener permiso del propietario del proyecto."
+      },
+      "no_scams": {
+        "tagline": "No estafas",
+        "description": "Obviamente, tu proyecto no debe poner en riesgo los fondos o la información de nadie."
+      },
+      "humanbound": {
+        "tagline": "Humanbound",
+        "description": "La dirección receptora del proyecto debe tener un ",
+        "link": "humanbound SBT."
+      }
+    },
+    "cart": {
+      "error": {
+        "reached_contribution_limit": "Se ha alcanzado el límite en el número de contribuciones.",
+        "connect_wallet": "Por favor, conecta tu billetera.",
+        "incorrect_network": "Por favor, cambia a la red {chain}.",
+        "need_to_setup_brightid": "Para contribuir, necesitas configurar BrightID.",
+        "invalid_contribution_amount": "Incluye una cantidad de contribución válida.",
+        "exceeded_max_cart_size": "Tu carrito no puede incluir más de {maxCartSize} proyectos.",
+        "round_cancelled": "Lo sentimos, hemos tenido que cancelar esta ronda de financiamiento.",
+        "round_ended": "La ronda de financiamiento ha finalizado.",
+        "cart_changes_exceed_cap": "Los cambios en el carrito excederán la capacidad de contribución de esta ronda.",
+        "contributions_over": "Las contribuciones han finalizado para esta ronda de financiamiento.",
+        "reached_contributor_limit": "Se ha alcanzado el límite en el número de colaboradores.",
+        "must_be_gt_zero": "Tu total debe ser mayor que 0 {nativeTokenSymbol}",
+        "not_enough_funds": "Fondos insuficientes. Tu saldo es de {balance} {nativeTokenSymbol}.",
+        "too_generous": "Tu contribución es demasiado generosa. La contribución máxima es de {maxAmount} {nativeTokenSymbol}.",
+        "need_gas_payment": "Necesitas tener ETH para pagar por el gas.",
+        "contributor_key_missing": "No se encontró la clave del colaborador. Actualiza la página e intenta de nuevo y/o asegúrate de estar utilizando el mismo navegador/máquina con la que hiciste la contribución.",
+        "more_than_original_contribution": "Tu nuevo total no puede ser mayor que tu contribución original de {total} {tokenSymbol}"
+      },
+      "action": {
+        "remove_all": "Eliminar todo",
+        "split_evenly": "Dividir por igual"
+      }
+    },
+    "verify": {
+      "step": {
+        "sponsorship": "Patrocinio",
+        "connect": "Conectar",
+        "registration": "Registrarse"
+      }
+    },
+    "progress": {
+      "step": {
+        "project": "Acerca del proyecto",
+        "donation": "Detalles de la donación",
+        "team": "Detalles del equipo",
+        "links": "Enlaces",
+        "images": "Imágenes",
+        "review": "Revisa",
+        "submit": "Enviar"
+      }
+    },
+    "mobile": {
+      "tab": {
+        "Cart": "Carrito",
+        "Round": "Ronda",
+        "Projects": "Proyectos"
+      }
+    }
+  },
+  "filter": "Filtrar",
+  "home": "Inicio",
+  "cancel": "Cancelar",
+  "copied": "Copied!",
+  "more_on_maci": "Más sobre MACI",
+  "add_project": "Agregar proyecto",
+  "close": "Cerrar",
+  "please_sign_message": "Por favor, firma el mensaje en tu billetera"
 }
