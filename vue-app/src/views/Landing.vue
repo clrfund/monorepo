@@ -199,11 +199,9 @@ const leaderboardRoute = computed(() => {
     return null
   }
 
-  const lastRound = leaderboardRounds.length > 0 ? leaderboardRounds[leaderboardRounds.length - 1] : null
-  const roundAddress = currentRoundAddress.value || lastRound?.address || ''
-  return leaderboardSet.has(roundAddress)
-    ? { name: 'leaderboard', params: { network: lastRound?.network, address: lastRound?.address } }
-    : null
+  const roundAddress = currentRoundAddress.value || ''
+  const leaderboard = leaderboardRounds.find(round => round.address === roundAddress)
+  return leaderboard ? { name: 'leaderboard', params: { network: leaderboard.network, address: roundAddress } } : null
 })
 
 const appUrl = computed(() => {
