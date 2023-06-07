@@ -1,3 +1,5 @@
+import { useHumanbound, humanboundWebsiteUrl } from '@/api/core'
+
 export interface Criterion {
   emoji: string
   translationKey: string
@@ -21,11 +23,14 @@ const CRITERIA: Criterion[] = [
     emoji: '👺',
     translationKey: 'no_scams',
   },
-  {
+]
+
+if (useHumanbound) {
+  CRITERIA.push({
     emoji: '🛡️',
     translationKey: 'humanbound',
-    link: 'https://app.humanbound.xyz',
-  },
-]
+    link: humanboundWebsiteUrl,
+  })
+}
 
 export const criteria: Criterion[] = [...CRITERIA]

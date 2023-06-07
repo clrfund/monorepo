@@ -238,6 +238,10 @@
                 <p class="input-description">
                   {{ $t('join.step1.p1') }}
                 </p>
+                <div class="warning input-description" v-if="useHumanbound">
+                  {{ $t('join.step1.address_must_hold_humanbound_sbt') }}
+                  <links :to="humanboundWebsiteUrl">{{ $t('join.step1.humanbound_sbt_link') }}</links>
+                </div>
                 <input
                   id="fund-address"
                   :placeholder="$t('join.step1.input1')"
@@ -715,7 +719,7 @@ import { required, requiredIf, email, maxLength, url, helpers } from '@vuelidate
 import { type RecipientApplicationData, formToProjectInterface } from '@/api/recipient-registry-optimistic'
 import type { Project } from '@/api/projects'
 import { recipientExists } from '@/api/projects'
-import { chain } from '@/api/core'
+import { chain, humanboundWebsiteUrl, useHumanbound } from '@/api/core'
 import { DateTime } from 'luxon'
 import { useRecipientStore, useAppStore, useUserStore } from '@/stores'
 import { waitForTransactionAndCheck } from '@/utils/contracts'
@@ -1476,5 +1480,14 @@ async function checkEns(): Promise<void> {
   word-break: keep-all;
   font-size: 0.875rem;
   margin-top: 0.25rem;
+}
+
+.warning {
+  color: var(--error-color);
+
+  a {
+    color: var(--error-color);
+    text-decoration-line: underline;
+  }
 }
 </style>
