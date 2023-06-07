@@ -143,6 +143,18 @@
                   />
                   <label for="tooling" class="radio-btn">{{ $t('join.step0.label5') }}</label>
                   <input
+                    id="education"
+                    type="radio"
+                    name="education"
+                    value="Education"
+                    v-model="v$.project.category.$model"
+                    :class="{
+                      input: true,
+                      invalid: v$.project.category.$error,
+                    }"
+                  />
+                  <label for="education" class="radio-btn"> {{ $t('join.step0.label_education') }}</label>
+                  <input
                     id="category-content"
                     type="radio"
                     name="project-category"
