@@ -536,7 +536,9 @@
       "p2": "Los posibles contribuyentes pueden decidir según tus planes de financiamiento específicos. Soporte de Markdown.",
       "input2": "ej: en nuestro plan de desarrollo...",
       "error2": "Informa a los posibles contribuyentes sobre tus planes para sus donaciones.",
-      "preview1": "Vista previa:"
+      "preview1": "Vista previa:",
+      "address_must_hold_humanbound_sbt": "La dirección debe tener un ",
+      "humanbound_sbt_link": "SBT vinculado a un humano"
     },
     "step2": {
       "h2": "Detalles del equipo",
