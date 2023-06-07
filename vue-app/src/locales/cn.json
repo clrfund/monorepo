@@ -536,7 +536,9 @@
       "p2": "有意的捐献者可能有兴趣知道您的用款计划。 支持 Markdown。",
       "input2": "例如: 在我们的路线图上。。。",
       "error2": "让捐献者了解您的用款计划。",
-      "preview1": "预览："
+      "preview1": "预览：",
+      "address_must_hold_humanbound_sbt": "这个地址必须持有",
+      "humanbound_sbt_link": "humanbound SBT"
     },
     "step2": {
       "h2": "团队",

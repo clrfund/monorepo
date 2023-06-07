@@ -536,7 +536,9 @@
       "p2": "Potential contributors might convert based on your specific funding plans. Markdown supported.",
       "input2": "ex: on our roadmap...",
       "error2": "Let potential contributors know what plans you have for their donations.",
-      "preview1": "Preview:"
+      "preview1": "Preview:",
+      "address_must_hold_humanbound_sbt": "The address must hold a ",
+      "humanbound_sbt_link": "humanbound SBT"
     },
     "step2": {
       "h2": "Team details",
