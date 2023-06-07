@@ -95,7 +95,7 @@ const { currentUser } = storeToRefs(userStore)
 const projects = ref<Project[]>([])
 const search = ref('')
 const isLoading = ref(true)
-const categories = ref<string[]>(['content', 'research', 'tooling', 'data'])
+const categories = ref<string[]>(['content', 'education', 'research', 'tooling', 'data'])
 const selectedCategories = ref<string[]>([])
 const roundAddress = ref('')
 
