@@ -772,11 +772,13 @@ const rules = computed(() => {
     image: {
       bannerHash: {
         required,
-        validIpfsHash: isIPFS.cid,
+        validIpfsHash,
+        $autoDirty: true,
       },
       thumbnailHash: {
         required,
-        validIpfsHash: isIPFS.cid,
+        validIpfsHash,
+        $autoDirty: true,
       },
     },
   }
@@ -784,12 +786,17 @@ const rules = computed(() => {
 const v$ = useVuelidate(rules, form)
 
 const currentStep = ref<number>(0)
-const steps = ['project', 'donation', 'team', 'links', 'images', 'review', 'submit', 'confirm']
+const steps = ['project', 'donation', 'team', 'links', 'image', 'review', 'submit', 'confirm']
 const stepNames = steps.slice(0, steps.length - 1)
 const showSummaryPreview = ref(false)
 const isWaiting = ref(false)
 const txHash = ref('')
 const txError = ref('')
+
+function validIpfsHash(hash: string): boolean {
+  const isValid = Boolean(hash) && isIPFS.cid(hash)
+  return isValid
+}
 
 const isNavDisabled = computed<boolean>(
   () => !isStepValid(currentStep.value) && currentStep.value !== form.furthestStep,
@@ -860,6 +867,7 @@ function saveFormData(updateFurthest?: boolean): void {
 // Callback from IpfsImageUpload component
 function handleUpload(key, value) {
   form.image[key] = value
+  v$.value.image[key].$touch()
   saveFormData(false)
 }
 
@@ -872,6 +880,7 @@ function isStepValid(step: number): boolean {
     return isLinkStepValid()
   }
   const stepName: string = steps[step]
+
   return !v$.value[stepName]?.$invalid
 }
 
