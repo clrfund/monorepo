@@ -518,6 +518,7 @@
       "label6": "Content",
       "label7": "Research",
       "label8": "Data",
+      "label_education": "Education",
       "error5": "You need to choose a category",
       "label9": "Problem space",
       "p5": "Explain the problems you're trying to solve. Markdown supported.",
@@ -1122,7 +1123,8 @@
       "content": "Content",
       "data": "Data",
       "research": "Research",
-      "other": "Other"
+      "other": "Other",
+      "education": "Education"
     },
     "timeleft": {
       "unit": {

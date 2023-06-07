@@ -518,6 +518,7 @@
       "label6": "Contenido",
       "label7": "Investigación",
       "label8": "Datos",
+      "label_education": "Educación",
       "error5": "Debes elegir una categoría",
       "label9": "Área problemática",
       "p5": "Explica los problemas que estás tratando de resolver. Soporte de Markdown.",
@@ -1122,7 +1123,8 @@
       "content": "Contenido",
       "data": "Datos",
       "research": "Investigación",
-      "other": "Otro"
+      "other": "Otro",
+      "education": "Educación"
     },
     "timeleft": {
       "unit": {

@@ -518,6 +518,7 @@
       "label6": "内容",
       "label7": "研究",
       "label8": "数据",
+      "label_education": "教育",
       "error5": "您需要选择一个类别",
       "label9": "问题空间",
       "p5": "解释您要解决的问题. 支持 Markdown。",
@@ -1122,7 +1123,8 @@
       "content": "内容",
       "research": "研究",
       "data": "数据",
-      "other": "其他"
+      "other": "其他",
+      "education": "教育"
     },
     "timeleft": {
       "unit": {
