@@ -60,8 +60,7 @@
 import { ref, computed, onMounted } from 'vue'
 
 import { getCurrentRound, getRoundInfo } from '@/api/round'
-import { type Project, getProjects } from '@/api/projects'
-import { getFactoryInfo } from '@/api/factory'
+import { type Project, getProjects, getRecipientRegistryAddress } from '@/api/projects'
 
 import CallToActionCard from '@/components/CallToActionCard.vue'
 import ProjectListItem from '@/components/ProjectListItem.vue'
@@ -145,9 +144,8 @@ async function loadProjectRoundInfo(roundAddress: string): Promise<ProjectRoundI
   }
 
   if (!recipientRegistryAddress) {
-    // get recipient registry address from the factory if a round does not exist
-    const factory = await getFactoryInfo()
-    recipientRegistryAddress = factory.recipientRegistryAddress
+    // pass null as round address to get recipient registry address from the factory
+    recipientRegistryAddress = await getRecipientRegistryAddress(null)
   }
 
   return { recipientRegistryAddress, startTime, votingDeadline }
