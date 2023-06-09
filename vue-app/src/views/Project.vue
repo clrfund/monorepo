@@ -60,7 +60,7 @@ onMounted(async () => {
 
   roundAddress.value = (route.params.address as string) || currentRoundAddress || ''
 
-  const registryAddress = await getRecipientRegistryAddress(roundAddress.value)
+  const registryAddress = await getRecipientRegistryAddress(roundAddress.value || null)
   const _project = await getProject(registryAddress, route.params.id as string)
   if (_project === null || _project.isHidden) {
     // Project not found
