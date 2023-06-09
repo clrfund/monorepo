@@ -84,3 +84,6 @@ export { leaderboardRounds }
 
 export const useHumanbound = /^yes$/i.test(import.meta.env.VITE_USE_HUMANBOUND)
 export const humanboundWebsiteUrl = 'https://app.humanbound.xyz'
+
+export const isBrightIdRequired = userRegistryType === 'brightid'
+export const isOptimisticRecipientRegistry = recipientRegistryType === 'optimistic'

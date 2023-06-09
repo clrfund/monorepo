@@ -23,7 +23,10 @@
             </li>
           </ul>
           <div class="mt2 button-spacing">
-            <links :to="`/recipients/${hash}`" class="btn-primary">{{ $t('projectAdded.link2') }}</links>
+            <links v-if="isOptimisticRecipientRegistry" :to="`/recipients/${hash}`" class="btn-primary">{{
+              $t('projectAdded.link2')
+            }}</links>
+            <links v-else to="/projects" class="btn-primary">{{ $t('projectAdded.linkProjects') }}</links>
             <links to="/" class="btn-secondary">{{ $t('projectAdded.link3') }}</links>
           </div>
         </div>
@@ -43,6 +46,7 @@ import ImageResponsive from '@/components/ImageResponsive.vue'
 import { useAppStore } from '@/stores'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
+import { isOptimisticRecipientRegistry } from '@/api/core'
 
 const route = useRoute()
 const appStore = useAppStore()

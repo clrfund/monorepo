@@ -731,7 +731,8 @@
     "link1": "learn more about the registration process here.",
     "li2": "Once that's complete, your project page will go live.",
     "li3": " If your project fails any checks, we'll let you know by email and return your deposit.",
-    "link2": "View projects",
+    "linkProjects": "View projects",
+    "link2": "View project",
     "link3": "Go home"
   },
   "projectList": {
@@ -1169,6 +1170,7 @@
         "connect_wallet": "Please connect your wallet",
         "incorrect_network": "Please change network to {chain} network.",
         "need_to_setup_brightid": "To contribute, you need to set up BrightID.",
+        "user_not_registered": "Please contact {operator} for registration",
         "invalid_contribution_amount": "Include valid contribution amount.",
         "exceeded_max_cart_size": "Your cart can't include over {maxCartSize} projects.",
         "round_cancelled": "Sorry, we've had to cancel this funding round.",

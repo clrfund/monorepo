@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
+import { isBrightIdRequired, isOptimisticRecipientRegistry } from '@/api/core'
 
 const Landing = () => import('@/views/Landing.vue')
 const JoinLanding = () => import('@/views/JoinLanding.vue')
@@ -183,43 +184,11 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: '/recipients',
-    name: 'recipients',
-    component: RecipientRegistryView,
-    meta: {
-      title: 'Recipient registry',
-    },
-  },
-  {
     path: '/recipients/:hash',
     name: 'recipient-profile',
     component: RecipientProfile,
     meta: {
       title: 'Recipient profile',
-    },
-  },
-  {
-    path: '/verify',
-    name: 'verify',
-    component: VerifyLanding,
-    meta: {
-      title: 'BrightID Verification',
-    },
-  },
-  {
-    path: '/verify/success/:hash?',
-    name: 'verified',
-    component: Verified,
-    meta: {
-      title: 'Verification Success',
-    },
-  },
-  {
-    path: '/verify/:step',
-    name: 'verify-step',
-    component: VerifyView,
-    meta: {
-      title: 'Verification Steps',
     },
   },
   {
@@ -263,6 +232,46 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
 ]
+
+if (isBrightIdRequired) {
+  routes.concat([
+    {
+      path: '/verify',
+      name: 'verify',
+      component: VerifyLanding,
+      meta: {
+        title: 'BrightID Verification',
+      },
+    },
+    {
+      path: '/verify/success/:hash?',
+      name: 'verified',
+      component: Verified,
+      meta: {
+        title: 'Verification Success',
+      },
+    },
+    {
+      path: '/verify/:step',
+      name: 'verify-step',
+      component: VerifyView,
+      meta: {
+        title: 'Verification Steps',
+      },
+    },
+  ])
+}
+
+if (isOptimisticRecipientRegistry) {
+  routes.push({
+    path: '/recipients',
+    name: 'recipients',
+    component: RecipientRegistryView,
+    meta: {
+      title: 'Recipient registry',
+    },
+  })
+}
 
 const router = createRouter({
   history: createWebHashHistory(),

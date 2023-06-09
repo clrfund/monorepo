@@ -731,6 +731,7 @@
     "link1": "了解更多关于注册流程的信息。",
     "li2": "完成后，您的项目页面将上线。",
     "li3": " 如果您的项目未通过检查，我们将电邮通知您并退回您的押金。",
+    "linkProjects": "查看项目",
     "link2": "查看项目",
     "link3": "回首页"
   },
@@ -1169,6 +1170,7 @@
         "connect_wallet": "请连接您的钱包",
         "incorrect_network": "请将网络更改为 {chain} 网络.",
         "need_to_setup_brightid": "要进行贡献, 您需要设置 BrightID。",
+        "user_not_registered": "请联系 {operator} 进行注册。",
         "invalid_contribution_amount": "请输入有效的贡献金额",
         "exceeded_max_cart_size": "您的捐款车不能超过 {maxCartSize} 个项目",
         "round_cancelled": "抱歉，我们不得不取消这次筹款活动。",

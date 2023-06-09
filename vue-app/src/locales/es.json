@@ -731,7 +731,8 @@
     "link1": "obtener más información sobre el proceso de registro aquí.",
     "li2": "Una vez que se complete, la página de tu proyecto se publicará.",
     "li3": "Si tu proyecto no pasa alguna verificación, te lo haremos saber por correo electrónico y te devolveremos tu depósito.",
-    "link2": "Ver proyectos",
+    "linkProjects": "Ver proyectos",
+    "link2": "Ver proyecto",
     "link3": "Ir a inicio"
   },
   "projectList": {
@@ -1169,6 +1170,7 @@
         "connect_wallet": "Por favor, conecta tu billetera.",
         "incorrect_network": "Por favor, cambia a la red {chain}.",
         "need_to_setup_brightid": "Para contribuir, necesitas configurar BrightID.",
+        "user_not_registered": "Por favor, contacta a {operador} para realizar el registro.",
         "invalid_contribution_amount": "Incluye una cantidad de contribución válida.",
         "exceeded_max_cart_size": "Tu carrito no puede incluir más de {maxCartSize} proyectos.",
         "round_cancelled": "Lo sentimos, hemos tenido que cancelar esta ronda de financiamiento.",
