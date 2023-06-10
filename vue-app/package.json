@@ -1,6 +1,6 @@
 {
   "name": "@clrfund/vue-app",
-  "version": "4.2.0",
+  "version": "4.2.1",
   "private": true,
   "license": "GPL-3.0",
   "scripts": {
