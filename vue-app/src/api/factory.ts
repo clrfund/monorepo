@@ -18,6 +18,7 @@ export async function getFactoryInfo() {
   const nativeTokenDecimals = await nativeToken.decimals()
 
   const userRegistryAddress = await factory.userRegistry()
+  const recipientRegistryAddress = await factory.recipientRegistry()
 
   return {
     fundingRoundAddress: factory.address,
@@ -25,5 +26,6 @@ export async function getFactoryInfo() {
     nativeTokenSymbol,
     nativeTokenDecimals,
     userRegistryAddress,
+    recipientRegistryAddress,
   }
 }

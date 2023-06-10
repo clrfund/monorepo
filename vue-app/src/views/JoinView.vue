@@ -143,6 +143,18 @@
                   />
                   <label for="tooling" class="radio-btn">{{ $t('join.step0.label5') }}</label>
                   <input
+                    id="education"
+                    type="radio"
+                    name="education"
+                    value="Education"
+                    v-model="v$.project.category.$model"
+                    :class="{
+                      input: true,
+                      invalid: v$.project.category.$error,
+                    }"
+                  />
+                  <label for="education" class="radio-btn"> {{ $t('join.step0.label_education') }}</label>
+                  <input
                     id="category-content"
                     type="radio"
                     name="project-category"
@@ -226,6 +238,10 @@
                 <p class="input-description">
                   {{ $t('join.step1.p1') }}
                 </p>
+                <div class="warning input-description" v-if="useHumanbound">
+                  {{ $t('join.step1.address_must_hold_humanbound_sbt') }}
+                  <links :to="humanboundWebsiteUrl">{{ $t('join.step1.humanbound_sbt_link') }}</links>
+                </div>
                 <input
                   id="fund-address"
                   :placeholder="$t('join.step1.input1')"
@@ -703,7 +719,7 @@ import { required, requiredIf, email, maxLength, url, helpers } from '@vuelidate
 import { type RecipientApplicationData, formToProjectInterface } from '@/api/recipient-registry-optimistic'
 import type { Project } from '@/api/projects'
 import { recipientExists } from '@/api/projects'
-import { chain } from '@/api/core'
+import { chain, humanboundWebsiteUrl, useHumanbound } from '@/api/core'
 import { DateTime } from 'luxon'
 import { useRecipientStore, useAppStore, useUserStore } from '@/stores'
 import { waitForTransactionAndCheck } from '@/utils/contracts'
@@ -760,11 +776,13 @@ const rules = computed(() => {
     image: {
       bannerHash: {
         required,
-        validIpfsHash: isIPFS.cid,
+        validIpfsHash,
+        $autoDirty: true,
       },
       thumbnailHash: {
         required,
-        validIpfsHash: isIPFS.cid,
+        validIpfsHash,
+        $autoDirty: true,
       },
     },
   }
@@ -772,12 +790,17 @@ const rules = computed(() => {
 const v$ = useVuelidate(rules, form)
 
 const currentStep = ref<number>(0)
-const steps = ['project', 'donation', 'team', 'links', 'images', 'review', 'submit', 'confirm']
+const steps = ['project', 'donation', 'team', 'links', 'image', 'review', 'submit', 'confirm']
 const stepNames = steps.slice(0, steps.length - 1)
 const showSummaryPreview = ref(false)
 const isWaiting = ref(false)
 const txHash = ref('')
 const txError = ref('')
+
+function validIpfsHash(hash: string): boolean {
+  const isValid = Boolean(hash) && isIPFS.cid(hash)
+  return isValid
+}
 
 const isNavDisabled = computed<boolean>(
   () => !isStepValid(currentStep.value) && currentStep.value !== form.furthestStep,
@@ -848,6 +871,7 @@ function saveFormData(updateFurthest?: boolean): void {
 // Callback from IpfsImageUpload component
 function handleUpload(key, value) {
   form.image[key] = value
+  v$.value.image[key].$touch()
   saveFormData(false)
 }
 
@@ -860,6 +884,7 @@ function isStepValid(step: number): boolean {
     return isLinkStepValid()
   }
   const stepName: string = steps[step]
+
   return !v$.value[stepName]?.$invalid
 }
 
@@ -1455,5 +1480,14 @@ async function checkEns(): Promise<void> {
   word-break: keep-all;
   font-size: 0.875rem;
   margin-top: 0.25rem;
+}
+
+.warning {
+  color: var(--error-color);
+
+  a {
+    color: var(--error-color);
+    text-decoration-line: underline;
+  }
 }
 </style>

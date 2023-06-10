@@ -27,6 +27,7 @@ const RecipientProfile = () => import('@/views/RecipientProfile.vue')
 const CartView = () => import('@/views/CartView.vue')
 const TransactionSuccess = () => import('@/views/TransactionSuccess.vue')
 const Leaderboard = () => import('@/views/Leaderboard.vue')
+const LeaderboardProject = () => import('@/views/LeaderboardProject.vue')
 
 // TODO: create a new route that takes funding factory address as a param
 const routes: Array<RouteRecordRaw> = [
@@ -57,11 +58,24 @@ const routes: Array<RouteRecordRaw> = [
     component: ProjectView,
   },
   {
-    path: '/rounds/:address/leaderboard',
+    path: '/leaderboards/:address/networks/:network/projects/:id?',
+    name: 'leaderboard-project',
+    component: LeaderboardProject,
+  },
+  {
+    path: '/leaderboards/:address/networks/:network*',
     name: 'leaderboard',
     component: Leaderboard,
     meta: {
       title: 'leaderboard',
+    },
+  },
+  {
+    path: '/leaderboards/:address*',
+    name: 'fallback-rounds',
+    component: RoundList,
+    meta: {
+      title: 'rounds',
     },
   },
   {

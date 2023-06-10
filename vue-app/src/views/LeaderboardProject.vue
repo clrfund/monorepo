@@ -1,14 +1,10 @@
 <template>
   <div>
     <loader v-if="isLoading"></loader>
-    <div :class="`grid ${showCartPanel ? 'cart-open' : 'cart-closed'}`" v-if="project">
+    <div :class="`grid`" v-if="project">
       <img class="project-image banner" :src="project.bannerImageUrl" :alt="project.name" />
       <project-profile class="details" :project="project" :previewMode="false" />
       <div class="sticky-column">
-        <div class="desktop">
-          <add-to-cart-button v-if="shouldShowCartInput && hasContributeBtn" :project="project" />
-          <claim-button :project="project" :roundAddress="roundAddress" />
-        </div>
         <link-box :project="project" />
       </div>
     </div>
@@ -18,51 +14,39 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 
-import { type Project, getRecipientRegistryAddress, getProject } from '@/api/projects'
-import { getCurrentRound } from '@/api/round'
+import type { Project } from '@/api/projects'
 import ProjectProfile from '@/components/ProjectProfile.vue'
-import AddToCartButton from '@/components/AddToCartButton.vue'
 import LinkBox from '@/components/LinkBox.vue'
-import ClaimButton from '@/components/ClaimButton.vue'
 
 import { useMeta } from 'vue-meta'
-import { storeToRefs } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'
-import { useAppStore } from '@/stores'
 import { operator } from '@/api/core'
+import { getLeaderboardProject } from '@/api/projects'
+import { getRouteParamValue } from '@/utils/route'
 
 const route = useRoute()
 const router = useRouter()
-const appStore = useAppStore()
-const { showCartPanel, isRoundContributionPhase, canUserReallocate } = storeToRefs(appStore)
 
 const roundAddress = ref<string>('')
 const project = ref<Project | null>(null)
 const isLoading = ref(true)
-const isCurrentRound = computed(() => {
-  return appStore.isCurrentRound(roundAddress.value)
-})
-
-const shouldShowCartInput = computed(
-  () => (isCurrentRound.value && isRoundContributionPhase.value) || canUserReallocate,
-)
-const hasContributeBtn = computed(() => isCurrentRound.value && project.value !== null && project.value.index !== 0)
 
 onMounted(async () => {
-  if (!!route.params.address && !route.params.id) {
-    // missing project id, redirect back to rounds
-    router.push({ name: 'rounds', params: route.params })
+  const network = getRouteParamValue(route.params.network)
+  const address = getRouteParamValue(route.params.address)
+  const projectId = getRouteParamValue(route.params.id)
+  if (!projectId) {
+    if (network && address) {
+      router.push({ name: 'leaderboard', params: { network, address } })
+    } else {
+      router.push({ name: 'rounds' })
+    }
     return
   }
+  roundAddress.value = address
 
-  //TODO: update to take factory address as a parameter, default to env. variable
-  const currentRoundAddress = appStore.currentRoundAddress || (await getCurrentRound())
-
-  roundAddress.value = (route.params.address as string) || currentRoundAddress || ''
-
-  const registryAddress = await getRecipientRegistryAddress(roundAddress.value || null)
-  const _project = await getProject(registryAddress, route.params.id as string)
-  if (_project === null || _project.isHidden) {
+  const _project = await getLeaderboardProject(roundAddress.value, projectId, network)
+  if (_project === null) {
     // Project not found
     router.push({ name: 'projects' })
     return

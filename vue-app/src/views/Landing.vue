@@ -14,9 +14,12 @@
               {{ $t('landing.hero.subtitle') }}
             </div>
             <div class="btn-group">
-              <div v-if="currentRound" class="btn-action" @click="gotoLeaderboardOrProjectsPage">
-                {{ $t('landing.hero.action') }}
-              </div>
+              <links v-if="leaderboardRoute" class="btn-action" :to="leaderboardRoute">
+                {{ $t('landing.button.leaderboard') }}
+              </links>
+              <links v-else-if="appUrl" class="btn-action" :to="appUrl">
+                {{ $t('landing.button.getStarted') }}
+              </links>
               <div class="btn-info" @click="scrollToHowItWorks">
                 {{ $t('landing.hero.info') }}
               </div>
@@ -166,7 +169,7 @@
 </template>
 
 <script setup lang="ts">
-import { chain } from '@/api/core'
+import { chain, leaderboardRounds } from '@/api/core'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import Links from '@/components/Links.vue'
@@ -174,10 +177,15 @@ import ImageResponsive from '@/components/ImageResponsive.vue'
 import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { getAssetsUrl } from '@/utils/url'
-import router from '@/router'
+
+const leaderboardSet = leaderboardRounds.reduce((rounds, round) => {
+  rounds.add(round.address)
+  return rounds
+}, new Set<string>())
 
 const appStore = useAppStore()
-const { operator, isRoundJoinPhase, isRecipientRegistryFull, currentRound, currentRoundAddress } = storeToRefs(appStore)
+const { operator, isRoundJoinPhase, isRecipientRegistryFull, currentRound, currentRoundAddress, isAppReady } =
+  storeToRefs(appStore)
 
 const signUpDeadline = computed(() => appStore.currentRound?.signUpDeadline)
 
@@ -186,28 +194,19 @@ function scrollToHowItWorks() {
 }
 const chainIconUrl = getAssetsUrl(chain.logo)
 
-async function gotoLeaderboardOrProjectsPage() {
-  if (currentRoundAddress.value) {
-    let data
-    try {
-      data = await appStore.getLeaderboardData(currentRoundAddress.value)
-    } catch {
-      // ignore error and do not display leaderboard
-    }
-    if (data) {
-      router.push({
-        name: 'leaderboard',
-        params: {
-          address: currentRoundAddress.value,
-        },
-      })
-
-      return
-    }
+const leaderboardRoute = computed(() => {
+  if (!isAppReady.value) {
+    return null
   }
 
-  router.push({ name: 'projects' })
-}
+  const roundAddress = currentRoundAddress.value || ''
+  const leaderboard = leaderboardRounds.find(round => round.address === roundAddress)
+  return leaderboard ? { name: 'leaderboard', params: { network: leaderboard.network, address: roundAddress } } : null
+})
+
+const appUrl = computed(() => {
+  return isAppReady.value && currentRoundAddress.value ? `/projects` : null
+})
 </script>
 
 <style scoped lang="scss">

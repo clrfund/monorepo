@@ -3,6 +3,8 @@ import { ethers } from 'ethers'
 import { FundingRoundFactory } from './abi'
 import { CHAIN_INFO } from '@/utils/chains'
 
+import historicalRounds from '@/rounds/rounds.json'
+
 export const rpcUrl = import.meta.env.VITE_ETHEREUM_API_URL
 if (!rpcUrl) {
   throw new Error('Please provide ethereum rpc url for connecting to blockchain')
@@ -48,9 +50,6 @@ if (!['simple', 'optimistic', 'kleros'].includes(recipientRegistryType as string
 }
 export const recipientRegistryPolicy = import.meta.env.VITE_RECIPIENT_REGISTRY_POLICY
 export const operator: string = import.meta.env.VITE_OPERATOR || 'Clr.fund'
-export const extraRounds: string[] = import.meta.env.VITE_EXTRA_ROUNDS
-  ? import.meta.env.VITE_EXTRA_ROUNDS.split(',')
-  : []
 
 export const SUBGRAPH_ENDPOINT =
   import.meta.env.VITE_SUBGRAPH_URL || 'https://api.thegraph.com/subgraphs/name/clrfund/clrfund'
@@ -76,3 +75,13 @@ export const brightIdSponsorUrl = import.meta.env.VITE_BRIGHTID_SPONSOR_API_URL
 export const MAX_WAIT_DEPTH = Number(import.meta.env.VITE_MAX_WAIT_DEPTH) || 15
 
 export const hideThemeButton = Boolean(import.meta.env.VITE_HIDE_THEME_BUTTON)
+export type LeaderboardRound = {
+  address: string
+  network: string
+}
+
+const leaderboardRounds = historicalRounds as LeaderboardRound[]
+export { leaderboardRounds }
+
+export const useHumanbound = /^yes$/i.test(import.meta.env.VITE_USE_HUMANBOUND)
+export const humanboundWebsiteUrl = 'https://app.humanbound.xyz'

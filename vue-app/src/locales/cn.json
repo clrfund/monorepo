@@ -518,6 +518,7 @@
       "label6": "内容",
       "label7": "研究",
       "label8": "数据",
+      "label_education": "教育",
       "error5": "您需要选择一个类别",
       "label9": "问题空间",
       "p5": "解释您要解决的问题. 支持 Markdown。",
@@ -535,7 +536,9 @@
       "p2": "有意的捐献者可能有兴趣知道您的用款计划。 支持 Markdown。",
       "input2": "例如: 在我们的路线图上。。。",
       "error2": "让捐献者了解您的用款计划。",
-      "preview1": "预览："
+      "preview1": "预览：",
+      "address_must_hold_humanbound_sbt": "这个地址必须持有",
+      "humanbound_sbt_link": "humanbound SBT"
     },
     "step2": {
       "h2": "团队",
@@ -650,11 +653,14 @@
     }
   },
   "landing": {
+    "button": {
+      "getStarted": "开始吧！",
+      "leaderboard": "排行榜"
+    },
     "hero": {
       "title": "将您最喜欢的项目送往月球！",
       "subtitle": "您捐赠的每个项目都将获得额外资金。",
-      "info": "如何运作",
-      "action": "开始"
+      "info": "如何运作"
     },
     "callout": {
       "title": "参加筹款",
@@ -1119,7 +1125,8 @@
       "content": "内容",
       "research": "研究",
       "data": "数据",
-      "other": "其他"
+      "other": "其他",
+      "education": "教育"
     },
     "timeleft": {
       "unit": {
@@ -1149,6 +1156,11 @@
       "no_scams": {
         "tagline": "无欺诈",
         "description": "显然，您的项目不应欺诈何人的资金或信息。"
+      },
+      "humanbound": {
+        "tagline": "人类绑定",
+        "description": "项目的接收地址必须持有一个与",
+        "link": "人类绑定的 SBT。"
       }
     },
     "cart": {
@@ -1189,7 +1201,7 @@
         "donation": "捐款细节",
         "team": "团队",
         "links": "链接",
-        "images": "图片",
+        "image": "图片",
         "review": "审查",
         "submit": "提交"
       }

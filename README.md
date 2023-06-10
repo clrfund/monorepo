@@ -175,7 +175,6 @@ to run `yarn test` or `yarn test:contracts`.
   - [Vuelidate](https://vuelidate-next.netlify.app/)
   - [vue-final-modal](https://vue-final-modal.org)
   - [Ethers](https://docs.ethers.io/v5/)
-  - [Gun](https://gun.eco/docs/)
 
 ### Visual Studio Code
 

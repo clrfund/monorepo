@@ -77,21 +77,9 @@ const props = defineProps<Props>()
 
 function projectRoute(id: string): LocationAsRelativeRaw {
   return {
-    name: 'round-project',
-    params: { id, address: props.round.fundingRoundAddress },
+    name: 'leaderboard-project',
+    params: { id, address: props.round.fundingRoundAddress, network: props.round.network },
   }
-}
-
-function isFirst(index: number) {
-  return index === 0
-}
-
-function isSecond(index: number) {
-  return index === 1
-}
-
-function isThird(index: number) {
-  return index === 2
 }
 
 function formatVotes(votes: BigNumber): string {

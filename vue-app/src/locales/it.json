@@ -518,6 +518,7 @@
       "label6": "Contenuto",
       "label7": "Ricerca",
       "label8": "Dati",
+      "label_education": "Istruzione",
       "error5": "Devi scegliere una categoria",
       "label9": "Spazio problema",
       "p5": "Spiega i problemi che stai cercando di risolvere. Markdown supportato.",
@@ -535,7 +536,9 @@
       "p2": "I possibili collaboratori potrebbero convertirsi in base ai vostri piani di finanziamento specifici. Markdown supportato.",
       "input2": "la nostra roadmap...",
       "error2": "Fate sapere ai potenziali contributori quali piani avete per le loro donazioni.",
-      "preview1": "Anteprima:"
+      "preview1": "Anteprima:",
+      "address_must_hold_humanbound_sbt": "La destinazione deve contenere un ",
+      "humanbound_sbt_link": "SBT legato all'umano"
     },
     "step2": {
       "h2": "Dettagli del team",
@@ -650,11 +653,14 @@
     }
   },
   "landing": {
+    "button": {
+      "getStarted": "Inizia",
+      "leaderboard": "Visualizza Risultati"
+    },
     "hero": {
       "title": "Il primo round di Quadratic Funding italiano per Web3-Powered Public Goods!",
       "subtitle": "Ogni progetto a cui contribuisci riceve una parte di finanziamento aggiuntivo.",
-      "info": "Come funziona",
-      "action": "Inizia"
+      "info": "Come funziona"
     },
     "callout": {
       "title": "Unisciti al round di finanziamento",
