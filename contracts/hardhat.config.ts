@@ -175,12 +175,17 @@ task(
   async (_, { config }, runSuper) => {
     await runSuper()
     // Copy Poseidon artifacts
-    const externalContracts: Array<string> = []
+    const externalContracts: Array<string> = [
+      'PoseidonT3',
+      'PoseidonT4',
+      'PoseidonT5',
+      'PoseidonT6',
+    ]
     for (const contractName of externalContracts) {
       const artifact = JSON.parse(
         fs
           .readFileSync(
-            `../node_modules/maci-contracts/artifacts/contracts/${contractName}.sol/${contractName}.json`
+            `../node_modules/maci-contracts/artifacts/contracts/crypto/Hasher.sol/${contractName}.json`
           )
           .toString()
       )
