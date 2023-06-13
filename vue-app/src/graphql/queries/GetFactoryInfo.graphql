@@ -6,5 +6,6 @@ query GetFactoryInfo($factoryAddress: ID!) {
       decimals
     }
     contributorRegistryAddress
+    recipientRegistryAddress
   }
 }

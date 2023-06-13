@@ -114,7 +114,7 @@
                     content: $t('roundInfo.tooltip4'),
                   }"
                 >
-                  <img width="16px" src="@/assets/info.svg" />
+                  <img width="16" src="@/assets/info.svg" />
                 </div>
               </div>
               <div class="message" v-if="!hasUserContributed">
@@ -193,7 +193,7 @@
                   content: $t('roundInfo.tooltip8'),
                 }"
               >
-                <img width="16px" src="@/assets/info.svg" />
+                <img width="16" src="@/assets/info.svg" />
               </div>
               <div
                 v-if="isCurrentRound && !isRoundFinalized && !isRoundTallying && !isRoundCancelled"
@@ -248,6 +248,30 @@
             {{ $t('roundInfo.div21') }}
           </div>
         </div>
+        <div class="round-value-info">
+          <div class="round-info-sub-item">
+            <div class="round-info-item-top">
+              <div class="round-info-title">{{ $t('roundInfo.div16') }}</div>
+              <div
+                v-tooltip="{
+                  content: $t('roundInfo.tooltip8'),
+                }"
+              >
+                <img width="16" src="@/assets/info.svg" />
+              </div>
+              <div v-tooltip="$t('roundInfo.tooltip9')" class="add-link" @click="addMatchingFunds">
+                <img src="@/assets/add.svg" width="16px" />
+                <span class="add-funds-link">{{ $t('roundInfo.span1') }}</span>
+              </div>
+            </div>
+            <div class="round-info-value">
+              <div class="value">
+                {{ formatAmount(matchingPool) }}
+              </div>
+              <div class="unit">{{ nativeTokenSymbol }}</div>
+            </div>
+          </div>
+        </div>
       </template>
       <loader v-if="isLoading" />
     </div>
@@ -291,6 +315,9 @@ const {
   canUserReallocate,
   recipientJoinDeadline,
   isRoundContributionPhase,
+  nativeTokenSymbol,
+  nativeTokenDecimals,
+  matchingPool,
 } = storeToRefs(appStore)
 const userStore = useUserStore()
 const { currentUser } = storeToRefs(userStore)
@@ -362,7 +389,10 @@ function formatDate(value: DateTime): string {
 }
 
 function formatAmount(value: BigNumber | FixedNumber | string): string {
-  return _formatAmount(value, roundInfo.value?.nativeTokenDecimals, 4)
+  if (!nativeTokenDecimals.value) {
+    return ''
+  }
+  return _formatAmount(value, nativeTokenDecimals.value, 4)
 }
 
 function addMatchingFunds(): void {
@@ -389,6 +419,7 @@ function addMatchingFunds(): void {
         close()
         // Reload matching pool size
         appStore.loadRoundInfo()
+        appStore.loadFactoryInfo()
       },
     },
   })
