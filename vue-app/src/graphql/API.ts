@@ -16,6 +16,7 @@ export type Scalars = {
   BigDecimal: any;
   BigInt: any;
   Bytes: any;
+  Int8: any;
 };
 
 export type BlockChangedFilter = {
@@ -3181,7 +3182,7 @@ export type GetFactoryInfoQueryVariables = Exact<{
 }>;
 
 
-export type GetFactoryInfoQuery = { __typename?: 'Query', fundingRoundFactory: { __typename?: 'FundingRoundFactory', contributorRegistryAddress: any | null, nativeTokenInfo: { __typename?: 'Token', tokenAddress: any | null, symbol: string | null, decimals: any | null } | null } | null };
+export type GetFactoryInfoQuery = { __typename?: 'Query', fundingRoundFactory: { __typename?: 'FundingRoundFactory', contributorRegistryAddress: any | null, recipientRegistryAddress: any | null, nativeTokenInfo: { __typename?: 'Token', tokenAddress: any | null, symbol: string | null, decimals: any | null } | null } | null };
 
 export type GetLatestBlockNumberQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3339,6 +3340,7 @@ export const GetFactoryInfoDocument = gql`
       decimals
     }
     contributorRegistryAddress
+    recipientRegistryAddress
   }
 }
     `;
