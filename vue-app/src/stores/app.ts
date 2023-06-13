@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { BigNumber } from 'ethers'
+import { FixedNumber, type BigNumber } from 'ethers'
 import {
   type CartItem,
   type Contributor,
@@ -151,6 +151,21 @@ export const useAppStore = defineStore('app', {
       if (factory) {
         return factory.userRegistryAddress
       }
+    },
+    matchingPool: (state): FixedNumber => {
+      const { currentRound, factory } = state
+
+      let matchingPool = FixedNumber.from(0)
+
+      if (factory) {
+        matchingPool = factory.matchingPool
+      }
+
+      if (currentRound) {
+        matchingPool = currentRound.matchingPool
+      }
+
+      return matchingPool
     },
     nativeTokenSymbol: (state): string => {
       const { currentRound, factory } = state
@@ -435,9 +450,6 @@ export const useAppStore = defineStore('app', {
       }
     },
     async loadFactoryInfo() {
-      if (this.factory) {
-        return
-      }
       const factory = await getFactoryInfo()
       this.factory = factory
     },
