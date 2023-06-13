@@ -4,6 +4,7 @@
     {{ $t('recipientProfile.not_found') }}
   </div>
   <div v-else class="project-page">
+    <img class="project-image" :src="recipient.bannerImageUrl" :alt="recipient.name" />
     <div class="about">
       <h1 class="project-name" :title="addressName" :project-index="recipient.index">
         <span> {{ recipient.name }} </span>
@@ -51,6 +52,7 @@
             :hasBorder="true"
           />
           <links
+            v-if="blockExplorer"
             class="explorerLink"
             :to="blockExplorer.url"
             :title="$t('projectProfile.link1', { blockExplorer: blockExplorer.label })"
@@ -70,10 +72,10 @@
 </template>
 
 <script setup lang="ts">
-import { type Project, getRecipientBySubmitHash } from '@/api/projects'
+import { type Project, getProject, getCurrentRecipientRegistryAddress } from '@/api/projects'
 import { ensLookup } from '@/utils/accounts'
 import { useAppStore } from '@/stores'
-import { getBlockExplorer } from '@/utils/explorer'
+import { getBlockExplorerByAddress } from '@/utils/explorer'
 
 const route = useRoute()
 const appStore = useAppStore()
@@ -82,10 +84,13 @@ const recipient = ref<Project | null>(null)
 const ens = ref<string | null>(null)
 const loading = ref<boolean>(true)
 
-const hash = computed(() => (route.params.hash as string) || '')
-
 onMounted(async () => {
-  recipient.value = await getRecipientBySubmitHash(hash.value)
+  const recipientId = (route.params.id as string) || ''
+  const recipientRegistryAddress = await getCurrentRecipientRegistryAddress()
+
+  // retrieve the project information without filtering by the locked or verified status
+  const filter = false
+  recipient.value = await getProject(recipientRegistryAddress, recipientId, filter)
   if (recipient.value?.address) {
     ens.value = await ensLookup(recipient.value.address)
   }
@@ -93,7 +98,8 @@ onMounted(async () => {
 })
 
 const blockExplorer = computed(() => {
-  return getBlockExplorer(hash.value)
+  const recipientAddress = recipient.value?.address ?? ''
+  return getBlockExplorerByAddress(recipientAddress)
 })
 
 const addressName = computed(() => {

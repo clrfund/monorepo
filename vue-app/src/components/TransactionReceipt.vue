@@ -34,7 +34,7 @@ import { computed, onMounted, ref } from 'vue'
 import Loader from '@/components/Loader.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import Links from '@/components/Links.vue'
-import { getBlockExplorer } from '@/utils/explorer'
+import { getBlockExplorerByHash } from '@/utils/explorer'
 import { isTransactionMined } from '@/utils/contracts'
 import { renderAddressOrHash } from '@/utils/accounts'
 
@@ -56,7 +56,7 @@ function updateIsCopied(value: boolean): void {
 }
 
 const blockExplorer = computed(() => {
-  return getBlockExplorer(props.hash)
+  return getBlockExplorerByHash(props.hash)
 })
 
 onMounted(() => {

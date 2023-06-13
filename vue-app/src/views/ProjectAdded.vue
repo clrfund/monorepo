@@ -23,7 +23,9 @@
             </li>
           </ul>
           <div class="mt2 button-spacing">
-            <links :to="`/recipients/${hash}`" class="btn-primary">{{ $t('projectAdded.link2') }}</links>
+            <links v-if="recipientId" :to="`/recipients/${recipientId}`" class="btn-primary">{{
+              $t('projectAdded.link2')
+            }}</links>
             <links to="/" class="btn-secondary">{{ $t('projectAdded.link3') }}</links>
           </div>
         </div>
@@ -43,11 +45,21 @@ import ImageResponsive from '@/components/ImageResponsive.vue'
 import { useAppStore } from '@/stores'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
+import { getRecipientBySubmitHash } from '@/api/projects'
 
 const route = useRoute()
 const appStore = useAppStore()
 const { currentRound } = storeToRefs(appStore)
 const hash = computed(() => route.params.hash as string)
+
+const recipientId = ref('')
+
+onMounted(async () => {
+  const recipient = await getRecipientBySubmitHash(hash.value)
+  if (recipient) {
+    recipientId.value = recipient.id
+  }
+})
 </script>
 
 <style scoped lang="scss">
