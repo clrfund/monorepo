@@ -82,5 +82,4 @@ export type LeaderboardRound = {
 const leaderboardRounds = historicalRounds as LeaderboardRound[]
 export { leaderboardRounds }
 
-export const useHumanbound = /^yes$/i.test(import.meta.env.VITE_USE_HUMANBOUND)
-export const humanboundWebsiteUrl = 'https://app.humanbound.xyz'
+export const showComplianceRequirement = /^yes$/i.test(import.meta.env.VITE_SHOW_COMPLIANCE_REQUIREMENT)

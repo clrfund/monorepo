@@ -19,6 +19,7 @@ declare module '@vue/runtime-core' {
     CartWidget: typeof import('./components/CartWidget.vue')['default']
     ClaimButton: typeof import('./components/ClaimButton.vue')['default']
     ClaimModal: typeof import('./components/ClaimModal.vue')['default']
+    ComplianceInfo: typeof import('./components/ComplianceInfo.vue')['default']
     ContributionModal: typeof import('./components/ContributionModal.vue')['default']
     CopyButton: typeof import('./components/CopyButton.vue')['default']
     CriteriaModal: typeof import('./components/CriteriaModal.vue')['default']
