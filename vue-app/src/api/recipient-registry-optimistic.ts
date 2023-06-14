@@ -55,32 +55,6 @@ export enum RequestStatus {
   Removed = 'Removed',
 }
 
-export function formToProjectInterface(data: RecipientApplicationData): Project {
-  const { project, fund, team, links, image } = data
-  return {
-    id: fund.resolvedAddress,
-    address: fund.resolvedAddress,
-    name: project.name,
-    tagline: project.tagline,
-    description: project.description,
-    category: project.category,
-    problemSpace: project.problemSpace,
-    plans: fund.plans,
-    teamName: team.name,
-    teamDescription: team.description,
-    githubUrl: links.github,
-    radicleUrl: links.radicle,
-    websiteUrl: links.website,
-    twitterUrl: links.twitter,
-    discordUrl: links.discord,
-    bannerImageUrl: `${ipfsGatewayUrl}/ipfs/${image.bannerHash}`,
-    thumbnailImageUrl: `${ipfsGatewayUrl}/ipfs/${image.thumbnailHash}`,
-    index: 0,
-    isHidden: false,
-    isLocked: true,
-  }
-}
-
 interface RecipientMetadata {
   name: string
   description: string
@@ -289,7 +263,14 @@ export async function getProjects(registryAddress: string, startTime?: number, e
   return projects
 }
 
-export async function getProject(recipientId: string): Promise<Project | null> {
+/**
+ * Get project information
+ *
+ * @param recipientId recipient id
+ * @param filter default to always filter result by locked or verified status
+ * @returns project
+ */
+export async function getProject(recipientId: string, filter = true): Promise<Project | null> {
   if (!isHexString(recipientId, 32)) {
     return null
   }
@@ -311,6 +292,10 @@ export async function getProject(recipientId: string): Promise<Project | null> {
   } catch {
     // Invalid metadata
     return null
+  }
+
+  if (!filter) {
+    return project
   }
 
   const requestType = Number(recipient.requestType)

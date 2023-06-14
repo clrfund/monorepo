@@ -184,7 +184,7 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: '/recipients/:hash',
+    path: '/recipients/:id',
     name: 'recipient-profile',
     component: RecipientProfile,
     meta: {

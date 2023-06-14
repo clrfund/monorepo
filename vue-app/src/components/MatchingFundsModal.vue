@@ -2,7 +2,7 @@
   <vue-final-modal class="modal-container">
     <div class="modal-body">
       <div v-if="step === 1">
-        <h3>{{ $t('matchingFundsModal.title', { tokenSymbol }) }}</h3>
+        <h3>{{ $t('matchingFundsModal.title', { nativeTokenSymbol }) }}</h3>
         <div>
           {{ $t('matchingFundsModal.fund_distribution_message') }}
         </div>
@@ -21,7 +21,7 @@
           {{
             $t('matchingFundsModal.div1', {
               renderBalance: renderBalance,
-              tokenSymbol: tokenSymbol,
+              tokenSymbol: nativeTokenSymbol,
             })
           }}
         </div>
@@ -37,7 +37,7 @@
           {{
             $t('matchingFundsModal.h3_2_t1', {
               renderContributionAmount: renderContributionAmount,
-              tokenSymbol: tokenSymbol,
+              tokenSymbol: nativeTokenSymbol,
             })
           }}
         </h3>
@@ -49,7 +49,7 @@
           {{
             $t('matchingFundsModal.h3_3', {
               renderContributionAmount: renderContributionAmount,
-              tokenSymbol: tokenSymbol,
+              tokenSymbol: nativeTokenSymbol,
             })
           }}
         </h3>
@@ -69,7 +69,6 @@ import InputButton from '@/components/InputButton.vue'
 
 import { waitForTransaction } from '@/utils/contracts'
 import { formatAmount } from '@/utils/amounts'
-import { getTokenLogo } from '@/utils/tokens'
 import { formatUnits } from '@ethersproject/units'
 
 import { ERC20 } from '@/api/abi'
@@ -79,6 +78,8 @@ import { useAppStore, useUserStore } from '@/stores'
 
 const appStore = useAppStore()
 const userStore = useUserStore()
+
+const { nativeTokenSymbol, nativeTokenDecimals, nativeTokenAddress } = storeToRefs(appStore)
 
 // state
 const step = ref(1)
@@ -96,12 +97,10 @@ const balance = computed<string | null>(() => {
 const renderBalance = computed<string | null>(() => {
   const balance: BigNumber | null | undefined = userStore.currentUser?.balance
   if (balance === null || typeof balance === 'undefined') return null
-  const { nativeTokenDecimals } = appStore.currentRound!
-  return formatAmount(balance, nativeTokenDecimals, null, 5)
+  return formatAmount(balance, nativeTokenDecimals.value, null, 5)
 })
 const renderContributionAmount = computed<string | null>(() => {
-  const { nativeTokenDecimals } = appStore.currentRound!
-  return formatAmount(amount.value, nativeTokenDecimals, null, null)
+  return formatAmount(amount.value, nativeTokenDecimals.value, null, null)
 })
 const isBalanceSufficient = computed<boolean>(() => {
   if (balance.value === null) return false
@@ -110,10 +109,9 @@ const isBalanceSufficient = computed<boolean>(() => {
 })
 
 const isAmountValid = computed<boolean>(() => {
-  const { nativeTokenDecimals } = appStore.currentRound!
   let _amount
   try {
-    _amount = parseFixed(amount.value, nativeTokenDecimals)
+    _amount = parseFixed(amount.value, nativeTokenDecimals.value)
   } catch {
     return false
   }
@@ -125,14 +123,11 @@ const isAmountValid = computed<boolean>(() => {
   }
   return true
 })
-const tokenSymbol = computed<string>(() => appStore.currentRound?.nativeTokenSymbol || '')
-const tokenLogo = computed<string>(() => getTokenLogo(tokenSymbol.value))
 
 async function contributeMatchingFunds() {
   step.value += 1
-  const { nativeTokenAddress, nativeTokenDecimals } = appStore.currentRound!
-  const token = new Contract(nativeTokenAddress, ERC20, userStore.signer)
-  const _amount = parseFixed(amount.value, nativeTokenDecimals)
+  const token = new Contract(nativeTokenAddress.value, ERC20, userStore.signer)
+  const _amount = parseFixed(amount.value, nativeTokenDecimals.value)
 
   // TODO: update to take factory address as a parameter from the route props, default to env. variable
   const matchingPoolAddress = import.meta.env.VITE_MATCHING_POOL_ADDRESS

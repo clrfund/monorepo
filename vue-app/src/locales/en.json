@@ -537,8 +537,7 @@
       "input2": "ex: on our roadmap...",
       "error2": "Let potential contributors know what plans you have for their donations.",
       "preview1": "Preview:",
-      "address_must_hold_humanbound_sbt": "The address must hold a ",
-      "humanbound_sbt_link": "humanbound SBT"
+      "address_requirement": "This address, or at least one of the signers, in the case of a multisig, should hold a {link_1}. Alternatively, project should be able to demonstrate that it has completed KYC for a reputable grants program, like the {link_2}, in the past year."
     },
     "step2": {
       "h2": "Team details",
@@ -1158,10 +1157,9 @@
         "tagline": "No scams",
         "description": "Obviously, your project must not put anyone's funds or information at risk."
       },
-      "humanbound": {
-        "tagline": "Humanbound",
-        "description": "The project's receiving address must hold a ",
-        "link": "humanbound SBT."
+      "compliance": {
+        "tagline": "Compliance",
+        "description": "The project's receiving address, or at least one signer on the team's multisig, should hold a {link_1}. Alternatively, project should be able to demonstrate that it has completed KYC for a reputable grants program, like the {link_2}, in the past year."
       }
     },
     "cart": {
@@ -1200,7 +1198,7 @@
     "progress": {
       "step": {
         "project": "About the project",
-        "donation": "Donation details",
+        "fund": "Donation details",
         "team": "Team details",
         "links": "Links",
         "image": "Images",
@@ -1223,5 +1221,9 @@
   "more_on_maci": "More on MACI",
   "add_project": "Add project",
   "close": "Close",
-  "please_sign_message": "Please sign the message in your wallet"
+  "please_sign_message": "Please sign the message in your wallet",
+  "compliance": {
+    "humanbound_sbt": "humanbound SBT",
+    "esp": "ESP"
+  }
 }

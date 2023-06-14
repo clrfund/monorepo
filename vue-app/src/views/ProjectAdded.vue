@@ -23,9 +23,11 @@
             </li>
           </ul>
           <div class="mt2 button-spacing">
-            <links v-if="isOptimisticRecipientRegistry" :to="`/recipients/${hash}`" class="btn-primary">{{
-              $t('projectAdded.link2')
-            }}</links>
+            <template v-if="isOptimisticRecipientRegistry">
+              <links v-if="recipientId" :to="`/recipients/${recipientId}`" class="btn-primary">{{
+                $t('projectAdded.link2')
+              }}</links>
+            </template>
             <links v-else to="/projects" class="btn-primary">{{ $t('projectAdded.linkProjects') }}</links>
             <links to="/" class="btn-secondary">{{ $t('projectAdded.link3') }}</links>
           </div>
@@ -47,11 +49,21 @@ import { useAppStore } from '@/stores'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { isOptimisticRecipientRegistry } from '@/api/core'
+import { getRecipientBySubmitHash } from '@/api/projects'
 
 const route = useRoute()
 const appStore = useAppStore()
 const { currentRound } = storeToRefs(appStore)
 const hash = computed(() => route.params.hash as string)
+
+const recipientId = ref('')
+
+onMounted(async () => {
+  const recipient = await getRecipientBySubmitHash(hash.value)
+  if (recipient) {
+    recipientId.value = recipient.id
+  }
+})
 </script>
 
 <style scoped lang="scss">

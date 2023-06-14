@@ -537,8 +537,7 @@
       "input2": "ej: en nuestro plan de desarrollo...",
       "error2": "Informa a los posibles contribuyentes sobre tus planes para sus donaciones.",
       "preview1": "Vista previa:",
-      "address_must_hold_humanbound_sbt": "La dirección debe tener un ",
-      "humanbound_sbt_link": "SBT vinculado a un humano"
+      "address_requirement": "Esta dirección, o al menos uno de los firmantes en el caso de una firma múltiple, debería poseer un {link_1}. Alternativamente, el proyecto debería poder demostrar que ha completado el proceso KYC para un programa de subvenciones reputado, como el {link_2}, en el último año."
     },
     "step2": {
       "h2": "Detalles del equipo",
@@ -1158,10 +1157,9 @@
         "tagline": "No estafas",
         "description": "Obviamente, tu proyecto no debe poner en riesgo los fondos o la información de nadie."
       },
-      "humanbound": {
-        "tagline": "Humanbound",
-        "description": "La dirección receptora del proyecto debe tener un ",
-        "link": "humanbound SBT."
+      "compliance": {
+        "tagline": "Cumplimiento",
+        "description": "La dirección de recepción del proyecto, o al menos uno de los firmantes en el multisig del equipo, debería tener un {link_1}. Alternativamente, el proyecto debería poder demostrar que ha completado el KYC para un programa de subvenciones reputado, como el {link_2}, en el último año."
       }
     },
     "cart": {
@@ -1200,7 +1198,7 @@
     "progress": {
       "step": {
         "project": "Acerca del proyecto",
-        "donation": "Detalles de la donación",
+        "fund": "Detalles de la donación",
         "team": "Detalles del equipo",
         "links": "Enlaces",
         "image": "Imágenes",
@@ -1223,5 +1221,9 @@
   "more_on_maci": "Más sobre MACI",
   "add_project": "Agregar proyecto",
   "close": "Cerrar",
-  "please_sign_message": "Por favor, firma el mensaje en tu billetera"
+  "please_sign_message": "Por favor, firma el mensaje en tu billetera",
+  "compliance": {
+    "humanbound_sbt": "humanbound SBT",
+    "esp": "ESP"
+  }
 }
