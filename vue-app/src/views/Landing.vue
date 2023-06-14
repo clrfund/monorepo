@@ -90,7 +90,7 @@
             {{ $t('landing.req.chain-cta', { chain: chain.label }) }}
           </links>
         </div>
-        <div class="pre-req" id="bright-id">
+        <div v-if="isBrightIdRequired" class="pre-req" id="bright-id">
           <div class="icon-row">
             <img src="@/assets/bright-id.png" id="bright-id-icon" />
             <p>
@@ -169,7 +169,7 @@
 </template>
 
 <script setup lang="ts">
-import { chain, leaderboardRounds } from '@/api/core'
+import { chain, leaderboardRounds, isBrightIdRequired } from '@/api/core'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import Links from '@/components/Links.vue'
@@ -177,11 +177,6 @@ import ImageResponsive from '@/components/ImageResponsive.vue'
 import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { getAssetsUrl } from '@/utils/url'
-
-const leaderboardSet = leaderboardRounds.reduce((rounds, round) => {
-  rounds.add(round.address)
-  return rounds
-}, new Set<string>())
 
 const appStore = useAppStore()
 const { operator, isRoundJoinPhase, isRecipientRegistryFull, currentRound, currentRoundAddress, isAppReady } =
@@ -542,6 +537,12 @@ ol li::before {
   padding: $content-space;
   > li {
     list-style-type: none;
+  }
+}
+
+.pre-req {
+  @media (min-width: $breakpoint-l) {
+    max-width: 32rem;
   }
 }
 </style>

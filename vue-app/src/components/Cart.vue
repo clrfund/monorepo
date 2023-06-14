@@ -235,7 +235,7 @@ import CartItems from '@/components/CartItems.vue'
 import Links from '@/components/Links.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import { MAX_CONTRIBUTION_AMOUNT, MAX_CART_SIZE, type CartItem, isContributionAmountValid } from '@/api/contributions'
-import { userRegistryType, UserRegistryType } from '@/api/core'
+import { userRegistryType, UserRegistryType, operator } from '@/api/core'
 import { RoundStatus } from '@/api/round'
 import { formatAmount as _formatAmount } from '@/utils/amounts'
 import FundsNeededWarning from '@/components/FundsNeededWarning.vue'
@@ -478,6 +478,7 @@ const errorMessage = computed<string | null>(() => {
   if (isMessageLimitReached.value) return t('dynamic.cart.error.reached_contribution_limit')
   if (!currentUser.value) return t('dynamic.cart.error.connect_wallet')
   if (isBrightIdRequired.value) return t('dynamic.cart.error.need_to_setup_brightid')
+  if (!currentUser.value.isRegistered) return t('dynamic.cart.error.user_not_registered', { operator })
   if (!isFormValid()) return t('dynamic.cart.error.invalid_contribution_amount')
   if (cart.value.length > MAX_CART_SIZE)
     return t('dynamic.cart.error.exceeded_max_cart_size', {

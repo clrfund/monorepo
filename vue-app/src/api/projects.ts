@@ -8,6 +8,7 @@ import OptimisticRegistry from './recipient-registry-optimistic'
 import KlerosRegistry from './recipient-registry-kleros'
 import sdk from '@/graphql/sdk'
 import { getLeaderboardData } from '@/api/leaderboard'
+import type { RecipientApplicationData } from '@/api/types'
 
 export interface LeaderboardProject {
   id: string // Address or another ID depending on registry implementation
@@ -229,5 +230,31 @@ export async function getLeaderboardProject(
     index: project.recipientIndex,
     isHidden: false, // always show leaderboard project
     isLocked: true, // Visible, but contributions are not allowed
+  }
+}
+
+export function formToProjectInterface(data: RecipientApplicationData): Project {
+  const { project, fund, team, links, image } = data
+  return {
+    id: fund.resolvedAddress,
+    address: fund.resolvedAddress,
+    name: project.name,
+    tagline: project.tagline,
+    description: project.description,
+    category: project.category,
+    problemSpace: project.problemSpace,
+    plans: fund.plans,
+    teamName: team.name,
+    teamDescription: team.description,
+    githubUrl: links.github,
+    radicleUrl: links.radicle,
+    websiteUrl: links.website,
+    twitterUrl: links.twitter,
+    discordUrl: links.discord,
+    bannerImageUrl: `${ipfsGatewayUrl}/ipfs/${image.bannerHash}`,
+    thumbnailImageUrl: `${ipfsGatewayUrl}/ipfs/${image.thumbnailHash}`,
+    index: 0,
+    isHidden: false,
+    isLocked: true,
   }
 }

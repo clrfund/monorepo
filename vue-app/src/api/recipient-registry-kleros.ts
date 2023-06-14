@@ -1,10 +1,11 @@
-import { Contract, type Event, Signer } from 'ethers'
+import { Contract, type Event, Signer, BigNumber } from 'ethers'
 import type { TransactionResponse } from '@ethersproject/abstract-provider'
 import { gtcrDecode } from '@kleros/gtcr-encoder'
 
 import { KlerosGTCR, KlerosGTCRAdapter } from './abi'
 import { provider, ipfsGatewayUrl } from './core'
 import type { Project } from './projects'
+import type { RegistryInfo } from './types'
 
 const KLEROS_CURATE_URL = 'https://curate.kleros.io/tcr/0x2E3B10aBf091cdc53cC892A50daBDb432e220398'
 
@@ -179,4 +180,30 @@ export async function registerProject(
   return transaction
 }
 
-export default { getProjects, getProject, registerProject }
+async function getRegistryInfo(registryAddress: string): Promise<RegistryInfo> {
+  const registry = new Contract(registryAddress, KlerosGTCRAdapter, provider)
+
+  let recipientCount
+  try {
+    recipientCount = await registry.getRecipientCount()
+  } catch {
+    // older BaseRecipientRegistry contract did not have recipientCount
+    // set it to zero as this information is only
+    // used during current round for space calculation
+    recipientCount = BigNumber.from(0)
+  }
+
+  // Kleros registry does not have owner
+  const owner = ''
+
+  // deposit, depositToken and challengePeriodDuration are only relevant to the optimistic registry
+  return {
+    deposit: BigNumber.from(0),
+    depositToken: '',
+    challengePeriodDuration: 0,
+    recipientCount: recipientCount.toNumber(),
+    owner,
+  }
+}
+
+export default { getProjects, getProject, registerProject, getRegistryInfo }

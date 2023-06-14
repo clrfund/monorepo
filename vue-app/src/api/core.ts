@@ -83,3 +83,6 @@ const leaderboardRounds = historicalRounds as LeaderboardRound[]
 export { leaderboardRounds }
 
 export const showComplianceRequirement = /^yes$/i.test(import.meta.env.VITE_SHOW_COMPLIANCE_REQUIREMENT)
+
+export const isBrightIdRequired = userRegistryType === 'brightid'
+export const isOptimisticRecipientRegistry = recipientRegistryType === 'optimistic'
