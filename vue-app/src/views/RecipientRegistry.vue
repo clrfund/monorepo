@@ -36,6 +36,14 @@
                   }"
                   >-></links
                 >
+                <links
+                  v-else
+                  :to="{
+                    name: 'recipient-profile',
+                    params: { id: request.recipientId },
+                  }"
+                  >-></links
+                >
               </div>
               <details class="project-details">
                 <summary>{{ $t('recipientRegistry.summary') }}</summary>
@@ -123,9 +131,6 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import type { BigNumber } from 'ethers'
-import humanizeDuration from 'humanize-duration'
-import { DateTime } from 'luxon'
 import CopyButton from '@/components/CopyButton.vue'
 
 import { chainId, exportBatchSize, recipientRegistryType } from '@/api/core'
@@ -136,12 +141,9 @@ import {
   getRequests,
   registerProject,
   rejectProject,
-  removeProject,
 } from '@/api/recipient-registry-optimistic'
 import Loader from '@/components/Loader.vue'
 import Links from '@/components/Links.vue'
-import { formatAmount as _formatAmount } from '@/utils/amounts'
-import { markdown } from '@/utils/markdown'
 import TransactionModal from '@/components/TransactionModal.vue'
 import { useUserStore, useRecipientStore } from '@/stores'
 import { storeToRefs } from 'pinia'
@@ -177,22 +179,6 @@ async function loadRequests() {
   requests.value = _requests.filter(req => Boolean(req.requester))
 }
 
-function formatAmount(value: BigNumber): string {
-  return _formatAmount(value, 18)
-}
-
-function formatDuration(seconds: number): string {
-  return humanizeDuration(seconds * 1000)
-}
-
-function formatDate(date: DateTime): string {
-  return date.toLocaleString(DateTime.DATETIME_SHORT)
-}
-
-function renderDescription(request: Request): string {
-  return markdown.render(request.metadata.description)
-}
-
 function isPending(request: Request): boolean {
   return request.status === RequestStatus.Submitted
 }
@@ -223,10 +209,6 @@ async function reject(request: Request): Promise<void> {
   await waitForTransactionAndLoad(
     rejectProject(recipientRegistryAddress.value!, request.recipientId, request.requester, userStore.signer),
   )
-}
-
-async function remove(request: Request): Promise<void> {
-  await waitForTransactionAndLoad(removeProject(recipientRegistryAddress.value!, request.recipientId, userStore.signer))
 }
 
 async function waitForTransactionAndLoad(transaction: Promise<TransactionResponse>) {

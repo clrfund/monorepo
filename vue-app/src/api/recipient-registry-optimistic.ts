@@ -374,7 +374,14 @@ export async function getProjects(registryAddress: string, startTime?: number, e
   return projects
 }
 
-export async function getProject(recipientId: string): Promise<Project | null> {
+/**
+ * Get project information
+ *
+ * @param recipientId recipient id
+ * @param filter default to always filter result by locked or verified status
+ * @returns project
+ */
+export async function getProject(recipientId: string, filter = true): Promise<Project | null> {
   if (!isHexString(recipientId, 32)) {
     return null
   }
@@ -396,6 +403,10 @@ export async function getProject(recipientId: string): Promise<Project | null> {
   } catch {
     // Invalid metadata
     return null
+  }
+
+  if (!filter) {
+    return project
   }
 
   const requestType = Number(recipient.requestType)

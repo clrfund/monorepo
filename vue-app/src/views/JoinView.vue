@@ -790,7 +790,7 @@ const rules = computed(() => {
 const v$ = useVuelidate(rules, form)
 
 const currentStep = ref<number>(0)
-const steps = ['project', 'donation', 'team', 'links', 'image', 'review', 'submit', 'confirm']
+const steps = ['project', 'fund', 'team', 'links', 'image', 'review', 'submit', 'confirm']
 const stepNames = steps.slice(0, steps.length - 1)
 const showSummaryPreview = ref(false)
 const isWaiting = ref(false)
@@ -884,7 +884,6 @@ function isStepValid(step: number): boolean {
     return isLinkStepValid()
   }
   const stepName: string = steps[step]
-
   return !v$.value[stepName]?.$invalid
 }
 

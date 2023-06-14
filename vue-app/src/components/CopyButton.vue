@@ -2,7 +2,6 @@
   <div
     v-tooltip="{
       content: isCopied ? $t('copyButton.tooltip1') : `${$t('copyButton.copy')}${text && ` ${text}`}`,
-      hideOnTargetClick: false,
     }"
     :class="`${myClass || 'copy-icon'} ${hasBorder && 'border'}`"
     @click="copyToClipboard"
