@@ -59,6 +59,19 @@ export async function getRecipientRegistryAddress(roundAddress: string | null): 
   }
 }
 
+export async function getCurrentRecipientRegistryAddress(): Promise<string> {
+  const data = await sdk.GetRecipientRegistryInfo({
+    factoryAddress: factory.address.toLowerCase(),
+  })
+
+  const registryAddress =
+    data.fundingRoundFactory?.currentRound?.recipientRegistry?.id ||
+    data.fundingRoundFactory?.recipientRegistry?.id ||
+    ''
+
+  return registryAddress
+}
+
 export async function getProjects(registryAddress: string, startTime?: number, endTime?: number): Promise<Project[]> {
   if (recipientRegistryType === 'simple') {
     return await SimpleRegistry.getProjects(registryAddress, startTime, endTime)
@@ -71,11 +84,21 @@ export async function getProjects(registryAddress: string, startTime?: number, e
   }
 }
 
-export async function getProject(registryAddress: string, recipientId: string): Promise<Project | null> {
+/**
+ * Get project information
+ *
+ * TODO: add subgraph event listener to track recipients from simple and kleros registries
+ *
+ * @param registryAddress recipient registry address
+ * @param recipientId  recipient id
+ * @param filter filter result by locked or verified status
+ * @returns project information
+ */
+export async function getProject(registryAddress: string, recipientId: string, filter = true): Promise<Project | null> {
   if (recipientRegistryType === 'simple') {
     return await SimpleRegistry.getProject(registryAddress, recipientId)
   } else if (recipientRegistryType === 'optimistic') {
-    return await OptimisticRegistry.getProject(recipientId)
+    return await OptimisticRegistry.getProject(recipientId, filter)
   } else if (recipientRegistryType === 'kleros') {
     return await KlerosRegistry.getProject(registryAddress, recipientId)
   } else {

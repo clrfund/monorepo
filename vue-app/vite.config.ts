@@ -33,6 +33,7 @@ export default defineConfig({
     alias: { '@': path.resolve(__dirname, 'src'), ...nodeStdlibBrowser },
   },
   optimizeDeps: {
+    include: ['@clrfund/maci-utils'],
     esbuildOptions: {
       target: 'esnext', // to enable nable Big integer literals
       inject: [require.resolve('node-stdlib-browser/helpers/esbuild/shim')],
