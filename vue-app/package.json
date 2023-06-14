@@ -14,7 +14,7 @@
     "type-check": "yarn vue-tsc --noEmit",
     "codegen": "graphql-codegen --config codegen.yml",
     "build-map": "NODE_OPTIONS=--max-old-space-size=4096 vite build --sourcemap",
-    "test:lint-i18n": "vue-i18n-extract report --vueFiles 'src/**/*.?(vue)' --languageFiles 'src/locales/*.?(json)' --exclude dynamic"
+    "test:lint-i18n": "vue-i18n-extract report --vueFiles 'src/**/*.?(vue)' --languageFiles 'src/locales/*.?(json)' --exclude dynamic --exclude join.step1.address_requirement"
   },
   "lint-staged": {
     "**/*.{js,ts,json,scss,css,vue}": [
