@@ -238,9 +238,8 @@
                 <p class="input-description">
                   {{ $t('join.step1.p1') }}
                 </p>
-                <div class="warning input-description" v-if="useHumanbound">
-                  {{ $t('join.step1.address_must_hold_humanbound_sbt') }}
-                  <links :to="humanboundWebsiteUrl">{{ $t('join.step1.humanbound_sbt_link') }}</links>
+                <div class="warning input-description" v-if="showComplianceRequirement">
+                  <compliance-info keypath="join.step1.address_requirement" />
                 </div>
                 <input
                   id="fund-address"
@@ -719,7 +718,7 @@ import { required, requiredIf, email, maxLength, url, helpers } from '@vuelidate
 import { type RecipientApplicationData, formToProjectInterface } from '@/api/recipient-registry-optimistic'
 import type { Project } from '@/api/projects'
 import { recipientExists } from '@/api/projects'
-import { chain, humanboundWebsiteUrl, useHumanbound } from '@/api/core'
+import { chain, showComplianceRequirement } from '@/api/core'
 import { DateTime } from 'luxon'
 import { useRecipientStore, useAppStore, useUserStore } from '@/stores'
 import { waitForTransactionAndCheck } from '@/utils/contracts'

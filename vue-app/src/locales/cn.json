@@ -537,8 +537,7 @@
       "input2": "例如: 在我们的路线图上。。。",
       "error2": "让捐献者了解您的用款计划。",
       "preview1": "预览：",
-      "address_must_hold_humanbound_sbt": "这个地址必须持有",
-      "humanbound_sbt_link": "humanbound SBT"
+      "address_requirement": "这个地址, 无论是单签还是多签, 至少一位签名者应该持有 {link_1}。或者，项目方应该能够证明在过去一年内已经完成了像 {link_2} 这样信誉良好的赠款计划的KYC。"
     },
     "step2": {
       "h2": "团队",
@@ -1157,10 +1156,9 @@
         "tagline": "无欺诈",
         "description": "显然，您的项目不应欺诈何人的资金或信息。"
       },
-      "humanbound": {
-        "tagline": "人类绑定",
-        "description": "项目的接收地址必须持有一个与",
-        "link": "人类绑定的 SBT。"
+      "compliance": {
+        "tagline": "合规",
+        "description": "项目的接收地址，或者团队多签中至少一位签名者，应该持有一个 {link_1}。或者，项目方应该能够证明在过去一年内已经完成了像 {link_2} 这样信誉良好的赠款计划的KYC。"
       }
     },
     "cart": {
@@ -1221,5 +1219,9 @@
   "more_on_maci": "更多关于 MACI",
   "add_project": "添加项目",
   "close": "关",
-  "please_sign_message": "请在您的钱包中签个字"
+  "please_sign_message": "请在您的钱包中签个字",
+  "compliance": {
+    "humanbound_sbt": "人类绑定的 SBT",
+    "esp": "ESP"
+  }
 }
