@@ -222,7 +222,7 @@ body {
 }
 html {
   background-color: var(--bg-primary-color);
-  color: var(--text-color);
+  color: var(--text-body);
   font-family: Inter, sans-serif;
   font-size: 16px;
 }
@@ -369,7 +369,7 @@ summary:focus {
     margin-right: 0.5rem;
   }
   .image-wrapper img {
-    width: 80%;
+    width: 100%;
   }
 }
 #cart {
@@ -541,12 +541,10 @@ summary:focus {
   }
 }
 .v-popper--theme-tooltip {
-  background: var(--bg-primary-color);
   color: var(--text-color);
   font-family: Inter;
   line-height: 150%;
   font-size: 14px;
-  border: 1px solid $button-color;
   border-radius: 0.5rem;
   padding: 5px 10px 4px;
   max-width: 30ch;
@@ -556,6 +554,12 @@ summary:focus {
   }
   .v-popper__popper--shown {
     width: 300px;
+  }
+}
+
+.v-popper--has-tooltip {
+  img {
+    filter: invert(0.7);
   }
 }
 </style>

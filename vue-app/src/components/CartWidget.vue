@@ -154,7 +154,7 @@ function toggleCart(): void {
   }
 
   img {
-    filter: var(--img-filter, invert(0.7));
+    filter: var(--img-filter, invert(0));
   }
 }
 

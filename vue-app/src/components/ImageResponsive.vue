@@ -6,7 +6,7 @@
 import { computed } from 'vue'
 import { getAssetsUrl } from '@/utils/url'
 
-const BREAKPOINTS = [360, 720, 1080, 1440, 2160, 2880]
+const BREAKPOINTS = [360, 720]
 
 interface Props {
   title: string
@@ -16,7 +16,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const src = computed(() => {
-  return requirePath(props.title, 1080)
+  return requirePath(props.title, 720)
 })
 
 const srcset = computed(() => {

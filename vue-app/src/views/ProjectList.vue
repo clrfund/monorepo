@@ -289,7 +289,7 @@ function clearSearch(): void {
     width: auto;
     img {
       margin-right: 10px;
-      filter: var(--img-filter, invert(1));
+      filter: var(--img-filter, invert(0));
     }
 
     input {

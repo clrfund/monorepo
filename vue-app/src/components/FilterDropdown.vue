@@ -88,9 +88,6 @@ function handleFilterClick(selection: string): void {
     @media (max-width: $breakpoint-m) {
       width: auto;
     }
-    img {
-      filter: var(--img-filter, invert(1));
-    }
   }
   .selector-wrapper {
     display: none;
@@ -114,6 +111,7 @@ function handleFilterClick(selection: string): void {
       line-height: 24px;
       &:hover {
         background: var(--bg-secondary-highlight);
+        color: var(--text-color);
       }
     }
     .category-btn-selected {
