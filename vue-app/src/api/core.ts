@@ -86,3 +86,5 @@ export const showComplianceRequirement = /^yes$/i.test(import.meta.env.VITE_SHOW
 
 export const isBrightIdRequired = userRegistryType === 'brightid'
 export const isOptimisticRecipientRegistry = recipientRegistryType === 'optimistic'
+
+export const hideThemeButton = true

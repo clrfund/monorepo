@@ -2,7 +2,7 @@
 @import './mixins';
 
 .btn-primary {
-  @include button(white, var(--brand-secondary), none);
+  @include button(white, var(--brand-primary), none);
 }
 
 .btn-action {
@@ -14,7 +14,7 @@
 }
 
 .btn-info {
-  @include button(var(--text-color), var(--bg-primary-color), 2px solid var(--loader-color));
+  @include button(var(--text-body), var(--bg-primary-color), 2px solid var(--loader-color));
 }
 
 .btn-warning {
@@ -30,7 +30,7 @@
 }
 
 .explorer-btn {
-  @include button(white, var(--bg-inactive), none);
+  @include button(white, var(--bg-secondary-color), none);
   box-shadow: var(--box-shadow);
   display: flex;
   gap: 0.5rem;
@@ -46,7 +46,7 @@
 
 .navbar-btn,
 .dropdown-btn {
-  @include button(white, #2c2938, 1px solid rgba(115, 117, 166, 0.3));
+  @include button(white, var(--bg-primary-color), 1px solid rgba(115, 117, 166, 0.3));
   padding: 0.25rem 0.5rem;
   border-radius: 8px;
   margin-right: 0.5rem;
@@ -88,8 +88,8 @@
 .tag {
   font-family: 'Glacial Indifference', sans-serif;
   padding: 0.5rem 0.75rem;
-  background: var(--bg-light-accent);
-  color: $button-disabled-text-color;
+  background: var(--bg-secondary-color);
+  color: var(--text-secondary);
   width: fit-content;
   border-radius: 4px;
 }

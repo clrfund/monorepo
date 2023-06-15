@@ -13,11 +13,11 @@ $button-disabled-color: #56567a;
 $button-disabled-text-color: #aaa9af;
 $box-shadow-nav-bar: 0px -4px 16px rgba(255, 255, 255, 0.05);
 
-$gradient-highlight: linear-gradient(109.01deg, $highlight-color 6.45%, $clr-pink 99.55%);
-
 $rank-1-color: #edbc00;
 $rank-2-color: #bd6b5e;
 $rank-3-color: #5d69ff;
+
+$gradient-highlight: linear-gradient(109.01deg, $highlight-color 6.45%, $clr-pink 99.55%);
 
 // inactive - 20% opacity
 $gradient-inactive: linear-gradient(109.01deg, rgba($highlight-color, 0.2) 6.45%, rgba($clr-pink, 0.2) 99.55%);
