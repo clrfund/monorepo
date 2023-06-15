@@ -234,7 +234,7 @@ const routes: Array<RouteRecordRaw> = [
 ]
 
 if (isBrightIdRequired) {
-  routes.concat([
+  routes.push(
     {
       path: '/verify',
       name: 'verify',
@@ -259,7 +259,7 @@ if (isBrightIdRequired) {
         title: 'Verification Steps',
       },
     },
-  ])
+  )
 }
 
 if (isOptimisticRecipientRegistry) {

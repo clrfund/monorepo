@@ -61,7 +61,14 @@ async function promptSignagure() {
 }
 
 function toggleCart(): void {
-  if (currentUser.value && !currentUser.value.encryptionKey) {
+  if (!currentUser.value) {
+    // should not get here as the widget is only shown if user is connected with their wallet
+    return
+  }
+
+  if (currentUser.value.encryptionKey) {
+    appStore.toggleShowCartPanel()
+  } else {
     promptSignagure()
   }
 }
