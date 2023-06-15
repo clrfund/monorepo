@@ -774,8 +774,8 @@ const blockExplorer = computed(() => ({
 }
 
 .contract-popover {
-  background-color: var(--bg-primary-color);
-  color: var(--text-color);
+  background-color: var(--bg-secondary-color);
+  color: var(--text-secondary);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -784,5 +784,6 @@ const blockExplorer = computed(() => ({
   border: solid 1px var(--border-highlight);
   border-radius: 6px;
   box-shadow: 0 6px 30px #0000001a;
+  margin-left: 10px;
 }
 </style>
