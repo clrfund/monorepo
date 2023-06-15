@@ -4,6 +4,7 @@ import { FundingRoundFactory } from './abi'
 import { CHAIN_INFO } from '@/utils/chains'
 
 import historicalRounds from '@/rounds/rounds.json'
+import { DateTime } from 'luxon'
 
 export const rpcUrl = import.meta.env.VITE_ETHEREUM_API_URL
 if (!rpcUrl) {
@@ -86,3 +87,10 @@ export const showComplianceRequirement = /^yes$/i.test(import.meta.env.VITE_SHOW
 
 export const isBrightIdRequired = userRegistryType === 'brightid'
 export const isOptimisticRecipientRegistry = recipientRegistryType === 'optimistic'
+
+// Try to get the next scheduled start date
+const nextStartDate = import.meta.env.VITE_NEXT_ROUND_START_DATE
+  ? DateTime.fromFormat(import.meta.env.VITE_NEXT_ROUND_START_DATE, 'yyyy-MM-dd')
+  : null
+
+export const nextRoundStartDate = nextStartDate?.isValid ? nextStartDate : null

@@ -829,6 +829,8 @@
     "unitap_link": "Unitap",
     "unitap_extra_text": ".",
     "link1": "Why is this important?",
+    "next_round_notice": "The round will begin on {start_date}. Please check back then.",
+    "no_round": "We haven't yet scheduled a funding round. Stay tuned!",
     "div2": "The current round is no longer accepting new contributions. Please try again next round.",
     "div3": "Contributions closed early – you can no longer donate! Due to the community's generosity and some technical constraints we had to close the round earlier than expected. If you already contributed, you still have time to reallocate if you need to. If you didn't get a chance to contribute, you can still help by donating to the matching pool",
     "link2": "I am BrightID verified",

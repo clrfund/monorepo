@@ -829,6 +829,8 @@
     "unitap_link": "Unitap",
     "unitap_extra_text": ".",
     "link1": "¿Por qué es importante?",
+    "next_round_notice": "La ronda comenzará el {start_date}. Por favor, revisa nuevamente entonces.",
+    "no_round": "Aún no hemos programado una ronda de financiamiento. ¡Mantente atento/a!",
     "div2": "La ronda actual ya no acepta nuevas contribuciones. Por favor, intenta nuevamente en la siguiente ronda.",
     "div3": "Las contribuciones se cerraron anticipadamente, ¡ya no puedes donar! Debido a la generosidad de la comunidad y algunas limitaciones técnicas, tuvimos que cerrar la ronda antes de lo previsto. Si ya has contribuido, todavía tienes tiempo para reasignar si es necesario. Si no tuviste la oportunidad de contribuir, aún puedes ayudar donando al fondo de concordancia",
     "link2": "Tengo BrightID instalado",
