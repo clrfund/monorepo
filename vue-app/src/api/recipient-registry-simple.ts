@@ -12,7 +12,6 @@ import { formToRecipientData } from './recipient'
 function decodeRecipientAdded(event: Event): Project {
   const args = event.args as any
   const metadata = JSON.parse(args._metadata)
-  console.log('metata', metadata)
   return {
     id: args._recipientId,
     address: args._recipient,
