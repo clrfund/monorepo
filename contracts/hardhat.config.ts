@@ -67,6 +67,10 @@ const config: HardhatUserConfig = {
       url: process.env.JSONRPC_HTTP_URL || 'https://arb1.arbitrum.io/rpc',
       accounts,
     },
+    arbitrumGoerli: {
+      url: process.env.JSONRPC_HTTP_URL || 'https://arb1.arbitrum.io/rpc',
+      accounts,
+    },
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY || 'YOUR_ETHERSCAN_API_KEY',
