@@ -152,9 +152,16 @@ async function getRoundInfo(
   ethers: any,
   operator: string
 ): Promise<Round> {
-  console.log('Fetching round data...')
+  console.log('Fetching round data for', roundContract.address)
   const round: any = { address: roundContract.address }
-  round.nativeTokenAddress = await roundContract.nativeToken()
+  try {
+    round.nativeTokenAddress = await roundContract.nativeToken()
+  } catch (err) {
+    const errorMessage = `Failed to get nativeToken. Make sure the environment variable JSONRPC_HTTP_URL is set properly: ${
+      (err as Error).message
+    }`
+    throw new Error(errorMessage)
+  }
 
   try {
     const token = await ethers.getContractAt('ERC20', round.nativeTokenAddress)

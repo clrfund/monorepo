@@ -4,13 +4,7 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-
-@Component
-export default class LayoutSteps extends Vue {}
-</script>
+<script setup lang="ts"></script>
 
 <style scoped lang="scss">
 @import '../styles/vars';

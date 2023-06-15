@@ -1,9 +1,13 @@
-import { Contract, Event } from 'ethers'
+import { Contract, BigNumber, Signer } from 'ethers'
+import type { Event } from 'ethers'
 import { isHexString } from '@ethersproject/bytes'
+import type { TransactionResponse } from '@ethersproject/abstract-provider'
 
 import { SimpleRecipientRegistry } from './abi'
 import { provider, ipfsGatewayUrl } from './core'
-import { Project } from './projects'
+import type { Project } from './projects'
+import type { RegistryInfo, RecipientApplicationData } from './types'
+import { formToRecipientData } from './recipient'
 
 function decodeRecipientAdded(event: Event): Project {
   const args = event.args as any
@@ -13,36 +17,34 @@ function decodeRecipientAdded(event: Event): Project {
     address: args._recipient,
     name: metadata.name,
     description: metadata.description,
-    imageUrl: `${ipfsGatewayUrl}/ipfs/${metadata.imageHash}`,
+    tagline: metadata.tagline,
+    category: metadata.category,
+    problemSpace: metadata.problemSpace,
+    plans: metadata.plans,
+    teamName: metadata.teamName,
+    teamDescription: metadata.teamDescription,
+    githubUrl: metadata.githubUrl,
+    radicleUrl: metadata.radicleUrl,
+    websiteUrl: metadata.websiteUrl,
+    twitterUrl: metadata.twitterUrl,
+    discordUrl: metadata.discordUrl,
+    bannerImageUrl: `${ipfsGatewayUrl}/ipfs/${metadata.bannerImageHash}`,
+    thumbnailImageUrl: `${ipfsGatewayUrl}/ipfs/${metadata.thumbnailImageHash}`,
     index: args._index.toNumber(),
     isHidden: false,
     isLocked: false,
   }
 }
 
-export async function getProjects(
-  registryAddress: string,
-  startTime?: number,
-  endTime?: number
-): Promise<Project[]> {
-  const registry = new Contract(
-    registryAddress,
-    SimpleRecipientRegistry,
-    provider
-  )
+export async function getProjects(registryAddress: string, startTime?: number, endTime?: number): Promise<Project[]> {
+  const registry = new Contract(registryAddress, SimpleRecipientRegistry, provider)
   const recipientAddedFilter = registry.filters.RecipientAdded()
-  const recipientAddedEvents = await registry.queryFilter(
-    recipientAddedFilter,
-    0
-  )
+  const recipientAddedEvents = await registry.queryFilter(recipientAddedFilter, 0)
   const recipientRemovedFilter = registry.filters.RecipientRemoved()
-  const recipientRemovedEvents = await registry.queryFilter(
-    recipientRemovedFilter,
-    0
-  )
+  const recipientRemovedEvents = await registry.queryFilter(recipientRemovedFilter, 0)
   const projects: Project[] = []
   for (const event of recipientAddedEvents) {
-    let project
+    let project: Project
     try {
       project = decodeRecipientAdded(event)
     } catch {
@@ -54,7 +56,7 @@ export async function getProjects(
       // Hide recipient if it is added after the end of round
       project.isHidden = true
     }
-    const removed = recipientRemovedEvents.find((event) => {
+    const removed = recipientRemovedEvents.find(event => {
       return (event.args as any)._recipientId === project.id
     })
     if (removed) {
@@ -74,23 +76,13 @@ export async function getProjects(
   return projects
 }
 
-export async function getProject(
-  registryAddress: string,
-  recipientId: string
-): Promise<Project | null> {
+export async function getProject(registryAddress: string, recipientId: string): Promise<Project | null> {
   if (!isHexString(recipientId, 32)) {
     return null
   }
-  const registry = new Contract(
-    registryAddress,
-    SimpleRecipientRegistry,
-    provider
-  )
+  const registry = new Contract(registryAddress, SimpleRecipientRegistry, provider)
   const recipientAddedFilter = registry.filters.RecipientAdded(recipientId)
-  const recipientAddedEvents = await registry.queryFilter(
-    recipientAddedFilter,
-    0
-  )
+  const recipientAddedEvents = await registry.queryFilter(recipientAddedFilter, 0)
   if (recipientAddedEvents.length !== 1) {
     // Project does not exist
     return null
@@ -103,10 +95,7 @@ export async function getProject(
     return null
   }
   const recipientRemovedFilter = registry.filters.RecipientRemoved(recipientId)
-  const recipientRemovedEvents = await registry.queryFilter(
-    recipientRemovedFilter,
-    0
-  )
+  const recipientRemovedEvents = await registry.queryFilter(recipientRemovedFilter, 0)
   if (recipientRemovedEvents.length !== 0) {
     // Disallow contributions to removed recipient
     project.isLocked = true
@@ -116,4 +105,40 @@ export async function getProject(
   return project
 }
 
-export default { getProjects, getProject }
+async function getRegistryInfo(registryAddress: string): Promise<RegistryInfo> {
+  const registry = new Contract(registryAddress, SimpleRecipientRegistry, provider)
+
+  let recipientCount
+  try {
+    recipientCount = await registry.getRecipientCount()
+  } catch {
+    // older BaseRecipientRegistry contract did not have recipientCount
+    // set it to zero as this information is only
+    // used during current round for space calculation
+    recipientCount = BigNumber.from(0)
+  }
+  const owner = await registry.owner()
+
+  // deposit, depositToken and challengePeriodDuration are only relevant to the optimistic registry
+  return {
+    deposit: BigNumber.from(0),
+    depositToken: '',
+    challengePeriodDuration: 0,
+    recipientCount: recipientCount.toNumber(),
+    owner,
+  }
+}
+
+async function addRecipient(
+  registryAddress: string,
+  recipientApplicationData: RecipientApplicationData,
+  signer: Signer,
+): Promise<TransactionResponse> {
+  const registry = new Contract(registryAddress, SimpleRecipientRegistry, signer)
+  const recipientData = formToRecipientData(recipientApplicationData)
+  const { address, ...metadata } = recipientData
+  const transaction = await registry.addRecipient(address, JSON.stringify(metadata))
+  return transaction
+}
+
+export default { getProjects, getProject, getRegistryInfo, addRecipient }

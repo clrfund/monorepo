@@ -24,11 +24,15 @@ export class PublishMessage__Params {
   }
 
   get _message(): PublishMessage_messageStruct {
-    return this._event.parameters[0].value.toTuple() as PublishMessage_messageStruct;
+    return changetype<PublishMessage_messageStruct>(
+      this._event.parameters[0].value.toTuple()
+    );
   }
 
   get _encPubKey(): PublishMessage_encPubKeyStruct {
-    return this._event.parameters[1].value.toTuple() as PublishMessage_encPubKeyStruct;
+    return changetype<PublishMessage_encPubKeyStruct>(
+      this._event.parameters[1].value.toTuple()
+    );
   }
 }
 
@@ -66,7 +70,9 @@ export class SignUp__Params {
   }
 
   get _userPubKey(): SignUp_userPubKeyStruct {
-    return this._event.parameters[0].value.toTuple() as SignUp_userPubKeyStruct;
+    return changetype<SignUp_userPubKeyStruct>(
+      this._event.parameters[0].value.toTuple()
+    );
   }
 
   get _stateIndex(): BigInt {
@@ -103,6 +109,14 @@ export class MACI__coordinatorPubKeyResult {
     map.set("value1", ethereum.Value.fromUnsignedBigInt(this.value1));
     return map;
   }
+
+  getX(): BigInt {
+    return this.value0;
+  }
+
+  getY(): BigInt {
+    return this.value1;
+  }
 }
 
 export class MACI__genBatchUstPublicSignalsInput_ecdhPubKeysStruct extends ethereum.Tuple {
@@ -127,7 +141,9 @@ export class MACI__hashMessageInput_messageStruct extends ethereum.Tuple {
 
 export class MACI__hashStateLeafInput_stateLeafStruct extends ethereum.Tuple {
   get pubKey(): MACI__hashStateLeafInput_stateLeafPubKeyStruct {
-    return this[0].toTuple() as MACI__hashStateLeafInput_stateLeafPubKeyStruct;
+    return changetype<MACI__hashStateLeafInput_stateLeafPubKeyStruct>(
+      this[0].toTuple()
+    );
   }
 
   get voteOptionTreeRoot(): BigInt {
@@ -179,6 +195,18 @@ export class MACI__treeDepthsResult {
       ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(this.value2))
     );
     return map;
+  }
+
+  getStateTreeDepth(): i32 {
+    return this.value0;
+  }
+
+  getMessageTreeDepth(): i32 {
+    return this.value1;
+  }
+
+  getVoteOptionTreeDepth(): i32 {
+    return this.value2;
   }
 }
 
@@ -1305,15 +1333,21 @@ export class ConstructorCall__Inputs {
   }
 
   get _treeDepths(): ConstructorCall_treeDepthsStruct {
-    return this._call.inputValues[0].value.toTuple() as ConstructorCall_treeDepthsStruct;
+    return changetype<ConstructorCall_treeDepthsStruct>(
+      this._call.inputValues[0].value.toTuple()
+    );
   }
 
   get _batchSizes(): ConstructorCall_batchSizesStruct {
-    return this._call.inputValues[1].value.toTuple() as ConstructorCall_batchSizesStruct;
+    return changetype<ConstructorCall_batchSizesStruct>(
+      this._call.inputValues[1].value.toTuple()
+    );
   }
 
   get _maxValues(): ConstructorCall_maxValuesStruct {
-    return this._call.inputValues[2].value.toTuple() as ConstructorCall_maxValuesStruct;
+    return changetype<ConstructorCall_maxValuesStruct>(
+      this._call.inputValues[2].value.toTuple()
+    );
   }
 
   get _signUpGatekeeper(): Address {
@@ -1341,7 +1375,9 @@ export class ConstructorCall__Inputs {
   }
 
   get _coordinatorPubKey(): ConstructorCall_coordinatorPubKeyStruct {
-    return this._call.inputValues[9].value.toTuple() as ConstructorCall_coordinatorPubKeyStruct;
+    return changetype<ConstructorCall_coordinatorPubKeyStruct>(
+      this._call.inputValues[9].value.toTuple()
+    );
   }
 
   get _coordinatorAddress(): Address {
@@ -1549,11 +1585,15 @@ export class PublishMessageCall__Inputs {
   }
 
   get _message(): PublishMessageCall_messageStruct {
-    return this._call.inputValues[0].value.toTuple() as PublishMessageCall_messageStruct;
+    return changetype<PublishMessageCall_messageStruct>(
+      this._call.inputValues[0].value.toTuple()
+    );
   }
 
   get _encPubKey(): PublishMessageCall_encPubKeyStruct {
-    return this._call.inputValues[1].value.toTuple() as PublishMessageCall_encPubKeyStruct;
+    return changetype<PublishMessageCall_encPubKeyStruct>(
+      this._call.inputValues[1].value.toTuple()
+    );
   }
 }
 
@@ -1603,7 +1643,9 @@ export class SignUpCall__Inputs {
   }
 
   get _userPubKey(): SignUpCall_userPubKeyStruct {
-    return this._call.inputValues[0].value.toTuple() as SignUpCall_userPubKeyStruct;
+    return changetype<SignUpCall_userPubKeyStruct>(
+      this._call.inputValues[0].value.toTuple()
+    );
   }
 
   get _signUpGatekeeperData(): Bytes {

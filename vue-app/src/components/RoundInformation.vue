@@ -7,12 +7,12 @@
       <template v-if="roundInfo">
         <div class="round">
           <div class="round-title-bar">
-            <h2 class="round-title">{{ $store.getters.operator }}</h2>
-            <v-popover class="verified-container">
+            <h2 class="round-title">{{ operator }}</h2>
+            <v-dropdown :distance="6" class="verified-container" theme="contract-popover">
               <div class="verified">
                 <img src="@/assets/verified.svg" />
               </div>
-              <template slot="popover">
+              <template #popper>
                 <div class="contract-popover">
                   <div class="contract-address">
                     {{ roundInfo.fundingRoundAddress }}
@@ -24,20 +24,13 @@
                   }}</links>
                 </div>
               </template>
-            </v-popover>
+            </v-dropdown>
           </div>
           <div class="status" v-if="isRoundCancelled">
             <div class="circle closed" />
             {{ $t('roundInfo.div1') }}
           </div>
-          <div
-            class="status"
-            v-else-if="
-              isCurrentRound &&
-              !$store.getters.isRoundFinalized &&
-              !$store.getters.isRoundTallying
-            "
-          >
+          <div class="status" v-else-if="isCurrentRound && !isRoundFinalized && !isRoundTallying">
             <div class="circle open-pulse" />
             {{ $t('roundInfo.div2') }}
           </div>
@@ -46,10 +39,7 @@
             {{ $t('roundInfo.div3') }}
           </div>
         </div>
-        <div
-          :class="{ hidden: !(showNotice && haveNotice) }"
-          class="round-notice"
-        >
+        <div :class="{ hidden: !(showNotice && haveNotice) }" class="round-notice">
           <span class="bold-all-caps">
             <p>{{ $t('roundInfo.p1') }}</p>
           </span>
@@ -59,9 +49,9 @@
           <p v-if="isMaxMessagesReached">
             {{ $t('roundInfo.max_messages_reached') }}
           </p>
-          <p v-if="blogUrl">
+          <p v-if="roundInfo.blogUrl">
             {{ $t('roundInfo.more') }}
-            <links :to="blogUrl">{{ blogUrl }}</links>
+            <links :to="roundInfo.blogUrl">{{ roundInfo.blogUrl }}</links>
           </p>
 
           <div class="dismiss-btn" @click="toggleNotice">
@@ -76,91 +66,64 @@
               </div>
             </div>
             <div class="round-info-value">
-              <time-left :date="$store.getters.recipientJoinDeadline" />
+              <time-left v-if="recipientJoinDeadline" :date="recipientJoinDeadline" />
             </div>
           </div>
-          <div
-            v-else-if="
-              $store.getters.isRoundContributionPhase &&
-              !$store.getters.hasUserContributed
-            "
-            class="round-info-item"
-          >
+          <div v-else-if="isRoundContributionPhase && !hasUserContributed" class="round-info-item">
             <div class="full-width">
               <div class="round-info-item-top">
                 <div class="round-info-title">{{ $t('roundInfo.div6') }}</div>
                 <div
                   v-tooltip="{
                     content: $t('roundInfo.tooltip1'),
-                    trigger: 'hover click',
                   }"
                 >
-                  <img width="16px" src="@/assets/info.svg" />
+                  <img width="16" src="@/assets/info.svg" />
                 </div>
               </div>
             </div>
-            <div
-              class="round-info-value"
-              :title="
-                $t('roundInfo.div7') + formatDate(roundInfo.signUpDeadline)
-              "
-            >
+            <div class="round-info-value" :title="$t('roundInfo.div7') + formatDate(roundInfo.signUpDeadline)">
               <time-left :date="roundInfo.signUpDeadline" />
             </div>
           </div>
-          <div
-            v-else-if="
-              $store.getters.isRoundReallocationPhase ||
-              $store.getters.canUserReallocate
-            "
-            class="round-info-item"
-          >
+          <div v-else-if="isRoundReallocationPhase || canUserReallocate" class="round-info-item">
             <div class="full-width">
               <div class="round-info-item-top">
                 <div class="round-info-title">
-                  {{
-                    $store.getters.hasUserContributed
-                      ? $t('roundInfo.div8_1')
-                      : $t('roundInfo.div8_2')
-                  }}
+                  {{ hasUserContributed ? $t('roundInfo.div8_1') : $t('roundInfo.div8_2') }}
                 </div>
                 <div
-                  v-if="$store.getters.hasUserContributed"
+                  v-if="hasUserContributed"
                   v-tooltip="{
                     content: $t('roundInfo.tooltip2'),
-                    trigger: 'hover click',
                   }"
                 >
-                  <img width="16px" src="@/assets/info.svg" />
+                  <img width="16" src="@/assets/info.svg" />
                 </div>
                 <div
-                  v-else-if="!$store.state.currentUser"
+                  v-else-if="!currentUser"
                   v-tooltip="{
                     content: $t('roundInfo.tooltip3'),
-                    trigger: 'hover click',
                   }"
                 >
-                  <img width="16px" src="@/assets/info.svg" />
+                  <img width="16" src="@/assets/info.svg" />
                 </div>
                 <div
                   v-else
                   v-tooltip="{
                     content: $t('roundInfo.tooltip4'),
-                    trigger: 'hover click',
                   }"
                 >
-                  <img width="16px" src="@/assets/info.svg" />
+                  <img width="16" src="@/assets/info.svg" />
                 </div>
               </div>
-              <div class="message" v-if="!$store.getters.hasUserContributed">
+              <div class="message" v-if="!hasUserContributed">
                 {{ $t('roundInfo.div9') }}
               </div>
               <div
                 v-else
                 class="round-info-value"
-                :title="
-                  $t('roundInfo.div10') + formatDate(roundInfo.votingDeadline)
-                "
+                :title="$t('roundInfo.div10') + formatDate(roundInfo.votingDeadline)"
               >
                 <div class="round-info-value">
                   <time-left :date="roundInfo.votingDeadline" />
@@ -168,17 +131,13 @@
               </div>
             </div>
           </div>
-          <div
-            v-else-if="$store.getters.isRoundTallying"
-            class="round-info-item"
-          >
+          <div v-else-if="isRoundTallying" class="round-info-item">
             <div class="full-width">
               <div class="round-info-item-top">
                 <div class="round-info-title">{{ $t('roundInfo.div11') }}</div>
                 <img
                   v-tooltip="{
                     content: $t('roundInfo.tooltip5'),
-                    trigger: 'hover click',
                   }"
                   width="16px"
                   src="@/assets/info.svg"
@@ -189,20 +148,16 @@
               </div>
             </div>
           </div>
-          <div
-            v-else-if="$store.getters.isRoundFinalized"
-            class="round-info-item"
-          >
+          <div v-else-if="isRoundFinalized" class="round-info-item">
             <div class="full-width">
               <div class="round-info-item-top">
                 <div class="round-info-title">{{ $t('roundInfo.div13') }}</div>
                 <div
                   v-tooltip="{
                     content: $t('roundInfo.tooltip6'),
-                    trigger: 'hover click',
                   }"
                 >
-                  <img width="16px" src="@/assets/info.svg" />
+                  <img width="16" src="@/assets/info.svg" />
                 </div>
               </div>
               <div class="round-info-value">
@@ -219,10 +174,9 @@
                 <div
                   v-tooltip="{
                     content: $t('roundInfo.tooltip7'),
-                    trigger: 'hover click',
                   }"
                 >
-                  <img width="16px" src="@/assets/info.svg" />
+                  <img width="16" src="@/assets/info.svg" />
                 </div>
               </div>
               <div class="round-info-value">
@@ -237,18 +191,12 @@
               <div
                 v-tooltip="{
                   content: $t('roundInfo.tooltip8'),
-                  trigger: 'hover click',
                 }"
               >
-                <img width="16px" src="@/assets/info.svg" />
+                <img width="16" src="@/assets/info.svg" />
               </div>
               <div
-                v-if="
-                  isCurrentRound &&
-                  !$store.getters.isRoundFinalized &&
-                  !$store.getters.isRoundTallying &&
-                  !isRoundCancelled
-                "
+                v-if="isCurrentRound && !isRoundFinalized && !isRoundTallying && !isRoundCancelled"
                 v-tooltip="$t('roundInfo.tooltip9')"
                 class="add-link"
                 @click="addMatchingFunds"
@@ -282,10 +230,7 @@
               <div class="round-info-value">
                 <div class="value">{{ roundInfo.contributors }}</div>
                 <div class="unit">
-                  {{ $t('roundInfo.div19')
-                  }}{{
-                    roundInfo.contributors > 1 ? $t('roundInfo.pluralism') : ''
-                  }}
+                  {{ $t('roundInfo.div19') }}{{ roundInfo.contributors > 1 ? $t('roundInfo.pluralism') : '' }}
                 </div>
               </div>
             </div>
@@ -303,188 +248,189 @@
             {{ $t('roundInfo.div21') }}
           </div>
         </div>
+        <div class="round-value-info">
+          <div class="round-info-sub-item">
+            <div class="round-info-item-top">
+              <div class="round-info-title">{{ $t('roundInfo.div16') }}</div>
+              <div
+                v-tooltip="{
+                  content: $t('roundInfo.tooltip8'),
+                }"
+              >
+                <img width="16" src="@/assets/info.svg" />
+              </div>
+              <div v-tooltip="$t('roundInfo.tooltip9')" class="add-link" @click="addMatchingFunds">
+                <img src="@/assets/add.svg" width="16px" />
+                <span class="add-funds-link">{{ $t('roundInfo.span1') }}</span>
+              </div>
+            </div>
+            <div class="round-info-value">
+              <div class="value">
+                {{ formatAmount(matchingPool) }}
+              </div>
+              <div class="unit">{{ nativeTokenSymbol }}</div>
+            </div>
+          </div>
+        </div>
       </template>
       <loader v-if="isLoading" />
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import { Watch } from 'vue-property-decorator'
-import Component from 'vue-class-component'
-import { BigNumber, FixedNumber } from 'ethers'
+<script setup lang="ts">
+import { ref, onMounted, computed, watch } from 'vue'
+import type { BigNumber, FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
-
-import { RoundInfo } from '@/api/round'
+import { type RoundInfo, getRoundInfo, getLeaderboardRoundInfo } from '@/api/round'
 import { chain } from '@/api/core'
-
 import { lsGet, lsSet } from '@/utils/localStorage'
-import { formatAmount } from '@/utils/amounts'
-import ProjectListItem from '@/components/ProjectListItem.vue'
+import { formatAmount as _formatAmount } from '@/utils/amounts'
 import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
 import Loader from '@/components/Loader.vue'
-import WalletModal from '@/components/WalletModal.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import Links from '@/components/Links.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
-import { LOAD_ROUNDS, LOAD_ROUND_INFO } from '@/store/action-types'
+import { useAppStore, useUserStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+import { useRoute } from 'vue-router'
+import { useModal } from 'vue-final-modal'
+import WalletModal from './WalletModal.vue'
+import { getRouteParamValue } from '@/utils/route'
 
-@Component({
-  components: {
-    ProjectListItem,
-    Loader,
-    WalletModal,
-    TimeLeft,
-    Links,
-    ImageResponsive,
-  },
+const showNotice = ref(false)
+const appStore = useAppStore()
+const route = useRoute()
+// state
+const isLoading = ref(true)
+const roundInfo = ref<RoundInfo | null>(null)
+const {
+  operator,
+  currentRoundAddress,
+  currentRound,
+  isRoundFinalized,
+  isRoundTallying,
+  hasUserContributed,
+  isRoundReallocationPhase,
+  canUserReallocate,
+  recipientJoinDeadline,
+  isRoundContributionPhase,
+  nativeTokenSymbol,
+  nativeTokenDecimals,
+  matchingPool,
+} = storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
+
+const lsIsNoticeHiddenKey = computed(() => `${roundInfo.value?.fundingRoundAddress}.is-notice-hidden`)
+const isRoundCancelled = computed(() => appStore.isRoundCancelled(roundInfo.value))
+const isMaxMessagesReached = computed(() => (!roundInfo.value ? true : false))
+const isCurrentRound = computed(() => {
+  const roundAddress = roundInfo.value?.fundingRoundAddress || ''
+  return appStore.isCurrentRound(roundAddress)
 })
-export default class RoundInformation extends Vue {
-  isLoading = true
-  roundInfo: RoundInfo | null = null
-  blogUrl: string | null = null
-  showNotice = false
 
-  async created() {
-    await this.loadRoundInfo()
+const formatTotalInRound = computed(() => {
+  if (!roundInfo.value) {
+    return ''
   }
 
-  get isRoundCancelled(): boolean {
-    return this.$store.getters.isRoundCancelled(this.roundInfo)
-  }
+  const { contributions, matchingPool } = roundInfo.value
+  const totalInRound = contributions.addUnsafe(matchingPool)
 
-  get isMaxMessagesReached(): boolean {
-    if (!this.roundInfo) {
-      return false
-    }
+  return formatAmount(totalInRound)
+})
 
-    return this.roundInfo.maxMessages <= this.roundInfo.messages
-  }
+const haveNotice = computed(() => {
+  return (isCurrentRound.value && isMaxMessagesReached.value) || Boolean(roundInfo.value?.blogUrl)
+})
 
-  get haveNotice(): boolean {
-    return (
-      (this.isCurrentRound && this.isMaxMessagesReached) ||
-      this.blogUrl !== null
-    )
-  }
+onMounted(async () => {
+  await loadRoundInfo()
+})
 
-  // Gets local storage key to look up if user has dismissed round notice (if message cap exceeded)
-  // Key specific to each round via round address
-  get lsIsNoticeHiddenKey(): string {
-    return `${this.roundInfo?.fundingRoundAddress}.is-notice-hidden`
-  }
+// Gets local storage key to look up if user has dismissed round notice (if message cap exceeded)
+// Key specific to each round via round address
+const roundAddress = computed(() => (route.params.address as string) || currentRoundAddress.value)
+watch(roundAddress, async () => {
+  await loadRoundInfo()
+})
 
-  get roundAddress(): string | null {
-    return this.$route.params?.address || this.$store.state.currentRoundAddress
-  }
-
-  @Watch('roundAddress')
-  async loadRoundInfo() {
-    this.roundInfo = null
-    this.isLoading = true
-    if (this.roundAddress) {
-      if (!this.$store.state.rounds) {
-        await this.$store.dispatch(LOAD_ROUNDS)
+async function loadRoundInfo() {
+  roundInfo.value = null
+  isLoading.value = true
+  if (roundAddress.value) {
+    const routeName = route.name?.toString() || ''
+    try {
+      if (routeName.startsWith('leaderboard')) {
+        const network = getRouteParamValue(route.params.network)
+        roundInfo.value = await getLeaderboardRoundInfo(roundAddress.value, network)
+      } else {
+        roundInfo.value = await getRoundInfo(roundAddress.value, currentRound.value)
       }
-
-      const round = await this.$store.state.rounds.getRound(this.roundAddress)
-      if (round) {
-        this.roundInfo = await round.getRoundInfo(
-          this.$store.state.currentRound
-        )
-
-        this.blogUrl = round.blogUrl
-        this.showNotice = !lsGet(this.lsIsNoticeHiddenKey, false)
-      }
+    } catch (err) {
+      /* eslint-disable-next-line no-console */
+      console.warn('Failed to get round information', roundAddress.value, err)
     }
-    this.isLoading = false
+    showNotice.value = !lsGet(lsIsNoticeHiddenKey.value, false)
   }
-
-  toggleNotice() {
-    this.showNotice = !this.showNotice
-    lsSet(this.lsIsNoticeHiddenKey, !this.showNotice)
-  }
-
-  get formatTotalInRound(): string {
-    if (!this.roundInfo) {
-      return ''
-    }
-
-    const { contributions, matchingPool } = this.roundInfo
-    const totalInRound = contributions.addUnsafe(matchingPool)
-
-    return this.formatAmount(totalInRound)
-  }
-
-  get isCurrentRound(): boolean {
-    const roundAddress = this.roundInfo?.fundingRoundAddress || ''
-    return this.$store.getters.isCurrentRound(roundAddress)
-  }
-
-  get isRoundJoinOnlyPhase(): boolean {
-    return this.isCurrentRound && this.$store.getters.isRoundJoinOnlyPhase
-  }
-
-  formatIntegerPart(value: FixedNumber): string {
-    if (value._value === '0.0') {
-      return '0'
-    }
-    const integerPart = value.toString().split('.')[0]
-    return integerPart + (value.round(0) === value ? '' : '.')
-  }
-
-  formatFractionalPart(value: FixedNumber): string {
-    return value._value === '0.0' ? '' : value.toString().split('.')[1]
-  }
-
-  formatDate(value: DateTime): string {
-    return value.toLocaleString(DateTime.DATETIME_SHORT) || ''
-  }
-
-  formatAmount(value: BigNumber | FixedNumber | string): string {
-    return formatAmount(value, this.roundInfo?.nativeTokenDecimals, 4)
-  }
-
-  addMatchingFunds(): void {
-    if (!this.$store.state.currentUser) {
-      return this.$modal.show(
-        WalletModal,
-        {},
-        { width: 400, top: 20 },
-        {
-          // If closed but no user was connected in the event, then this will be closing the WalletModal
-          // and dont do anythign else. If closed and a user was connected, call the addMatchingFunds method
-          // again to pop open the MatchingFundsModal after the WalletModal.
-          closed: () => {
-            if (this.$store.state.currentUser) {
-              this.addMatchingFunds()
-            }
-          },
-        }
-      )
-    }
-
-    return this.$modal.show(
-      MatchingFundsModal,
-      {},
-      {},
-      {
-        closed: () => {
-          // Reload matching pool size
-          this.$store.dispatch(LOAD_ROUND_INFO)
-        },
-      }
-    )
-  }
-
-  get blockExplorer(): { label: string; url: string } {
-    return {
-      label: chain.explorerLabel,
-      url: `${chain.explorer}/address/${this.roundInfo?.fundingRoundAddress}`,
-    }
-  }
+  isLoading.value = false
 }
+
+function toggleNotice() {
+  showNotice.value = !showNotice.value
+  lsSet(lsIsNoticeHiddenKey.value, !showNotice.value)
+}
+
+const isRoundJoinOnlyPhase = computed(() => isCurrentRound.value && appStore.isRoundJoinOnlyPhase)
+
+function formatDate(value: DateTime): string {
+  return value.toLocaleString(DateTime.DATETIME_SHORT) || ''
+}
+
+function formatAmount(value: BigNumber | FixedNumber | string): string {
+  if (!nativeTokenDecimals.value) {
+    return ''
+  }
+  return _formatAmount(value, nativeTokenDecimals.value, 4)
+}
+
+function addMatchingFunds(): void {
+  if (!currentUser.value) {
+    const { open: openWallet, close: closeWallet } = useModal({
+      component: WalletModal,
+      attrs: {
+        onClose() {
+          closeWallet()
+          if (currentUser.value?.walletAddress) {
+            addMatchingFunds()
+          }
+        },
+      },
+    })
+    openWallet()
+    return
+  }
+
+  const { open: openMatchingFundModal, close } = useModal({
+    component: MatchingFundsModal,
+    attrs: {
+      onClose() {
+        close()
+        // Reload matching pool size
+        appStore.loadRoundInfo()
+        appStore.loadFactoryInfo()
+      },
+    },
+  })
+
+  openMatchingFundModal()
+}
+
+const blockExplorer = computed(() => ({
+  label: chain.explorerLabel,
+  url: `${chain.explorer}/address/${roundInfo.value?.fundingRoundAddress}`,
+}))
 </script>
 
 <style scoped lang="scss">
@@ -787,7 +733,8 @@ export default class RoundInformation extends Vue {
 
 .add-funds-link {
   font-size: 14px;
-  color: var(--text-body);
+  color: var(--button-action);
+  text-decoration-line: underline;
 }
 
 .status {
@@ -826,7 +773,17 @@ export default class RoundInformation extends Vue {
   display: none;
 }
 
-.has-tooltip {
-  filter: invert(0.7);
+.contract-popover {
+  background-color: var(--bg-secondary-color);
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 300px;
+  padding: 1rem;
+  border: solid 1px var(--border-highlight);
+  border-radius: 6px;
+  box-shadow: 0 6px 30px #0000001a;
+  margin-left: 10px;
 }
 </style>

@@ -27,9 +27,7 @@
     </ul>
     <p>
       {{ $t('decentralization.which.exists_in_code') }}
-      <links to="https://github.com/clrfund/monorepo">{{
-        $t('decentralization.which.here')
-      }}</links
+      <links to="https://github.com/clrfund/monorepo">{{ $t('decentralization.which.here') }}</links
       >{{ $t('decentralization.which.maintained_by_miner') }}
     </p>
     <h2>{{ $t('decentralization.why.title') }}</h2>
@@ -42,31 +40,16 @@
       </li>
       <li>
         {{ $t('decentralization.why.li-2-text-1') }}
-        <links to="/about/sybil-resistance">{{
-          $t('decentralization.why.li-2-link-1')
-        }}</links
+        <links to="/about/sybil-resistance">{{ $t('decentralization.why.li-2-link-1') }}</links
         >{{ $t('decentralization.why.li-2-text-2') }}
-        <links to="/about/maci">{{
-          $t('decentralization.why.li-2-link-2')
-        }}</links
+        <links to="/about/maci">{{ $t('decentralization.why.li-2-link-2') }}</links
         >{{ $t('decentralization.why.li-2-text-3') }}
       </li>
       <li>
         {{ $t('decentralization.why.li-3-text-1') }}
-        <links to="/about/quadratic-funding">{{
-          $t('decentralization.why.li-3-link-2')
-        }}</links
+        <links to="/about/quadratic-funding">{{ $t('decentralization.why.li-3-link-2') }}</links
         >{{ $t('decentralization.why.li-3-text-2') }}
       </li>
     </ol>
   </div>
 </template>
-
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import Links from '@/components/Links.vue'
-
-@Component({ components: { Links } })
-export default class AboutDecentralization extends Vue {}
-</script>

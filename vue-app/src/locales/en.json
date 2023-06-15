@@ -114,7 +114,7 @@
       "li-5": "the mechanism for distributing funds once a round's results are finalized",
       "exists_in_code": "Each of these pieces exists in an Ethereum smart contract (see the code",
       "here": "here",
-      "maintained_by_miner": ", meaning its functionality is maintained by Ethereum miners, a decentralized group."
+      "maintained_by_miner": "), meaning its functionality is maintained by Ethereum miners, a decentralized group."
     },
     "why": {
       "title": "Why is clr.fund decentralized?",
@@ -518,6 +518,7 @@
       "label6": "Content",
       "label7": "Research",
       "label8": "Data",
+      "label_education": "Education",
       "error5": "You need to choose a category",
       "label9": "Problem space",
       "p5": "Explain the problems you're trying to solve. Markdown supported.",
@@ -535,14 +536,15 @@
       "p2": "Potential contributors might convert based on your specific funding plans. Markdown supported.",
       "input2": "ex: on our roadmap...",
       "error2": "Let potential contributors know what plans you have for their donations.",
-      "preview1": "Preview:"
+      "preview1": "Preview:",
+      "address_requirement": "This address, or at least one of the signers, in the case of a multisig, should hold a {link_1}. Alternatively, project should be able to demonstrate that it has completed KYC for a reputable grants program, like the {link_2}, in the past year."
     },
     "step2": {
       "h2": "Team details",
       "p1": "Tell us about the folks behind your project.",
       "label1": "Contact email",
       "description1": "For important updates about your project and the funding round.",
-      "input1": "example: doge@goodboi.com",
+      "input1": "example: doge{'@'}goodboi.com",
       "notice1": "We won't display this publicly or add it to the on-chain registry.",
       "error1": "This doesn't look like an email.",
       "label2": "Team name (optional)",
@@ -650,6 +652,10 @@
     }
   },
   "landing": {
+    "button": {
+      "getStarted": "Get Started",
+      "leaderboard": "View Results"
+    },
     "hero": {
       "title": "Send your favorite projects to the moon!",
       "subtitle": "Every project you contribute to gets a portion of extra funding.",
@@ -717,9 +723,6 @@
     "btn2_2": "View",
     "div2": "You haven't submitted any projects"
   },
-  "project": {
-    "p": "You have contributed to this project!"
-  },
   "projectAdded": {
     "h1": "Project submitted!",
     "div1": "You’re almost on board this funding round.",
@@ -727,7 +730,8 @@
     "link1": "learn more about the registration process here.",
     "li2": "Once that's complete, your project page will go live.",
     "li3": " If your project fails any checks, we'll let you know by email and return your deposit.",
-    "link2": "View projects",
+    "linkProjects": "View projects",
+    "link2": "View project",
     "link3": "Go home"
   },
   "projectList": {
@@ -802,6 +806,7 @@
     "btn": " Become a contributor",
     "next": "Next",
     "previous": "Previous",
+    "copy_link": "Copy Link",
     "verification_status": "Your wallet address is not linked with BrightID. It may take a few minutes to verify the connection, please wait and click the button later to check the status.",
     "skip_sponsorship": "Skip",
     "get_sponsored_header": "Get sponsored",
@@ -824,7 +829,8 @@
     "unitap_link": "Unitap",
     "unitap_extra_text": ".",
     "link1": "Why is this important?",
-    "div1": "There's not yet an open funding round. Please check back later.",
+    "next_round_notice": "The round will begin on {start_date}. Please check back then.",
+    "no_round": "We haven't yet scheduled a funding round. Stay tuned!",
     "div2": "The current round is no longer accepting new contributions. Please try again next round.",
     "div3": "Contributions closed early – you can no longer donate! Due to the community's generosity and some technical constraints we had to close the round earlier than expected. If you already contributed, you still have time to reallocate if you need to. If you didn't get a chance to contribute, you can still help by donating to the matching pool",
     "link2": "I am BrightID verified",
@@ -856,6 +862,9 @@
     "link2": "Continue setup"
   },
   "cart": {
+    "sign": "Sign",
+    "connect": "Connect",
+    "sign_the_message_to_see_your_cart": "Please sign the message to see your cart",
     "h3_1": "Connect to see your cart",
     "div1": "You’ve already contributed this round. You can edit your choices and add new projects, but your cart total must always equal your original contribution amount.",
     "link1": "Why?",
@@ -891,9 +900,7 @@
     "div13": "Time left:",
     "span3": "Projects",
     "span4": "Matching Pool",
-    "span5": "Total",
-    "div14": "No current round.",
-    "link4": "Verify with BrightID while you wait"
+    "span5": "Total"
   },
   "cartItems": {
     "button1": "Amount"
@@ -965,7 +972,7 @@
   "linkBox": {
     "h2": "Check them out",
     "link1": "GitHub repo",
-    "link2": "@Twitter"
+    "link2": "{'@'}Twitter"
   },
   "matchingFundsModal": {
     "title": "Contribute {tokenSymbol} to the matching pool",
@@ -977,8 +984,8 @@
     "div2": "Thanks for helping out all our projects.",
     "button3": "Done"
   },
-  "app": "App",
   "navBar": {
+    "app": "App",
     "dropdown": {
       "home": "Home",
       "about": "About",
@@ -1120,7 +1127,8 @@
       "content": "Content",
       "data": "Data",
       "research": "Research",
-      "other": "Other"
+      "other": "Other",
+      "education": "Education"
     },
     "timeleft": {
       "unit": {
@@ -1150,6 +1158,10 @@
       "no_scams": {
         "tagline": "No scams",
         "description": "Obviously, your project must not put anyone's funds or information at risk."
+      },
+      "compliance": {
+        "tagline": "Compliance",
+        "description": "The project's receiving address, or at least one signer on the team's multisig, should hold a {link_1}. Alternatively, project should be able to demonstrate that it has completed KYC for a reputable grants program, like the {link_2}, in the past year."
       }
     },
     "cart": {
@@ -1158,6 +1170,7 @@
         "connect_wallet": "Please connect your wallet",
         "incorrect_network": "Please change network to {chain} network.",
         "need_to_setup_brightid": "To contribute, you need to set up BrightID.",
+        "user_not_registered": "Please contact {operator} for registration",
         "invalid_contribution_amount": "Include valid contribution amount.",
         "exceeded_max_cart_size": "Your cart can't include over {maxCartSize} projects.",
         "round_cancelled": "Sorry, we've had to cancel this funding round.",
@@ -1187,10 +1200,10 @@
     "progress": {
       "step": {
         "project": "About the project",
-        "donation": "Donation details",
+        "fund": "Donation details",
         "team": "Team details",
         "links": "Links",
-        "images": "Images",
+        "image": "Images",
         "review": "Review",
         "submit": "Submit"
       }
@@ -1208,5 +1221,11 @@
   "cancel": "Cancel",
   "copied": "Copied!",
   "more_on_maci": "More on MACI",
-  "add_project": "Add project"
+  "add_project": "Add project",
+  "close": "Close",
+  "please_sign_message": "Please sign the message in your wallet",
+  "compliance": {
+    "humanbound_sbt": "humanbound SBT",
+    "esp": "ESP"
+  }
 }

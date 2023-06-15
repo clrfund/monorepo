@@ -1,35 +1,13 @@
 <template>
   <div>
     <loader v-if="isLoading"></loader>
-    <div
-      :class="`grid ${isCartToggledOpen ? 'cart-open' : 'cart-closed'}`"
-      v-if="project"
-    >
-      <img
-        class="project-image banner"
-        :src="project.bannerImageUrl"
-        :alt="project.name"
-      />
-      <project-profile
-        class="details"
-        :project="project"
-        :previewMode="false"
-      />
+    <div :class="`grid ${showCartPanel ? 'cart-open' : 'cart-closed'}`" v-if="project">
+      <img class="project-image banner" :src="project.bannerImageUrl" :alt="project.name" />
+      <project-profile class="details" :project="project" :previewMode="false" />
       <div class="sticky-column">
         <div class="desktop">
-          <add-to-cart-button
-            v-if="shouldShowCartInput && hasContributeBtn()"
-            :project="project"
-          />
+          <add-to-cart-button v-if="shouldShowCartInput && hasContributeBtn" :project="project" />
           <claim-button :project="project" :roundAddress="roundAddress" />
-          <p
-            v-if="
-              $store.getters.hasUserContributed &&
-              !$store.getters.canUserReallocate
-            "
-          >
-            ✔️ {{ $t('project.p') }}
-          </p>
         </div>
         <link-box :project="project" />
       </div>
@@ -37,92 +15,70 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
 
-import { Project } from '@/api/projects'
+import { type Project, getRecipientRegistryAddress, getProject } from '@/api/projects'
 import { getCurrentRound } from '@/api/round'
-import Loader from '@/components/Loader.vue'
 import ProjectProfile from '@/components/ProjectProfile.vue'
 import AddToCartButton from '@/components/AddToCartButton.vue'
 import LinkBox from '@/components/LinkBox.vue'
 import ClaimButton from '@/components/ClaimButton.vue'
-import { markdown } from '@/utils/markdown'
-import { LOAD_ROUNDS } from '@/store/action-types'
 
-@Component({
-  metaInfo() {
-    return { title: (this as any).project?.name || '' }
-  },
-  components: { Loader, ProjectProfile, AddToCartButton, LinkBox, ClaimButton },
+import { useMeta } from 'vue-meta'
+import { storeToRefs } from 'pinia'
+import { useRoute, useRouter } from 'vue-router'
+import { useAppStore } from '@/stores'
+import { operator } from '@/api/core'
+
+const route = useRoute()
+const router = useRouter()
+const appStore = useAppStore()
+const { showCartPanel, isRoundContributionPhase, canUserReallocate } = storeToRefs(appStore)
+
+const roundAddress = ref<string>('')
+const project = ref<Project | null>(null)
+const isLoading = ref(true)
+const isCurrentRound = computed(() => {
+  return appStore.isCurrentRound(roundAddress.value)
 })
-export default class ProjectView extends Vue {
-  project: Project | null = null
-  isLoading = true
-  roundAddress = ''
 
-  async created() {
-    if (!!this.$route.params.address && !this.$route.params.id) {
-      // missing project id, redirect back to rounds
-      this.$router.push({ name: 'rounds', params: this.$route.params })
-      return
+const shouldShowCartInput = computed(
+  () => (isCurrentRound.value && isRoundContributionPhase.value) || canUserReallocate,
+)
+const hasContributeBtn = computed(() => isCurrentRound.value && project.value !== null && project.value.index !== 0)
+
+onMounted(async () => {
+  if (!!route.params.address && !route.params.id) {
+    // missing project id, redirect back to rounds
+    router.push({ name: 'rounds', params: route.params })
+    return
+  }
+
+  //TODO: update to take factory address as a parameter, default to env. variable
+  const currentRoundAddress = appStore.currentRoundAddress || (await getCurrentRound())
+
+  roundAddress.value = (route.params.address as string) || currentRoundAddress || ''
+
+  const registryAddress = await getRecipientRegistryAddress(roundAddress.value || null)
+  const _project = await getProject(registryAddress, route.params.id as string)
+  if (_project === null || _project.isHidden) {
+    // Project not found
+    router.push({ name: 'projects' })
+    return
+  } else {
+    project.value = _project
+  }
+  isLoading.value = false
+})
+
+useMeta(
+  computed(() => {
+    return {
+      title: project.value ? operator + ' - ' + project.value.name : operator,
     }
-
-    //TODO: update to take factory address as a parameter, default to env. variable
-    const currentRoundAddress =
-      this.$store.state.currentRoundAddress || (await getCurrentRound())
-
-    this.roundAddress = this.$route.params.address || currentRoundAddress
-
-    if (!this.$store.state.rounds) {
-      await this.$store.dispatch(LOAD_ROUNDS)
-    }
-
-    const rounds = this.$store.state.rounds
-    const selectedRound = await rounds.getRound(this.roundAddress)
-    const project = selectedRound
-      ? await selectedRound.getProject(this.$route.params.id)
-      : null
-
-    if (project === null || project.isHidden) {
-      // Project not found
-      this.$router.push({ name: 'projects' })
-      return
-    } else {
-      this.project = project
-    }
-
-    this.isLoading = false
-  }
-
-  get isCartToggledOpen(): boolean {
-    return this.$store.state.showCartPanel
-  }
-
-  get isCurrentRound(): boolean {
-    const { currentRoundAddress } = this.$store.state
-    const roundAddress = this.$route.params.address || currentRoundAddress
-    return this.$store.getters.isCurrentRound(roundAddress)
-  }
-
-  get shouldShowCartInput(): boolean {
-    const { isRoundContributionPhase, canUserReallocate } = this.$store.getters
-    return (
-      (this.isCurrentRound && isRoundContributionPhase) || canUserReallocate
-    )
-  }
-
-  hasContributeBtn(): boolean {
-    return (
-      this.isCurrentRound && this.project !== null && this.project.index !== 0
-    )
-  }
-
-  get descriptionHtml(): string {
-    return markdown.render(this.project?.description || '')
-  }
-}
+  }),
+)
 </script>
 
 <style scoped lang="scss">
@@ -137,32 +93,27 @@ export default class ProjectView extends Vue {
   grid-column-gap: 2rem;
   grid-row-gap: 3rem;
 }
-
 @mixin project-grid-mobile() {
   grid-template-columns: 1fr;
   grid-template-rows: repeat(3, auto);
   grid-template-areas: 'banner' 'details' 'actions';
   padding-bottom: 6rem;
 }
-
 .grid.cart-open {
   @include project-grid();
   @media (max-width: $breakpoint-xl) {
     @include project-grid-mobile();
   }
 }
-
 .grid.cart-closed {
   @include project-grid();
   @media (max-width: $breakpoint-m) {
     @include project-grid-mobile();
   }
 }
-
 .banner {
   grid-area: banner;
 }
-
 .sticky-column {
   grid-area: actions;
   position: sticky;
@@ -175,7 +126,6 @@ export default class ProjectView extends Vue {
     margin-bottom: 3rem;
   }
 }
-
 .project-image {
   border-radius: 4px;
   display: block;
@@ -184,7 +134,6 @@ export default class ProjectView extends Vue {
   text-align: center;
   width: 100%;
 }
-
 .content {
   display: flex;
   gap: 3rem;

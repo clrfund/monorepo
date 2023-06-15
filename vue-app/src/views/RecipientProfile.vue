@@ -4,18 +4,15 @@
     {{ $t('recipientProfile.not_found') }}
   </div>
   <div v-else class="project-page">
+    <img class="project-image" :src="recipient.bannerImageUrl" :alt="recipient.name" />
     <div class="about">
-      <h1
-        class="project-name"
-        :title="addressName"
-        :project-index="recipient.index"
-      >
+      <h1 class="project-name" :title="addressName" :project-index="recipient.index">
         <span> {{ recipient.name }} </span>
       </h1>
       <p class="tagline">{{ recipient.tagline }}</p>
       <div class="subtitle">
         <div v-if="recipient.category" class="tag">
-          {{ $t($store.getters.categoryLocaleKey(recipient.category)) }}
+          {{ $t(appStore.categoryLocaleKey(recipient.category)) }}
           {{ $t('projectProfile.div1') }}
         </div>
         <div class="team-byline" v-if="!!recipient.teamName">
@@ -38,8 +35,7 @@
       <div
         :class="{
           'address-box': recipient.teamName || recipient.teamDescription,
-          'address-box-no-team':
-            !recipient.teamName && !recipient.teamDescription,
+          'address-box-no-team': !recipient.teamName && !recipient.teamDescription,
         }"
       >
         <div>
@@ -56,85 +52,59 @@
             :hasBorder="true"
           />
           <links
+            v-if="blockExplorer"
             class="explorerLink"
             :to="blockExplorer.url"
-            :title="
-              $t('projectProfile.link1', { blockExplorer: blockExplorer.label })
-            "
+            :title="$t('projectProfile.link1', { blockExplorer: blockExplorer.label })"
             :hideArrow="true"
           >
-            <img
-              class="icon"
-              :src="require(`@/assets/${blockExplorer.logo}`)"
-            />
+            <img class="icon" :src="blockExplorer.logoUrl" />
           </links>
         </div>
       </div>
       <hr v-if="recipient.teamName || recipient.teamDescription" />
-      <div
-        id="team"
-        v-if="recipient.teamName || recipient.teamDescription"
-        class="team"
-      >
+      <div id="team" v-if="recipient.teamName || recipient.teamDescription" class="team">
         <h2>{{ $t('projectProfile.h2_4') }} {{ recipient.teamName }}</h2>
-        <markdown :raw="recipient.teamDescription" />
+        <markdown :raw="recipient.teamDescription || ''" />
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
-import { Project, getRecipientBySubmitHash } from '@/api/projects'
-import { chain } from '@/api/core'
+<script setup lang="ts">
+import { type Project, getProject, getCurrentRecipientRegistryAddress } from '@/api/projects'
 import { ensLookup } from '@/utils/accounts'
-import Warning from '@/components/Warning.vue'
-import Markdown from '@/components/Markdown.vue'
-import CopyButton from '@/components/CopyButton.vue'
-import LinkBox from '@/components/LinkBox.vue'
-import Links from '@/components/Links.vue'
-import AddToCartButton from '@/components/AddToCartButton.vue'
-import ClaimButton from '@/components/ClaimButton.vue'
-import Loader from '@/components/Loader.vue'
+import { useAppStore } from '@/stores'
+import { getBlockExplorerByAddress } from '@/utils/explorer'
 
-@Component({
-  components: {
-    Markdown,
-    Warning,
-    LinkBox,
-    CopyButton,
-    Links,
-    AddToCartButton,
-    ClaimButton,
-    Loader,
-  },
+const route = useRoute()
+const appStore = useAppStore()
+
+const recipient = ref<Project | null>(null)
+const ens = ref<string | null>(null)
+const loading = ref<boolean>(true)
+
+onMounted(async () => {
+  const recipientId = (route.params.id as string) || ''
+  const recipientRegistryAddress = await getCurrentRecipientRegistryAddress()
+
+  // retrieve the project information without filtering by the locked or verified status
+  const filter = false
+  recipient.value = await getProject(recipientRegistryAddress, recipientId, filter)
+  if (recipient.value?.address) {
+    ens.value = await ensLookup(recipient.value.address)
+  }
+  loading.value = false
 })
-export default class ProjectProfile extends Vue {
-  recipient: Project | null = null
-  ens: string | null = null
-  loading = true
 
-  async created() {
-    const hash = this.$route.params.hash || ''
-    this.recipient = await getRecipientBySubmitHash(hash)
-    if (this.recipient?.address) {
-      this.ens = await ensLookup(this.recipient.address)
-    }
-    this.loading = false
-  }
+const blockExplorer = computed(() => {
+  const recipientAddress = recipient.value?.address ?? ''
+  return getBlockExplorerByAddress(recipientAddress)
+})
 
-  get blockExplorer(): { label: string; url: string; logo: string } {
-    return {
-      label: chain.explorerLabel,
-      url: `${chain.explorer}/address/${this.recipient?.address}`,
-      logo: chain.explorerLogo,
-    }
-  }
-
-  get addressName(): string {
-    return this.ens || this.recipient?.address || ''
-  }
-}
+const addressName = computed(() => {
+  return ens.value || recipient.value?.address || ''
+})
 </script>
 
 <style lang="scss" scoped>

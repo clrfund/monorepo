@@ -2,32 +2,33 @@
   <img sizes="(max-width: 1440px) 100vw, 1440px" :src="src" :srcset="srcset" />
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
+<script setup lang="ts">
+import { computed } from 'vue'
+import { getAssetsUrl } from '@/utils/url'
 
 const BREAKPOINTS = [360, 720]
 
-@Component
-export default class ImageResponsive extends Vue {
-  @Prop() title!: string
+interface Props {
+  title: string
+  height?: string
+}
 
-  get src() {
-    return this.requirePath(this.title, 720)
-  }
+const props = defineProps<Props>()
 
-  get srcset() {
-    const paths = BREAKPOINTS.map((breakpoint) => {
-      const path = this.requirePath(this.title, breakpoint)
-      return `${path} ${breakpoint}w`
-    })
+const src = computed(() => {
+  return requirePath(props.title, 720)
+})
 
-    return paths.join(', ')
-  }
+const srcset = computed(() => {
+  const paths = BREAKPOINTS.map(breakpoint => {
+    const path = requirePath(props.title, breakpoint)
+    return `${path} ${breakpoint}w`
+  })
 
-  requirePath(name: string, breakpoint: number) {
-    return require(`../assets/${name}/${name}_w${breakpoint}.png`)
-  }
+  return paths.join(', ')
+})
+
+function requirePath(name: string, breakpoint: number) {
+  return getAssetsUrl(`${name}/${name}_w${breakpoint}.png`)
 }
 </script>

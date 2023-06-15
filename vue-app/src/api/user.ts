@@ -1,10 +1,10 @@
 import makeBlockie from 'ethereum-blockies-base64'
 import { BigNumber, Contract } from 'ethers'
-import { Web3Provider } from '@ethersproject/providers'
+import type { Web3Provider } from '@ethersproject/providers'
 
 import { UserRegistry, ERC20 } from './abi'
 import { factory, ipfsGatewayUrl, provider, operator } from './core'
-import { BrightId } from './bright-id'
+import type { BrightId } from './bright-id'
 
 //TODO: update anywhere this is called to take factory address as a parameter, default to env. variable
 export const LOGIN_MESSAGE = `Welcome to ${operator}!
@@ -18,18 +18,16 @@ Contract address: ${factory.address.toLowerCase()}.`
 export interface User {
   walletAddress: string
   walletProvider: Web3Provider
-  encryptionKey: string
+  encryptionKey?: string
   brightId?: BrightId
-  isRegistered: boolean // If is in user registry
+  isRegistered?: boolean // If is in user registry
   balance?: BigNumber | null
   etherBalance?: BigNumber | null
   contribution?: BigNumber | null
   ensName?: string | null
 }
 
-export async function getProfileImageUrl(
-  walletAddress: string
-): Promise<string | null> {
+export async function getProfileImageUrl(walletAddress: string): Promise<string | null> {
   const threeBoxProfileUrl = `https://ipfs.3box.io/profile?address=${walletAddress}`
   let profileImageHash: string
   try {
@@ -42,24 +40,16 @@ export async function getProfileImageUrl(
   return `${ipfsGatewayUrl}/ipfs/${profileImageHash}`
 }
 
-export async function isVerifiedUser(
-  userRegistryAddress: string,
-  walletAddress: string
-): Promise<boolean> {
+export async function isVerifiedUser(userRegistryAddress: string, walletAddress: string): Promise<boolean> {
   const registry = new Contract(userRegistryAddress, UserRegistry, provider)
   return await registry.isVerifiedUser(walletAddress)
 }
 
-export async function getTokenBalance(
-  tokenAddress: string,
-  walletAddress: string
-): Promise<BigNumber> {
+export async function getTokenBalance(tokenAddress: string, walletAddress: string): Promise<BigNumber> {
   const token = new Contract(tokenAddress, ERC20, provider)
   return await token.balanceOf(walletAddress)
 }
 
-export async function getEtherBalance(
-  walletAddress: string
-): Promise<BigNumber> {
+export async function getEtherBalance(walletAddress: string): Promise<BigNumber> {
   return await provider.getBalance(walletAddress)
 }

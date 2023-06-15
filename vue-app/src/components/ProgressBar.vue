@@ -6,25 +6,20 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
+<script setup lang="ts">
+import { computed } from 'vue'
 
-@Component
-export default class Transaction extends Vue {
-  @Prop()
-  currentStep!: number
+interface Props {
+  currentStep: number
+  totalSteps: number
+}
 
-  @Prop()
-  totalSteps!: number
-
-  get progressBarStyle(): string {
-    return `grid-template-columns: repeat(${this.totalSteps}, 1fr);`
-  }
-  isFutureStep(step: number): boolean {
-    return step > this.currentStep
-  }
+const props = defineProps<Props>()
+const progressBarStyle = computed(() => {
+  return `grid-template-columns: repeat(${props.totalSteps}, 1fr);`
+})
+function isFutureStep(step: number): boolean {
+  return step > props.currentStep
 }
 </script>
 

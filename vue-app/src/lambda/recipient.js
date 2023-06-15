@@ -27,13 +27,10 @@ function recipientToRow(recipient) {
       return { ...result, [header]: recipient[header] }
     }
 
-    const childObj = Object.keys(recipient[header]).reduce(
-      (result, subheader) => {
-        const key = header + subheader
-        return { ...result, [key]: recipient[header][subheader] }
-      },
-      {}
-    )
+    const childObj = Object.keys(recipient[header]).reduce((result, subheader) => {
+      const key = header + subheader
+      return { ...result, [key]: recipient[header][subheader] }
+    }, {})
 
     return { ...result, ...childObj }
   }, {})
@@ -50,7 +47,7 @@ exports.handler = async function (event) {
     const recipient = JSON.parse(event.body)
 
     const creds = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS)
-    const doc = new GoogleSpreadsheet(process.env.VUE_APP_GOOGLE_SPREADSHEET_ID)
+    const doc = new GoogleSpreadsheet(process.env.VITE_GOOGLE_SPREADSHEET_ID)
     await doc.useServiceAccountAuth(creds)
 
     await doc.loadInfo()

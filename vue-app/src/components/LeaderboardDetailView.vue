@@ -15,13 +15,13 @@
         <div class="donation heading">
           <div>{{ $t('leaderboard.heading.donation') }}</div>
           <div class="desktop symbol">
-            <img :src="require(`@/assets/${tokenLogo}`)" :alt="tokenSymbol" />
+            <img :src="tokenLogo" :alt="tokenSymbol" />
           </div>
         </div>
         <div class="funding heading">
           <div>{{ $t('leaderboard.heading.total') }}</div>
           <div class="desktop symbol">
-            <img :src="require(`@/assets/${tokenLogo}`)" :alt="tokenSymbol" />
+            <img :src="tokenLogo" :alt="tokenSymbol" />
           </div>
         </div>
       </div>
@@ -35,35 +35,21 @@
               {{ project.name }}
             </div>
             <div class="votes">
-              <span class="mobile"
-                >{{ $t('leaderboard.heading.votes') }}:
-              </span>
+              <span class="mobile">{{ $t('leaderboard.heading.votes') }}: </span>
               <span>{{ formatVotes(project.votes) }}</span>
             </div>
             <div class="donation">
-              <span class="mobile"
-                >{{ $t('leaderboard.heading.donation') }}:
-              </span>
+              <span class="mobile">{{ $t('leaderboard.heading.donation') }}: </span>
               <span>~{{ formatDonation(project.donation) }}</span>
               <div class="mobile symbol">
-                <img
-                  :src="require(`@/assets/${tokenLogo}`)"
-                  :alt="tokenSymbol"
-                />
+                <img :src="tokenLogo" :alt="tokenSymbol" />
               </div>
             </div>
             <div class="funding">
-              <span class="mobile"
-                >{{ $t('leaderboard.heading.total') }}:
-              </span>
-              <span class="amount">
-                ~{{ formatAmount(project.allocatedAmount) }}
-              </span>
+              <span class="mobile">{{ $t('leaderboard.heading.total') }}: </span>
+              <span class="amount"> ~{{ formatAllocation(project.allocatedAmount) }} </span>
               <div class="mobile symbol">
-                <img
-                  :src="require(`@/assets/${tokenLogo}`)"
-                  :alt="tokenSymbol"
-                />
+                <img :src="tokenLogo" :alt="tokenSymbol" />
               </div>
             </div>
           </div>
@@ -73,73 +59,53 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import { Component, Prop } from 'vue-property-decorator'
-
-import Links from '@/components/Links.vue'
-import Info from '@/components/Info.vue'
-import { LeaderboardProject } from '@/api/projects'
-import { RoundInfo } from '@/api/round'
-import { BigNumber } from 'ethers'
+<script setup lang="ts">
+import type { RoundInfo } from '@/api/round'
+import type { LeaderboardProject } from '@/api/projects'
+import type { LocationAsRelativeRaw } from 'vue-router'
+import type { BigNumber } from 'ethers'
 import { formatAmount } from '@/utils/amounts'
 import { getTokenLogo } from '@/utils/tokens'
-import { Route } from 'vue-router'
+import { getAssetsUrl } from '@/utils/url'
 
-@Component({
-  components: {
-    Links,
-    Info,
-  },
-})
-export default class LeaderboardDetailView extends Vue {
-  @Prop() projects!: LeaderboardProject[]
-  @Prop() round!: RoundInfo
+interface Props {
+  projects: LeaderboardProject[]
+  round: RoundInfo
+}
 
-  projectRoute(id: string): Partial<Route> {
-    return {
-      name: 'round-project',
-      params: { id, address: this.round.fundingRoundAddress },
-    }
-  }
+const props = defineProps<Props>()
 
-  isFirst(index: number) {
-    return index === 0
-  }
-
-  isSecond(index: number) {
-    return index === 1
-  }
-
-  isThird(index: number) {
-    return index === 2
-  }
-
-  formatVotes(votes: BigNumber): string {
-    // pass votes as string to skip formatting by tokenDecimal
-    return formatAmount(votes.toString(), this.tokenDecimals, null, 0)
-  }
-
-  formatDonation(donation: BigNumber): string {
-    return this.formatAmount(donation.mul(this.round.voiceCreditFactor))
-  }
-
-  formatAmount(amount?: BigNumber): string {
-    return amount ? formatAmount(amount, this.tokenDecimals, null, 0) : '0'
-  }
-
-  get tokenDecimals(): number {
-    return this.round.nativeTokenDecimals
-  }
-
-  get tokenSymbol(): string {
-    return this.round.nativeTokenSymbol
-  }
-
-  get tokenLogo(): string {
-    return getTokenLogo(this.tokenSymbol)
+function projectRoute(id: string): LocationAsRelativeRaw {
+  return {
+    name: 'leaderboard-project',
+    params: { id, address: props.round.fundingRoundAddress, network: props.round.network },
   }
 }
+
+function formatVotes(votes: BigNumber): string {
+  // pass votes as string to skip formatting by tokenDecimal
+  return formatAmount(votes.toString(), tokenDecimals.value, null, 0)
+}
+
+function formatDonation(donation: BigNumber): string {
+  return formatAmount(donation.mul(props.round.voiceCreditFactor), tokenDecimals.value, null, 0)
+}
+
+function formatAllocation(amount?: BigNumber): string {
+  return amount ? formatAmount(amount, tokenDecimals.value, null, 0) : '0'
+}
+
+const tokenDecimals = computed(() => {
+  return props.round.nativeTokenDecimals
+})
+
+const tokenSymbol = computed(() => {
+  return props.round.nativeTokenSymbol
+})
+
+const tokenLogo = computed(() => {
+  return getAssetsUrl(getTokenLogo(tokenSymbol.value))
+})
 </script>
 
 <style scoped lang="scss">

@@ -1,6 +1,11 @@
 <template>
   <div class="content">
-    <links :to="projectRoute">
+    <links
+      :to="{
+        name: 'leaderboard-project',
+        params: { id: project.id, address: round.fundingRoundAddress, network: round.network },
+      }"
+    >
       <div class="container">
         <div class="rank">
           <div v-if="isTop3">
@@ -20,13 +25,13 @@
           </div>
         </div>
         <div class="desktop project-image">
-          <img :src="projectImageUrl" :alt="project.name" />
+          <img v-if="projectImageUrl" :src="projectImageUrl" :alt="project.name" />
         </div>
         <div class="project-name">
           {{ project.name }}
         </div>
         <div class="funding">
-          <div class="amount">~{{ formatAmount(project.allocatedAmount) }}</div>
+          <div class="amount">~{{ formatAllocationAmount(project.allocatedAmount) }}</div>
           <div class="symbol">
             {{
               $t('leaderboardSimpleView.funded', {
@@ -40,74 +45,52 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import { Component, Prop } from 'vue-property-decorator'
-
-import Links from '@/components/Links.vue'
-import { LeaderboardProject } from '@/api/projects'
-import { RoundInfo } from '@/api/round'
-import { Route } from 'vue-router'
-import { BigNumber } from 'ethers'
+<script setup lang="ts">
+import type { LeaderboardProject } from '@/api/projects'
+import type { RoundInfo } from '@/api/round'
+import type { BigNumber } from 'ethers'
 import { formatAmount } from '@/utils/amounts'
-import { getTokenLogo } from '@/utils/tokens'
 
-@Component({
-  components: {
-    Links,
-  },
-})
-export default class LeaderboardSimpleView extends Vue {
-  @Prop() project!: LeaderboardProject
-  @Prop() round!: RoundInfo
-  @Prop() rank!: number
-
-  get projectRoute(): Partial<Route> {
-    return {
-      name: 'round-project',
-      params: { id: this.project.id, address: this.round.fundingRoundAddress },
-    }
-  }
-
-  get isTop3(): boolean {
-    return this.rank <= 3
-  }
-
-  get isFirst(): boolean {
-    return this.rank === 1
-  }
-
-  get isSecond(): boolean {
-    return this.rank === 2
-  }
-
-  get isThird(): boolean {
-    return this.rank === 3
-  }
-
-  formatAmount(amount?: BigNumber): string {
-    const tokenDecimals = this.round.nativeTokenDecimals
-    return amount ? formatAmount(amount, tokenDecimals, null, 0) : '0'
-  }
-
-  get projectImageUrl(): string | null {
-    if (typeof this.project.bannerImageUrl !== 'undefined') {
-      return this.project.bannerImageUrl
-    }
-    if (typeof this.project.imageUrl !== 'undefined') {
-      return this.project.imageUrl
-    }
-    return null
-  }
-
-  get tokenSymbol(): string {
-    return this.round.nativeTokenSymbol
-  }
-
-  get tokenLogo(): string {
-    return getTokenLogo(this.tokenSymbol)
-  }
+interface Props {
+  project: LeaderboardProject
+  round: RoundInfo
+  rank: number
 }
+
+const props = defineProps<Props>()
+
+const isTop3 = computed(() => {
+  return props.rank <= 3
+})
+
+const isFirst = computed(() => {
+  return props.rank === 1
+})
+
+const isSecond = computed(() => {
+  return props.rank === 2
+})
+
+const isThird = computed(() => {
+  return props.rank === 3
+})
+
+function formatAllocationAmount(amount?: BigNumber): string {
+  const tokenDecimals = props.round.nativeTokenDecimals
+  return amount ? formatAmount(amount, tokenDecimals, null, 0) : '0'
+}
+
+const projectImageUrl = computed(() => {
+  if (typeof props.project.imageUrl !== 'undefined') {
+    return props.project.imageUrl
+  }
+
+  return null
+})
+
+const tokenSymbol = computed(() => {
+  return props.round.nativeTokenSymbol
+})
 </script>
 
 <style scoped lang="scss">

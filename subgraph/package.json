@@ -1,6 +1,6 @@
 {
   "name": "@clrfund/subgraph",
-  "version": "3.0.1",
+  "version": "4.2.2",
   "repository": "https://github.com/clrfund/monorepo/subgraph",
   "keywords": [
     "clr.fund",
@@ -29,15 +29,15 @@
     "gen-uml": "graphqlviz https://api.thegraph.com/subgraphs/name/clrfund/clrfund | dot -Tpng -o subgraphUML.png"
   },
   "dependencies": {
-    "@graphprotocol/graph-cli": "0.21.0",
-    "@graphprotocol/graph-ts": "0.20.0"
+    "@graphprotocol/graph-cli": "^0.46.1",
+    "@graphprotocol/graph-ts": "^0.29.3"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^2.34.0",
-    "@typescript-eslint/parser": "^2.34.0",
+    "@typescript-eslint/eslint-plugin": "^5.44.0",
+    "@typescript-eslint/parser": "^5.44.0",
     "chai": "^4.2.0",
-    "eslint": "^6.8.0",
-    "eslint-config-prettier": "^8.3.0",
+    "eslint": "^8.28.0",
+    "eslint-config-prettier": "^8.5.0",
     "mustache": "^4.2.0"
   }
 }

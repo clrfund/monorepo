@@ -1,37 +1,37 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
+import type { RouteRecordRaw } from 'vue-router'
+import { isBrightIdRequired, isOptimisticRecipientRegistry } from '@/api/core'
 
-import Landing from '../views/Landing.vue'
-import JoinLanding from '../views/JoinLanding.vue'
-import ProjectList from '../views/ProjectList.vue'
-import ProjectView from '../views/Project.vue'
-import ProjectAdded from '../views/ProjectAdded.vue'
-import RoundInformation from '../views/RoundInformation.vue'
-import RoundList from '../views/RoundList.vue'
-import VerifyLanding from '../views/VerifyLanding.vue'
-import About from '../views/About.vue'
-import AboutSybilResistance from '../views/AboutSybilResistance.vue'
-import AboutMaci from '../views/AboutMaci.vue'
-import AboutPublicGoods from '../views/AboutPublicGoods.vue'
-import AboutQuadraticFunding from '../views/AboutQuadraticFunding.vue'
-import AboutDecentralization from '../views/AboutDecentralization.vue'
-import AboutHowItWorks from '../views/AboutHowItWorks.vue'
-import AboutContributors from '../views/AboutContributors.vue'
-import AboutRecipients from '../views/AboutRecipients.vue'
-import AboutLayer2 from '../views/AboutLayer2.vue'
-import Verified from '../views/Verified.vue'
-import JoinView from '../views/Join.vue'
-import VerifyView from '../views/Verify.vue'
-import RecipientRegistryView from '@/views/RecipientRegistry.vue'
-import CartView from '@/views/Cart.vue'
-import TransactionSuccess from '@/views/TransactionSuccess.vue'
-import Leaderboard from '@/views/Leaderboard.vue'
-import RecipientProfile from '@/views/RecipientProfile.vue'
-
-Vue.use(VueRouter)
+const Landing = () => import('@/views/Landing.vue')
+const JoinLanding = () => import('@/views/JoinLanding.vue')
+const ProjectList = () => import('@/views/ProjectList.vue')
+const ProjectView = () => import('@/views/Project.vue')
+const ProjectAdded = () => import('@/views/ProjectAdded.vue')
+const RoundInformationView = () => import('@/views/RoundInformationView.vue')
+const RoundList = () => import('@/views/RoundList.vue')
+const VerifyLanding = () => import('@/views/VerifyLanding.vue')
+const About = () => import('@/views/About.vue')
+const AboutSybilResistance = () => import('@/views/AboutSybilResistance.vue')
+const AboutMaci = () => import('@/views/AboutMaci.vue')
+const AboutPublicGoods = () => import('@/views/AboutPublicGoods.vue')
+const AboutQuadraticFunding = () => import('@/views/AboutQuadraticFunding.vue')
+const AboutDecentralization = () => import('@/views/AboutDecentralization.vue')
+const AboutHowItWorks = () => import('@/views/AboutHowItWorks.vue')
+const AboutContributors = () => import('@/views/AboutContributors.vue')
+const AboutRecipients = () => import('@/views/AboutRecipients.vue')
+const AboutLayer2 = () => import('@/views/AboutLayer2.vue')
+const Verified = () => import('@/views/Verified.vue')
+const JoinView = () => import('@/views/JoinView.vue')
+const VerifyView = () => import('@/views/Verify.vue')
+const RecipientRegistryView = () => import('@/views/RecipientRegistry.vue')
+const RecipientProfile = () => import('@/views/RecipientProfile.vue')
+const CartView = () => import('@/views/CartView.vue')
+const TransactionSuccess = () => import('@/views/TransactionSuccess.vue')
+const Leaderboard = () => import('@/views/Leaderboard.vue')
+const LeaderboardProject = () => import('@/views/LeaderboardProject.vue')
 
 // TODO: create a new route that takes funding factory address as a param
-const routes = [
+const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'landing',
@@ -59,7 +59,12 @@ const routes = [
     component: ProjectView,
   },
   {
-    path: '/rounds/:address/leaderboard',
+    path: '/leaderboards/:address/networks/:network/projects/:id?',
+    name: 'leaderboard-project',
+    component: LeaderboardProject,
+  },
+  {
+    path: '/leaderboards/:address/networks/:network*',
     name: 'leaderboard',
     component: Leaderboard,
     meta: {
@@ -67,9 +72,17 @@ const routes = [
     },
   },
   {
+    path: '/leaderboards/:address*',
+    name: 'fallback-rounds',
+    component: RoundList,
+    meta: {
+      title: 'rounds',
+    },
+  },
+  {
     path: '/round-information',
     name: 'round-information',
-    component: RoundInformation,
+    component: RoundInformationView,
     meta: {
       title: 'Round Information',
     },
@@ -171,43 +184,11 @@ const routes = [
     },
   },
   {
-    path: '/recipients',
-    name: 'recipients',
-    component: RecipientRegistryView,
-    meta: {
-      title: 'Recipient registry',
-    },
-  },
-  {
-    path: '/recipients/:hash',
+    path: '/recipients/:id',
     name: 'recipient-profile',
     component: RecipientProfile,
     meta: {
       title: 'Recipient profile',
-    },
-  },
-  {
-    path: '/verify',
-    name: 'verify',
-    component: VerifyLanding,
-    meta: {
-      title: 'BrightID Verification',
-    },
-  },
-  {
-    path: '/verify/success/:hash?',
-    name: 'verified',
-    component: Verified,
-    meta: {
-      title: 'Verification Success',
-    },
-  },
-  {
-    path: '/verify/:step',
-    name: 'verify-step',
-    component: VerifyView,
-    meta: {
-      title: 'Verification Steps',
     },
   },
   {
@@ -234,7 +215,6 @@ const routes = [
       title: 'Project Application',
     },
   },
-
   {
     path: '/cart',
     name: 'cart',
@@ -252,12 +232,50 @@ const routes = [
     },
   },
 ]
-const router = new VueRouter({
-  base: window.location.pathname,
+
+if (isBrightIdRequired) {
+  routes.push(
+    {
+      path: '/verify',
+      name: 'verify',
+      component: VerifyLanding,
+      meta: {
+        title: 'BrightID Verification',
+      },
+    },
+    {
+      path: '/verify/success/:hash?',
+      name: 'verified',
+      component: Verified,
+      meta: {
+        title: 'Verification Success',
+      },
+    },
+    {
+      path: '/verify/:step',
+      name: 'verify-step',
+      component: VerifyView,
+      meta: {
+        title: 'Verification Steps',
+      },
+    },
+  )
+}
+
+if (isOptimisticRecipientRegistry) {
+  routes.push({
+    path: '/recipients',
+    name: 'recipients',
+    component: RecipientRegistryView,
+    meta: {
+      title: 'Recipient registry',
+    },
+  })
+}
+
+const router = createRouter({
+  history: createWebHashHistory(),
   routes,
-  scrollBehavior() {
-    return { x: 0, y: 0 }
-  },
 })
 
 export default router

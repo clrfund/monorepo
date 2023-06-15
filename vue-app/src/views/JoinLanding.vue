@@ -16,7 +16,7 @@
       <loader />
     </div>
 
-    <div class="content" v-else-if="$store.getters.hasContributionPhaseEnded">
+    <div class="content" v-else-if="hasContributionPhaseEnded">
       <div class="big-emoji">☹</div>
       <h1>{{ $t('joinLanding.closed.h1') }}</h1>
       <div id="subtitle" class="subtitle">
@@ -51,13 +51,11 @@
       </div>
       <div class="btn-container">
         <links to="/" class="btn-primary">{{ $t('home') }}</links>
-        <links to="/about" class="btn-secondary">{{
-          $t('more_on_maci')
-        }}</links>
+        <links to="/about" class="btn-secondary">{{ $t('more_on_maci') }}</links>
       </div>
     </div>
 
-    <div class="content" v-else-if="$store.state.currentRound">
+    <div class="content" v-else-if="currentRound">
       <h1>{{ $t('joinLanding.open.h1') }}</h1>
       <div class="subtitle">
         {{ $t('joinLanding.need_info_about_your_project') }}
@@ -77,11 +75,7 @@
             {{ $t('joinLanding.open.div1') }}
           </div>
           <div class="countdown caps">
-            <time-left
-              valueClass="none"
-              unitClass="none"
-              :date="signUpDeadline"
-            />
+            <time-left v-if="signUpDeadline" valueClass="none" unitClass="none" :date="signUpDeadline" />
           </div>
         </div>
         <div class="apply-callout">
@@ -118,9 +112,7 @@
         <button class="btn-secondary" @click="toggleCriteria">
           {{ $t('joinLanding.see_round_criteria') }}
         </button>
-        <links to="/join/project" class="btn-primary">{{
-          $t('add_project')
-        }}</links>
+        <links to="/join/project" class="btn-primary">{{ $t('add_project') }}</links>
       </div>
     </div>
 
@@ -132,9 +124,7 @@
         >{{ $t('joinLanding.security_deposit') }}
       </div>
       <div class="subtitle mt2">
-        {{
-          $t('joinLanding.cap_on_projects', { maxRecipients: maxRecipients })
-        }}
+        {{ $t('joinLanding.cap_on_projects', { maxRecipients: maxRecipients }) }}
       </div>
       <div class="info-boxes">
         <div class="apply-callout">
@@ -150,9 +140,7 @@
         <button class="btn-secondary" @click="toggleCriteria">
           {{ $t('joinLanding.see_round_criteria') }}
         </button>
-        <links to="/join/project" class="btn-primary">{{
-          $t('add_project')
-        }}</links>
+        <links to="/join/project" class="btn-primary">{{ $t('add_project') }}</links>
       </div>
     </div>
 
@@ -160,13 +148,11 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { DateTime } from 'luxon'
-import { BigNumber } from 'ethers'
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
+import type { BigNumber } from 'ethers'
 
-import { RegistryInfo } from '@/api/recipient-registry-optimistic'
+import type { RegistryInfo } from '@/api/recipient-registry-optimistic'
 import Loader from '@/components/Loader.vue'
 import CriteriaModal from '@/components/CriteriaModal.vue'
 import Breadcrumbs from '@/components/Breadcrumbs.vue'
@@ -176,101 +162,68 @@ import TimeLeft from '@/components/TimeLeft.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
 
 import { getCurrentRound } from '@/api/round'
-import { formatAmount } from '@/utils/amounts'
+import { formatAmount as _formatAmount } from '@/utils/amounts'
+import { useAppStore, useRecipientStore } from '@/stores'
+import { storeToRefs } from 'pinia'
 
-@Component({
-  components: {
-    RoundStatusBanner,
-    CriteriaModal,
-    Loader,
-    Links,
-    TimeLeft,
-    ImageResponsive,
-    Breadcrumbs,
-  },
+const appStore = useAppStore()
+const { maxRecipients, isMessageLimitReached, hasContributionPhaseEnded } = storeToRefs(appStore)
+const recipientStore = useRecipientStore()
+const { recipientRegistryInfo } = storeToRefs(recipientStore)
+
+const currentRound = ref<string | null>(null)
+const loading = ref(true)
+const showCriteriaPanel = ref(false)
+
+const links = computed<Array<{ link: string; url: string }>>(() => [{ link: 'join', url: '/join' }])
+
+const registryInfo = computed<RegistryInfo | null>(() => recipientRegistryInfo.value)
+
+const deposit = computed<BigNumber | undefined>(() => registryInfo.value?.deposit)
+const depositToken = computed<string | null>(() => registryInfo.value?.depositToken || null)
+const signUpDeadline = computed(() => appStore.currentRound?.signUpDeadline)
+const spacesRemaining = computed(() => {
+  // eslint-disable-next-line
+  if (!appStore.currentRound || !registryInfo.value) {
+    return null
+  }
+  return appStore.currentRound.maxRecipients - registryInfo.value.recipientCount
 })
-export default class JoinLanding extends Vue {
-  currentRound: string | null = null
-  loading = true
-  showCriteriaPanel = false
 
-  get links(): Array<{ link: string; url: string }> {
-    return [{ link: 'join', url: '/join' }]
+const isRoundFull = computed(() => {
+  if (spacesRemaining.value === null) {
+    return false
   }
+  return spacesRemaining.value === 0 || isMessageLimitReached.value
+})
 
-  async created() {
-    this.currentRound = await getCurrentRound()
-    this.loading = false
+const isRoundFillingUp = computed(() => {
+  if (spacesRemaining.value === null) {
+    return false
   }
+  return spacesRemaining.value < 20
+})
 
-  get registryInfo(): RegistryInfo {
-    return this.$store.state.recipientRegistryInfo
-  }
+const spacesRemainingString = computed(() =>
+  spacesRemaining.value === 1 ? '1 space' : `${spacesRemaining.value} spaces`,
+)
 
-  get deposit(): BigNumber | null {
-    return this.registryInfo?.deposit
-  }
+onMounted(async () => {
+  currentRound.value = await getCurrentRound()
+  loading.value = false
+})
 
-  get depositToken(): string | null {
-    return this.registryInfo?.depositToken
-  }
+function openTooltip(): void {
+  document.getElementById('myTooltip')?.classList.toggle('hidden')
+}
 
-  get recipientCount(): number | null {
-    return this.registryInfo?.recipientCount
-  }
+function toggleCriteria(): void {
+  showCriteriaPanel.value = !showCriteriaPanel.value
+}
 
-  private get signUpDeadline(): DateTime {
-    return this.$store.state.currentRound?.signUpDeadline
-  }
-
-  get maxRecipients(): number | undefined {
-    return this.$store.getters.maxRecipients
-  }
-
-  get spacesRemaining(): number | null {
-    if (!this.$store.state.currentRound || !this.registryInfo) {
-      return null
-    }
-    return (
-      this.$store.state.currentRound.maxRecipients -
-      this.registryInfo.recipientCount
-    )
-  }
-
-  get isRoundFull(): boolean {
-    if (this.spacesRemaining === null) {
-      return false
-    }
-    return (
-      this.spacesRemaining === 0 || this.$store.getters.isMessageLimitReached
-    )
-  }
-
-  get isRoundFillingUp(): boolean {
-    if (this.spacesRemaining === null) {
-      return false
-    }
-    return this.spacesRemaining < 20
-  }
-
-  get spacesRemainingString(): string {
-    return this.spacesRemaining === 1
-      ? '1 space'
-      : `${this.spacesRemaining} spaces`
-  }
-
-  openTooltip(): void {
-    document.getElementById('myTooltip')?.classList.toggle('hidden')
-  }
-
-  toggleCriteria(): void {
-    this.showCriteriaPanel = !this.showCriteriaPanel
-  }
-
-  formatAmount(value: BigNumber): string {
-    if (!value) return ''
-    return formatAmount(value, 18)
-  }
+function formatAmount(value?: BigNumber): string {
+  if (!value) return ''
+  return _formatAmount(value, 18)
 }
 </script>
 

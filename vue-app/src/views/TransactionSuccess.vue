@@ -8,38 +8,28 @@
     <div class="dropshadow">
       <div class="content">
         <span class="contributed-icon">🎉</span>
-        <p
-          v-if="$route.params.type === 'reallocation'"
-          class="contributed-header"
-        >
-          {{ formatContribution() }}
-          {{ currentRound.nativeTokenSymbol }} {{ $t('transactionSuccess.p1') }}
+        <p v-if="$route.params.type === 'reallocation'" class="contributed-header">
+          {{ formatContribution }}
+          {{ currentRound?.nativeTokenSymbol }} {{ $t('transactionSuccess.p1') }}
         </p>
-        <p
-          v-else-if="$route.params.type === 'contribution'"
-          class="contributed-header"
-        >
+        <p v-else-if="$route.params.type === 'contribution'" class="contributed-header">
           {{ $t('transactionSuccess.p2') }}
         </p>
         <div>
-          <p
-            v-if="$route.params.type === 'reallocation'"
-            class="contributed-content"
-          >
+          <p v-if="$route.params.type === 'reallocation'" class="contributed-content">
             {{ $t('transactionSuccess.p3') }}
             <time-left
+              v-if="currentRound?.votingDeadline"
               valueClass="contributed-content-bold"
               unitClass="contributed-content-bold"
-              :date="currentRound.votingDeadline"
+              :date="currentRound?.votingDeadline"
             />
             {{ $t('transactionSuccess.p4') }}
           </p>
-          <p
-            v-else-if="$route.params.type === 'contribution'"
-            class="contributed-content"
-          >
+          <p v-else-if="$route.params.type === 'contribution'" class="contributed-content">
             {{ $t('transactionSuccess.p4_t1') }}
             <time-left
+              v-if="currentRound?.votingDeadline"
               valueClass="contributed-content-bold"
               unitClass="contributed-content-bold"
               :date="currentRound.votingDeadline"
@@ -47,7 +37,7 @@
             {{ $t('transactionSuccess.p4_t2') }}
           </p>
           <div class="receipt" v-if="$route.params.hash">
-            <transaction-receipt :hash="$route.params.hash" />
+            <transaction-receipt :hash="hash" />
           </div>
           <div class="btn-info" @click="redirectToProjects()">
             {{ $t('transactionSuccess.btn') }}
@@ -58,14 +48,9 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 // Libraries
-import { BigNumber } from 'ethers'
-import Vue from 'vue'
-import Component from 'vue-class-component'
-
-// API
-import { RoundInfo } from '@/api/round'
+import { computed } from 'vue'
 
 // Components
 import TransactionReceipt from '@/components/TransactionReceipt.vue'
@@ -74,26 +59,19 @@ import ImageResponsive from '@/components/ImageResponsive.vue'
 
 // Utils
 import { formatAmount } from '@/utils/amounts'
+import { useAppStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
 
-@Component({
-  components: { TransactionReceipt, TimeLeft, ImageResponsive },
-})
-export default class TransactionSuccess extends Vue {
-  get contribution(): BigNumber | null {
-    return this.$store.state.contribution
-  }
+const route = useRoute()
+const router = useRouter()
+const appStore = useAppStore()
+const { contribution, currentRound } = storeToRefs(appStore)
 
-  get currentRound(): RoundInfo | null {
-    return this.$store.state.currentRound
-  }
-
-  formatContribution() {
-    return this.contribution ? formatAmount(this.contribution, 18) : ''
-  }
-
-  redirectToProjects() {
-    this.$router.push({ name: 'projects' })
-  }
+const formatContribution = computed(() => (contribution.value ? formatAmount(contribution.value, 18) : ''))
+const hash = computed(() => route.params.hash as string)
+function redirectToProjects() {
+  router.push({ name: 'projects' })
 }
 </script>
 

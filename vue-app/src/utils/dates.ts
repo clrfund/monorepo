@@ -1,11 +1,15 @@
-import { DateTime } from 'luxon'
-import { TimeLeft } from '@/api/round'
+import { DateTime, type LocaleOptions } from 'luxon'
+import type { TimeLeft } from '@/api/round'
 
-export function formatDate(date: DateTime): string {
+export function formatDate(date?: DateTime): string {
   if (!date) {
     return '...' //  TODO best place to do this?
   }
   return date.toFormat('MMMM dd')
+}
+
+export function formatDateWithOptions(date: DateTime, options: LocaleOptions & Intl.DateTimeFormatOptions): string {
+  return date.isValid ? new Intl.DateTimeFormat(options.locale, options).format(date.toJSDate()) : ''
 }
 
 export function hasDateElapsed(date: DateTime): boolean {
@@ -26,9 +30,6 @@ export function getTimeLeft(date: DateTime): TimeLeft {
     return { days: 0, hours: 0, minutes: 0, seconds: 0 }
   }
   const diff = date.diff(now)
-  const [days, hours, minutes, seconds] = diff
-    .toFormat('d h m s')
-    .split(' ')
-    .map(Number)
+  const [days, hours, minutes, seconds] = diff.toFormat('d h m s').split(' ').map(Number)
   return { days, hours, minutes, seconds }
 }

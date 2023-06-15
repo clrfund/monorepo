@@ -1,61 +1,55 @@
 <template>
-  <div class="modal-body">
-    <transaction
-      :hash="txHash"
-      :error="txError"
-      :displayRetryBtn="true"
-      @close="$emit('close')"
-      @retry="
-        () => {
-          this.txError = ''
-          executeTx()
-        }
-      "
-    ></transaction>
-    <button
-      v-if="txHash"
-      class="btn-secondary close-btn"
-      @click="$emit('close')"
-    >
-      {{ $t('transactionModal.button1') }}
-    </button>
-  </div>
+  <vue-final-modal class="modal-container">
+    <div class="modal-body">
+      <transaction
+        :hash="txHash"
+        :error="txError"
+        :displayRetryBtn="true"
+        @close="emit('close')"
+        @retry="
+          () => {
+            txError = ''
+            executeTx()
+          }
+        "
+      ></transaction>
+      <button v-if="txHash" class="btn-secondary close-btn" @click="emit('close')">
+        {{ $t('transactionModal.button1') }}
+      </button>
+    </div>
+  </vue-final-modal>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
-import { TransactionResponse } from '@ethersproject/abstract-provider'
-
+<script setup lang="ts">
+import type { TransactionResponse } from '@ethersproject/abstract-provider'
+// @ts-ignore
+import { VueFinalModal } from 'vue-final-modal'
 import Transaction from '@/components/Transaction.vue'
 import { waitForTransaction } from '@/utils/contracts'
 
-@Component({
-  components: {
-    Transaction,
-  },
+interface Props {
+  transaction: Promise<TransactionResponse>
+  onTxSuccess: (txHash: string) => void
+}
+
+const props = defineProps<Props>()
+const emit = defineEmits(['close'])
+
+const txHash = ref('')
+const txError = ref('')
+
+onMounted(() => {
+  executeTx()
 })
-export default class TransactionModal extends Vue {
-  @Prop() transaction!: Promise<TransactionResponse>
-  @Prop() onTxSuccess!: (txHash) => void
 
-  txHash = ''
-  txError = ''
+async function executeTx() {
+  try {
+    await waitForTransaction(props.transaction, hash => (txHash.value = hash))
 
-  mounted() {
-    this.executeTx()
-  }
-
-  private async executeTx() {
-    try {
-      await waitForTransaction(this.transaction, (hash) => (this.txHash = hash))
-
-      this.onTxSuccess(this.txHash)
-    } catch (error) {
-      this.txError = error.message
-      return
-    }
+    props.onTxSuccess(txHash.value)
+  } catch (error: any) {
+    txError.value = error.message
+    return
   }
 }
 </script>
@@ -77,6 +71,6 @@ export default class TransactionModal extends Vue {
 }
 
 .close-btn {
-  margin-top: $modal-space;
+  margin: $modal-space auto 0;
 }
 </style>

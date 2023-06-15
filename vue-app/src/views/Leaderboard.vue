@@ -4,22 +4,20 @@
     <div v-else>
       <div class="info" v-if="!round">🤚 {{ $t('leaderboard.no_round') }}</div>
       <div v-else-if="projects">
-        <div class="info" v-if="projects.length === 0">
-          😢 {{ $t('leaderboard.no_project') }}
-        </div>
+        <div class="info" v-if="projects.length === 0">😢 {{ $t('leaderboard.no_project') }}</div>
         <template v-else>
           <div class="header">
             <div>
               <h2>{{ $t('leaderboard.header') }}</h2>
             </div>
-            <button class="btn-secondary" @click="toggleView()">
-              <div v-if="isSimpleView">{{ $t('leaderboard.more') }}</div>
+            <button class="btn-secondary" @click="appStore.toggleLeaderboardView()">
+              <div v-if="showSimpleLeaderboard">{{ $t('leaderboard.more') }}</div>
               <div v-else>{{ $t('leaderboard.less') }}</div>
             </button>
           </div>
           <div class="hr" />
           <div class="">
-            <div v-if="isSimpleView">
+            <div v-if="showSimpleLeaderboard">
               <leaderboard-simple-view
                 v-for="(project, index) in projects"
                 :project="project"
@@ -29,10 +27,7 @@
               ></leaderboard-simple-view>
             </div>
             <div v-else>
-              <leaderboard-detail-view
-                :projects="projects"
-                :round="round"
-              ></leaderboard-detail-view>
+              <leaderboard-detail-view :projects="projects" :round="round"></leaderboard-detail-view>
             </div>
           </div>
         </template>
@@ -41,60 +36,55 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import LeaderboardDetailView from '@/components/LeaderboardDetailView.vue'
-import LeaderboardSimpleView from '@/components/LeaderboardSimpleView.vue'
-import Loader from '@/components/Loader.vue'
-import { TOGGLE_LEADERBOARD_VIEW } from '@/store/mutation-types'
-import { LeaderboardProject } from '@/api/projects'
-import { RoundInfo } from '@/api/round'
-import { LOAD_ROUNDS } from '@/store/action-types'
+<script setup lang="ts">
+import { useAppStore } from '@/stores'
+import { useRouter, useRoute } from 'vue-router'
+import type { RoundInfo } from '@/api/round'
+import type { LeaderboardProject } from '@/api/projects'
+import { toLeaderboardProject } from '@/api/projects'
+import { getLeaderboardData } from '@/api/leaderboard'
+import { getRouteParamValue } from '@/utils/route'
 
-@Component({
-  name: 'leaderboard',
-  components: { LeaderboardSimpleView, LeaderboardDetailView, Loader },
-})
-export default class Leaderboard extends Vue {
-  isLoading = true
-  round: RoundInfo | null = null
-  projects: LeaderboardProject[] | null = null
+const router = useRouter()
+const route = useRoute()
 
-  get isSimpleView(): boolean {
-    return this.$store.state.showSimpleLeaderboard
-  }
+const isLoading = ref(true)
+const round = ref<RoundInfo | null>(null)
+const projects = ref<LeaderboardProject[] | null>(null)
 
-  private async loadRound(address: string) {
-    if (!this.$store.state.rounds) {
-      await this.$store.dispatch(LOAD_ROUNDS)
-    }
+const appStore = useAppStore()
+const { showSimpleLeaderboard } = storeToRefs(appStore)
 
-    const round = await this.$store.state.rounds.getRound(address)
-
-    if (round) {
-      this.round = await round.getRoundInfo()
-      this.projects = await round.getLeaderboardProjects()
-    }
-  }
-
-  async created() {
-    const { address } = this.$route.params
-
-    await this.loadRound(address)
-
-    // redirect to projects view if not finalized or no static round data for leaderboard
-    if (!this.projects) {
-      this.$router.push({ name: 'round', params: this.$route.params })
-    }
-
-    this.isLoading = false
-  }
-
-  toggleView(): void {
-    this.$store.commit(TOGGLE_LEADERBOARD_VIEW)
-  }
+async function loadLeaderboard(address: string, network: string) {
+  const data = await getLeaderboardData(address, network)
+  return data
 }
+
+onMounted(async () => {
+  if (!route.params.address || !route.params.network) {
+    router.push({ name: 'rounds' })
+    return
+  }
+
+  const address = getRouteParamValue(route.params.address)
+  const network = getRouteParamValue(route.params.network)
+  const data = await loadLeaderboard(address, network)
+
+  // redirect to projects view if not finalized or no static round data for leaderboard
+  if (!data?.projects) {
+    router.push({ name: 'round' })
+    return
+  }
+
+  projects.value = data.projects
+    .filter(project => project.state != 'Removed')
+    .map(project => toLeaderboardProject(project))
+    .sort((p1: LeaderboardProject, p2: LeaderboardProject) => p2.allocatedAmount.sub(p1.allocatedAmount))
+
+  round.value = { ...data.round, fundingRoundAddress: data.round.address, network }
+
+  isLoading.value = false
+})
 </script>
 
 <style lang="scss" scoped>

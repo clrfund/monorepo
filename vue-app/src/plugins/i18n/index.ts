@@ -1,11 +1,35 @@
-import Vue from 'vue'
-import VueI18n from 'vue-i18n'
+import { createI18n } from 'vue-i18n'
+import cn from '@/locales/cn.json'
 import en from '@/locales/en.json'
+import es from '@/locales/es.json'
 
-Vue.use(VueI18n)
+const defaultLocale = import.meta.env.VITE_I18N_LOCALE || 'en'
+export const languages = [
+  { locale: 'en', emoji: '🇺🇸', description: 'English' },
+  { locale: 'es', emoji: '🇪🇸', description: 'Español' },
+  { locale: 'zh-CN', emoji: '🇨🇳', description: '简体中文' },
+  /*
+  // comment out as we don't have the translations for these yet
+  { locale: 'tw', emoji: '🇹🇼', description: '繁體中文' },
+   */
+]
 
-export default new VueI18n({
-  locale: 'en',
-  fallbackLocale: 'en',
-  messages: { en },
+const supportedLocales = languages.map(entry => entry.locale)
+export function isLocaleSupported(locale) {
+  return supportedLocales.includes(locale)
+}
+
+type MessageSchema = typeof en
+const i18n = createI18n<[MessageSchema], 'zh-CN' | 'es' | 'en'>({
+  legacy: false,
+  locale: defaultLocale,
+  fallbackLocale: defaultLocale,
+  globalInjection: true,
+  messages: {
+    'zh-CN': cn,
+    es,
+    en,
+  },
 })
+
+export default i18n

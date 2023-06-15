@@ -1,13 +1,12 @@
 <template>
-  <div class="project-container">
+  <loader v-if="isLoading"></loader>
+  <div v-else class="project-container">
     <div class="projects">
       <div
         :class="{
           title: true,
-          'title-with-cart-closed':
-            !!$store.state.currentUser && !$store.state.showCartPanel,
-          'title-with-cart-open':
-            !!$store.state.currentUser && $store.state.showCartPanel,
+          'title-with-cart-closed': !!currentUser && !showCartPanel,
+          'title-with-cart-open': !!currentUser && showCartPanel,
         }"
       >
         <div class="header">
@@ -30,26 +29,16 @@
             autocomplete="on"
             onfocus="this.value=''"
           />
-          <img
-            v-if="search.length > 0"
-            @click="clearSearch"
-            src="@/assets/close.svg"
-            height="20"
-            class="pointer"
-          />
+          <img v-if="search.length > 0" @click="clearSearch" src="@/assets/close.svg" height="20" class="pointer" />
         </div>
         <div class="add-project">
-          <links to="/join" class="btn-primary">{{
-            $t('projectList.link1')
-          }}</links>
+          <links to="/join" class="btn-primary">{{ $t('projectList.link1') }}</links>
         </div>
         <div class="hr" />
       </div>
 
       <div class="project-list">
-        <call-to-action-card
-          v-if="!this.search && this.selectedCategories.length === 0"
-        />
+        <call-to-action-card v-if="!search && selectedCategories.length === 0" />
         <project-list-item
           v-for="project in filteredProjects"
           :project="project"
@@ -58,7 +47,7 @@
         >
         </project-list-item>
       </div>
-      <div class="empty-search" v-if="filteredProjects == 0">
+      <div class="empty-search" v-if="filteredProjects.length == 0">
         <div>
           {{ $t('projectList.div1') }}
         </div>
@@ -67,20 +56,26 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { FixedNumber } from 'ethers'
-import { DateTime } from 'luxon'
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
 
-import { getCurrentRound } from '@/api/round'
-import { Project } from '@/api/projects'
+import { getCurrentRound, getRoundInfo } from '@/api/round'
+import { type Project, getProjects, getRecipientRegistryAddress } from '@/api/projects'
 
 import CallToActionCard from '@/components/CallToActionCard.vue'
-import CartWidget from '@/components/CartWidget.vue'
 import ProjectListItem from '@/components/ProjectListItem.vue'
 import FilterDropdown from '@/components/FilterDropdown.vue'
 import Links from '@/components/Links.vue'
+import { useRoute } from 'vue-router'
+import { useAppStore, useUserStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+import { DateTime } from 'luxon'
+
+type ProjectRoundInfo = {
+  recipientRegistryAddress: string
+  startTime: number
+  votingDeadline: number
+}
 
 const SHUFFLE_RANDOM_SEED = Math.random()
 
@@ -99,98 +94,91 @@ function shuffleArray(array: any[]) {
   }
 }
 
-@Component({
-  components: {
-    CallToActionCard,
-    CartWidget,
-    ProjectListItem,
-    FilterDropdown,
-    Links,
-  },
-})
-export default class ProjectList extends Vue {
-  projects: Project[] = []
-  search = ''
-  isLoading = true
-  categories: string[] = ['content', 'research', 'tooling', 'data']
-  selectedCategories: string[] = []
-  roundAddress = ''
+const route = useRoute()
+const appStore = useAppStore()
+const { currentRoundAddress, currentRound, showCartPanel } = storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
 
-  get projectsByCategoriesSelected(): Project[] {
-    return this.selectedCategories.length === 0
-      ? this.projects
-      : this.projects.filter((project) =>
-          this.selectedCategories.includes(
-            ((project.category as string) || '').toLowerCase()
-          )
-        )
-  }
+const projects = ref<Project[]>([])
+const search = ref('')
+const isLoading = ref(true)
+const categories = ref<string[]>(['content', 'education', 'research', 'tooling', 'data'])
+const selectedCategories = ref<string[]>([])
+const roundAddress = ref('')
 
-  async created() {
-    //TODO: update to take factory address as a parameter, default to env. variable
-    this.roundAddress =
-      this.$route.params.address ||
-      this.$store.state.currentRoundAddress ||
-      (await getCurrentRound())
-
-    await this.loadProjects(this.roundAddress)
-    this.isLoading = false
-  }
-
-  private async loadProjects(roundAddress: string) {
-    if (!this.$store.state.rounds) {
-      await this.$store.dispatch('LOAD_ROUNDS')
-    }
-
-    const round = await this.$store.state.rounds.getRound(roundAddress)
-    if (round) {
-      const projects = await round.getProjects()
-      const visibleProjects = projects.filter((project) => {
-        return !project.isHidden && !project.isLocked
-      })
-      shuffleArray(visibleProjects)
-      this.projects = visibleProjects
-    }
-  }
-
-  formatIntegerPart(value: FixedNumber): string {
-    if (value._value === '0.0') {
-      return '0'
-    }
-    const integerPart = value.toString().split('.')[0]
-    return integerPart + (value.round(0) === value ? '' : '.')
-  }
-
-  formatFractionalPart(value: FixedNumber): string {
-    return value._value === '0.0' ? '' : value.round(2).toString().split('.')[1]
-  }
-
-  formatDate(value: DateTime): string {
-    return value.toLocaleString(DateTime.DATETIME_SHORT) || ''
-  }
-
-  get filteredProjects(): Project[] {
-    return this.projectsByCategoriesSelected.filter((project: Project) => {
-      if (!this.search) {
-        return true
-      }
-      return project.name.toLowerCase().includes(this.search.toLowerCase())
-    })
-  }
-
-  handleFilterClick(selection: string): void {
-    if (this.selectedCategories.includes(selection)) {
-      this.selectedCategories = this.selectedCategories.filter(
-        (category) => category !== selection
+const projectsByCategoriesSelected = computed<Project[]>(() => {
+  return selectedCategories.value.length === 0
+    ? projects.value
+    : projects.value.filter(project =>
+        selectedCategories.value.includes(((project.category as string) || '').toLowerCase()),
       )
-    } else {
-      this.selectedCategories.push(selection)
+})
+
+onMounted(async () => {
+  try {
+    roundAddress.value =
+      (route.params.address as string) || currentRoundAddress.value || (await getCurrentRound()) || ''
+    const round = await loadProjectRoundInfo(roundAddress.value)
+    await loadProjects(round)
+  } catch (err) {
+    /* eslint-disable-next-line no-console */
+    console.error('Error loading projects', err)
+  }
+  isLoading.value = false
+})
+
+async function loadProjectRoundInfo(roundAddress: string): Promise<ProjectRoundInfo> {
+  // defaults when a round has not been created yet
+  let recipientRegistryAddress = ''
+  let startTime = 0
+  let votingDeadline = DateTime.local().toSeconds()
+
+  if (roundAddress) {
+    const round = await getRoundInfo(roundAddress, currentRound.value)
+    if (round) {
+      recipientRegistryAddress = round.recipientRegistryAddress
+      startTime = round.startTime.toSeconds()
+      votingDeadline = round.votingDeadline.toSeconds()
     }
   }
 
-  clearSearch(): void {
-    this.search = ''
+  if (!recipientRegistryAddress) {
+    // pass null as round address to get recipient registry address from the factory
+    recipientRegistryAddress = await getRecipientRegistryAddress(null)
   }
+
+  return { recipientRegistryAddress, startTime, votingDeadline }
+}
+
+async function loadProjects(round: ProjectRoundInfo) {
+  const _projects = await getProjects(round.recipientRegistryAddress, round.startTime, round.votingDeadline)
+  const visibleProjects = _projects.filter(project => {
+    return !project.isHidden && !project.isLocked
+  })
+  shuffleArray(visibleProjects)
+  projects.value = visibleProjects
+}
+
+const filteredProjects = computed(() => {
+  return projectsByCategoriesSelected.value.filter((project: Project) => {
+    if (!search.value) {
+      return true
+    }
+    return project.name.toLowerCase().includes(search.value.toLowerCase())
+  })
+})
+
+function handleFilterClick(selection: string): void {
+  if (selectedCategories.value.includes(selection)) {
+    selectedCategories.value = selectedCategories.value.filter(category => category !== selection)
+  } else {
+    selectedCategories.value.push(selection)
+  }
+}
+
+function clearSearch(): void {
+  search.value = ''
 }
 </script>
 
@@ -215,7 +203,7 @@ export default class ProjectList extends Vue {
     margin: 0 (-$content-space);
     padding: 20px $content-space;
   }
-  @media (max-width: $breakpoint-m - 1px) {
+  @media (max-width: ( $breakpoint-m - 1px)) {
     display: none;
   }
 }
@@ -301,7 +289,7 @@ export default class ProjectList extends Vue {
     width: auto;
     img {
       margin-right: 10px;
-      filter: var(--img-filter, invert(1));
+      filter: var(--img-filter, invert(0));
     }
 
     input {
@@ -330,31 +318,31 @@ export default class ProjectList extends Vue {
   /* Nudges right edge of "title bar" inward when the cart
   toggle button is present. Only as issue when cart is closed,
   AND the user is logged in. */
-  @media (min-width: $breakpoint-m + 1px) {
+  @media (min-width: ($breakpoint-m + 1px)) {
     // Desktop only
     margin-right: 1rem;
   }
   /* Adjusts breakpoints for when cart is present but closed */
-  @media (max-width: $breakpoint-xl + $cart-width-closed) {
+  @media (max-width: ($breakpoint-xl + $cart-width-closed)) {
     @include project-grid-xl();
   }
-  @media (max-width: $breakpoint-l + $cart-width-closed) {
+  @media (max-width: ($breakpoint-l + $cart-width-closed)) {
     @include project-grid-l();
   }
-  @media (max-width: $breakpoint-m + $cart-width-closed) {
+  @media (max-width: ($breakpoint-m + $cart-width-closed)) {
     @include project-grid-m();
   }
 }
 
 .title-with-cart-open {
   /* Adjusts breakpoints for when cart is present and open */
-  @media (max-width: $breakpoint-xl + $cart-width-open) {
+  @media (max-width: ($breakpoint-xl + $cart-width-open)) {
     @include project-grid-xl();
   }
-  @media (max-width: $breakpoint-l + $cart-width-open) {
+  @media (max-width: ( $breakpoint-l + $cart-width-open)) {
     @include project-grid-l();
   }
-  @media (max-width: $breakpoint-m + $cart-width-open) {
+  @media (max-width: ($breakpoint-m + $cart-width-open)) {
     @include project-grid-m();
   }
 }
@@ -404,7 +392,7 @@ export default class ProjectList extends Vue {
   }
 
   .round-info-title {
-    margin-bottom: $content-space / 2;
+    margin-bottom: calc($content-space / 2);
   }
 }
 </style>

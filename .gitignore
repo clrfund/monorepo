@@ -1,5 +1,10 @@
 node_modules
 vue-app/.env
+vue-app/.env.dev
+vue-app/.env.xdai
+vue-app/.env.gnosis
+vue-app/.env.testnet
+vue-app/.env.vue3
 vue-app/gundata/
 vetur.config.js
 # Local Netlify folder

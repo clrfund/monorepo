@@ -1,61 +1,23 @@
 import { BigNumber, Contract, Signer } from 'ethers'
-import {
-  TransactionResponse,
-  TransactionReceipt,
-} from '@ethersproject/abstract-provider'
+import type { TransactionResponse, TransactionReceipt } from '@ethersproject/abstract-provider'
 import { isHexString } from '@ethersproject/bytes'
 import { DateTime } from 'luxon'
 import { getEventArg } from '@/utils/contracts'
 import { chain } from '@/api/core'
 
 import { OptimisticRecipientRegistry } from './abi'
-import { provider, ipfsGatewayUrl, recipientRegistryPolicy } from './core'
-import { Project } from './projects'
+import { provider, ipfsGatewayUrl } from './core'
+import type { Project } from './projects'
 import sdk from '@/graphql/sdk'
-import { Recipient } from '@/graphql/API'
+import type { Recipient } from '@/graphql/API'
 import { hasDateElapsed } from '@/utils/dates'
+import type { RegistryInfo, RecipientApplicationData } from './types'
+import { formToRecipientData } from './recipient'
 
-export interface RegistryInfo {
-  registryAddress: string
-  deposit: BigNumber
-  depositToken: string
-  challengePeriodDuration: number
-  listingPolicyUrl: string
-  recipientCount: number
-  owner: string
-}
-
-export async function getRegistryInfo(
-  factoryAddress: string
-): Promise<RegistryInfo | null> {
-  const { fundingRoundFactory } = await sdk.GetRecipientRegistryInfo({
-    factoryAddress: factoryAddress.toLowerCase(),
-  })
-
-  if (!fundingRoundFactory) {
-    return null
-  }
-
-  const recipientRegistry = fundingRoundFactory.currentRound
-    ? fundingRoundFactory.currentRound.recipientRegistry
-    : fundingRoundFactory.recipientRegistry
-
-  if (!recipientRegistry) {
-    return null
-  }
-
-  const registryAddress = recipientRegistry.id
-  const owner = recipientRegistry.owner
-  const deposit = BigNumber.from(recipientRegistry.baseDeposit || 0)
-  const challengePeriodDuration = BigNumber.from(
-    recipientRegistry.challengePeriodDuration || 0
-  )
-
-  const registry = new Contract(
-    registryAddress,
-    OptimisticRecipientRegistry,
-    provider
-  )
+async function getRegistryInfo(registryAddress: string): Promise<RegistryInfo> {
+  const registry = new Contract(registryAddress, OptimisticRecipientRegistry, provider)
+  const deposit = await registry.baseDeposit()
+  const challengePeriodDuration = await registry.challengePeriodDuration()
   let recipientCount
   try {
     recipientCount = await registry.getRecipientCount()
@@ -65,12 +27,11 @@ export async function getRegistryInfo(
     // used during current round for space calculation
     recipientCount = BigNumber.from(0)
   }
+  const owner = await registry.owner()
   return {
-    registryAddress,
     deposit,
     depositToken: chain.currency,
     challengePeriodDuration: challengePeriodDuration.toNumber(),
-    listingPolicyUrl: `${ipfsGatewayUrl}/ipfs/${recipientRegistryPolicy}`,
     recipientCount: recipientCount.toNumber(),
     owner,
   }
@@ -94,67 +55,6 @@ export enum RequestStatus {
   Removed = 'Removed',
 }
 
-export interface RecipientApplicationData {
-  project: {
-    name: string
-    tagline: string
-    description: string
-    category: string
-    problemSpace: string
-  }
-  fund: {
-    addressName: string
-    resolvedAddress: string
-    plans: string
-  }
-  team: {
-    name: string
-    description: string
-    email: string
-  }
-  links: {
-    github: string
-    radicle: string
-    website: string
-    twitter: string
-    discord: string
-  }
-  image: {
-    bannerHash: string
-    thumbnailHash: string
-  }
-  furthestStep: number
-  hasEns: boolean
-}
-
-export function formToProjectInterface(
-  data: RecipientApplicationData
-): Project {
-  const { project, fund, team, links, image } = data
-  return {
-    id: fund.resolvedAddress,
-    address: fund.resolvedAddress,
-    name: project.name,
-    tagline: project.tagline,
-    description: project.description,
-    category: project.category,
-    problemSpace: project.problemSpace,
-    plans: fund.plans,
-    teamName: team.name,
-    teamDescription: team.description,
-    githubUrl: links.github,
-    radicleUrl: links.radicle,
-    websiteUrl: links.website,
-    twitterUrl: links.twitter,
-    discordUrl: links.discord,
-    bannerImageUrl: `${ipfsGatewayUrl}/ipfs/${image.bannerHash}`,
-    thumbnailImageUrl: `${ipfsGatewayUrl}/ipfs/${image.thumbnailHash}`,
-    index: 0,
-    isHidden: false,
-    isLocked: true,
-  }
-}
-
 interface RecipientMetadata {
   name: string
   description: string
@@ -173,15 +73,12 @@ export interface Request {
   requester: string
 }
 
-export async function getRequests(
-  registryInfo: RegistryInfo,
-  registryAddress: string
-): Promise<Request[]> {
+export async function getRequests(registryInfo: RegistryInfo, registryAddress: string): Promise<Request[]> {
   const data = await sdk.GetRecipients({
     registryAddress: registryAddress.toLowerCase(),
   })
 
-  if (!data.recipients?.length) {
+  if (!data.recipients.length) {
     return []
   }
 
@@ -210,9 +107,7 @@ export async function getRequests(
     }
 
     const submissionTime = Number(recipient.submissionTime)
-    const acceptanceDate = DateTime.fromSeconds(
-      submissionTime + registryInfo.challengePeriodDuration
-    )
+    const acceptanceDate = DateTime.fromSeconds(submissionTime + registryInfo.challengePeriodDuration)
 
     let requester
     if (recipient.requester) {
@@ -220,12 +115,9 @@ export async function getRequests(
     }
 
     const request: Request = {
-      transactionHash:
-        recipient.requestResolvedHash || recipient.requestSubmittedHash,
+      transactionHash: recipient.requestResolvedHash || recipient.requestSubmittedHash,
       type: RequestType[RequestTypeCode[requestType]],
-      status: hasDateElapsed(acceptanceDate)
-        ? RequestStatus.Accepted
-        : RequestStatus.Submitted,
+      status: hasDateElapsed(acceptanceDate) ? RequestStatus.Accepted : RequestStatus.Submitted,
       acceptanceDate,
       recipientId: recipient.id,
       recipient: recipient.recipientAddress,
@@ -238,90 +130,30 @@ export async function getRequests(
     }
 
     if (recipient.verified) {
-      request.status =
-        requestType === RequestTypeCode.Removal
-          ? RequestStatus.Removed
-          : RequestStatus.Executed
+      request.status = requestType === RequestTypeCode.Removal ? RequestStatus.Removed : RequestStatus.Executed
     }
 
     // In case there are two requests submissions events, we always prioritize
     // the last one since you can only have one request per recipient
     requests[request.recipientId] = request
   }
-  return Object.keys(requests).map((recipientId) => requests[recipientId])
+  return Object.keys(requests).map(recipientId => requests[recipientId])
 }
 
-// TODO merge this with `Project` inteface
-export interface RecipientData {
-  name: string
-  description: string
-  imageHash?: string // TODO remove - old flow
-  address: string
-  tagline?: string
-  category?: string
-  problemSpace?: string
-  plans?: string
-  teamName?: string
-  teamDescription?: string
-  githubUrl?: string
-  radicleUrl?: string
-  websiteUrl?: string
-  twitterUrl?: string
-  discordUrl?: string
-  // fields different vs. Project
-  bannerImageHash?: string
-  thumbnailImageHash?: string
-}
-
-export function formToRecipientData(
-  data: RecipientApplicationData
-): RecipientData {
-  const { project, fund, team, links, image } = data
-  return {
-    address: fund.resolvedAddress,
-    name: project.name,
-    tagline: project.tagline,
-    description: project.description,
-    category: project.category,
-    problemSpace: project.problemSpace,
-    plans: fund.plans,
-    teamName: team.name,
-    teamDescription: team.description,
-    githubUrl: links.github,
-    radicleUrl: links.radicle,
-    websiteUrl: links.website,
-    twitterUrl: links.twitter,
-    discordUrl: links.discord,
-    bannerImageHash: image.bannerHash,
-    thumbnailImageHash: image.thumbnailHash,
-  }
-}
-
-export async function addRecipient(
+async function addRecipient(
   registryAddress: string,
   recipientApplicationData: RecipientApplicationData,
   deposit: BigNumber,
-  signer: Signer
+  signer: Signer,
 ): Promise<TransactionResponse> {
-  const registry = new Contract(
-    registryAddress,
-    OptimisticRecipientRegistry,
-    signer
-  )
+  const registry = new Contract(registryAddress, OptimisticRecipientRegistry, signer)
   const recipientData = formToRecipientData(recipientApplicationData)
   const { address, ...metadata } = recipientData
-  const transaction = await registry.addRecipient(
-    address,
-    JSON.stringify(metadata),
-    { value: deposit }
-  )
+  const transaction = await registry.addRecipient(address, JSON.stringify(metadata), { value: deposit })
   return transaction
 }
 
-export function getRequestId(
-  receipt: TransactionReceipt,
-  registryAddress: string
-): string {
+export function getRequestId(receipt: TransactionReceipt, registryAddress: string): string {
   const registry = new Contract(registryAddress, OptimisticRecipientRegistry)
   return getEventArg(receipt, registry, 'RequestSubmitted', '_recipientId')
 }
@@ -366,32 +198,24 @@ function decodeProject(recipient: Partial<Recipient>): Project {
     websiteUrl: metadata.websiteUrl,
     twitterUrl: metadata.twitterUrl,
     discordUrl: metadata.discordUrl,
-    bannerImageUrl: metadata.bannerImageHash
-      ? `${ipfsGatewayUrl}/ipfs/${metadata.bannerImageHash}`
-      : imageUrl,
-    thumbnailImageUrl: metadata.thumbnailImageHash
-      ? `${ipfsGatewayUrl}/ipfs/${metadata.thumbnailImageHash}`
-      : imageUrl,
+    bannerImageUrl: metadata.bannerImageHash ? `${ipfsGatewayUrl}/ipfs/${metadata.bannerImageHash}` : imageUrl,
+    thumbnailImageUrl: metadata.thumbnailImageHash ? `${ipfsGatewayUrl}/ipfs/${metadata.thumbnailImageHash}` : imageUrl,
   }
 }
 
-export async function getProjects(
-  registryAddress: string,
-  startTime?: number,
-  endTime?: number
-): Promise<Project[]> {
+export async function getProjects(registryAddress: string, startTime?: number, endTime?: number): Promise<Project[]> {
   const data = await sdk.GetRecipients({
     registryAddress: registryAddress.toLowerCase(),
   })
 
-  if (!data.recipients?.length) {
+  if (!data.recipients.length) {
     return []
   }
 
   const recipients = data.recipients
 
   const projects: Project[] = recipients
-    .map((recipient) => {
+    .map(recipient => {
       let project
       try {
         project = decodeProject(recipient)
@@ -439,7 +263,14 @@ export async function getProjects(
   return projects
 }
 
-export async function getProject(recipientId: string): Promise<Project | null> {
+/**
+ * Get project information
+ *
+ * @param recipientId recipient id
+ * @param filter default to always filter result by locked or verified status
+ * @returns project
+ */
+export async function getProject(recipientId: string, filter = true): Promise<Project | null> {
   if (!isHexString(recipientId, 32)) {
     return null
   }
@@ -448,12 +279,12 @@ export async function getProject(recipientId: string): Promise<Project | null> {
     recipientId,
   })
 
-  if (!data.recipients?.length) {
+  if (!data.recipients.length) {
     // Project does not exist
     return null
   }
 
-  const recipient = data.recipients?.[0]
+  const recipient = data.recipients[0]
 
   let project: Project
   try {
@@ -461,6 +292,10 @@ export async function getProject(recipientId: string): Promise<Project | null> {
   } catch {
     // Invalid metadata
     return null
+  }
+
+  if (!filter) {
+    return project
   }
 
   const requestType = Number(recipient.requestType)
@@ -482,13 +317,9 @@ export async function getProject(recipientId: string): Promise<Project | null> {
 export async function registerProject(
   registryAddress: string,
   recipientId: string,
-  signer: Signer
+  signer: Signer,
 ): Promise<TransactionResponse> {
-  const registry = new Contract(
-    registryAddress,
-    OptimisticRecipientRegistry,
-    signer
-  )
+  const registry = new Contract(registryAddress, OptimisticRecipientRegistry, signer)
   const transaction = await registry.executeRequest(recipientId)
   return transaction
 }
@@ -497,30 +328,15 @@ export async function rejectProject(
   registryAddress: string,
   recipientId: string,
   requesterAddress: string,
-  signer: Signer
+  signer: Signer,
 ) {
-  const registry = new Contract(
-    registryAddress,
-    OptimisticRecipientRegistry,
-    signer
-  )
-  const transaction = await registry.challengeRequest(
-    recipientId,
-    requesterAddress
-  )
+  const registry = new Contract(registryAddress, OptimisticRecipientRegistry, signer)
+  const transaction = await registry.challengeRequest(recipientId, requesterAddress)
   return transaction
 }
 
-export async function removeProject(
-  registryAddress: string,
-  recipientId: string,
-  signer: Signer
-) {
-  const registry = new Contract(
-    registryAddress,
-    OptimisticRecipientRegistry,
-    signer
-  )
+export async function removeProject(registryAddress: string, recipientId: string, signer: Signer) {
+  const registry = new Contract(registryAddress, OptimisticRecipientRegistry, signer)
 
   await registry.removeRecipient(recipientId)
   const transaction = await registry.executeRequest(recipientId)
@@ -528,4 +344,4 @@ export async function removeProject(
   return transaction
 }
 
-export default { getProjects, getProject, registerProject, decodeProject }
+export default { getProjects, getProject, registerProject, decodeProject, getRegistryInfo, addRecipient }

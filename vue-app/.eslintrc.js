@@ -1,34 +1,51 @@
+/* eslint-env node */
+require('@rushstack/eslint-patch/modern-module-resolution')
+
 module.exports = {
   root: true,
-  env: {
-    node: true,
-  },
   extends: [
-    'plugin:vue/essential',
     'eslint:recommended',
-    '@vue/typescript/recommended',
-    '@vue/prettier',
-    '@vue/prettier/@typescript-eslint',
+    'plugin:vue/vue3-essential',
+    '@vue/eslint-config-typescript/recommended',
+    '@vue/eslint-config-prettier',
+    './.eslintrc-auto-import.json',
   ],
+  parser: 'vue-eslint-parser',
   parserOptions: {
-    ecmaVersion: 2020,
-  },
-  rules: {
-    'prefer-const': 'error',
-    '@typescript-eslint/no-explicit-any': 'off',
-    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    ecmaVersion: 'latest',
+    parser: {
+      '<template>': 'espree',
+      ts: '@typescript-eslint/parser',
+      js: '@typescript-eslint/parser',
+    },
+    tsconfigRootDir: __dirname,
+    project: ['./tsconfig.json', './tsconfig.config.json'],
+    extraFileExtensions: ['.vue'],
   },
   overrides: [
     {
-      files: [
-        '**/__tests__/*.{j,t}s?(x)',
-        '**/tests/unit/**/*.spec.{j,t}s?(x)',
-      ],
-      env: {
-        mocha: true,
+      // enable the rule specifically for TypeScript files
+      files: ['*.ts', '*.tsx'],
+      parserOptions: {
+        parser: '@typescript-eslint/parser',
+      },
+    },
+    {
+      files: ['*.spec.ts'],
+      rules: {
+        '@typescript-eslint/no-empty-function': 'off',
       },
     },
   ],
-  ignorePatterns: ['src/graphql/API.ts'],
+  rules: {
+    '@typescript-eslint/no-unnecessary-condition': ['error'],
+    '@typescript-eslint/no-explicit-any': 'warn',
+    '@typescript-eslint/ban-ts-comment': 'warn',
+    'vue/multi-word-component-names': 'warn',
+    'vue/no-parsing-error': 'warn', // enable template {{ }} using !
+    'prefer-const': 'error',
+    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+  },
+  ignorePatterns: ['dist', 'src/graphql/API.ts', '.eslintrc.js', 'src/locales/*', 'src/lambda/*'],
 }

@@ -4,49 +4,35 @@
       {{ renderCopiedOrHash }}
     </div>
     <div class="icons">
-      <copy-button
-        :value="hash"
-        text="hash"
-        v-on:copied="updateIsCopied"
-        myClass="ipfs-copy-widget"
-      />
-      <links
-        v-tooltip="$t('ipfsCopyWidget.tooltip1')"
-        :href="ipfsUrl"
-        :hideArrow="true"
-      >
+      <copy-button :value="hash" text="hash" v-on:copied="updateIsCopied" myClass="ipfs-copy-widget" />
+      <links v-tooltip="$t('ipfsCopyWidget.tooltip1')" :to="ipfsUrl" :hideArrow="true">
         <img class="icon" src="@/assets/ipfs-white.svg" />
       </links>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
-import CopyButton from '@/components/CopyButton.vue'
-import Links from '@/components/Links.vue'
+const { t } = useI18n()
 
-@Component({
-  components: { CopyButton, Links },
+interface Props {
+  hash: string
+}
+
+const props = defineProps<Props>()
+
+const isCopied = ref(false)
+const ipfsUrl = computed(() => `https://ipfs.io/ipfs/${props.hash}`)
+
+const renderCopiedOrHash = computed(() => {
+  return isCopied.value ? t('copied').toString() : props.hash
 })
-export default class IpfsCopyWidget extends Vue {
-  @Prop() hash!: string
-  isCopied = false
 
-  updateIsCopied(isCopied: boolean): void {
-    this.isCopied = isCopied
-  }
-
-  get ipfsUrl(): string {
-    return `https://ipfs.io/ipfs/${this.hash}`
-  }
-
-  get renderCopiedOrHash(): string {
-    return this.isCopied ? this.$t('copied').toString() : this.hash
-  }
+function updateIsCopied(_isCopied: boolean): void {
+  isCopied.value = _isCopied
 }
 </script>
 

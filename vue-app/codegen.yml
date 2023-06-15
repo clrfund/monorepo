@@ -1,0 +1,11 @@
+overwrite: true
+schema: 'https://api.thegraph.com/subgraphs/name/clrfund/clrfund'
+documents: 'src/graphql/**/*.graphql'
+generates:
+  src/graphql/API.ts:
+    plugins:
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-graphql-request'
+    config:
+      avoidOptionals: true

@@ -2,28 +2,23 @@
   <div class="markdown" v-html="body"></div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
-
+<script setup lang="ts">
+import { computed } from 'vue'
 import { markdown } from '@/utils/markdown'
 
-@Component
-export default class Transaction extends Vue {
-  @Prop()
-  raw!: string
-
-  get body(): string {
-    return this.raw ? markdown.render(this.raw) : ''
-  }
+interface Props {
+  raw: string
 }
+
+const props = defineProps<Props>()
+
+const body = computed<string>(() => (props.raw ? markdown.render(props.raw) : ''))
 </script>
 
 <style scoped lang="scss">
 .markdown {
   overflow-wrap: break-word;
-  ::v-deep {
+  :deep() {
     h1,
     h2,
     h3,

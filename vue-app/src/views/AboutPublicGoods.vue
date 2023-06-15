@@ -19,9 +19,7 @@
     </p>
     <p>
       {{ $t('public_goods.heading.p4_t1') }}
-      <links to="https://en.wikipedia.org/wiki/Public_good_(economics)">{{
-        $t('public_goods.heading.p4_link')
-      }}</links>
+      <links to="https://en.wikipedia.org/wiki/Public_good_(economics)">{{ $t('public_goods.heading.p4_link') }}</links>
       {{ $t('public_goods.heading.p4_t2') }}
     </p>
     <h2>{{ $t('public_goods.why.h2') }}</h2>
@@ -33,19 +31,8 @@
     </p>
     <p>
       {{ $t('public_goods.why.p3') }}
-      <links to="/about/quadratic-funding">
-        {{ $t('public_goods.why.link') }}</links
-      >
+      <links to="/about/quadratic-funding"> {{ $t('public_goods.why.link') }}</links>
       {{ $t('public_goods.why.exponential_power') }}
     </p>
   </div>
 </template>
-
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import Links from '@/components/Links.vue'
-
-@Component({ components: { Links } })
-export default class AboutPublicGoods extends Vue {}
-</script>

@@ -10,19 +10,11 @@
 }
 
 .btn-secondary {
-  @include button(
-    var(--button-secondary-color),
-    var(--button-secondary-bg),
-    2px solid var(--button-secondary-border)
-  );
+  @include button(var(--button-secondary-color), var(--button-secondary-bg), 2px solid var(--button-secondary-border));
 }
 
 .btn-info {
-  @include button(
-    var(--text-body),
-    var(--bg-primary-color),
-    2px solid var(--loader-color)
-  );
+  @include button(var(--text-body), var(--bg-primary-color), 2px solid var(--loader-color));
 }
 
 .btn-warning {
@@ -54,11 +46,7 @@
 
 .navbar-btn,
 .dropdown-btn {
-  @include button(
-    white,
-    var(--bg-primary-color),
-    1px solid rgba(115, 117, 166, 0.3)
-  );
+  @include button(white, var(--bg-primary-color), 1px solid rgba(115, 117, 166, 0.3));
   padding: 0.25rem 0.5rem;
   border-radius: 8px;
   margin-right: 0.5rem;

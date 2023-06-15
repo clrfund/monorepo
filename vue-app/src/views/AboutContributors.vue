@@ -14,40 +14,28 @@
       }}
       <span v-if="chain.label.includes('Arbitrum')">
         {{ $t('contributors.funds.paragraph-1-text-2') }}
-        <links to="https://arbitrum.io/bridge-tutorial/">
-          {{ $t('contributors.funds.paragraph-1-link-1') }}</links
-        >
-        {{
-          $t('contributors.funds.paragraph-1-text-3', { chain: chain.label })
-        }}
+        <links to="https://arbitrum.io/bridge-tutorial/"> {{ $t('contributors.funds.paragraph-1-link-1') }}</links>
+        {{ $t('contributors.funds.paragraph-1-text-3', { chain: chain.label }) }}
       </span>
       <span v-else-if="chain.bridge">
         {{ $t('contributors.funds.paragraph-2-text-1') }}
-        <links :to="chain.bridge">{{
-          $t('contributors.funds.paragraph-2-link-1', { chain: chain.label })
-        }}</links>
+        <links :to="chain.bridge">{{ $t('contributors.funds.paragraph-2-link-1', { chain: chain.label }) }}</links>
         {{ $t('contributors.funds.paragraph-2-text-2') }}
       </span>
     </p>
     <p v-if="chain.isLayer2">
       {{ $t('contributors.funds.paragraph-3-text-1', { chain: chain.label }) }}
       <links to="/about/layer-2">
-        {{
-          $t('contributors.funds.paragraph-3-link-1', { chain: chain.label })
-        }}
+        {{ $t('contributors.funds.paragraph-3-link-1', { chain: chain.label }) }}
       </links>
     </p>
     <h2>{{ $t('contributors.contributing.title') }}</h2>
     <ol>
       <li>
         {{ $t('contributors.contributing.li-1-text-1') }}
-        <links to="/verify">{{
-          $t('contributors.contributing.li-1-link-1')
-        }}</links
+        <links to="/verify">{{ $t('contributors.contributing.li-1-link-1') }}</links
         >{{ $t('contributors.contributing.li-1-text-2') }}
-        <links to="/about/sybil-resistance">{{
-          $t('contributors.contributing.li-1-link-2')
-        }}</links>
+        <links to="/about/sybil-resistance">{{ $t('contributors.contributing.li-1-link-2') }}</links>
       </li>
       <li>
         {{
@@ -58,9 +46,7 @@
         }}
       </li>
       <li>
-        <links to="/projects">{{
-          $t('contributors.contributing.li-3-link')
-        }}</links>
+        <links to="/projects">{{ $t('contributors.contributing.li-3-link') }}</links>
         {{ $t('contributors.contributing.li-3-text') }}
       </li>
       <li>
@@ -79,9 +65,7 @@
     <h2>{{ $t('contributors.matching.title') }}</h2>
     <p>
       {{ $t('contributors.matching.paragraph-text-1') }}
-      <links to="/about/quadratic-funding">{{
-        $t('contributors.matching.paragraph-link')
-      }}</links>
+      <links to="/about/quadratic-funding">{{ $t('contributors.matching.paragraph-link') }}</links>
       {{ $t('contributors.matching.paragraph-text-2') }}
     </p>
     <ol>
@@ -99,9 +83,7 @@
             nativeTokenSymbol: nativeTokenSymbol,
           })
         }}
-        <links to="/projects">
-          {{ $t('contributors.matching.li-2-link') }}</links
-        >
+        <links to="/projects"> {{ $t('contributors.matching.li-2-link') }}</links>
         {{ $t('contributors.matching.li-2-text-2') }}
       </li>
     </ol>
@@ -115,22 +97,13 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
+<script setup lang="ts">
 import Links from '@/components/Links.vue'
 import { chain } from '@/api/core'
-import { ChainInfo } from '@/plugins/Web3/constants/chains'
+import { useAppStore } from '@/stores'
 
-@Component({ components: { Links } })
-export default class AboutContributors extends Vue {
-  // TODO: update to new getter
-  get nativeTokenSymbol(): string {
-    return this.$store.getters.nativeTokenSymbol
-  }
-
-  get chain(): ChainInfo {
-    return chain
-  }
-}
+const appStore = useAppStore()
+const nativeTokenSymbol = computed(() => {
+  return appStore.nativeTokenSymbol
+})
 </script>

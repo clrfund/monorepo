@@ -1,91 +1,73 @@
 <template>
   <div class="explorer-btn tx-receipt">
     <div class="status-label-address">
-      <loader
-        v-if="isPending"
-        :v-tooltip="$t('transactionReceipt.tooltip1')"
-        class="pending"
-      />
+      <loader v-if="isPending" v-tooltip="$t('transactionReceipt.tooltip1')" class="pending" />
       <img
-        class="success"
-        :v-tooltip="$t('transactionReceipt.tooltip2')"
         v-if="!isPending"
+        v-tooltip="$t('transactionReceipt.tooltip2')"
+        class="success"
         src="@/assets/checkmark.svg"
       />
       <p class="hash">{{ renderCopiedOrHash }}</p>
     </div>
     <div class="actions">
       <links
-        class="explorerLink"
-        :to="blockExplorer.url"
-        :v-tooltip="
+        v-tooltip="
           $t('transactionReceipt.tooltip3', {
             blockExplorer: blockExplorer.label,
           })
         "
-        :hideArrow="true"
+        class="explorerLink"
+        :to="blockExplorer.url"
+        :hide-arrow="true"
       >
-        <div class="icon">
-          <img :src="require(`@/assets/${blockExplorer.logo}`)" />
-        </div>
+        <img class="icon" :src="blockExplorer.logoUrl" />
       </links>
-      <copy-button
-        :value="hash"
-        :text="$t('transactionReceipt.button1')"
-        v-on:copied="updateIsCopied"
-        myClass="icon"
-      />
+      <copy-button :value="hash" :text="$t('transactionReceipt.button1')" my-class="icon" @copied="updateIsCopied" />
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
 
 import Loader from '@/components/Loader.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import Links from '@/components/Links.vue'
-import { chain } from '@/api/core'
+import { getBlockExplorerByHash } from '@/utils/explorer'
 import { isTransactionMined } from '@/utils/contracts'
 import { renderAddressOrHash } from '@/utils/accounts'
 
-@Component({
-  components: { Loader, CopyButton, Links },
+interface Props {
+  hash: string
+}
+
+const props = defineProps<Props>()
+
+const isPending = ref(true)
+const isCopied = ref(false)
+
+const renderCopiedOrHash = computed<string>(() => {
+  return isCopied.value ? 'Copied!' : renderAddressOrHash(props.hash, 16)
 })
-export default class TransactionReceipt extends Vue {
-  isPending = true
-  isCopied = false
 
-  @Prop() hash!: string
+function updateIsCopied(value: boolean): void {
+  isCopied.value = value
+}
 
-  updateIsCopied(value: boolean): void {
-    this.isCopied = value
-  }
+const blockExplorer = computed(() => {
+  return getBlockExplorerByHash(props.hash)
+})
 
-  created() {
-    this.checkTxStatus()
-  }
+onMounted(() => {
+  checkTxStatus()
+})
 
-  get renderCopiedOrHash(): string {
-    return this.isCopied ? 'Copied!' : renderAddressOrHash(this.hash, 16)
-  }
-
-  async checkTxStatus(): Promise<void> {
-    while (this.isPending) {
-      await new Promise((resolve) => setTimeout(resolve, 5000))
-      const isMined = await isTransactionMined(this.hash)
-      this.isPending = !isMined
-    }
-  }
-
-  get blockExplorer(): { label: string; url: string; logo: string } {
-    return {
-      label: chain.explorerLabel,
-      url: `${chain.explorer}/tx/${this.hash}`,
-      logo: chain.explorerLogo,
-    }
+async function checkTxStatus(): Promise<void> {
+  while (isPending.value) {
+    await new Promise(resolve => setTimeout(resolve, 5000))
+    const isMined = await isTransactionMined(props.hash)
+    isPending.value = !isMined
   }
 }
 </script>
@@ -137,12 +119,6 @@ export default class TransactionReceipt extends Vue {
 .explorerLink {
   padding: 0;
   margin: 0;
-  img {
-    width: 1rem;
-    height: 1rem;
-    cursor: pointer;
-    filter: var(--img-filter, invert(0.7));
-  }
 }
 .status-label-address {
   display: flex;

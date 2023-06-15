@@ -8,11 +8,7 @@
     </div>
     <loader v-if="isLoading" />
     <div v-else>
-      <button
-        v-if="hasPendingRequests"
-        class="btn-secondary desktop btn-export"
-        @click="handleExport"
-      >
+      <button v-if="hasPendingRequests" class="btn-secondary desktop btn-export" @click="handleExport">
         Export pending submissions
       </button>
       <table class="requests">
@@ -25,26 +21,25 @@
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="request in requests.slice().reverse()"
-            :key="request.recipientId"
-          >
+          <tr v-for="request in requests.slice().reverse()" :key="request.recipientId">
             <td>
               <div class="project-name">
-                <links
-                  v-if="request.metadata.thumbnailImageUrl"
-                  :to="request.metadata.thumbnailImageUrl"
-                >
-                  <img
-                    class="project-image"
-                    :src="request.metadata.thumbnailImageUrl"
-                  />
+                <links v-if="request.metadata.thumbnailImageUrl" :to="request.metadata.thumbnailImageUrl">
+                  <img class="project-image" :src="request.metadata.thumbnailImageUrl" />
                 </links>
                 {{ request.metadata.name }}
                 <links
                   v-if="hasProjectLink(request)"
                   :to="{
                     name: 'project',
+                    params: { id: request.recipientId },
+                  }"
+                  >-></links
+                >
+                <links
+                  v-else
+                  :to="{
+                    name: 'recipient-profile',
                     params: { id: request.recipientId },
                   }"
                   >-></links
@@ -79,11 +74,7 @@
                 <div>
                   <div class="btn-row">
                     {{ $t('recipientRegistry.div3') }}
-                    <copy-button
-                      :value="request.recipient"
-                      :text="$t('recipientRegistry.btn3')"
-                      myClass="copy-icon"
-                    />
+                    <copy-button :value="request.recipient" :text="$t('recipientRegistry.btn3')" myClass="copy-icon" />
                   </div>
                   <code>{{ request.recipient }}</code>
                 </div>
@@ -138,250 +129,183 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { BigNumber } from 'ethers'
-import * as humanizeDuration from 'humanize-duration'
-import { DateTime } from 'luxon'
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
 import CopyButton from '@/components/CopyButton.vue'
 
 import { chainId, exportBatchSize, recipientRegistryType } from '@/api/core'
 import {
   RequestType,
   RequestStatus,
-  Request,
+  type Request,
   getRequests,
   registerProject,
   rejectProject,
-  removeProject,
 } from '@/api/recipient-registry-optimistic'
 import Loader from '@/components/Loader.vue'
 import Links from '@/components/Links.vue'
-import { formatAmount } from '@/utils/amounts'
-import { markdown } from '@/utils/markdown'
-import { LOAD_RECIPIENT_REGISTRY_INFO } from '@/store/action-types'
-import { RegistryInfo } from '@/api/recipient-registry-optimistic'
 import TransactionModal from '@/components/TransactionModal.vue'
+import { useUserStore, useRecipientStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+import type { TransactionResponse } from '@ethersproject/abstract-provider'
+import { useModal } from 'vue-final-modal'
 
-@Component({ components: { CopyButton, Loader, Links } })
-export default class RecipientRegistryView extends Vue {
-  requests: Request[] = []
-  isLoading = true
+const recipientStore = useRecipientStore()
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
 
-  async created() {
-    if (recipientRegistryType !== 'optimistic') {
-      return
-    }
+const { isRecipientRegistryOwner, recipientRegistryInfo, recipientRegistryAddress } = storeToRefs(recipientStore)
+const requests = ref<Request[]>([])
+const isLoading = ref(true)
+const isOwner = computed(() => isRecipientRegistryOwner.value)
+const isUserConnected = computed(() => !!currentUser.value)
+const hasPendingRequests = computed(() => {
+  const pendingRequests = requests.value.filter(req => isPending(req))
+  return pendingRequests.length > 0
+})
 
-    await this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
-    await this.loadRequests()
-    this.isLoading = false
+onMounted(async () => {
+  if (recipientRegistryType !== 'optimistic') {
+    return
   }
 
-  get isOwner() {
-    return this.$store.getters.isRecipientRegistryOwner
+  await recipientStore.loadRecipientRegistryInfo()
+  await loadRequests()
+  isLoading.value = false
+})
+
+async function loadRequests() {
+  const _requests = await getRequests(recipientRegistryInfo.value!, recipientRegistryAddress.value!)
+  requests.value = _requests.filter(req => Boolean(req.requester))
+}
+
+function isPending(request: Request): boolean {
+  return request.status === RequestStatus.Submitted
+}
+
+function isAccepted(request: Request): boolean {
+  return request.status === RequestStatus.Accepted
+}
+
+function isRejected(request: Request): boolean {
+  return request.status === RequestStatus.Rejected
+}
+
+function isExecuted(request: Request): boolean {
+  return request.status === RequestStatus.Executed
+}
+
+function hasProjectLink(request: Request): boolean {
+  return request.type === RequestType.Registration && request.status === RequestStatus.Executed
+}
+
+async function approve(request: Request): Promise<void> {
+  await waitForTransactionAndLoad(
+    registerProject(recipientRegistryAddress.value!, request.recipientId, userStore.signer),
+  )
+}
+
+async function reject(request: Request): Promise<void> {
+  await waitForTransactionAndLoad(
+    rejectProject(recipientRegistryAddress.value!, request.recipientId, request.requester, userStore.signer),
+  )
+}
+
+async function waitForTransactionAndLoad(transaction: Promise<TransactionResponse>) {
+  const { open, close } = useModal({
+    component: TransactionModal,
+    attrs: {
+      onTxSuccess: async () => {
+        // TODO: this is not ideal. Leaving as is, just because it is an admin
+        // page where no end user is using. We are forcing this 2s time to give
+        // time the subgraph to index the new state from the tx. Perhaps we could
+        // avoid querying the subgraph and query directly the chain to get the
+        // request state.
+        await new Promise(resolve => {
+          setTimeout(async () => {
+            await loadRequests()
+            resolve(true)
+          }, 2000)
+        })
+      },
+      transaction,
+      onClose() {
+        close()
+      },
+    },
+  })
+
+  open()
+}
+
+function handleExport(): void {
+  const pendingRequests = requests.value.filter(req => isPending(req))
+
+  let count = 1
+  for (let i = 0; i < pendingRequests.length; i = i + exportBatchSize) {
+    const end = i + exportBatchSize
+    const chunk = pendingRequests.slice(i, end)
+    const url = createExportUrl(chunk)
+    const filename = `pending-submission-${count}.json`
+    exportFile(url, filename)
+    count++
   }
+}
 
-  get isUserConnected(): boolean {
-    return !!this.$store.state.currentUser
-  }
-
-  async loadRequests() {
-    const { recipientRegistryInfo, recipientRegistryAddress } =
-      this.$store.state
-    const requests = await getRequests(
-      recipientRegistryInfo,
-      recipientRegistryAddress
-    )
-
-    this.requests = requests.filter((req) => Boolean(req.requester))
-  }
-
-  get registryInfo(): RegistryInfo {
-    return this.$store.state.recipientRegistryInfo
-  }
-
-  formatAmount(value: BigNumber): string {
-    return formatAmount(value, 18)
-  }
-
-  formatDuration(seconds: number): string {
-    return humanizeDuration(seconds * 1000)
-  }
-
-  formatDate(date: DateTime): string {
-    return date.toLocaleString(DateTime.DATETIME_SHORT)
-  }
-
-  renderDescription(request: Request): string {
-    return markdown.render(request.metadata.description)
-  }
-
-  isPending(request: Request): boolean {
-    return request.status === RequestStatus.Submitted
-  }
-
-  isAccepted(request: Request): boolean {
-    return request.status === RequestStatus.Accepted
-  }
-
-  isRejected(request: Request): boolean {
-    return request.status === RequestStatus.Rejected
-  }
-
-  isExecuted(request: Request): boolean {
-    return request.status === RequestStatus.Executed
-  }
-
-  hasProjectLink(request: Request): boolean {
-    return (
-      request.type === RequestType.Registration &&
-      request.status === RequestStatus.Executed
-    )
-  }
-
-  async approve(request: Request): Promise<void> {
-    const { recipientRegistryAddress, currentUser } = this.$store.state
-    const signer = currentUser.walletProvider.getSigner()
-
-    await this.waitForTransactionAndLoad(
-      registerProject(recipientRegistryAddress, request.recipientId, signer)
-    )
-  }
-
-  async reject(request: Request): Promise<void> {
-    const { recipientRegistryAddress, currentUser } = this.$store.state
-    const signer = currentUser.walletProvider.getSigner()
-
-    await this.waitForTransactionAndLoad(
-      rejectProject(
-        recipientRegistryAddress,
-        request.recipientId,
-        request.requester,
-        signer
-      )
-    )
-  }
-
-  async remove(request: Request): Promise<void> {
-    const { recipientRegistryAddress, currentUser } = this.$store.state
-    const signer = currentUser.walletProvider.getSigner()
-
-    await this.waitForTransactionAndLoad(
-      removeProject(recipientRegistryAddress, request.recipientId, signer)
-    )
-  }
-
-  async waitForTransactionAndLoad(transaction) {
-    this.$modal.show(
-      TransactionModal,
+const challengeRequestAbi = computed(() => {
+  return {
+    inputs: [
       {
-        transaction,
-        onTxSuccess: async () => {
-          // TODO: this is not ideal. Leaving as is, just because it is an admin
-          // page where no end user is using. We are forcing this 2s time to give
-          // time the subgraph to index the new state from the tx. Perhaps we could
-          // avoid querying the subgraph and query directly the chain to get the
-          // request state.
-          await new Promise((resolve) => {
-            setTimeout(async () => {
-              await this.loadRequests()
-              resolve()
-            }, 2000)
-          })
-        },
+        internalType: 'bytes32',
+        name: '_recipientId',
+        type: 'bytes32',
       },
-      {},
-      {}
-    )
+      {
+        internalType: 'address payable',
+        name: '_beneficiary',
+        type: 'address',
+      },
+    ],
+    name: 'challengeRequest',
+    payable: false,
   }
+})
 
-  async copyAddress(text: string): Promise<void> {
-    try {
-      await navigator.clipboard.writeText(text)
-    } catch (error) {
-      /* eslint-disable-next-line no-console */
-      console.warn('Error in copying text: ', error)
-    }
-  }
-
-  private get challengeRequestAbi(): any {
+function createExportUrl(requests: Request[]): string {
+  const transactions = requests.map(req => {
     return {
-      inputs: [
-        {
-          internalType: 'bytes32',
-          name: '_recipientId',
-          type: 'bytes32',
-        },
-        {
-          internalType: 'address payable',
-          name: '_beneficiary',
-          type: 'address',
-        },
-      ],
-      name: 'challengeRequest',
-      payable: false,
-    }
-  }
-
-  private createExportUrl(requests: Request[]): string {
-    const { recipientRegistryAddress } = this.$store.state
-
-    const transactions = requests.map((req) => {
-      return {
-        to: recipientRegistryAddress,
-        value: '0',
-        data: null,
-        contractMethod: this.challengeRequestAbi,
-        contractInputsValues: {
-          _recipientId: req.recipientId,
-          _beneficiary: req.requester,
-        },
-      }
-    })
-
-    const data = {
-      version: '1.0',
-      chainId,
-      createdAt: Date.now(),
-      meta: {
-        name: 'Pending Submissions',
-        txBuilderVersion: '1.11.1',
+      to: recipientRegistryAddress.value,
+      value: '0',
+      data: null,
+      contractMethod: challengeRequestAbi.value,
+      contractInputsValues: {
+        _recipientId: req.recipientId,
+        _beneficiary: req.requester,
       },
-      transactions,
     }
+  })
 
-    return 'data:application/json,' + encodeURIComponent(JSON.stringify(data))
+  const data = {
+    version: '1.0',
+    chainId,
+    createdAt: Date.now(),
+    meta: {
+      name: 'Pending Submissions',
+      txBuilderVersion: '1.11.1',
+    },
+    transactions,
   }
 
-  private exportFile(url: string, filename: string): void {
-    const anchor = document.createElement('a')
-    anchor.setAttribute('href', url)
-    anchor.setAttribute('download', filename)
-    document.body.appendChild(anchor)
-    anchor.click()
-    document.body.removeChild(anchor)
-  }
+  return 'data:application/json,' + encodeURIComponent(JSON.stringify(data))
+}
 
-  handleExport(): void {
-    const pendingRequests = this.requests.filter((req) => this.isPending(req))
-
-    let count = 1
-    for (let i = 0; i < pendingRequests.length; i = i + exportBatchSize) {
-      const end = i + exportBatchSize
-      const chunk = pendingRequests.slice(i, end)
-      const url = this.createExportUrl(chunk)
-      const filename = `pending-submission-${count}.json`
-      this.exportFile(url, filename)
-      count++
-    }
-  }
-
-  get hasPendingRequests(): boolean {
-    const pendingRequests = this.requests.filter((req) => this.isPending(req))
-    return pendingRequests.length > 0
-  }
+function exportFile(url: string, filename: string): void {
+  const anchor = document.createElement('a')
+  anchor.setAttribute('href', url)
+  anchor.setAttribute('download', filename)
+  document.body.appendChild(anchor)
+  anchor.click()
+  document.body.removeChild(anchor)
 }
 </script>
 
@@ -436,7 +360,7 @@ export default class RecipientRegistryView extends Vue {
   th,
   td {
     overflow: hidden;
-    padding: $content-space / 2;
+    padding: calc($content-space / 2);
     text-align: left;
     text-overflow: ellipsis;
 
