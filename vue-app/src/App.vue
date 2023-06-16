@@ -556,10 +556,4 @@ summary:focus {
     width: 300px;
   }
 }
-
-.v-popper--has-tooltip {
-  img {
-    filter: invert(0.7);
-  }
-}
 </style>

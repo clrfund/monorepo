@@ -103,4 +103,16 @@ async function vote() {
 .close-btn {
   margin-top: $modal-space;
 }
+
+.modal-body {
+  text-align: left;
+  background: var(--bg-secondary-color);
+  border-radius: 1rem;
+  box-shadow: var(--box-shadow);
+  padding: 1.5rem;
+
+  // 	add for vfm
+  max-width: 500px;
+  margin: auto;
+}
 </style>

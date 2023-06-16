@@ -786,4 +786,10 @@ const blockExplorer = computed(() => ({
   box-shadow: 0 6px 30px #0000001a;
   margin-left: 10px;
 }
+
+.v-popper--has-tooltip {
+  img {
+    filter: invert(0.7);
+  }
+}
 </style>
