@@ -65,7 +65,7 @@ async function executeTx() {
   padding: 1.5rem;
 
   div {
-    border: 1px solid var(--bg-primary-color);
+    border: 1px solid var(--bg-secondary-color);
     border-radius: 1rem;
   }
 }
