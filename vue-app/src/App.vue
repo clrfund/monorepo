@@ -480,7 +480,7 @@ summary:focus {
   }
 
   @media (max-width: $breakpoint-m) {
-    width: calc(100% - 4rem);
+    width: calc(100% - 1rem);
   }
 }
 .hidden {
