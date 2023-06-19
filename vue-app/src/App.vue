@@ -478,6 +478,10 @@ summary:focus {
   .loader {
     margin: $modal-space auto;
   }
+
+  @media (max-width: $breakpoint-m) {
+    width: calc(100% - 4rem);
+  }
 }
 .hidden {
   display: none;
