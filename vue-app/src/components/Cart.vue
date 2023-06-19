@@ -293,6 +293,14 @@ const dropdownItems = ref<
   },
 ])
 
+onMounted(async () => {
+  if (currentUser.value?.encryptionKey) {
+    isLoading.value = true
+    await loadCart()
+    isLoading.value = false
+  }
+})
+
 function removeAll(): void {
   appStore.clearCart()
   appStore.saveCart()
@@ -578,6 +586,7 @@ function submitCart(event: any) {
     attrs: {
       votes: votes.value,
       onClose() {
+        appStore.restoreCommittedCartToLocalCart()
         closeReallocationModal()
       },
     },
