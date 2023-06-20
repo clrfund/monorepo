@@ -53,7 +53,7 @@
               <p class="item-text">{{ $t('navBar.dropdown.rounds') }}</p>
             </links>
           </div>
-          <div class="dropdown-item" @click="closeHelpDropdown">
+          <div v-if="isOptimisticRecipientRegistry" class="dropdown-item" @click="closeHelpDropdown">
             <links to="/recipients">
               <div class="emoji-wrapper">💎</div>
               <p class="item-text">{{ $t('navBar.dropdown.recipients') }}</p>
@@ -87,7 +87,7 @@
 </template>
 
 <script setup lang="ts">
-import { chain, ThemeMode } from '@/api/core'
+import { chain, ThemeMode, isOptimisticRecipientRegistry } from '@/api/core'
 import { lsGet, lsSet } from '@/utils/localStorage'
 import { isValidTheme, getDefaultColorScheme } from '@/utils/theme'
 import { useAppStore } from '@/stores'

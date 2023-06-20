@@ -537,8 +537,7 @@
       "input2": "la nostra roadmap...",
       "error2": "Fate sapere ai potenziali contributori quali piani avete per le loro donazioni.",
       "preview1": "Anteprima:",
-      "address_must_hold_humanbound_sbt": "La destinazione deve contenere un ",
-      "humanbound_sbt_link": "SBT legato all'umano"
+      "address_requirement": "Questo indirizzo, o almeno uno dei firmatari, nel caso di una multisig, dovrebbe possedere un {link_1}. In alternativa, il progetto dovrebbe essere in grado di dimostrare di aver completato la KYC per un programma di sovvenzioni affidabile, come {link_2}, nell'ultimo anno."
     },
     "step2": {
       "h2": "Dettagli del team",
@@ -731,6 +730,7 @@
     "link1": "scoprire di più sul processo di registrazione qui.",
     "li2": "Una volta completato, la pagina del tuo progetto sarà attiva.",
     "li3": "Se il tuo progetto non supera qualche controllo, ti informeremo via email e ti restituiremo il tuo deposito.",
+    "linkProjects": "Visualizza progetti",
     "link2": "Visualizza progetti",
     "link3": "Torna a casa"
   },
@@ -829,6 +829,8 @@
     "unitap_link": "Unitap",
     "unitap_extra_text": ".",
     "link1": "Perché è importante?",
+    "next_round_notice": "Il turno inizierà il {start_date}. Ti preghiamo di controllare nuovamente in quel momento.",
+    "no_round": "Non abbiamo ancora programmato un round di finanziamento. Restate sintonizzati!",
     "div2": "Il round attuale non accetta più nuovi contributi. Si prega di riprovare nel prossimo round.",
     "div3": "Le donazioni sono chiuse in anticipo: non è più possibile donare! A causa della generosità della comunità e di alcune limitazioni tecniche, abbiamo dovuto chiudere il round prima del previsto. Se hai già contribuito, hai ancora tempo per riassegnare se necessario. Se non hai avuto l'opportunità di contribuire, puoi comunque aiutare donando al fondo di corrispondenza.",
     "link2": "Sono verificato con BrightID",
@@ -1125,7 +1127,8 @@
       "content": "Contenuto",
       "data": "Dati",
       "research": "Ricerca",
-      "other": "Altre"
+      "other": "Altre",
+      "education": "Istruzione"
     },
     "timeleft": {
       "unit": {
@@ -1155,6 +1158,10 @@
       "no_scams": {
         "tagline": "Nessuna truffa",
         "description": "Ovviamente, il tuo progetto non deve mettere a rischio i fondi o le informazioni di nessuno."
+      },
+      "compliance": {
+        "tagline": "Conformità",
+        "description": "L'indirizzo di ricezione del progetto, o almeno uno dei firmatari della multisig del team, dovrebbe possedere un {link_1}. In alternativa, il progetto dovrebbe essere in grado di dimostrare di aver completato la KYC per un programma di sovvenzioni affidabile, come {link_2}, nell'ultimo anno."
       }
     },
     "cart": {
@@ -1163,6 +1170,7 @@
         "connect_wallet": "Si prega di collegare il vostro portafoglio",
         "incorrect_network": "Si prega di cambiare rete alla rete {chain}.",
         "need_to_setup_brightid": "Per contribuire, devi configurare BrightID.",
+        "user_not_registered": "Si prega di contattare {operator} per la registrazione.",
         "invalid_contribution_amount": "Includi un importo di contribuzione valido.",
         "exceeded_max_cart_size": "Il tuo carrello non può includere più di {maxCartSize} progetti.",
         "round_cancelled": "Spiacenti, abbiamo dovuto annullare questo round di finanziamento.",
@@ -1192,10 +1200,10 @@
     "progress": {
       "step": {
         "project": "Riguardo al progetto",
-        "donation": "Dettagli della donazione",
+        "fund": "Dettagli della donazione",
         "team": "Dettagli del team",
         "links": "Collegamenti",
-        "images": "Immagini",
+        "image": "Immagini",
         "review": "Recensione",
         "submit": "Invia"
       }
@@ -1215,5 +1223,9 @@
   "more_on_maci": "Ulteriori informazioni su MACI",
   "add_project": "Aggiungi progetto",
   "close": "Chiudi",
-  "please_sign_message": "Per favore firma il messaggio nel tuo portafoglio"
+  "please_sign_message": "Per favore firma il messaggio nel tuo portafoglio",
+  "compliance": {
+    "humanbound_sbt": "humanbound SBT",
+    "esp": "ESP"
+  }
 }

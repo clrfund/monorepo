@@ -238,9 +238,8 @@
                 <p class="input-description">
                   {{ $t('join.step1.p1') }}
                 </p>
-                <div class="warning input-description" v-if="useHumanbound">
-                  {{ $t('join.step1.address_must_hold_humanbound_sbt') }}
-                  <links :to="humanboundWebsiteUrl">{{ $t('join.step1.humanbound_sbt_link') }}</links>
+                <div class="warning input-description" v-if="showComplianceRequirement">
+                  <compliance-info keypath="join.step1.address_requirement" />
                 </div>
                 <input
                   id="fund-address"
@@ -716,14 +715,14 @@
 import type { Ref } from 'vue'
 import { useVuelidate } from '@vuelidate/core'
 import { required, requiredIf, email, maxLength, url, helpers } from '@vuelidate/validators'
-import { type RecipientApplicationData, formToProjectInterface } from '@/api/recipient-registry-optimistic'
+import type { RecipientApplicationData } from '@/api/types'
 import type { Project } from '@/api/projects'
-import { recipientExists } from '@/api/projects'
-import { chain, humanboundWebsiteUrl, useHumanbound } from '@/api/core'
+import { recipientExists, formToProjectInterface } from '@/api/projects'
+import { chain, showComplianceRequirement, isOptimisticRecipientRegistry } from '@/api/core'
 import { DateTime } from 'luxon'
 import { useRecipientStore, useAppStore, useUserStore } from '@/stores'
 import { waitForTransactionAndCheck } from '@/utils/contracts'
-import { addRecipient as _addRecipient } from '@/api/recipient-registry-optimistic'
+import { addRecipient as _addRecipient } from '@/api/recipient-registry'
 import { isValidEthAddress, resolveEns } from '@/utils/accounts'
 import * as isIPFS from 'is-ipfs'
 import { toReactive } from '@vueuse/core'
@@ -790,7 +789,7 @@ const rules = computed(() => {
 const v$ = useVuelidate(rules, form)
 
 const currentStep = ref<number>(0)
-const steps = ['project', 'donation', 'team', 'links', 'image', 'review', 'submit', 'confirm']
+const steps = ['project', 'fund', 'team', 'links', 'image', 'review', 'submit', 'confirm']
 const stepNames = steps.slice(0, steps.length - 1)
 const showSummaryPreview = ref(false)
 const isWaiting = ref(false)
@@ -884,7 +883,6 @@ function isStepValid(step: number): boolean {
     return isLinkStepValid()
   }
   const stepName: string = steps[step]
-
   return !v$.value[stepName]?.$invalid
 }
 
@@ -951,7 +949,7 @@ async function addRecipient() {
           currentUser.value.walletProvider.getSigner(),
         ),
         hash => {
-          return recipientExists(hash)
+          return isOptimisticRecipientRegistry ? recipientExists(hash) : Promise.resolve(true)
         },
         hash => (txHash.value = hash),
       )

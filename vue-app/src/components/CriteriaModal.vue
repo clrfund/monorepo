@@ -19,7 +19,7 @@
           >.
         </p>
         <div class="content">
-          <div v-for="({ emoji, translationKey, link }, idx) in criteria" :key="idx" class="criterion-point">
+          <div v-for="({ emoji, translationKey }, idx) in criteria" :key="idx" class="criterion-point">
             <div class="emoji" aria-hidden="true">{{ emoji }}</div>
             <div>
               <h3 class="no-margin">
@@ -27,8 +27,16 @@
               </h3>
               <p class="no-margin">
                 {{ $t(getDescription(translationKey)) }}
-                <links v-if="link" :to="link">{{ $t(getLink(translationKey)) }}</links>
               </p>
+            </div>
+          </div>
+          <div v-if="showComplianceRequirement" class="criterion-point">
+            <div class="emoji" aria-hidden="true">🛡️</div>
+            <div>
+              <h3 class="no-margin">
+                {{ $t('dynamic.criteria.compliance.tagline') }}
+              </h3>
+              <compliance-info keypath="dynamic.criteria.compliance.description" />
             </div>
           </div>
         </div>
@@ -39,6 +47,7 @@
 </template>
 
 <script setup lang="ts">
+import { showComplianceRequirement } from '@/api/core'
 import { criteria } from '@/plugins/round/criteria'
 
 function getCriterion(key: string): string {
@@ -47,10 +56,6 @@ function getCriterion(key: string): string {
 
 function getDescription(key: string): string {
   return `dynamic.criteria.${key}.description`
-}
-
-function getLink(key: string): string {
-  return `dynamic.criteria.${key}.link`
 }
 </script>
 

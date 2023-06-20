@@ -44,11 +44,13 @@ BRIGHTID_SPONSOR=
 
 1. Adjust the `/contracts/scripts/deploy.ts` as you wish.
 2. Run `yarn hardhat run --network {network} scripts/deploy.ts` or use one of the `yarn deploy:{network}` available in `/contracts/package.json`.
-3. To deploy a new funding round, update the .env file with the funding round factory address deployed in the previous step and run the `newRound.ts` script:
+3. Make sure to save in a safe place the serializedCoordinatorPrivKey and the serializedCoordinatorPubKey, you are going to need them for the website and tallying the votes in future steps.
+4. To deploy a new funding round, update the .env file with the funding round factory address and the COORDINATOR_PK (with serializedCoordinatorPrivKey) deployed in the previous step and run the `newRound.ts` script:
 
 ```
 # .env
 FACTORY_ADDRESS=
+COORDINATOR_PK=
 ```
 
 ```

@@ -537,8 +537,7 @@
       "input2": "ej: en nuestro plan de desarrollo...",
       "error2": "Informa a los posibles contribuyentes sobre tus planes para sus donaciones.",
       "preview1": "Vista previa:",
-      "address_must_hold_humanbound_sbt": "La dirección debe tener un ",
-      "humanbound_sbt_link": "SBT vinculado a un humano"
+      "address_requirement": "Esta dirección, o al menos uno de los firmantes en el caso de una firma múltiple, debería poseer un {link_1}. Alternativamente, el proyecto debería poder demostrar que ha completado el proceso KYC para un programa de subvenciones reputado, como el {link_2}, en el último año."
     },
     "step2": {
       "h2": "Detalles del equipo",
@@ -731,7 +730,8 @@
     "link1": "obtener más información sobre el proceso de registro aquí.",
     "li2": "Una vez que se complete, la página de tu proyecto se publicará.",
     "li3": "Si tu proyecto no pasa alguna verificación, te lo haremos saber por correo electrónico y te devolveremos tu depósito.",
-    "link2": "Ver proyectos",
+    "linkProjects": "Ver proyectos",
+    "link2": "Ver proyecto",
     "link3": "Ir a inicio"
   },
   "projectList": {
@@ -829,6 +829,8 @@
     "unitap_link": "Unitap",
     "unitap_extra_text": ".",
     "link1": "¿Por qué es importante?",
+    "next_round_notice": "La ronda comenzará el {start_date}. Por favor, revisa nuevamente entonces.",
+    "no_round": "Aún no hemos programado una ronda de financiamiento. ¡Mantente atento/a!",
     "div2": "La ronda actual ya no acepta nuevas contribuciones. Por favor, intenta nuevamente en la siguiente ronda.",
     "div3": "Las contribuciones se cerraron anticipadamente, ¡ya no puedes donar! Debido a la generosidad de la comunidad y algunas limitaciones técnicas, tuvimos que cerrar la ronda antes de lo previsto. Si ya has contribuido, todavía tienes tiempo para reasignar si es necesario. Si no tuviste la oportunidad de contribuir, aún puedes ayudar donando al fondo de concordancia",
     "link2": "Tengo BrightID instalado",
@@ -1157,10 +1159,9 @@
         "tagline": "No estafas",
         "description": "Obviamente, tu proyecto no debe poner en riesgo los fondos o la información de nadie."
       },
-      "humanbound": {
-        "tagline": "Humanbound",
-        "description": "La dirección receptora del proyecto debe tener un ",
-        "link": "humanbound SBT."
+      "compliance": {
+        "tagline": "Cumplimiento",
+        "description": "La dirección de recepción del proyecto, o al menos uno de los firmantes en el multisig del equipo, debería tener un {link_1}. Alternativamente, el proyecto debería poder demostrar que ha completado el KYC para un programa de subvenciones reputado, como el {link_2}, en el último año."
       }
     },
     "cart": {
@@ -1169,6 +1170,7 @@
         "connect_wallet": "Por favor, conecta tu billetera.",
         "incorrect_network": "Por favor, cambia a la red {chain}.",
         "need_to_setup_brightid": "Para contribuir, necesitas configurar BrightID.",
+        "user_not_registered": "Por favor, contacta a {operador} para realizar el registro.",
         "invalid_contribution_amount": "Incluye una cantidad de contribución válida.",
         "exceeded_max_cart_size": "Tu carrito no puede incluir más de {maxCartSize} proyectos.",
         "round_cancelled": "Lo sentimos, hemos tenido que cancelar esta ronda de financiamiento.",
@@ -1198,7 +1200,7 @@
     "progress": {
       "step": {
         "project": "Acerca del proyecto",
-        "donation": "Detalles de la donación",
+        "fund": "Detalles de la donación",
         "team": "Detalles del equipo",
         "links": "Enlaces",
         "image": "Imágenes",
@@ -1221,5 +1223,9 @@
   "more_on_maci": "Más sobre MACI",
   "add_project": "Agregar proyecto",
   "close": "Cerrar",
-  "please_sign_message": "Por favor, firma el mensaje en tu billetera"
+  "please_sign_message": "Por favor, firma el mensaje en tu billetera",
+  "compliance": {
+    "humanbound_sbt": "humanbound SBT",
+    "esp": "ESP"
+  }
 }

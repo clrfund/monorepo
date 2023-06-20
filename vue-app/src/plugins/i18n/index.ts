@@ -9,7 +9,7 @@ export const languages = [
   { locale: 'it', emoji: '🇮🇹', description: 'Italiano' },
   { locale: 'en', emoji: '🇺🇸', description: 'English' },
   { locale: 'es', emoji: '🇪🇸', description: 'Español' },
-  { locale: 'cn', emoji: '🇨🇳', description: '简体中文' },
+  { locale: 'zh-CN', emoji: '🇨🇳', description: '简体中文' },
   /*
   // comment out as we don't have the translations for these yet
   { locale: 'tw', emoji: '🇹🇼', description: '繁體中文' },
@@ -22,14 +22,14 @@ export function isLocaleSupported(locale) {
 }
 
 type MessageSchema = typeof en
-const i18n = createI18n<[MessageSchema], 'it' | 'es' | 'cn' | 'en'>({
+const i18n = createI18n<[MessageSchema], 'it' | 'zh-CN' | 'es' | 'en'>({
   legacy: false,
   locale: defaultLocale,
   fallbackLocale: defaultLocale,
   globalInjection: true,
   messages: {
     it,
-    cn,
+    'zh-CN': cn,
     es,
     en,
   },
