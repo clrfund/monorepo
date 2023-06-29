@@ -60,9 +60,12 @@ async function loadFile(registry: Contract, filePath: string) {
             `Transaction ${result.transactionHash} failed with status ${result.status}`
           )
         }
-      } catch (err) {
-        console.error('Failed to add address', address, err)
-        break
+      } catch (err: any) {
+        if (err.reason) {
+          console.error('Failed to add address', address, err.reason)
+        } else {
+          console.error('Failed to add address', address, err)
+        }
       }
     } else {
       console.warn('Skipping invalid address', address)
