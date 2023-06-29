@@ -41,7 +41,7 @@
       "paragraph-1-link-1": "financiamiento cuadrático",
       "paragraph-1-text-2": "(QF), para facilitar las contribuciones monetarias de los miembros de la comunidad Ethereum hacia los constructores de bienes públicos de Ethereum.",
       "paragraph-2": "Con su lógica codificada en contratos inteligentes de Ethereum y otras tecnologías web3, clr.fund requiere una confianza mínima en personas o entidades individuales para funcionar y es resistente a la colusión y el soborno.",
-      "paragraph-3": "En términos generales, clr.fund consta de un fondo de coincidencia y una ronda de financiamiento. Individuos u organizaciones filantrópicas contribuyen al fondo de coincidencia para que esos fondos se asignen eficientemente según las preferencias de la comunidad. Los usuarios contribuyen directamente a los proyectos que valoran y, al hacerlo, obtienen una parte del fondo de coincidencia para los proyectos, junto con su contribución. Esto aumenta efectivamente el valor de su contribución.",
+      "paragraph-3": "En términos generales, clr.fund consta de un matching pool y una ronda de financiamiento. Individuos u organizaciones filantrópicas contribuyen al matching pool para que esos fondos se asignen eficientemente según las preferencias de la comunidad. Los usuarios contribuyen directamente a los proyectos que valoran y, al hacerlo, obtienen una parte del matching pool para los proyectos, junto con su contribución. Esto aumenta efectivamente el valor de su contribución.",
       "paragraph-4-text-1": "En la parte técnica, clr.fund utiliza pruebas de conocimiento cero (ZK-SNARKS), gracias a la",
       "paragraph-4-link-1": "Infraestructura Mínima Anticolusión (MACI)",
       "paragraph-4-text-2": ", para mantener privadas las contribuciones individuales y limitar la efectividad de la colusión y el soborno.",
@@ -80,11 +80,11 @@
       "li-4": "Cuando estés listo, abre tu carrito, haz clic en 'Contribuir' y confirma las transacciones para completar tus contribuciones.",
       "paragraph": "Nota: solo puedes contribuir una vez. Después de enviar tus contribuciones, puedes reasignarlas tantas veces como desees antes de la fase de reasignación, pero no puedes añadir más fondos a la cantidad total de tu contribución.",
       "li-5": "Puedes añadir y eliminar proyectos.",
-      "li-6": "Tu total de reasignación debe ser menor o igual al total (si es menor, el resto irá al fondo de coincidencia)."
+      "li-6": "Tu total de reasignación debe ser menor o igual al total (si es menor, el resto irá al matching pool)."
     },
     "matching": {
-      "title": "Contribuir al fondo de coincidencia",
-      "paragraph-text-1": "¿No estás seguro a qué proyecto contribuir específicamente? Las contribuciones al fondo de coincidencia se distribuirán a todos los proyectos que reciban contribuciones específicas del proyecto durante esa ronda. El peso de esta distribución se determina mediante los resultados del",
+      "title": "Contribuir al Matching Pool",
+      "paragraph-text-1": "¿No estás seguro a qué proyecto contribuir específicamente? Las contribuciones al matching pool se distribuirán a todos los proyectos que reciban contribuciones específicas del proyecto durante esa ronda. El peso de esta distribución se determina mediante los resultados del",
       "paragraph-link": "financiamiento cuadrático",
       "paragraph-text-2": ".",
       "li-1": "Asegúrate de que la billetera que estás utilizando contenga {nativeTokenSymbol} en {chain}. Puedes comprar fácilmente {nativeTokenSymbol} en cualquier intercambio importante enfocado en Ethereum.",
@@ -108,7 +108,7 @@
       "title": "¿Qué partes de clr.fund están descentralizadas?",
       "paragraph-1": "Gran parte de la infraestructura de clr.fund se basa en Ethereum, una cadena de bloques descentralizada:",
       "li-1": "el registro de proyectos calificados para financiamiento (y, potencialmente, el mecanismo de curación para elegir estos proyectos)",
-      "li-2": "el fondo de coincidencia de fondos",
+      "li-2": "el matching pool de fondos",
       "li-3": "el registro resistente a ataques Sybil de usuarios calificados para contribuir a proyectos individuales",
       "li-4": "los fondos y la información encriptada sobre las contribuciones a proyectos individuales",
       "li-5": "el mecanismo para distribuir fondos una vez que se finalizan los resultados de una ronda",
@@ -143,8 +143,8 @@
       "title": "Resumen rápido sobre financiamiento cuadrático",
       "paragraph-1-text-1": "Como se describe en nuestra",
       "link-1": "descripción general sobre financiamiento cuadrático",
-      "paragraph-1-text-2": ", los proyectos recibirán financiamiento tanto de las contribuciones individuales como del fondo de coincidencia. Cuando contribuyes a tus proyectos favoritos, tu contribución también actúa como un voto. Cuantas más contribuciones reciba un proyecto, más votos obtendrá. Y cuanto más votos reciba un proyecto, más recibirá del fondo de coincidencia. Aunque una contribución individual más alta equivale a un mayor peso de voto, es mucho más importante recibir un gran volumen de contribuciones únicas que solo unas pocas contribuciones de alto valor.",
-      "paragraph-2": "Como la ronda de financiamiento también es una votación pública, necesita plazos. La ronda se divide en varias fases para que, después de que se realicen todas las contribuciones o votos, puedan contarse y confirmarse antes de la distribución final del fondo de coincidencia."
+      "paragraph-1-text-2": ", los proyectos recibirán financiamiento tanto de las contribuciones individuales como del matching pool. Cuando contribuyes a tus proyectos favoritos, tu contribución también actúa como un voto. Cuantas más contribuciones reciba un proyecto, más votos obtendrá. Y cuanto más votos reciba un proyecto, más recibirá del matching pool. Aunque una contribución individual más alta equivale a un mayor peso de voto, es mucho más importante recibir un gran volumen de contribuciones únicas que solo unas pocas contribuciones de alto valor.",
+      "paragraph-2": "Como la ronda de financiamiento también es una votación pública, necesita plazos. La ronda se divide en varias fases para que, después de que se realicen todas las contribuciones o votos, puedan contarse y confirmarse antes de la distribución final del matching pool."
     },
     "phases": {
       "title": "Fases de la ronda de financiamiento",
@@ -181,7 +181,7 @@
       "need": {
         "title": "Necesitas saber",
         "li-1": "Esta fase durará {reallocationPhaseDays} días después del final de la fase de contribución.",
-        "li-2": "Si eliminas proyectos, deberás reasignar los fondos a otros proyectos o se destinarán al fondo de coincidencia.",
+        "li-2": "Si eliminas proyectos, deberás reasignar los fondos a otros proyectos o se destinarán al matching pool.",
         "li-3": "No puedes superar el total de tu contribución original al reasignar fondos."
       }
     },
@@ -189,7 +189,7 @@
       "title": "Fase de recuento",
       "paragraph-text-1": "En este punto, todas las contribuciones son definitivas y ahora se pueden contar. El coordinador de la ronda activa",
       "link": "MACI",
-      "paragraph-text-2": "y los contratos inteligentes para calcular cuánto recibirá cada proyecto del fondo de coincidencia."
+      "paragraph-text-2": "y los contratos inteligentes para calcular cuánto recibirá cada proyecto del matching pool."
     },
     "finalized": {
       "title": "Fase finalizada",
@@ -278,10 +278,10 @@
     },
     "quadratic": {
       "h2": "Financiamiento Cuadrático",
-      "p1": "Este es el mecanismo que clr.fund utiliza en nuestras rondas de financiamiento. Cuando contribuyes a un proyecto, no solo les estás enviando dinero, estás votando por ellos. Al final, los fondos del fondo de coincidencia se distribuyen a los proyectos según el número de votos al final de la ronda.",
+      "p1": "Este es el mecanismo que clr.fund utiliza en nuestras rondas de financiamiento. Cuando contribuyes a un proyecto, no solo les estás enviando dinero, estás votando por ellos. Al final, los fondos del matching pool se distribuyen a los proyectos según el número de votos al final de la ronda.",
       "p2_t1": "Lee más en",
       "p2_link": "financiamiento cuadrático.",
-      "p3": "Este mecanismo es excelente para el financiamiento democrático, pero presenta algunos riesgos. Puede ser rentable para el propietario de un proyecto sobornar a los usuarios para que voten por su proyecto, ya que la cantidad eventual del fondo de coincidencia podría ser muy alta. Este tipo de fraude pone en riesgo todo el concepto, ya que ya no se trata de qué proyectos ofrecen el mayor valor para la mayor cantidad de personas."
+      "p3": "Este mecanismo es excelente para el financiamiento democrático, pero presenta algunos riesgos. Puede ser rentable para el propietario de un proyecto sobornar a los usuarios para que voten por su proyecto, ya que la cantidad eventual del matching pool podría ser muy alta. Este tipo de fraude pone en riesgo todo el concepto, ya que ya no se trata de qué proyectos ofrecen el mayor valor para la mayor cantidad de personas."
     },
     "background": {
       "h2": "Antecedentes",
@@ -668,12 +668,12 @@
       "deadline": "para unirse"
     },
     "how": {
-      "title": "Cada donación se amplifica mediante el fondo de coincidencia.",
+      "title": "Cada donación se amplifica mediante el matching pool.",
       "paragraph": "Esta recaudación de fondos recompensa a los proyectos con la demanda única más alta, no solo a aquellos con patrocinadores más adinerados.",
       "subtitle": "Cómo funciona",
-      "list-1": "El {operator} y otros donantes envían fondos al contrato inteligente del fondo de coincidencia.",
+      "list-1": "El {operator} y otros donantes envían fondos al contrato inteligente del matching pool.",
       "list-2": "La ronda comienza y puedes donar a tus proyectos favoritos.",
-      "list-3": "Una vez que finaliza la ronda, el contrato inteligente distribuye los fondos del fondo de coincidencia a los proyectos ponderados principalmente por el número de contribuciones,",
+      "list-3": "Una vez que finaliza la ronda, el contrato inteligente distribuye los fondos del matching pool a los proyectos ponderados principalmente por el número de contribuciones,",
       "list-3-strong": "no por el valor de las contribuciones",
       "action": "Cómo funciona la ronda"
     },
@@ -687,7 +687,7 @@
     "about": {
       "title": "Acerca de",
       "subtitle-1": "No se trata de cuánto...",
-      "paragraph-1": "Usando financiamiento cuadrático, tu contribución cuenta como un voto. Los proyectos con más contribuciones al final de la ronda reciben la mayor cantidad del fondo de coincidencia. Esto significa que incluso una pequeña donación puede tener un impacto masivo.",
+      "paragraph-1": "Usando financiamiento cuadrático, tu contribución cuenta como un voto. Los proyectos con más contribuciones al final de la ronda reciben la mayor cantidad del matching pool. Esto significa que incluso una pequeña donación puede tener un impacto masivo.",
       "link-1": "Acerca del financiamiento cuadrático",
       "subtitle-2": "Protección contra el soborno",
       "paragraph-2": "Utilizando MACI, una tecnología de conocimiento cero, es imposible demostrar cómo contribuiste. Esto vuelve locos a los sobornadores porque no tienen idea de si realmente hiciste lo que te sobornaron para hacer.",
@@ -832,7 +832,7 @@
     "next_round_notice": "La ronda comenzará el {start_date}. Por favor, revisa nuevamente entonces.",
     "no_round": "Aún no hemos programado una ronda de financiamiento. ¡Mantente atento/a!",
     "div2": "La ronda actual ya no acepta nuevas contribuciones. Por favor, intenta nuevamente en la siguiente ronda.",
-    "div3": "Las contribuciones se cerraron anticipadamente, ¡ya no puedes donar! Debido a la generosidad de la comunidad y algunas limitaciones técnicas, tuvimos que cerrar la ronda antes de lo previsto. Si ya has contribuido, todavía tienes tiempo para reasignar si es necesario. Si no tuviste la oportunidad de contribuir, aún puedes ayudar donando al fondo de concordancia",
+    "div3": "Las contribuciones se cerraron anticipadamente, ¡ya no puedes donar! Debido a la generosidad de la comunidad y algunas limitaciones técnicas, tuvimos que cerrar la ronda antes de lo previsto. Si ya has contribuido, todavía tienes tiempo para reasignar si es necesario. Si no tuviste la oportunidad de contribuir, aún puedes ayudar donando al matching pool",
     "link2": "Tengo BrightID instalado",
     "link3": "Volver"
   },
@@ -885,21 +885,21 @@
     "div7": "Tiempo restante:",
     "span1": "Contribución original",
     "span2": "Tu carrito",
-    "div8": "Fondo de concordancia",
-    "div9": "Los fondos restantes se destinarán al fondo de concordancia",
+    "div8": "Matching pool",
+    "div9": "Los fondos restantes se destinarán al matching pool",
     "div10": "Distribuir {contribution} {tokenSymbol} de manera uniforme",
     "button1": "Retirar {contribution} {tokenSymbol}",
     "div11": "No puedes",
     "div11_if2": "reasignar",
     "div11_if3": "contribuir",
-    "div12": "Los fondos que no contribuyas a proyectos ({total} { tokenSymbol}) se enviarán al fondo de concordancia al final de la ronda. Tu carrito debe sumar tu donación original de {contribution} {tokenSymbol}.",
+    "div12": "Los fondos que no contribuyas a proyectos ({total} { tokenSymbol}) se enviarán al matching pool al final de la ronda. Tu carrito debe sumar tu donación original de {contribution} {tokenSymbol}.",
     "link3": "Verificar con BrightID",
     "template1": "Contribuir {total} {tokenSymbol} a {cart} proyectos",
     "template2": "Finalizar contribución",
     "template3": "Reasignar contribución",
     "div13": "Tiempo restante:",
     "span3": "Proyectos",
-    "span4": "Fondo de Concordancia",
+    "span4": "Matching Pool",
     "span5": "Total"
   },
   "cartItems": {
@@ -926,8 +926,8 @@
     "permission": "Esto le otorga a esta aplicación el permiso para retirar {renderTotal} {nativeTokenSymbol} de tu billetera para tu contribución.",
     "send_contribution": "Enviar contribución de {renderTotal} {nativeTokenSymbol}",
     "send_tx": "Esta transacción envía tu contribución de {renderTotal} {nativeTokenSymbol} a los proyectos que elijas.",
-    "magic": "Magia del fondo de concordancia ✨",
-    "how_much": "Esta transacción le permite al fondo de concordancia saber cuánto {nativeTokenSymbol} enviar a tus proyectos favoritos en función de tus contribuciones."
+    "magic": "Magia del matching pool ✨",
+    "how_much": "Esta transacción le permite al matching pool saber cuánto {nativeTokenSymbol} enviar a tus proyectos favoritos en función de tus contribuciones."
   },
   "copyButton": {
     "tooltip1": "¡Copiado!",
@@ -975,17 +975,17 @@
     "link2": "{'@'}Twitter"
   },
   "matchingFundsModal": {
-    "title": "Contribuir {tokenSymbol} a al fondo de coincidencia",
+    "title": "Contribuir {tokenSymbol} a al matching pool",
     "div1": "⚠️ Solo tienes {renderBalance} {tokenSymbol}",
     "button2": "Contribuir",
-    "h3_2_t1": " Contribuir {renderContributionAmount} {tokenSymbol} a la fondo de coincidencia",
+    "h3_2_t1": " Contribuir {renderContributionAmount} {tokenSymbol} a la matching pool",
     "h3_3": "¡Acabas de aumentar el fondo en {renderContributionAmount} {tokenSymbol}!",
     "fund_distribution_message": "Los fondos se distribuirán a todos los proyectos en función de las contribuciones que reciban de la comunidad",
     "div2": "Gracias por ayudar a todos nuestros proyectos.",
     "button3": "Listo"
   },
   "navBar": {
-    "app": "Aplicación",
+    "app": "Ver Aplicaciones",
     "dropdown": {
       "home": "Inicio",
       "about": "Acerca de",
@@ -1035,7 +1035,7 @@
     "div3": "Cerrado",
     "p1": "La ronda está oficialmente cerrada",
     "p2": "¡Ya es demasiado tarde para contribuir o reasignar tus donaciones!",
-    "max_messages_reached": "Debido a la generosidad de la comunidad y algunas limitaciones técnicas, tuvimos que cerrar la ronda antes de lo esperado. Aún puedes ayudar donando al fondo de contribución.",
+    "max_messages_reached": "Debido a la generosidad de la comunidad y algunas limitaciones técnicas, tuvimos que cerrar la ronda antes de lo esperado. Aún puedes ayudar donando al matching pool.",
     "div4": "¡Excelente!",
     "div5": "⏱️ Apertura de la ronda",
     "div6": "Tiempo restante para contribuir",
@@ -1055,8 +1055,8 @@
     "tooltip6": "Si eres propietario de un proyecto, ¡ahora puedes reclamar tus fondos!",
     "div14": "Las contribuciones están listas para reclamar 🎉",
     "div15": "Total en la ronda",
-    "tooltip7": "Este total incluye los fondos en el fondo de contribución y todas las contribuciones de la comunidad.",
-    "div16": "Fondo de contribución",
+    "tooltip7": "Este total incluye los fondos en el matching pool y todas las contribuciones de la comunidad.",
+    "div16": "matching pool",
     "tooltip8": "Estos son los fondos que se distribuirán a todos los proyectos según las contribuciones que reciban de la comunidad.",
     "tooltip9": "Agregar fondos de contribución",
     "span1": "Agregar fondos",
@@ -1170,7 +1170,7 @@
         "connect_wallet": "Por favor, conecta tu billetera.",
         "incorrect_network": "Por favor, cambia a la red {chain}.",
         "need_to_setup_brightid": "Para contribuir, necesitas configurar BrightID.",
-        "user_not_registered": "Por favor, contacta a {operador} para realizar el registro.",
+        "user_not_registered": "Por favor, contacta a {operator} para realizar el registro.",
         "invalid_contribution_amount": "Incluye una cantidad de contribución válida.",
         "exceeded_max_cart_size": "Tu carrito no puede incluir más de {maxCartSize} proyectos.",
         "round_cancelled": "Lo sentimos, hemos tenido que cancelar esta ronda de financiamiento.",
