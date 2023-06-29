@@ -1,8 +1,8 @@
-import type { BigNumber, BigNumberish, FixedNumber } from 'ethers'
+import type { BigNumber, BigNumberish } from 'ethers'
 import { commify, formatUnits } from '@ethersproject/units'
 
 export function formatAmount(
-  _value: BigNumber | FixedNumber | string,
+  _value: BigNumber | string,
   units: BigNumberish = 18,
   maximumSignificantDigits?: number | null,
   maxDecimals?: number | null,
