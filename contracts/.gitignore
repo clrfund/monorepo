@@ -7,3 +7,4 @@ proofs.json
 tally.json
 .env
 .DS_Store
+tasks/addresses.txt
