@@ -162,7 +162,11 @@ export async function getContributorIndex(fundingRoundAddress: string, pubKey: P
     publicKeyId: id,
   })
 
-  return data.publicKey?.stateIndex ? Number(data.publicKey.stateIndex) : null
+  if (data.publicKeys.length === 0) {
+    return null
+  }
+
+  return Number(data.publicKeys[0].stateIndex)
 }
 
 /**
