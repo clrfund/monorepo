@@ -336,7 +336,7 @@ const formatTotalInRound = computed(() => {
   }
 
   const { contributions, matchingPool } = roundInfo.value
-  const totalInRound = contributions.addUnsafe(matchingPool)
+  const totalInRound = contributions.add(matchingPool)
 
   return formatAmount(totalInRound)
 })
@@ -388,7 +388,7 @@ function formatDate(value: DateTime): string {
   return value.toLocaleString(DateTime.DATETIME_SHORT) || ''
 }
 
-function formatAmount(value: BigNumber | FixedNumber | string): string {
+function formatAmount(value: BigNumber | string): string {
   if (!nativeTokenDecimals.value) {
     return ''
   }

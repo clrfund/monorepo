@@ -66,9 +66,11 @@ import { useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
 const appStore = useAppStore()
-const { contribution, currentRound } = storeToRefs(appStore)
+const { contribution, currentRound, nativeTokenDecimals } = storeToRefs(appStore)
 
-const formatContribution = computed(() => (contribution.value ? formatAmount(contribution.value, 18) : ''))
+const formatContribution = computed(() =>
+  contribution.value ? formatAmount(contribution.value, nativeTokenDecimals.value) : '',
+)
 const hash = computed(() => route.params.hash as string)
 function redirectToProjects() {
   router.push({ name: 'projects' })
