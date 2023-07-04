@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { FixedNumber, type BigNumber } from 'ethers'
+import { BigNumber } from 'ethers'
 import {
   type CartItem,
   type Contributor,
@@ -152,10 +152,10 @@ export const useAppStore = defineStore('app', {
         return factory.userRegistryAddress
       }
     },
-    matchingPool: (state): FixedNumber => {
+    matchingPool: (state): BigNumber => {
       const { currentRound, factory } = state
 
-      let matchingPool = FixedNumber.from(0)
+      let matchingPool = BigNumber.from(0)
 
       if (factory) {
         matchingPool = factory.matchingPool

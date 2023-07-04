@@ -92,7 +92,7 @@ const balance = computed<string | null>(() => {
   if (balance === null || typeof balance === 'undefined') {
     return null
   }
-  return formatUnits(balance, 18)
+  return formatUnits(balance, nativeTokenDecimals.value)
 })
 const renderBalance = computed<string | null>(() => {
   const balance: BigNumber | null | undefined = userStore.currentUser?.balance
