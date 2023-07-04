@@ -1,4 +1,4 @@
-import { FixedNumber } from 'ethers'
+import { BigNumber } from 'ethers'
 import { factory } from './core'
 import sdk from '@/graphql/sdk'
 
@@ -8,14 +8,14 @@ export interface Factory {
   nativeTokenSymbol: string
   nativeTokenDecimals: number
   userRegistryAddress: string
-  matchingPool: FixedNumber
+  matchingPool: BigNumber
 }
 
 export async function getFactoryInfo() {
   let nativeTokenAddress = ''
   let nativeTokenSymbol = ''
   let nativeTokenDecimals = 0
-  let matchingPool = FixedNumber.from(0)
+  let matchingPool = BigNumber.from(0)
   let userRegistryAddress = ''
   let recipientRegistryAddress = ''
 
@@ -39,7 +39,7 @@ export async function getFactoryInfo() {
   }
 
   try {
-    matchingPool = await getMatchingFunds(nativeTokenAddress, nativeTokenDecimals)
+    matchingPool = await getMatchingFunds(nativeTokenAddress)
   } catch (err) {
     /* eslint-disable-next-line no-console */
     console.error('Failed to get matching pool', err)
@@ -56,7 +56,7 @@ export async function getFactoryInfo() {
   }
 }
 
-export async function getMatchingFunds(nativeTokenAddress: string, nativeTokenDecimals: number): Promise<FixedNumber> {
+export async function getMatchingFunds(nativeTokenAddress: string): Promise<BigNumber> {
   const matchingFunds = await factory.getMatchingFunds(nativeTokenAddress)
-  return FixedNumber.fromValue(matchingFunds, nativeTokenDecimals)
+  return matchingFunds
 }

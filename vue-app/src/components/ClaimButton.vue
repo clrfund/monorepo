@@ -27,13 +27,12 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import type { FixedNumber } from 'ethers'
+import type { BigNumber } from 'ethers'
 
 import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
 import type { Project } from '@/api/projects'
 import { RoundStatus } from '@/api/round'
 import { formatAmount as _formatAmount } from '@/utils/amounts'
-import { markdown } from '@/utils/markdown'
 
 import ClaimModal from '@/components/ClaimModal.vue'
 import Loader from '@/components/Loader.vue'
@@ -52,7 +51,7 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const allocatedAmount = ref<FixedNumber | null>(null)
+const allocatedAmount = ref<BigNumber | null>(null)
 const claimed = ref<boolean | null>(null)
 const isLoading = ref(true)
 
@@ -118,7 +117,7 @@ function canClaim(): boolean {
   return hasClaimBtn() && !!currentUser.value && !claimed.value
 }
 
-function formatAmount(value: FixedNumber): string {
+function formatAmount(value: BigNumber): string {
   const maxDecimals = 6
   const { nativeTokenDecimals } = currentRound.value!
   return _formatAmount(value, nativeTokenDecimals, null, maxDecimals)

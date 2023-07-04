@@ -417,7 +417,7 @@ const contribution = computed(() => appStore.contribution || BigNumber.from(0))
 const filteredCart = computed<CartItem[]>(() => {
   // Once reallocation phase ends, use committedCart for cart items
   if (hasReallocationPhaseEnded.value) {
-    return committedCart.value
+    return committedCart.value.filter(item => !item.isCleared)
   }
   // Hide cleared items
   return cart.value.filter(item => !item.isCleared)

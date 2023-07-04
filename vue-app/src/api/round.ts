@@ -1,4 +1,4 @@
-import { BigNumber, Contract, utils, FixedNumber } from 'ethers'
+import { BigNumber, Contract, utils } from 'ethers'
 import { DateTime } from 'luxon'
 import { PubKey } from '@clrfund/maci-utils'
 
@@ -30,9 +30,9 @@ export interface RoundInfo {
   startTime: DateTime
   signUpDeadline: DateTime
   votingDeadline: DateTime
-  totalFunds: FixedNumber
-  matchingPool: FixedNumber
-  contributions: FixedNumber
+  totalFunds: BigNumber
+  matchingPool: BigNumber
+  contributions: BigNumber
   contributors: number
   messages: number
   blogUrl?: string
@@ -103,9 +103,9 @@ function toRoundInfo(data: any, network: string): RoundInfo {
     startTime: DateTime.fromSeconds(data.startTime),
     signUpDeadline: DateTime.fromSeconds(Number(data.startTime) + Number(data.signUpDuration)),
     votingDeadline: DateTime.fromSeconds(Number(data.startTime) + Number(data.votingDuration)),
-    totalFunds: FixedNumber.fromValue(totalFunds, nativeTokenDecimals),
-    matchingPool: FixedNumber.fromValue(matchingPool, nativeTokenDecimals),
-    contributions: FixedNumber.fromValue(contributions, nativeTokenDecimals),
+    totalFunds,
+    matchingPool,
+    contributions,
     contributors: data.contributorCount,
     messages: Number(data.messages),
     blogUrl: data.blogUrl,
@@ -240,9 +240,9 @@ export async function getRoundInfo(
     startTime,
     signUpDeadline,
     votingDeadline,
-    totalFunds: FixedNumber.fromValue(totalFunds, nativeTokenDecimals),
-    matchingPool: FixedNumber.fromValue(matchingPool, nativeTokenDecimals),
-    contributions: FixedNumber.fromValue(contributions, nativeTokenDecimals),
+    totalFunds,
+    matchingPool,
+    contributions,
     contributors,
     messages: messages.toNumber(),
   }
