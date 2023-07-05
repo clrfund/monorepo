@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
+import { isBrightIdRequired, isOptimisticRecipientRegistry } from '@/api/core'
 
 const Landing = () => import('@/views/Landing.vue')
 const JoinLanding = () => import('@/views/JoinLanding.vue')
@@ -27,6 +28,7 @@ const RecipientProfile = () => import('@/views/RecipientProfile.vue')
 const CartView = () => import('@/views/CartView.vue')
 const TransactionSuccess = () => import('@/views/TransactionSuccess.vue')
 const Leaderboard = () => import('@/views/Leaderboard.vue')
+const LeaderboardProject = () => import('@/views/LeaderboardProject.vue')
 
 // TODO: create a new route that takes funding factory address as a param
 const routes: Array<RouteRecordRaw> = [
@@ -57,11 +59,24 @@ const routes: Array<RouteRecordRaw> = [
     component: ProjectView,
   },
   {
-    path: '/rounds/:address/leaderboard',
+    path: '/leaderboards/:address/networks/:network/projects/:id?',
+    name: 'leaderboard-project',
+    component: LeaderboardProject,
+  },
+  {
+    path: '/leaderboards/:address/networks/:network*',
     name: 'leaderboard',
     component: Leaderboard,
     meta: {
       title: 'leaderboard',
+    },
+  },
+  {
+    path: '/leaderboards/:address*',
+    name: 'fallback-rounds',
+    component: RoundList,
+    meta: {
+      title: 'rounds',
     },
   },
   {
@@ -169,43 +184,11 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: '/recipients',
-    name: 'recipients',
-    component: RecipientRegistryView,
-    meta: {
-      title: 'Recipient registry',
-    },
-  },
-  {
-    path: '/recipients/:hash',
+    path: '/recipients/:id',
     name: 'recipient-profile',
     component: RecipientProfile,
     meta: {
       title: 'Recipient profile',
-    },
-  },
-  {
-    path: '/verify',
-    name: 'verify',
-    component: VerifyLanding,
-    meta: {
-      title: 'BrightID Verification',
-    },
-  },
-  {
-    path: '/verify/success/:hash?',
-    name: 'verified',
-    component: Verified,
-    meta: {
-      title: 'Verification Success',
-    },
-  },
-  {
-    path: '/verify/:step',
-    name: 'verify-step',
-    component: VerifyView,
-    meta: {
-      title: 'Verification Steps',
     },
   },
   {
@@ -249,6 +232,46 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
 ]
+
+if (isBrightIdRequired) {
+  routes.push(
+    {
+      path: '/verify',
+      name: 'verify',
+      component: VerifyLanding,
+      meta: {
+        title: 'BrightID Verification',
+      },
+    },
+    {
+      path: '/verify/success/:hash?',
+      name: 'verified',
+      component: Verified,
+      meta: {
+        title: 'Verification Success',
+      },
+    },
+    {
+      path: '/verify/:step',
+      name: 'verify-step',
+      component: VerifyView,
+      meta: {
+        title: 'Verification Steps',
+      },
+    },
+  )
+}
+
+if (isOptimisticRecipientRegistry) {
+  routes.push({
+    path: '/recipients',
+    name: 'recipients',
+    component: RecipientRegistryView,
+    meta: {
+      title: 'Recipient registry',
+    },
+  })
+}
 
 const router = createRouter({
   history: createWebHashHistory(),

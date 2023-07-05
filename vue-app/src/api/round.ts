@@ -1,15 +1,16 @@
-import { BigNumber, Contract, utils, FixedNumber } from 'ethers'
+import { BigNumber, Contract, utils } from 'ethers'
 import { DateTime } from 'luxon'
-import { PubKey } from 'maci-domainobjs'
+import { PubKey } from '@clrfund/maci-utils'
 
 import { FundingRound, MACI } from './abi'
 import { provider, factory } from './core'
 import { getTotalContributed } from './contributions'
 import { getRounds } from './rounds'
 import sdk from '@/graphql/sdk'
-import { assert, ASSERT_MISSING_ROUND } from '@/utils/assert'
 
 import { isSameAddress } from '@/utils/accounts'
+import { Keypair } from '@clrfund/maci-utils'
+import { getLeaderboardData } from '@/api/leaderboard'
 
 export interface RoundInfo {
   fundingRoundAddress: string
@@ -29,11 +30,13 @@ export interface RoundInfo {
   startTime: DateTime
   signUpDeadline: DateTime
   votingDeadline: DateTime
-  totalFunds: FixedNumber
-  matchingPool: FixedNumber
-  contributions: FixedNumber
+  totalFunds: BigNumber
+  matchingPool: BigNumber
+  contributions: BigNumber
   contributors: number
   messages: number
+  blogUrl?: string
+  network?: string
 }
 
 export interface TimeLeft {
@@ -65,19 +68,87 @@ export async function getCurrentRound(): Promise<string | null> {
   return null
 }
 
+function toRoundInfo(data: any, network: string): RoundInfo {
+  const nativeTokenDecimals = Number(data.nativeTokenDecimals)
+  // leaderboard does not need coordinator key, generate a dummy number
+  const keypair = Keypair.createFromSeed(utils.hexlify(utils.randomBytes(32)))
+  const coordinatorPubKey = keypair.pubKey
+
+  const voiceCreditFactor = BigNumber.from(data.voiceCreditFactor)
+  const contributions = BigNumber.from(data.totalSpent).mul(voiceCreditFactor)
+  const matchingPool = BigNumber.from(data.matchingPoolSize)
+  let status = RoundStatus.Cancelled
+  if (data.isCancelled) {
+    status = RoundStatus.Cancelled
+  } else if (data.isFinalized) {
+    status = RoundStatus.Finalized
+  }
+  const totalFunds = contributions.add(matchingPool)
+
+  return {
+    fundingRoundAddress: data.address,
+    recipientRegistryAddress: utils.getAddress(data.recipientRegistryAddress),
+    userRegistryAddress: utils.getAddress(data.userRegistryAddress),
+    maciAddress: utils.getAddress(data.maciAddress),
+    recipientTreeDepth: 0,
+    maxContributors: 0,
+    maxRecipients: data.maxRecipients,
+    maxMessages: data.maxMessages,
+    coordinatorPubKey,
+    nativeTokenAddress: utils.getAddress(data.nativeTokenAddress),
+    nativeTokenSymbol: data.nativeTokenSymbol,
+    nativeTokenDecimals,
+    voiceCreditFactor,
+    status,
+    startTime: DateTime.fromSeconds(data.startTime),
+    signUpDeadline: DateTime.fromSeconds(Number(data.startTime) + Number(data.signUpDuration)),
+    votingDeadline: DateTime.fromSeconds(Number(data.startTime) + Number(data.votingDuration)),
+    totalFunds,
+    matchingPool,
+    contributions,
+    contributors: data.contributorCount,
+    messages: Number(data.messages),
+    blogUrl: data.blogUrl,
+    network,
+  }
+}
+
+export async function getLeaderboardRoundInfo(fundingRoundAddress: string, network: string): Promise<RoundInfo | null> {
+  const data = await getLeaderboardData(fundingRoundAddress, network)
+  if (!data) {
+    return null
+  }
+
+  let round: RoundInfo | null = null
+  try {
+    round = toRoundInfo(data.round, network)
+  } catch (err) {
+    /* eslint-disable-next-line no-console */
+    console.warn(`Failed map leaderboard round info`, err)
+  }
+
+  return round
+}
+
 //TODO: update to take factory address as a parameter, default to env. variable
-export async function getRoundInfo(fundingRoundAddress: string, cachedRound?: RoundInfo | null): Promise<RoundInfo> {
-  if (cachedRound && isSameAddress(fundingRoundAddress, cachedRound.fundingRoundAddress)) {
+export async function getRoundInfo(
+  fundingRoundAddress: string,
+  cachedRound?: RoundInfo | null,
+): Promise<RoundInfo | null> {
+  const roundAddress = fundingRoundAddress || ''
+  if (cachedRound && isSameAddress(roundAddress, cachedRound.fundingRoundAddress)) {
     // the requested round matches the cached round, quick return
     return cachedRound
   }
 
   const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
   const data = await sdk.GetRoundInfo({
-    fundingRoundAddress: fundingRoundAddress.toLowerCase(),
+    fundingRoundAddress: roundAddress.toLowerCase(),
   })
 
-  assert(data.fundingRound, ASSERT_MISSING_ROUND)
+  if (!data.fundingRound) {
+    return null
+  }
 
   const {
     maci: maciAddress,
@@ -169,9 +240,9 @@ export async function getRoundInfo(fundingRoundAddress: string, cachedRound?: Ro
     startTime,
     signUpDeadline,
     votingDeadline,
-    totalFunds: FixedNumber.fromValue(totalFunds, nativeTokenDecimals),
-    matchingPool: FixedNumber.fromValue(matchingPool, nativeTokenDecimals),
-    contributions: FixedNumber.fromValue(contributions, nativeTokenDecimals),
+    totalFunds,
+    matchingPool,
+    contributions,
     contributors,
     messages: messages.toNumber(),
   }

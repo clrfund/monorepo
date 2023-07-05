@@ -1,5 +1,6 @@
 <template>
-  <div class="project-container">
+  <loader v-if="isLoading"></loader>
+  <div v-else class="project-container">
     <div class="projects">
       <div
         :class="{
@@ -57,10 +58,9 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import type { FixedNumber } from 'ethers'
 
 import { getCurrentRound, getRoundInfo } from '@/api/round'
-import { type Project, getProjects } from '@/api/projects'
+import { type Project, getProjects, getRecipientRegistryAddress } from '@/api/projects'
 
 import CallToActionCard from '@/components/CallToActionCard.vue'
 import ProjectListItem from '@/components/ProjectListItem.vue'
@@ -69,6 +69,13 @@ import Links from '@/components/Links.vue'
 import { useRoute } from 'vue-router'
 import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
+import { DateTime } from 'luxon'
+
+type ProjectRoundInfo = {
+  recipientRegistryAddress: string
+  startTime: number
+  votingDeadline: number
+}
 
 const SHUFFLE_RANDOM_SEED = Math.random()
 
@@ -96,7 +103,7 @@ const { currentUser } = storeToRefs(userStore)
 const projects = ref<Project[]>([])
 const search = ref('')
 const isLoading = ref(true)
-const categories = ref<string[]>(['content', 'research', 'tooling', 'data'])
+const categories = ref<string[]>(['content', 'education', 'research', 'tooling', 'data'])
 const selectedCategories = ref<string[]>([])
 const roundAddress = ref('')
 
@@ -109,34 +116,48 @@ const projectsByCategoriesSelected = computed<Project[]>(() => {
 })
 
 onMounted(async () => {
-  //TODO: update to take factory address as a parameter, default to env. variable
-  roundAddress.value = (route.params.address as string) || currentRoundAddress.value! || (await getCurrentRound()) || ''
-  if (roundAddress.value) {
-    await loadProjects(roundAddress.value)
+  try {
+    roundAddress.value =
+      (route.params.address as string) || currentRoundAddress.value || (await getCurrentRound()) || ''
+    const round = await loadProjectRoundInfo(roundAddress.value)
+    await loadProjects(round)
+  } catch (err) {
+    /* eslint-disable-next-line no-console */
+    console.error('Error loading projects', err)
   }
   isLoading.value = false
 })
 
-async function loadProjects(roundAddress: string) {
-  const round = await getRoundInfo(roundAddress, currentRound.value)
-  const _projects = await getProjects(
-    round.recipientRegistryAddress,
-    round.startTime.toSeconds(),
-    round.votingDeadline.toSeconds(),
-  )
+async function loadProjectRoundInfo(roundAddress: string): Promise<ProjectRoundInfo> {
+  // defaults when a round has not been created yet
+  let recipientRegistryAddress = ''
+  let startTime = 0
+  let votingDeadline = DateTime.local().toSeconds()
+
+  if (roundAddress) {
+    const round = await getRoundInfo(roundAddress, currentRound.value)
+    if (round) {
+      recipientRegistryAddress = round.recipientRegistryAddress
+      startTime = round.startTime.toSeconds()
+      votingDeadline = round.votingDeadline.toSeconds()
+    }
+  }
+
+  if (!recipientRegistryAddress) {
+    // pass null as round address to get recipient registry address from the factory
+    recipientRegistryAddress = await getRecipientRegistryAddress(null)
+  }
+
+  return { recipientRegistryAddress, startTime, votingDeadline }
+}
+
+async function loadProjects(round: ProjectRoundInfo) {
+  const _projects = await getProjects(round.recipientRegistryAddress, round.startTime, round.votingDeadline)
   const visibleProjects = _projects.filter(project => {
     return !project.isHidden && !project.isLocked
   })
   shuffleArray(visibleProjects)
   projects.value = visibleProjects
-}
-
-function formatIntegerPart(value: FixedNumber): string {
-  if (value._value === '0.0') {
-    return '0'
-  }
-  const integerPart = value.toString().split('.')[0]
-  return integerPart + (value.round(0) === value ? '' : '.')
 }
 
 const filteredProjects = computed(() => {

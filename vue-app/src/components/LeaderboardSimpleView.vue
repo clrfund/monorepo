@@ -1,6 +1,11 @@
 <template>
   <div class="content">
-    <links :to="projectRoute">
+    <links
+      :to="{
+        name: 'leaderboard-project',
+        params: { id: project.id, address: round.fundingRoundAddress, network: round.network },
+      }"
+    >
       <div class="container">
         <div class="rank">
           <div v-if="isTop3">
@@ -53,13 +58,6 @@ interface Props {
 }
 
 const props = defineProps<Props>()
-
-const projectRoute = computed(() => {
-  return {
-    name: 'round-project',
-    params: { id: props.project.id, address: props.round.fundingRoundAddress },
-  }
-})
 
 const isTop3 = computed(() => {
   return props.rank <= 3

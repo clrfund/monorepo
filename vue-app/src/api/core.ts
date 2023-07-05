@@ -3,6 +3,9 @@ import { ethers } from 'ethers'
 import { FundingRoundFactory } from './abi'
 import { CHAIN_INFO } from '@/utils/chains'
 
+import historicalRounds from '@/rounds/rounds.json'
+import { DateTime } from 'luxon'
+
 export const rpcUrl = import.meta.env.VITE_ETHEREUM_API_URL
 if (!rpcUrl) {
   throw new Error('Please provide ethereum rpc url for connecting to blockchain')
@@ -48,9 +51,6 @@ if (!['simple', 'optimistic', 'kleros'].includes(recipientRegistryType as string
 }
 export const recipientRegistryPolicy = import.meta.env.VITE_RECIPIENT_REGISTRY_POLICY
 export const operator: string = import.meta.env.VITE_OPERATOR || 'Clr.fund'
-export const extraRounds: string[] = import.meta.env.VITE_EXTRA_ROUNDS
-  ? import.meta.env.VITE_EXTRA_ROUNDS.split(',')
-  : []
 
 export const SUBGRAPH_ENDPOINT =
   import.meta.env.VITE_SUBGRAPH_URL || 'https://api.thegraph.com/subgraphs/name/clrfund/clrfund'
@@ -74,3 +74,23 @@ export const brightIdSponsorUrl = import.meta.env.VITE_BRIGHTID_SPONSOR_API_URL
 
 // wait for data to sync with the subgraph
 export const MAX_WAIT_DEPTH = Number(import.meta.env.VITE_MAX_WAIT_DEPTH) || 15
+
+export type LeaderboardRound = {
+  address: string
+  network: string
+}
+
+const leaderboardRounds = historicalRounds as LeaderboardRound[]
+export { leaderboardRounds }
+
+export const showComplianceRequirement = /^yes$/i.test(import.meta.env.VITE_SHOW_COMPLIANCE_REQUIREMENT)
+
+export const isBrightIdRequired = userRegistryType === 'brightid'
+export const isOptimisticRecipientRegistry = recipientRegistryType === 'optimistic'
+
+// Try to get the next scheduled start date
+const nextStartDate = import.meta.env.VITE_NEXT_ROUND_START_DATE
+  ? DateTime.fromFormat(import.meta.env.VITE_NEXT_ROUND_START_DATE, 'yyyy-MM-dd')
+  : null
+
+export const nextRoundStartDate = nextStartDate?.isValid ? nextStartDate : null

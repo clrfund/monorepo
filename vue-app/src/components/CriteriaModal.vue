@@ -30,6 +30,15 @@
               </p>
             </div>
           </div>
+          <div v-if="showComplianceRequirement" class="criterion-point">
+            <div class="emoji" aria-hidden="true">🛡️</div>
+            <div>
+              <h3 class="no-margin">
+                {{ $t('dynamic.criteria.compliance.tagline') }}
+              </h3>
+              <compliance-info keypath="dynamic.criteria.compliance.description" />
+            </div>
+          </div>
         </div>
       </div>
       <links to="/join/project" class="btn-primary fit-content">{{ $t('criterialModal.link2') }}</links>
@@ -38,6 +47,7 @@
 </template>
 
 <script setup lang="ts">
+import { showComplianceRequirement } from '@/api/core'
 import { criteria } from '@/plugins/round/criteria'
 
 function getCriterion(key: string): string {

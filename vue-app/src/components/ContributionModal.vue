@@ -265,13 +265,9 @@ async function contribute() {
       contributionTxError.value = error.message
       return
     }
-    // Get state index and amount of voice credits
+    // Get state index
     const maci = new Contract(maciAddress, MACI, userStore.signer)
     const stateIndex = getEventArg(contributionTxReceipt, maci, 'SignUp', '_stateIndex')
-    const voiceCredits = getEventArg(contributionTxReceipt, maci, 'SignUp', '_voiceCreditBalance')
-    if (!voiceCredits.mul(voiceCreditFactor).eq(total.value)) {
-      throw new Error('Incorrect amount of voice credits')
-    }
     const contributor = {
       keypair: contributorKeypair,
       stateIndex: stateIndex.toNumber(),

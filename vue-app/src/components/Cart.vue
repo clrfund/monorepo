@@ -1,6 +1,11 @@
 <template>
   <div class="h100">
-    <div v-if="!currentUser" class="empty-cart">
+    <loader v-if="!isAppReady"></loader>
+    <div v-else-if="!currentRound" class="empty-cart">
+      <div class="moon-emoji">🌚</div>
+      <h3>{{ $t('roundInfo.div21') }}</h3>
+    </div>
+    <div v-else-if="!currentUser" class="empty-cart">
       <div class="moon-emoji">🌚</div>
       <h3>{{ $t('cart.h3_1') }}</h3>
       <button @click="promptConnection" class="btn-action">{{ $t('cart.connect') }}</button>
@@ -217,7 +222,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref } from 'vue'
 import { BigNumber } from 'ethers'
 import { parseFixed } from '@ethersproject/bignumber'
 import { DateTime } from 'luxon'
@@ -230,7 +235,7 @@ import CartItems from '@/components/CartItems.vue'
 import Links from '@/components/Links.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import { MAX_CONTRIBUTION_AMOUNT, MAX_CART_SIZE, type CartItem, isContributionAmountValid } from '@/api/contributions'
-import { userRegistryType, UserRegistryType } from '@/api/core'
+import { userRegistryType, UserRegistryType, operator } from '@/api/core'
 import { RoundStatus } from '@/api/round'
 import { formatAmount as _formatAmount } from '@/utils/amounts'
 import FundsNeededWarning from '@/components/FundsNeededWarning.vue'
@@ -262,6 +267,7 @@ const {
   hasUserVoted,
   hasContributionPhaseEnded,
   contributor,
+  isAppReady,
 } = storeToRefs(appStore)
 const userStore = useUserStore()
 const { currentUser } = storeToRefs(userStore)
@@ -287,17 +293,19 @@ const dropdownItems = ref<
   },
 ])
 
+onMounted(async () => {
+  if (currentUser.value?.encryptionKey) {
+    isLoading.value = true
+    await loadCart()
+    isLoading.value = false
+  }
+})
+
 function removeAll(): void {
   appStore.clearCart()
   appStore.saveCart()
   appStore.toggleEditSelection(true)
 }
-
-onMounted(() => {
-  if (currentUser.value && !currentUser.value.encryptionKey) {
-    promptSignagure()
-  }
-})
 
 function showError(errorMessage: string) {
   const { open, close } = useModal({
@@ -348,7 +356,7 @@ function promptSignagure(): void {
 }
 
 async function loadCart() {
-  if (appStore.cartLoaded) {
+  if (appStore.cartLoaded || !appStore.currentRound) {
     return
   }
 
@@ -409,7 +417,7 @@ const contribution = computed(() => appStore.contribution || BigNumber.from(0))
 const filteredCart = computed<CartItem[]>(() => {
   // Once reallocation phase ends, use committedCart for cart items
   if (hasReallocationPhaseEnded.value) {
-    return committedCart.value
+    return committedCart.value.filter(item => !item.isCleared)
   }
   // Hide cleared items
   return cart.value.filter(item => !item.isCleared)
@@ -478,6 +486,7 @@ const errorMessage = computed<string | null>(() => {
   if (isMessageLimitReached.value) return t('dynamic.cart.error.reached_contribution_limit')
   if (!currentUser.value) return t('dynamic.cart.error.connect_wallet')
   if (isBrightIdRequired.value) return t('dynamic.cart.error.need_to_setup_brightid')
+  if (!currentUser.value.isRegistered) return t('dynamic.cart.error.user_not_registered', { operator })
   if (!isFormValid()) return t('dynamic.cart.error.invalid_contribution_amount')
   if (cart.value.length > MAX_CART_SIZE)
     return t('dynamic.cart.error.exceeded_max_cart_size', {
@@ -577,6 +586,7 @@ function submitCart(event: any) {
     attrs: {
       votes: votes.value,
       onClose() {
+        appStore.restoreCommittedCartToLocalCart()
         closeReallocationModal()
       },
     },

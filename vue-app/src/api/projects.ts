@@ -7,6 +7,8 @@ import SimpleRegistry from './recipient-registry-simple'
 import OptimisticRegistry from './recipient-registry-optimistic'
 import KlerosRegistry from './recipient-registry-kleros'
 import sdk from '@/graphql/sdk'
+import { getLeaderboardData } from '@/api/leaderboard'
+import type { RecipientApplicationData } from '@/api/types'
 
 export interface LeaderboardProject {
   id: string // Address or another ID depending on registry implementation
@@ -58,6 +60,19 @@ export async function getRecipientRegistryAddress(roundAddress: string | null): 
   }
 }
 
+export async function getCurrentRecipientRegistryAddress(): Promise<string> {
+  const data = await sdk.GetRecipientRegistryInfo({
+    factoryAddress: factory.address.toLowerCase(),
+  })
+
+  const registryAddress =
+    data.fundingRoundFactory?.currentRound?.recipientRegistry?.id ||
+    data.fundingRoundFactory?.recipientRegistry?.id ||
+    ''
+
+  return registryAddress
+}
+
 export async function getProjects(registryAddress: string, startTime?: number, endTime?: number): Promise<Project[]> {
   if (recipientRegistryType === 'simple') {
     return await SimpleRegistry.getProjects(registryAddress, startTime, endTime)
@@ -70,11 +85,21 @@ export async function getProjects(registryAddress: string, startTime?: number, e
   }
 }
 
-export async function getProject(registryAddress: string, recipientId: string): Promise<Project | null> {
+/**
+ * Get project information
+ *
+ * TODO: add subgraph event listener to track recipients from simple and kleros registries
+ *
+ * @param registryAddress recipient registry address
+ * @param recipientId  recipient id
+ * @param filter filter result by locked or verified status
+ * @returns project information
+ */
+export async function getProject(registryAddress: string, recipientId: string, filter = true): Promise<Project | null> {
   if (recipientRegistryType === 'simple') {
     return await SimpleRegistry.getProject(registryAddress, recipientId)
   } else if (recipientRegistryType === 'optimistic') {
-    return await OptimisticRegistry.getProject(recipientId)
+    return await OptimisticRegistry.getProject(recipientId, filter)
   } else if (recipientRegistryType === 'kleros') {
     return await KlerosRegistry.getProject(registryAddress, recipientId)
   } else {
@@ -111,7 +136,7 @@ export async function getProjectByIndex(
     recipientIndex,
   })
 
-  if (!result.recipients?.length) {
+  if (!result.recipients.length) {
     return null
   }
 
@@ -173,5 +198,63 @@ export function toLeaderboardProject(project: any): LeaderboardProject {
     allocatedAmount: BigNumber.from(project.allocatedAmount || '0'),
     votes: BigNumber.from(project.tallyResult || '0'),
     donation: BigNumber.from(project.spentVoiceCredits || '0'),
+  }
+}
+
+export async function getLeaderboardProject(
+  roundAddress: string,
+  projectId: string,
+  network: string,
+): Promise<Project | null> {
+  const data = await getLeaderboardData(roundAddress, network)
+  if (!data) {
+    return null
+  }
+
+  const project = data.projects.find(project => project.id === projectId)
+
+  const metadata = project.metadata
+  const thumbnailHash = metadata.imageHash
+  const thumbnailImageUrl = thumbnailHash ? `${ipfsGatewayUrl}/ipfs/${thumbnailHash}` : undefined
+  const bannerHash = metadata.imageHash
+  const bannerImageUrl = bannerHash ? `${ipfsGatewayUrl}/ipfs/${bannerHash}` : undefined
+
+  return {
+    id: project.id,
+    address: project.recipientAddress || '',
+    name: project.name,
+    description: metadata.description,
+    tagline: metadata.tagline,
+    thumbnailImageUrl,
+    bannerImageUrl,
+    index: project.recipientIndex,
+    isHidden: false, // always show leaderboard project
+    isLocked: true, // Visible, but contributions are not allowed
+  }
+}
+
+export function formToProjectInterface(data: RecipientApplicationData): Project {
+  const { project, fund, team, links, image } = data
+  return {
+    id: fund.resolvedAddress,
+    address: fund.resolvedAddress,
+    name: project.name,
+    tagline: project.tagline,
+    description: project.description,
+    category: project.category,
+    problemSpace: project.problemSpace,
+    plans: fund.plans,
+    teamName: team.name,
+    teamDescription: team.description,
+    githubUrl: links.github,
+    radicleUrl: links.radicle,
+    websiteUrl: links.website,
+    twitterUrl: links.twitter,
+    discordUrl: links.discord,
+    bannerImageUrl: `${ipfsGatewayUrl}/ipfs/${image.bannerHash}`,
+    thumbnailImageUrl: `${ipfsGatewayUrl}/ipfs/${image.thumbnailHash}`,
+    index: 0,
+    isHidden: false,
+    isLocked: true,
   }
 }

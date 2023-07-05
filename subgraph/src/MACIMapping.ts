@@ -91,24 +91,24 @@ export function handleSignUp(event: SignUp): void {
 
   //NOTE: If the public keys aren't being tracked initialize them
   if (publicKey == null) {
-    let publicKey = new PublicKey(publicKeyId)
-    publicKey.x = event.params._userPubKey.x
-    publicKey.y = event.params._userPubKey.y
-    publicKey.stateIndex = event.params._stateIndex
-
-    publicKey.voiceCreditBalance = event.params._voiceCreditBalance
-
-    let fundingRoundAddress = event.transaction.to!
-    let fundingRoundId = fundingRoundAddress.toHex()
-    let fundingRound = FundingRound.load(fundingRoundId)
-    if (fundingRound == null) {
-      log.error('Error: handleSignUp failed, fundingRound not registered', [])
-      return
-    }
-
-    publicKey.fundingRound = fundingRoundId
-    publicKey.save()
+    publicKey = new PublicKey(publicKeyId)
   }
+  publicKey.x = event.params._userPubKey.x
+  publicKey.y = event.params._userPubKey.y
+  publicKey.stateIndex = event.params._stateIndex
+
+  publicKey.voiceCreditBalance = event.params._voiceCreditBalance
+
+  let fundingRoundAddress = event.transaction.to!
+  let fundingRoundId = fundingRoundAddress.toHex()
+  let fundingRound = FundingRound.load(fundingRoundId)
+  if (fundingRound == null) {
+    log.error('Error: handleSignUp failed, fundingRound not registered', [])
+    return
+  }
+
+  publicKey.fundingRound = fundingRoundId
+  publicKey.save()
 
   log.info('SignUp', [])
 }
