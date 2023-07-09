@@ -75,7 +75,7 @@
             {{ $t('joinLanding.open.div1') }}
           </div>
           <div class="countdown caps">
-            <time-left v-if="signUpDeadline" valueClass="none" unitClass="none" :date="signUpDeadline" />
+            <time-left v-if="recipientJoinDeadline" valueClass="none" unitClass="none" :date="recipientJoinDeadline" />
           </div>
         </div>
         <div class="apply-callout">
@@ -182,7 +182,6 @@ const registryInfo = computed<RegistryInfo | null>(() => recipientRegistryInfo.v
 
 const deposit = computed<BigNumber | undefined>(() => registryInfo.value?.deposit)
 const depositToken = computed<string | null>(() => registryInfo.value?.depositToken || null)
-const signUpDeadline = computed(() => appStore.currentRound?.signUpDeadline)
 const spacesRemaining = computed(() => {
   // eslint-disable-next-line
   if (!appStore.currentRound || !registryInfo.value) {
