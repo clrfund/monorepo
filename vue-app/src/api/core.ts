@@ -94,3 +94,9 @@ const nextStartDate = import.meta.env.VITE_NEXT_ROUND_START_DATE
   : null
 
 export const nextRoundStartDate = nextStartDate?.isValid ? nextStartDate : null
+
+// Use this deadline to hide the 'Add Project' button
+const deadline = import.meta.env.VITE_RECIPIENT_JOIN_DEADLINE
+  ? DateTime.fromFormat(import.meta.env.VITE_RECIPIENT_JOIN_DEADLINE, 'yyyy-MM-dd', { zone: 'utc' })
+  : null
+export const recipientJoinDeadlineConfig = deadline?.isValid ? deadline : null
