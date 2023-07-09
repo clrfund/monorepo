@@ -31,7 +31,7 @@
           />
           <img v-if="search.length > 0" @click="clearSearch" src="@/assets/close.svg" height="20" class="pointer" />
         </div>
-        <div class="add-project">
+        <div v-if="isRoundJoinPhase" class="add-project">
           <links to="/join" class="btn-primary">{{ $t('projectList.link1') }}</links>
         </div>
         <div class="hr" />
@@ -96,7 +96,7 @@ function shuffleArray(array: any[]) {
 
 const route = useRoute()
 const appStore = useAppStore()
-const { currentRoundAddress, currentRound, showCartPanel } = storeToRefs(appStore)
+const { currentRoundAddress, currentRound, showCartPanel, isRoundJoinPhase } = storeToRefs(appStore)
 const userStore = useUserStore()
 const { currentUser } = storeToRefs(userStore)
 
