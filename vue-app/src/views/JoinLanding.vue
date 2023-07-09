@@ -11,12 +11,12 @@
     <div class="breadcrumbs">
       <breadcrumbs />
     </div>
-    <div class="content" v-if="loading">
+    <div class="content" v-if="loading || !isAppReady">
       <h1>{{ $t('joinLanding.loading') }}</h1>
       <loader />
     </div>
 
-    <div class="content" v-else-if="hasContributionPhaseEnded">
+    <div class="content" v-else-if="recipientJoinDeadline && !isRoundJoinPhase">
       <div class="big-emoji">☹</div>
       <h1>{{ $t('joinLanding.closed.h1') }}</h1>
       <div id="subtitle" class="subtitle">
@@ -167,7 +167,8 @@ import { useAppStore, useRecipientStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
 const appStore = useAppStore()
-const { maxRecipients, isMessageLimitReached, hasContributionPhaseEnded } = storeToRefs(appStore)
+const { maxRecipients, isMessageLimitReached, isRoundJoinPhase, recipientJoinDeadline, isAppReady } =
+  storeToRefs(appStore)
 const recipientStore = useRecipientStore()
 const { recipientRegistryInfo } = storeToRefs(recipientStore)
 
