@@ -245,14 +245,16 @@ export async function getProjects(registryAddress: string, startTime?: number, e
       }
 
       if (requestType === RequestTypeCode.Removal) {
-        const removedAt = submissionTime
-        if (!startTime || removedAt <= startTime) {
-          // Start time not specified
-          // or recipient had been removed before start time
-          project.isHidden = true
-        } else {
-          // Disallow contributions to removed recipient, but don't hide it
-          project.isLocked = true
+        if (recipient.verified) {
+          const removedAt = submissionTime
+          if (!startTime || removedAt <= startTime) {
+            // Start time not specified
+            // or recipient had been removed before start time
+            project.isHidden = true
+          } else {
+            // Disallow contributions to removed recipient, but don't hide it
+            project.isLocked = true
+          }
         }
       }
 

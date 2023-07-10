@@ -41,7 +41,8 @@ export function handleRequestResolved(event: RequestResolved): void {
   recipient.requester = event.transaction.from.toHexString()
   recipient.submissionTime = event.params._timestamp.toString()
   recipient.rejected = event.params._rejected
-  recipient.verified = !event.params._rejected
+  // verified means the request is resolved
+  recipient.verified = true
   recipient.recipientRegistry = recipientRegistryId
   recipient.recipientIndex = event.params._recipientIndex
   recipient.requestResolvedHash = event.transaction.hash
