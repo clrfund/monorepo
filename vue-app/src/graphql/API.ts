@@ -3430,7 +3430,7 @@ export const GetRecipientRegistryInfoDocument = gql`
     `;
 export const GetRecipientsDocument = gql`
     query GetRecipients($registryAddress: String!) {
-  recipients(where: {recipientRegistry: $registryAddress}) {
+  recipients(where: {recipientRegistry: $registryAddress}, first: 1000) {
     id
     recipientIndex
     requestType
