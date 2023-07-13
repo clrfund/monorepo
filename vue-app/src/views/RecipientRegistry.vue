@@ -113,11 +113,7 @@
                 >
                   <img src="@/assets/checkmark.svg" />
                 </div>
-                <div
-                  class="icon-btn-reject"
-                  v-if="isOwner && (isPending(request) || isAccepted(request))"
-                  @click="reject(request)"
-                >
+                <div class="icon-btn-reject" v-if="isOwner && isPending(request)" @click="reject(request)">
                   <img src="@/assets/close.svg" />
                 </div>
               </div>
