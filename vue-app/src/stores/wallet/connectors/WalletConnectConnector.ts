@@ -9,6 +9,7 @@ export default {
       rpc: {
         [rpcChainId]: rpcUrl,
       },
+      bridge: "https://walletconnect-relay.minerva.digital",
     })
 
     let accounts, chainId
