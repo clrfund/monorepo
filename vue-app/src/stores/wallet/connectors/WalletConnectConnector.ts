@@ -10,17 +10,8 @@ export default {
       showQrModal: true,
       qrModalOptions: {
         themeMode: 'light',
-        themeVariables: { '--w3m-z-index': walletConnectZIndex },
-        chainImages: undefined,
-        desktopWallets: undefined,
-        walletImages: undefined,
-        mobileWallets: undefined,
+        themeVariables: { '--wcm-z-index': walletConnectZIndex },
         enableExplorer: true,
-        explorerAllowList: undefined,
-        tokenImages: undefined,
-        privacyPolicyUrl: undefined,
-        explorerDenyList: undefined,
-        termsOfServiceUrl: undefined,
       },
     })
 
