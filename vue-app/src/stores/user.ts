@@ -77,15 +77,8 @@ export const useUserStore = defineStore('user', {
 
         let contribution = appStore.contribution
         if (!contribution || contribution.isZero()) {
-          contribution = await getContributionAmount(
-            appStore.currentRound.fundingRoundAddress,
-            this.currentUser.walletAddress,
-          )
-
-          const hasVoted = await hasContributorVoted(
-            appStore.currentRound.fundingRoundAddress,
-            this.currentUser.walletAddress,
-          )
+          contribution = await getContributionAmount(appStore.currentRound.fundingRoundAddress, walletAddress)
+          const hasVoted = await hasContributorVoted(appStore.currentRound.fundingRoundAddress, walletAddress)
 
           appStore.contribution = contribution
           appStore.hasVoted = hasVoted

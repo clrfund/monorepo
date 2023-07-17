@@ -16,6 +16,7 @@ export type Scalars = {
   BigDecimal: any;
   BigInt: any;
   Bytes: any;
+  Int8: any;
 };
 
 export type BlockChangedFilter = {
@@ -3145,12 +3146,12 @@ export type GetContributionsAmountQueryVariables = Exact<{
 export type GetContributionsAmountQuery = { __typename?: 'Query', contributions: Array<{ __typename?: 'Contribution', amount: any | null }> };
 
 export type GetContributorIndexQueryVariables = Exact<{
-  fundingRoundAddress: Scalars['ID'];
+  fundingRoundAddress: Scalars['String'];
   publicKeyId: Scalars['ID'];
 }>;
 
 
-export type GetContributorIndexQuery = { __typename?: 'Query', publicKey: { __typename?: 'PublicKey', id: string, stateIndex: any | null } | null };
+export type GetContributorIndexQuery = { __typename?: 'Query', publicKeys: Array<{ __typename?: 'PublicKey', id: string, stateIndex: any | null }> };
 
 export type GetContributorMessagesQueryVariables = Exact<{
   fundingRoundAddress: Scalars['String'];
@@ -3181,7 +3182,7 @@ export type GetFactoryInfoQueryVariables = Exact<{
 }>;
 
 
-export type GetFactoryInfoQuery = { __typename?: 'Query', fundingRoundFactory: { __typename?: 'FundingRoundFactory', contributorRegistryAddress: any | null, nativeTokenInfo: { __typename?: 'Token', tokenAddress: any | null, symbol: string | null, decimals: any | null } | null } | null };
+export type GetFactoryInfoQuery = { __typename?: 'Query', fundingRoundFactory: { __typename?: 'FundingRoundFactory', contributorRegistryAddress: any | null, recipientRegistryAddress: any | null, nativeTokenInfo: { __typename?: 'Token', tokenAddress: any | null, symbol: string | null, decimals: any | null } | null } | null };
 
 export type GetLatestBlockNumberQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3194,13 +3195,6 @@ export type GetProjectQueryVariables = Exact<{
 
 
 export type GetProjectQuery = { __typename?: 'Query', recipients: Array<{ __typename?: 'Recipient', id: string, requestType: string | null, recipientAddress: any | null, recipientMetadata: string | null, recipientIndex: any | null, submissionTime: string | null, rejected: boolean | null, verified: boolean | null }> };
-
-export type GetPublicKeyQueryVariables = Exact<{
-  pubKey: Scalars['ID'];
-}>;
-
-
-export type GetPublicKeyQuery = { __typename?: 'Query', publicKey: { __typename?: 'PublicKey', id: string } | null };
 
 export type GetRecipientQueryVariables = Exact<{
   registryAddress: Scalars['ID'];
@@ -3285,8 +3279,8 @@ export const GetContributionsAmountDocument = gql`
 }
     `;
 export const GetContributorIndexDocument = gql`
-    query GetContributorIndex($fundingRoundAddress: ID!, $publicKeyId: ID!) {
-  publicKey(id: $publicKeyId) {
+    query GetContributorIndex($fundingRoundAddress: String!, $publicKeyId: ID!) {
+  publicKeys(where: {id: $publicKeyId, fundingRound: $fundingRoundAddress}) {
     id
     stateIndex
   }
@@ -3339,6 +3333,7 @@ export const GetFactoryInfoDocument = gql`
       decimals
     }
     contributorRegistryAddress
+    recipientRegistryAddress
   }
 }
     `;
@@ -3362,13 +3357,6 @@ export const GetProjectDocument = gql`
     submissionTime
     rejected
     verified
-  }
-}
-    `;
-export const GetPublicKeyDocument = gql`
-    query GetPublicKey($pubKey: ID!) {
-  publicKey(id: $pubKey) {
-    id
   }
 }
     `;
@@ -3442,7 +3430,7 @@ export const GetRecipientRegistryInfoDocument = gql`
     `;
 export const GetRecipientsDocument = gql`
     query GetRecipients($registryAddress: String!) {
-  recipients(where: {recipientRegistry: $registryAddress}) {
+  recipients(where: {recipientRegistry: $registryAddress}, first: 1000) {
     id
     recipientIndex
     requestType
@@ -3537,9 +3525,6 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     GetProject(variables: GetProjectQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetProjectQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetProjectQuery>(GetProjectDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetProject', 'query');
-    },
-    GetPublicKey(variables: GetPublicKeyQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetPublicKeyQuery> {
-      return withWrapper((wrappedRequestHeaders) => client.request<GetPublicKeyQuery>(GetPublicKeyDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetPublicKey', 'query');
     },
     GetRecipient(variables: GetRecipientQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRecipientQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRecipientQuery>(GetRecipientDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetRecipient', 'query');

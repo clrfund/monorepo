@@ -1,6 +1,6 @@
 {
   "name": "@clrfund/vue-app",
-  "version": "4.0.4",
+  "version": "4.2.3",
   "private": true,
   "license": "GPL-3.0",
   "scripts": {
@@ -14,7 +14,7 @@
     "type-check": "yarn vue-tsc --noEmit",
     "codegen": "graphql-codegen --config codegen.yml",
     "build-map": "NODE_OPTIONS=--max-old-space-size=4096 vite build --sourcemap",
-    "test:lint-i18n": "vue-i18n-extract report --vueFiles 'src/**/*.?(vue)' --languageFiles 'src/locales/*.?(json)' --exclude dynamic"
+    "test:lint-i18n": "vue-i18n-extract report --vueFiles 'src/**/*.?(vue)' --languageFiles 'src/locales/*.?(json)' --exclude dynamic --exclude join.step1.address_requirement"
   },
   "lint-staged": {
     "**/*.{js,ts,json,scss,css,vue}": [
@@ -40,8 +40,6 @@
     "humanize-duration": "^3.27.3",
     "is-ipfs": "^7.0.3",
     "luxon": "^3.1.1",
-    "maci-crypto": "npm:@clrfund/maci-crypto@0.10.2",
-    "maci-domainobjs": "npm:@clrfund/maci-domainobjs@0.10.2",
     "markdown-it": "^13.0.1",
     "markdown-it-link-attributes": "^4.0.1",
     "node-stdlib-browser": "^1.2.0",
@@ -51,7 +49,8 @@
     "vue-final-modal": "^4.3.0",
     "vue-i18n": "9",
     "vue-meta": "3.0.0-alpha.8",
-    "vue-router": "4"
+    "vue-router": "4",
+    "@clrfund/maci-utils": "^0.0.1"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^3.3.0",

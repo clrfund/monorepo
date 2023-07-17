@@ -45,6 +45,7 @@ import { useAppStore, useUserStore, useRecipientStore, useWalletStore } from '@/
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import { useMeta } from 'vue-meta'
+import type { WalletUser } from '@/stores'
 
 const route = useRoute()
 const appStore = useAppStore()
@@ -85,7 +86,7 @@ const routeName = computed(() => route.name?.toString() || '')
 const isUserAndRoundLoaded = computed(() => !!currentUser.value && !!currentRound.value)
 const isInApp = computed(() => routeName.value !== 'landing')
 const isVerifyStep = computed(() => routeName.value === 'verify-step')
-const isSideCartShown = computed(() => !!currentUser.value && isSidebarShown.value && routeName.value !== 'cart')
+const isSideCartShown = computed(() => isUserAndRoundLoaded.value && isSidebarShown.value && routeName.value !== 'cart')
 const isCartPadding = computed(() => {
   const routes = ['cart']
   return routes.includes(routeName.value)
@@ -169,6 +170,7 @@ onMounted(async () => {
   await appStore.loadMACIFactoryInfo()
   await appStore.loadRoundInfo()
   await recipientStore.loadRecipientRegistryInfo()
+  appStore.isAppReady = true
 
   setupLoadIntervals()
 })
@@ -182,9 +184,14 @@ onBeforeUnmount(() => {
 watch(walletUser, async () => {
   try {
     if (walletUser.value) {
+      const user: WalletUser = {
+        chainId: walletUser.value.chainId,
+        walletAddress: walletUser.value.walletAddress,
+        web3Provider: walletUser.value.web3Provider,
+      }
       // make sure factory is loaded
       await appStore.loadFactoryInfo()
-      userStore.loginUser(walletUser.value)
+      userStore.loginUser(user)
       await userStore.loadUserInfo()
       await userStore.loadBrightID()
     } else {

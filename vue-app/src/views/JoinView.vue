@@ -143,6 +143,18 @@
                   />
                   <label for="tooling" class="radio-btn">{{ $t('join.step0.label5') }}</label>
                   <input
+                    id="education"
+                    type="radio"
+                    name="education"
+                    value="Education"
+                    v-model="v$.project.category.$model"
+                    :class="{
+                      input: true,
+                      invalid: v$.project.category.$error,
+                    }"
+                  />
+                  <label for="education" class="radio-btn"> {{ $t('join.step0.label_education') }}</label>
+                  <input
                     id="category-content"
                     type="radio"
                     name="project-category"
@@ -226,6 +238,9 @@
                 <p class="input-description">
                   {{ $t('join.step1.p1') }}
                 </p>
+                <div class="warning input-description" v-if="showComplianceRequirement">
+                  <compliance-info keypath="join.step1.address_requirement" />
+                </div>
                 <input
                   id="fund-address"
                   :placeholder="$t('join.step1.input1')"
@@ -700,14 +715,14 @@
 import type { Ref } from 'vue'
 import { useVuelidate } from '@vuelidate/core'
 import { required, requiredIf, email, maxLength, url, helpers } from '@vuelidate/validators'
-import { type RecipientApplicationData, formToProjectInterface } from '@/api/recipient-registry-optimistic'
+import type { RecipientApplicationData } from '@/api/types'
 import type { Project } from '@/api/projects'
-import { recipientExists } from '@/api/projects'
-import { chain } from '@/api/core'
+import { recipientExists, formToProjectInterface } from '@/api/projects'
+import { chain, showComplianceRequirement, isOptimisticRecipientRegistry } from '@/api/core'
 import { DateTime } from 'luxon'
 import { useRecipientStore, useAppStore, useUserStore } from '@/stores'
 import { waitForTransactionAndCheck } from '@/utils/contracts'
-import { addRecipient as _addRecipient } from '@/api/recipient-registry-optimistic'
+import { addRecipient as _addRecipient } from '@/api/recipient-registry'
 import { isValidEthAddress, resolveEns } from '@/utils/accounts'
 import * as isIPFS from 'is-ipfs'
 import { toReactive } from '@vueuse/core'
@@ -760,11 +775,13 @@ const rules = computed(() => {
     image: {
       bannerHash: {
         required,
-        validIpfsHash: isIPFS.cid,
+        validIpfsHash,
+        $autoDirty: true,
       },
       thumbnailHash: {
         required,
-        validIpfsHash: isIPFS.cid,
+        validIpfsHash,
+        $autoDirty: true,
       },
     },
   }
@@ -772,12 +789,17 @@ const rules = computed(() => {
 const v$ = useVuelidate(rules, form)
 
 const currentStep = ref<number>(0)
-const steps = ['project', 'donation', 'team', 'links', 'images', 'review', 'submit', 'confirm']
+const steps = ['project', 'fund', 'team', 'links', 'image', 'review', 'submit', 'confirm']
 const stepNames = steps.slice(0, steps.length - 1)
 const showSummaryPreview = ref(false)
 const isWaiting = ref(false)
 const txHash = ref('')
 const txError = ref('')
+
+function validIpfsHash(hash: string): boolean {
+  const isValid = Boolean(hash) && isIPFS.cid(hash)
+  return isValid
+}
 
 const isNavDisabled = computed<boolean>(
   () => !isStepValid(currentStep.value) && currentStep.value !== form.furthestStep,
@@ -848,6 +870,7 @@ function saveFormData(updateFurthest?: boolean): void {
 // Callback from IpfsImageUpload component
 function handleUpload(key, value) {
   form.image[key] = value
+  v$.value.image[key].$touch()
   saveFormData(false)
 }
 
@@ -926,7 +949,7 @@ async function addRecipient() {
           currentUser.value.walletProvider.getSigner(),
         ),
         hash => {
-          return recipientExists(hash)
+          return isOptimisticRecipientRegistry ? recipientExists(hash) : Promise.resolve(true)
         },
         hash => (txHash.value = hash),
       )
@@ -1455,5 +1478,14 @@ async function checkEns(): Promise<void> {
   word-break: keep-all;
   font-size: 0.875rem;
   margin-top: 0.25rem;
+}
+
+.warning {
+  color: var(--error-color);
+
+  a {
+    color: var(--error-color);
+    text-decoration-line: underline;
+  }
 }
 </style>

@@ -7,7 +7,6 @@ import type { Provider } from './types'
 import { EthereumProvider } from '@walletconnect/ethereum-provider'
 import { chainId } from '@/api/core'
 import { providers } from 'ethers'
-import { LOGIN_MESSAGE } from '@/api/user'
 
 const CONNECTED_PROVIDER = 'connected-provider'
 const DISCONNECT_EVENT = 'disconnect'

@@ -1,5 +1,0 @@
-query GetPublicKey($pubKey: ID!) {
-  publicKey(id: $pubKey) {
-    id
-  }
-}

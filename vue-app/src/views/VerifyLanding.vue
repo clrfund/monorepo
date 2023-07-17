@@ -45,7 +45,11 @@
         </ul>
         <links to="/about/sybil-resistance">{{ $t('verifyLanding.link1') }}</links>
         <div v-if="isRoundOver" class="warning-message">
-          {{ $t('verifyLanding.div2') }}
+          <i18n-t v-if="nextRoundStartDate" keypath="verifyLanding.next_round_notice" scope="global">
+            <template #start_date>{{ translateDate(nextRoundStartDate) }}</template>
+          </i18n-t>
+          <template v-else-if="!currentRound">{{ $t('verifyLanding.no_round') }}</template>
+          <template v-else>{{ $t('verifyLanding.div2') }}</template>
         </div>
         <div v-else-if="isRoundFull" class="warning-message">
           {{ $t('verifyLanding.div3') }}
@@ -67,6 +71,7 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
 import { getCurrentRound } from '@/api/round'
+import { nextRoundStartDate } from '@/api/core'
 
 import Breadcrumbs from '@/components/Breadcrumbs.vue'
 import Links from '@/components/Links.vue'
@@ -79,6 +84,12 @@ import { useRouter } from 'vue-router'
 import { useModal } from 'vue-final-modal'
 import SignatureModal from '@/components/SignatureModal.vue'
 import { ASSERT_NOT_CONNECTED_WALLET, assert } from '@/utils/assert'
+
+import { formatDateWithOptions } from '@/utils/dates'
+import type { DateTime } from 'luxon'
+
+import { useI18n } from 'vue-i18n'
+const { locale } = useI18n()
 
 const router = useRouter()
 const appStore = useAppStore()
@@ -95,8 +106,18 @@ onMounted(async () => {
 })
 
 const isRoundFull = computed(() => isRoundContributorLimitReached.value)
-const isRoundOver = computed(() => hasContributionPhaseEnded.value)
+const isRoundOver = computed(() => !currentRound.value || hasContributionPhaseEnded.value)
 const showBrightIdButton = computed(() => currentUser.value?.isRegistered === false)
+
+function translateDate(date: DateTime): string {
+  return formatDateWithOptions(date, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'UTC',
+    locale: locale.value,
+  })
+}
 
 async function promptSignagure() {
   const { open, close } = useModal({

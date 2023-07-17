@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
-import type { BigNumber } from 'ethers'
-import { utils } from 'ethers'
+import { BigNumber } from 'ethers'
 import {
   type CartItem,
   type Contributor,
@@ -11,7 +10,7 @@ import {
   serializeCart,
 } from '@/api/contributions'
 import { getCommittedCart } from '@/api/cart'
-import { operator, chain, ThemeMode, recipientRegistryType } from '@/api/core'
+import { operator, chain, ThemeMode, recipientRegistryType, recipientJoinDeadlineConfig } from '@/api/core'
 import { type RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
 import { getTally, type Tally } from '@/api/tally'
 import { type Factory, getFactoryInfo } from '@/api/factory'
@@ -21,12 +20,14 @@ import { storage } from '@/api/storage'
 import { getSecondsFromNow, hasDateElapsed } from '@/utils/dates'
 import { useRecipientStore } from './recipient'
 import { useUserStore } from './user'
-import { getAssetsUrl, getRoundsUrl } from '@/utils/url'
+import { getAssetsUrl } from '@/utils/url'
 import { getTokenLogo } from '@/utils/tokens'
 import { assert, ASSERT_MISSING_ROUND, ASSERT_MISSING_SIGNATURE, ASSERT_NOT_CONNECTED_WALLET } from '@/utils/assert'
 import { Keypair } from '@clrfund/maci-utils'
+import { DateTime } from 'luxon'
 
 export type AppState = {
+  isAppReady: boolean
   cart: CartItem[]
   cartEditModeSelected: boolean
   committedCart: CartItem[]
@@ -46,6 +47,7 @@ export type AppState = {
 
 export const useAppStore = defineStore('app', {
   state: (): AppState => ({
+    isAppReady: false,
     cart: new Array<CartItem>(),
     cartEditModeSelected: false,
     committedCart: new Array<CartItem>(),
@@ -64,6 +66,10 @@ export const useAppStore = defineStore('app', {
   }),
   getters: {
     recipientJoinDeadline: state => {
+      if (recipientJoinDeadlineConfig) {
+        return recipientJoinDeadlineConfig
+      }
+
       const recipientStore = useRecipientStore()
       if (!state.currentRound || !recipientStore.recipientRegistryInfo) {
         return null
@@ -76,7 +82,7 @@ export const useAppStore = defineStore('app', {
         seconds: challengePeriodDuration,
       })
 
-      return deadline.isValid ? deadline : null
+      return deadline.isValid ? deadline : state.currentRound.signUpDeadline
     },
     isRoundReallocationPhase: (state): boolean => {
       return !!state.currentRound && state.currentRound.status === RoundStatus.Reallocating
@@ -117,7 +123,14 @@ export const useAppStore = defineStore('app', {
       return !!this.currentRound && this.isRoundJoinPhase && !hasDateElapsed(this.currentRound.startTime)
     },
     isRoundJoinPhase(): boolean {
-      return !hasDateElapsed(this.recipientJoinDeadline!)
+      if (!this.isAppReady) {
+        return false
+      }
+      if (!this.recipientJoinDeadline) {
+        // no deadline means still accepting application
+        return true
+      }
+      return !hasDateElapsed(this.recipientJoinDeadline)
     },
     isRoundContributorLimitReached: state => {
       return !!state.currentRound && state.currentRound.maxContributors <= state.currentRound.contributors
@@ -150,6 +163,21 @@ export const useAppStore = defineStore('app', {
       if (factory) {
         return factory.userRegistryAddress
       }
+    },
+    matchingPool: (state): BigNumber => {
+      const { currentRound, factory } = state
+
+      let matchingPool = BigNumber.from(0)
+
+      if (factory) {
+        matchingPool = factory.matchingPool
+      }
+
+      if (currentRound) {
+        matchingPool = currentRound.matchingPool
+      }
+
+      return matchingPool
     },
     nativeTokenSymbol: (state): string => {
       const { currentRound, factory } = state
@@ -247,18 +275,6 @@ export const useAppStore = defineStore('app', {
   actions: {
     setHasVote(hasVoted: boolean) {
       this.hasVoted = hasVoted
-    },
-    async getLeaderboardData(roundAddress: string): Promise<any | null> {
-      try {
-        const url = await getRoundsUrl(roundAddress)
-        if (!url) {
-          return null
-        }
-        const data = await utils.fetchJson(url)
-        return data
-      } catch {
-        return null
-      }
     },
     toggleLeaderboardView() {
       this.showSimpleLeaderboard = !this.showSimpleLeaderboard
@@ -446,9 +462,6 @@ export const useAppStore = defineStore('app', {
       }
     },
     async loadFactoryInfo() {
-      if (this.factory) {
-        return
-      }
       const factory = await getFactoryInfo()
       this.factory = factory
     },

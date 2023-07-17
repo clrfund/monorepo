@@ -518,6 +518,7 @@
       "label6": "内容",
       "label7": "研究",
       "label8": "数据",
+      "label_education": "教育",
       "error5": "您需要选择一个类别",
       "label9": "问题空间",
       "p5": "解释您要解决的问题. 支持 Markdown。",
@@ -535,7 +536,8 @@
       "p2": "有意的捐献者可能有兴趣知道您的用款计划。 支持 Markdown。",
       "input2": "例如: 在我们的路线图上。。。",
       "error2": "让捐献者了解您的用款计划。",
-      "preview1": "预览："
+      "preview1": "预览：",
+      "address_requirement": "这个地址, 无论是单签还是多签, 至少一位签名者应该持有 {link_1}。或者，项目方应该能够证明在过去一年内已经完成了像 {link_2} 这样信誉良好的赠款计划的KYC。"
     },
     "step2": {
       "h2": "团队",
@@ -650,11 +652,14 @@
     }
   },
   "landing": {
+    "button": {
+      "getStarted": "开始吧！",
+      "leaderboard": "排行榜"
+    },
     "hero": {
       "title": "将您最喜欢的项目送往月球！",
       "subtitle": "您捐赠的每个项目都将获得额外资金。",
-      "info": "如何运作",
-      "action": "开始"
+      "info": "如何运作"
     },
     "callout": {
       "title": "参加筹款",
@@ -725,6 +730,7 @@
     "link1": "了解更多关于注册流程的信息。",
     "li2": "完成后，您的项目页面将上线。",
     "li3": " 如果您的项目未通过检查，我们将电邮通知您并退回您的押金。",
+    "linkProjects": "查看项目",
     "link2": "查看项目",
     "link3": "回首页"
   },
@@ -823,6 +829,8 @@
     "unitap_link": "Unitap",
     "unitap_extra_text": " 获得一些燃料代币。",
     "link1": "这为什么重要?",
+    "next_round_notice": "筹款活动将于{start_date}开始。请稍后再查看。",
+    "no_round": "我们还没有安排新的筹款活动。请保持关注！",
     "div2": "当前筹款活动不再接受新的捐款。请在下一轮再试。",
     "div3": "捐赠提早关闭 - 您不能再捐款了！由于社区的慷慨和一些技术限制，我们不得不比预期更早地结束这一次筹款活动。如果您已经捐赠过，您仍然有时间重新分配。如果您没有机会捐赠，您仍然可以通过捐赠匹配池来帮助。",
     "link2": "我已验证了 BrightID",
@@ -1119,7 +1127,8 @@
       "content": "内容",
       "research": "研究",
       "data": "数据",
-      "other": "其他"
+      "other": "其他",
+      "education": "教育"
     },
     "timeleft": {
       "unit": {
@@ -1149,6 +1158,10 @@
       "no_scams": {
         "tagline": "无欺诈",
         "description": "显然，您的项目不应欺诈何人的资金或信息。"
+      },
+      "compliance": {
+        "tagline": "合规",
+        "description": "项目的接收地址，或者团队多签中至少一位签名者，应该持有一个 {link_1}。或者，项目方应该能够证明在过去一年内已经完成了像 {link_2} 这样信誉良好的赠款计划的KYC。"
       }
     },
     "cart": {
@@ -1157,6 +1170,7 @@
         "connect_wallet": "请连接您的钱包",
         "incorrect_network": "请将网络更改为 {chain} 网络.",
         "need_to_setup_brightid": "要进行贡献, 您需要设置 BrightID。",
+        "user_not_registered": "请联系 {operator} 进行注册。",
         "invalid_contribution_amount": "请输入有效的贡献金额",
         "exceeded_max_cart_size": "您的捐款车不能超过 {maxCartSize} 个项目",
         "round_cancelled": "抱歉，我们不得不取消这次筹款活动。",
@@ -1186,10 +1200,10 @@
     "progress": {
       "step": {
         "project": "关于项目",
-        "donation": "捐款细节",
+        "fund": "捐款细节",
         "team": "团队",
         "links": "链接",
-        "images": "图片",
+        "image": "图片",
         "review": "审查",
         "submit": "提交"
       }
@@ -1209,5 +1223,9 @@
   "more_on_maci": "更多关于 MACI",
   "add_project": "添加项目",
   "close": "关",
-  "please_sign_message": "请在您的钱包中签个字"
+  "please_sign_message": "请在您的钱包中签个字",
+  "compliance": {
+    "humanbound_sbt": "人类绑定的 SBT",
+    "esp": "ESP"
+  }
 }

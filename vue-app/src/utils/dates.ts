@@ -1,4 +1,4 @@
-import { DateTime } from 'luxon'
+import { DateTime, type LocaleOptions } from 'luxon'
 import type { TimeLeft } from '@/api/round'
 
 export function formatDate(date?: DateTime): string {
@@ -6,6 +6,10 @@ export function formatDate(date?: DateTime): string {
     return '...' //  TODO best place to do this?
   }
   return date.toFormat('MMMM dd')
+}
+
+export function formatDateWithOptions(date: DateTime, options: LocaleOptions & Intl.DateTimeFormatOptions): string {
+  return date.isValid ? new Intl.DateTimeFormat(options.locale, options).format(date.toJSDate()) : ''
 }
 
 export function hasDateElapsed(date: DateTime): boolean {

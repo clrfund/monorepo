@@ -27,6 +27,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import Cart from '@/components/Cart.vue'
+import { useModal } from 'vue-final-modal'
+import SignatureModal from '@/components/SignatureModal.vue'
+
 import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
@@ -43,8 +46,31 @@ const isCartBadgeShown = computed(() => {
   return (canUserReallocate.value || isRoundContributionPhase.value) && !!cart.value.length
 })
 
+async function promptSignagure() {
+  const { open, close } = useModal({
+    component: SignatureModal,
+    attrs: {
+      onClose() {
+        close().then(() => {
+          appStore.toggleShowCartPanel()
+        })
+      },
+    },
+  })
+  open()
+}
+
 function toggleCart(): void {
-  appStore.toggleShowCartPanel()
+  if (!currentUser.value) {
+    // should not get here as the widget is only shown if user is connected with their wallet
+    return
+  }
+
+  if (currentUser.value.encryptionKey) {
+    appStore.toggleShowCartPanel()
+  } else {
+    promptSignagure()
+  }
 }
 </script>
 

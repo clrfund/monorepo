@@ -14,7 +14,12 @@
               {{ $t('landing.hero.subtitle') }}
             </div>
             <div class="btn-group">
-              <div class="btn-action" @click="gotoLeaderboardOrProjectsPage">{{ $t('landing.hero.action') }}</div>
+              <links v-if="leaderboardRoute" class="btn-action" :to="leaderboardRoute">
+                {{ $t('landing.button.leaderboard') }}
+              </links>
+              <links v-else-if="appUrl" class="btn-action" :to="appUrl">
+                {{ $t('landing.button.getStarted') }}
+              </links>
               <div class="btn-info" @click="scrollToHowItWorks">
                 {{ $t('landing.hero.info') }}
               </div>
@@ -28,8 +33,8 @@
               </p>
               <div class="button-group">
                 <links to="/join" class="btn-primary w100">{{ $t('landing.callout.action') }}</links>
-                <div v-if="signUpDeadline">
-                  <time-left unitClass="none" :date="signUpDeadline" />
+                <div v-if="recipientJoinDeadline">
+                  <time-left unitClass="none" :date="recipientJoinDeadline" />
                   {{ $t('landing.callout.deadline') }}
                 </div>
               </div>
@@ -85,7 +90,7 @@
             {{ $t('landing.req.chain-cta', { chain: chain.label }) }}
           </links>
         </div>
-        <div class="pre-req" id="bright-id">
+        <div v-if="isBrightIdRequired" class="pre-req" id="bright-id">
           <div class="icon-row">
             <img src="@/assets/bright-id.png" id="bright-id-icon" />
             <p>
@@ -164,7 +169,7 @@
 </template>
 
 <script setup lang="ts">
-import { chain } from '@/api/core'
+import { chain, leaderboardRounds, isBrightIdRequired } from '@/api/core'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import Links from '@/components/Links.vue'
@@ -172,40 +177,36 @@ import ImageResponsive from '@/components/ImageResponsive.vue'
 import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { getAssetsUrl } from '@/utils/url'
-import router from '@/router'
 
 const appStore = useAppStore()
-const { operator, isRoundJoinPhase, isRecipientRegistryFull, currentRound, currentRoundAddress } = storeToRefs(appStore)
-
-const signUpDeadline = computed(() => appStore.currentRound?.signUpDeadline)
+const {
+  operator,
+  isRoundJoinPhase,
+  recipientJoinDeadline,
+  isRecipientRegistryFull,
+  currentRound,
+  currentRoundAddress,
+  isAppReady,
+} = storeToRefs(appStore)
 
 function scrollToHowItWorks() {
   document.getElementById('section-how-it-works')?.scrollIntoView({ behavior: 'smooth' })
 }
 const chainIconUrl = getAssetsUrl(chain.logo)
 
-async function gotoLeaderboardOrProjectsPage() {
-  if (currentRoundAddress.value) {
-    let data
-    try {
-      data = await appStore.getLeaderboardData(currentRoundAddress.value)
-    } catch {
-      // ignore error and do not display leaderboard
-    }
-    if (data) {
-      router.push({
-        name: 'leaderboard',
-        params: {
-          address: currentRoundAddress.value,
-        },
-      })
-
-      return
-    }
+const leaderboardRoute = computed(() => {
+  if (!isAppReady.value) {
+    return null
   }
 
-  router.push({ name: 'projects' })
-}
+  const roundAddress = currentRoundAddress.value || ''
+  const leaderboard = leaderboardRounds.find(round => round.address === roundAddress)
+  return leaderboard ? { name: 'leaderboard', params: { network: leaderboard.network, address: roundAddress } } : null
+})
+
+const appUrl = computed(() => {
+  return isAppReady.value && currentRoundAddress.value ? `/projects` : null
+})
 </script>
 
 <style scoped lang="scss">
@@ -541,6 +542,12 @@ ol li::before {
   padding: $content-space;
   > li {
     list-style-type: none;
+  }
+}
+
+.pre-req {
+  @media (min-width: $breakpoint-l) {
+    max-width: 32rem;
   }
 }
 </style>

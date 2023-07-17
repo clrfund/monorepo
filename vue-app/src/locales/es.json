@@ -1,0 +1,1231 @@
+{
+  "about": {
+    "heading": {
+      "title": "Acerca de"
+    },
+    "what": {
+      "title": "¿Qué es clr.fund?",
+      "paragraph": "Clr.fund, pronunciado \"Clear Fund\", es un protocolo para asignar eficientemente fondos a bienes públicos que benefician a la red Ethereum de acuerdo a las preferencias de la comunidad Ethereum. Clr.fund busca la neutralidad creíble, la descentralización, la permisividad, la ausencia de confianza y el seudonimato."
+    },
+    "why": {
+      "title": "¿Por qué existe clr.fund?",
+      "paragraph-1-text-1": "Asignar fondos a",
+      "paragraph-1-link": "bienes públicos",
+      "paragraph-1-text-2": " - bienes o servicios que no son excluyentes ni sustractivos - es un desafío para cualquier ecosistema, y Ethereum no es una excepción.",
+      "paragraph-2": "El objetivo de clr.fund es permitir la asignación de fondos a bienes públicos que benefician a la red Ethereum sin depender de entidades centralizadas y de una manera que refleje las preferencias de la comunidad Ethereum.",
+      "paragraph-3-text-1": "Consulta la",
+      "paragraph-3-link": "Constitución de clr.fund",
+      "paragraph-3-text-2": "para obtener más detalles sobre los objetivos y valores de clr.fund."
+    },
+    "unique": {
+      "title": "¿Qué hace único a clr.fund?",
+      "paragraph-1": "Las instancias de clr.fund también tienen varias propiedades especiales:",
+      "li-1-text-1": "Descentralización: gran parte de la infraestructura de clr.fund se basa en",
+      "li-1-link-1": "Ethereum",
+      "li-1-text-2": "Una cadena de bloques programable que proporciona un libro mayor confiable y resistente a la censura para las transacciones de votación y financiamiento de clr.fund.",
+      "li-1-link-2": "Lee más sobre la descentralización de clr.fund.",
+      "li-2-text-1": "Escalabilidad: debido a que usar Ethereum puede resultar costoso para los usuarios, clr.fund utiliza",
+      "li-2-layer2-1": "\"capa 2\"",
+      "li-2-layer2-2": "\"sidechain\"",
+      "li-2-text-2": "redes complementarias para obtener la mayoría de los beneficios de la red principal de Ethereum pero con transacciones más rápidas y económicas.",
+      "li-2-link-1": "Obtén más información sobre el uso de clr.fund de la capa 2.",
+      "li-3-text-1": "Resistencia a la colusión: dado que las cadenas de bloques como Ethereum publican todos los datos de forma pública de manera predeterminada, los contribuyentes de clr.fund son vulnerables a sobornos y otros tipos de manipulación. Clr.fund ayuda a prevenir estos ataques utilizando matemáticas mágicas llamadas pruebas de conocimiento cero.",
+      "li-3-link-1": "Descubre sobre MACI, nuestra Infraestructura Mínima Anticolusión.",
+      "li-4-text-1": "Resistencia a Sybil: los sistemas de votación que se preocupan por la cantidad de personas individuales que votan por una opción dada, como el financiamiento cuadrático, pueden ser vulnerables a ataques Sybil, en los que una persona crea muchas identidades para votar varias veces. Clr.fund mitiga esta amenaza con un sistema de identidad llamado BrightID.",
+      "li-4-link-1": "Obtén más información sobre BrightID.",
+      "paragraph-2": "Clr.fund también está diseñado para que cualquier persona pueda crear y ejecutar su propia instancia para crear un programa de subvenciones para bienes públicos en su ámbito particular."
+    },
+    "how": {
+      "title": "¿Cómo funciona?",
+      "paragraph-1-text-1": "El protocolo clr.fund utiliza el algoritmo Constrained Liberal Radicalism (CLR), comúnmente conocido como",
+      "paragraph-1-link-1": "financiamiento cuadrático",
+      "paragraph-1-text-2": "(QF), para facilitar las contribuciones monetarias de los miembros de la comunidad Ethereum hacia los constructores de bienes públicos de Ethereum.",
+      "paragraph-2": "Con su lógica codificada en contratos inteligentes de Ethereum y otras tecnologías web3, clr.fund requiere una confianza mínima en personas o entidades individuales para funcionar y es resistente a la colusión y el soborno.",
+      "paragraph-3": "En términos generales, clr.fund consta de un matching pool y una ronda de financiamiento. Individuos u organizaciones filantrópicas contribuyen al matching pool para que esos fondos se asignen eficientemente según las preferencias de la comunidad. Los usuarios contribuyen directamente a los proyectos que valoran y, al hacerlo, obtienen una parte del matching pool para los proyectos, junto con su contribución. Esto aumenta efectivamente el valor de su contribución.",
+      "paragraph-4-text-1": "En la parte técnica, clr.fund utiliza pruebas de conocimiento cero (ZK-SNARKS), gracias a la",
+      "paragraph-4-link-1": "Infraestructura Mínima Anticolusión (MACI)",
+      "paragraph-4-text-2": ", para mantener privadas las contribuciones individuales y limitar la efectividad de la colusión y el soborno.",
+      "paragraph-5": "Para asegurarse de que cada contribuyente sea una persona única, clr.fund utiliza",
+      "paragraph-5-link": "BrightID.",
+      "paragraph-6": "¿Todavía tienes curiosidad? Lee más sobre",
+      "paragraph-6-link": "cómo funciona clr.fund"
+    }
+  },
+  "contributors": {
+    "heading": {
+      "title": "Guía para contribuyentes",
+      "paragraph": "Una descripción general de cómo funcionan las cosas como contribuyente para que sepas qué esperar durante toda la duración de una ronda de financiamiento."
+    },
+    "funds": {
+      "title": "Obtener fondos en {chain}",
+      "paragraph-1-text-1": "Necesitarás {currency} en {chain} para poder enviar transacciones a los contratos inteligentes de clr.fund.",
+      "paragraph-1-text-2": "Sigue",
+      "paragraph-1-link-1": "este tutorial",
+      "paragraph-1-text-3": "para transferir tus fondos a {chain}",
+      "paragraph-2-text-1": "Utiliza el",
+      "paragraph-2-link-1": "puente {chain}",
+      "paragraph-2-text-2": "para transferir algunos fondos.",
+      "paragraph-3-text-1": "¿No estás seguro de qué es {chain}?",
+      "paragraph-3-link-1": "Lee nuestra explicación sobre cómo clr.fund utiliza la capa 2 en Ethereum."
+    },
+    "contributing": {
+      "title": "Contribuir a proyectos específicos",
+      "li-1-text-1": "Antes de contribuir a proyectos específicos, deberás",
+      "li-1-link-1": "verificar que eres una persona única",
+      "li-1-text-2": ". Esto ayuda a clr.fund",
+      "li-1-link-2": "a resistir los ataques Sybil.",
+      "li-2": "Asegúrate de tener {nativeTokenSymbol} en tu billetera verificada por BrightID en la red {chain}.",
+      "li-3-link": "Explora proyectos",
+      "li-3-text": " y añade algunos a tu carrito, ajustando tus contribuciones a la cantidad de {nativeTokenSymbol} que deseas.",
+      "li-4": "Cuando estés listo, abre tu carrito, haz clic en 'Contribuir' y confirma las transacciones para completar tus contribuciones.",
+      "paragraph": "Nota: solo puedes contribuir una vez. Después de enviar tus contribuciones, puedes reasignarlas tantas veces como desees antes de la fase de reasignación, pero no puedes añadir más fondos a la cantidad total de tu contribución.",
+      "li-5": "Puedes añadir y eliminar proyectos.",
+      "li-6": "Tu total de reasignación debe ser menor o igual al total (si es menor, el resto irá al matching pool)."
+    },
+    "matching": {
+      "title": "Contribuir al Matching Pool",
+      "paragraph-text-1": "¿No estás seguro a qué proyecto contribuir específicamente? Las contribuciones al matching pool se distribuirán a todos los proyectos que reciban contribuciones específicas del proyecto durante esa ronda. El peso de esta distribución se determina mediante los resultados del",
+      "paragraph-link": "financiamiento cuadrático",
+      "paragraph-text-2": ".",
+      "li-1": "Asegúrate de que la billetera que estás utilizando contenga {nativeTokenSymbol} en {chain}. Puedes comprar fácilmente {nativeTokenSymbol} en cualquier intercambio importante enfocado en Ethereum.",
+      "li-2-text-1": "Una vez que tengas la cantidad deseada de {nativeTokenSymbol} en tu billetera, selecciona \"Agregar fondos\" en la",
+      "li-2-link": "página de Proyectos",
+      "li-2-text-2": " y confirma las transacciones."
+    },
+    "wow": {
+      "title": "¿Cómo funciona clr.fund?",
+      "paragraph": "¿Buscas una descripción más general?",
+      "link": "Consulta nuestra página \"Cómo funciona\""
+    }
+  },
+  "decentralization": {
+    "heading": {
+      "title": "Descentralización en clr.fund",
+      "subtitle": "¿Qué es la descentralización?",
+      "paragraph": "Cuando decimos que algo está \"descentralizado\" en clr.fund, y en web3 en general, nos referimos a que ninguna persona, empresa u otra entidad es únicamente responsable de su ejecución o mantenimiento. En cambio, un sistema descentralizado es administrado o mantenido por un gran grupo de entidades independientes, coordinadas por un conjunto de reglas en las que cada una participa, como los mineros en Ethereum o los pares en BitTorrent."
+    },
+    "which": {
+      "title": "¿Qué partes de clr.fund están descentralizadas?",
+      "paragraph-1": "Gran parte de la infraestructura de clr.fund se basa en Ethereum, una cadena de bloques descentralizada:",
+      "li-1": "el registro de proyectos calificados para financiamiento (y, potencialmente, el mecanismo de curación para elegir estos proyectos)",
+      "li-2": "el matching pool de fondos",
+      "li-3": "el registro resistente a ataques Sybil de usuarios calificados para contribuir a proyectos individuales",
+      "li-4": "los fondos y la información encriptada sobre las contribuciones a proyectos individuales",
+      "li-5": "el mecanismo para distribuir fondos una vez que se finalizan los resultados de una ronda",
+      "exists_in_code": "Cada una de estas partes existe en un contrato inteligente de Ethereum (ver el código",
+      "here": "aquí",
+      "maintained_by_miner": "), lo que significa que su funcionalidad es mantenida por los mineros de Ethereum, un grupo descentralizado."
+    },
+    "why": {
+      "title": "¿Por qué es clr.fund descentralizado?",
+      "paragraph": "La descentralización de Ethereum proporciona a clr.fund tres beneficios principales:",
+      "li-1": "Proceso transparente: Todas las partes descentralizadas de clr.fund son verificables públicamente. Cualquiera puede examinar el código de los contratos inteligentes y observar sus entradas y salidas, con muy poca posibilidad de que algo esté siendo ocultado o modificado secretamente.",
+      "li-2-text-1": "Votación segura: Debido a las sólidas garantías de seguridad de Ethereum, cualquier persona que envíe un mensaje puede tener una gran confianza en que su mensaje será procesado como se espera por el sistema. Aún existen peligros de seguridad, por supuesto, como",
+      "li-2-link-1": "ataques Sybil",
+      "li-2-text-2": " o",
+      "li-2-link-2": "manipulación de votos",
+      "li-2-text-3": ", pero el tipo de \"hackeo de votos\" típicamente temido en las votaciones digitales es muy improbable aquí.",
+      "li-3-text-1": "Bien público: Todo en Ethereum es de código abierto y sin permisos, lo que significa que el código de la infraestructura descentralizada de clr.fund actúa como un bien público: cualquiera puede implementar su propia versión del sistema para crear su propio sistema de",
+      "li-3-link-2": "financiamiento cuadrático",
+      "li-3-text-2": ", con los mismos beneficios descentralizados del original."
+    }
+  },
+  "howItWorks": {
+    "heading": {
+      "title": "Cómo funciona la ronda",
+      "subtitle": "Recorrido de CLR",
+      "paragraph-1": "Esta es una descripción general de cómo funciona todo detrás de escena para que puedas saber qué esperar durante la duración de la ronda.",
+      "paragraph-2": "¿Buscas una guía sobre cómo participar? Consulta nuestras guías específicas para contribuir y unirte como proyecto.",
+      "li-1": "Guía para los contribuyentes",
+      "li-2": "Guía para los beneficiarios"
+    },
+    "quick": {
+      "title": "Resumen rápido sobre financiamiento cuadrático",
+      "paragraph-1-text-1": "Como se describe en nuestra",
+      "link-1": "descripción general sobre financiamiento cuadrático",
+      "paragraph-1-text-2": ", los proyectos recibirán financiamiento tanto de las contribuciones individuales como del matching pool. Cuando contribuyes a tus proyectos favoritos, tu contribución también actúa como un voto. Cuantas más contribuciones reciba un proyecto, más votos obtendrá. Y cuanto más votos reciba un proyecto, más recibirá del matching pool. Aunque una contribución individual más alta equivale a un mayor peso de voto, es mucho más importante recibir un gran volumen de contribuciones únicas que solo unas pocas contribuciones de alto valor.",
+      "paragraph-2": "Como la ronda de financiamiento también es una votación pública, necesita plazos. La ronda se divide en varias fases para que, después de que se realicen todas las contribuciones o votos, puedan contarse y confirmarse antes de la distribución final del matching pool."
+    },
+    "phases": {
+      "title": "Fases de la ronda de financiamiento",
+      "subtitle": "Fase de unión",
+      "paragraph-1-text-1": "Para comenzar, los proyectos serán invitados a",
+      "link-1": "unirse a la ronda",
+      "paragraph-1-text-2": ". Si eres un contribuyente entusiasta, podrás ver los proyectos y agregarlos a tu carrito, pero aún no podrás contribuir.",
+      "need": {
+        "title": "Necesitas saber",
+        "li-1": "Habrá un máximo de {maxRecipients} proyectos en la ronda.",
+        "li-2-text": "Los proyectos deben cumplir con los ",
+        "li-2-link": "criterios de la ronda.",
+        "li-3-text": "Si quieres contribuir, este es el momento perfecto para",
+        "li-3-link": "prepararte para contribuir."
+      }
+    },
+    "contribution": {
+      "title": "Fase de contribución",
+      "paragraph-1": "El lanzamiento de la fase de contribución sigue a la fase de unión y marca el inicio oficial de la ronda de financiamiento. Este es el momento para que agregues tus proyectos favoritos a tu carrito y contribuyas.",
+      "need": {
+        "title": "Necesitas saber",
+        "li-1": "Esta fase durará {contributionPhaseDays} días.",
+        "li-2-text-1": "Deberás completar algunos",
+        "li-2-link": "pasos de configuración",
+        "li-2-text-2": " antes de poder contribuir.",
+        "li-3": "El monto máximo de contribución es de {maxContributionAmount} {nativeTokenSymbol}.",
+        "li-4": "Tu monto total de contribución es definitivo. No puedes aumentarlo contribuyendo nuevamente."
+      },
+      "paragraph-2": "Si no contribuyes en la fase de contribución, la ronda termina para ti una vez que finaliza esta fase."
+    },
+    "reallocation": {
+      "title": "Fase de reasignación",
+      "paragraph": "Durante esta fase, si has contribuido, tendrás tiempo para cambiar de opinión. Puedes editar los montos de tu contribución o agregar/eliminar proyectos, pero el total debe ser igual al de tu contribución original.",
+      "need": {
+        "title": "Necesitas saber",
+        "li-1": "Esta fase durará {reallocationPhaseDays} días después del final de la fase de contribución.",
+        "li-2": "Si eliminas proyectos, deberás reasignar los fondos a otros proyectos o se destinarán al matching pool.",
+        "li-3": "No puedes superar el total de tu contribución original al reasignar fondos."
+      }
+    },
+    "tallying": {
+      "title": "Fase de recuento",
+      "paragraph-text-1": "En este punto, todas las contribuciones son definitivas y ahora se pueden contar. El coordinador de la ronda activa",
+      "link": "MACI",
+      "paragraph-text-2": "y los contratos inteligentes para calcular cuánto recibirá cada proyecto del matching pool."
+    },
+    "finalized": {
+      "title": "Fase finalizada",
+      "paragraph": "Una vez que se completan los cálculos del recuento, la ronda finaliza. ¡Los propietarios de proyectos pueden venir y reclamar su financiamiento!"
+    },
+    "more": {
+      "title": "Más",
+      "paragraph": "Utilizamos diferentes tecnologías para mantener la ronda justa y libre de actores maliciosos. Puedes obtener más información sobre ellas a continuación:",
+      "li-1-link": "MACI",
+      "li-1-text": " – para proteger contra el soborno y calcular los resultados de la ronda.",
+      "li-2-link": "BrightID",
+      "li-2-text": " – para proteger contra ataques de sybil."
+    }
+  },
+  "layer2": {
+    "heading": {
+      "title": "Acerca de Layer 2",
+      "subtitle": "Clr.fund en Layer 2",
+      "paragraph-1-text-1": "tl;dr: clr.fund se ejecuta en",
+      "link-1": "Ethereum Layer 2 rollups",
+      "paragraph-1-text-2": "para ayudarte a ahorrar tiempo y dinero al contribuir a tus proyectos favoritos. Necesitarás una billetera con fondos en {chain} para interactuar con esta aplicación.",
+      "cta": "Transferir Fondos"
+    },
+    "transactions": {
+      "title": "Costos de Transacción de Ethereum",
+      "paragraph-1": "Ethereum, la cadena de bloques que alberga gran parte de la infraestructura de clr.fund, requiere que los usuarios paguen costos de transacción al interactuar con ella, y estos costos están aumentando. Las tarifas de transacción compensan a la comunidad descentralizada de mineros de Ethereum por procesar y mantener de manera segura el estado de la cadena de bloques. A medida que aumenta el uso de Ethereum, también aumenta el precio de hacer que los mineros incluyan tu transacción en la cadena de bloques.",
+      "paragraph-2": "Por lo tanto, el costo creciente de usar Ethereum demuestra que es útil, lo cual es genial, pero también presenta un problema para los usuarios finales que no desean pagar tarifas en decenas o cientos de dólares."
+    },
+    "scalability": {
+      "title": "Layer 2 para Escalabilidad",
+      "p1": "La cadena de bloques principal de Ethereum, \"layer 1\", puede ser mejorada para reducir los costos en el futuro (este es uno de los objetivos para el futuro de Ethereum, que clr.fund está ayudando a lograr).",
+      "p2": "A corto plazo, sin embargo, las soluciones de \"layer 2\" ya están ayudando a reducir drásticamente los costos. La mayoría de los layer 2 son \"rollups\", sistemas similares a las cadenas de bloques que son mantenidos, al igual que Ethereum, por un grupo descentralizado de nodos. Los rollups periódicamente \"consolidan\" todas sus transacciones recientes en una sola transacción que se registra en layer 1, Ethereum, lo que les permite heredar gran parte de la seguridad de Ethereum.",
+      "p3": "Las transacciones en layer 2 son órdenes de magnitud más baratas que en layer 1, ya que los rollups pueden procesar una alta tasa de transacciones y el tráfico de transacciones se diluye ahora en muchas opciones de layer 2.",
+      "p4_t1": "Lee más en",
+      "p4_l1": "tecnologías de Ethereum Layer 2."
+    },
+    "arbitrum": {
+      "p1": "Existen muchas variantes en el enfoque de los rollups de layer 2. Esta ronda actual de {operator} utiliza {chain}, un rollup de estilo \"optimista\".",
+      "link": "Obtén más información en la documentación de {chain}.",
+      "subtitle": "Lo que necesitarás",
+      "li1": "Una billetera que admita {chain}",
+      "li2": "Fondos en {chain}",
+      "h3": "💼 Cómo encontrar una billetera que admita {chain}",
+      "tooltip": "Los recursos de billetera se proporcionan como una conveniencia y no representan un respaldo de ninguno de los proyectos o servicios mencionados. Siempre realiza tu propia investigación (DYOR).",
+      "li3_t1": "Visita el portal oficial de",
+      "li3_link": " {chain}",
+      "li3_t2": "y filtra por \"Billeteras\" para ver algunas de las billeteras que actualmente admiten la red {chain}.",
+      "li4_t1": "Asegúrate de que cualquier billetera que consideres",
+      "li4_link": " también admita WalletConnect",
+      "li4_t2": "para asegurarte de que puedas conectarte a la aplicación.",
+      "funds": {
+        "h3": "💰 Cómo obtener fondos en {chain}",
+        "button": "Puente oficial de {chain}",
+        "p1_t1": "Sigue los pasos a continuación, o utiliza el",
+        "link1": "tutorial oficial",
+        "p1_t2": "como guía en cualquier momento.",
+        "li1": "Haz clic arriba para ir al puente oficial de {chain}",
+        "li2": "Conecta tu billetera que admite {chain} usando",
+        "li2_b": "Mainnet",
+        "li3": "Selecciona la moneda (primero ETH para pagar el gas, y luego {nativeTokenSymbol} para contribuir)",
+        "li3_p": " Para {nativeTokenSymbol}, haz clic en el menú \"Token\", busca {nativeTokenSymbol} y selecciona el token.",
+        "li4": "Ingresa la cantidad y haz clic en \"Depositar\"",
+        "li5": "Confirma en tu billetera",
+        "p2_t1": "Una vez que hayas transferido tus {nativeTokenSymbol} a {chain}, es posible que desees agregar el ",
+        "p2_link": "token",
+        "p2_t2": "a tu billetera, por ejemplo, en MetaMask.",
+        "button_2nd": "Agregar {nativeTokenSymbol} de {chain} a MetaMask"
+      }
+    },
+    "not_arbitrum": {
+      "subtitle": "Lo que necesitarás",
+      "li1": "Una billetera que admita {chain}",
+      "li2": "Fondos en {chain}",
+      "h2": "💰 Transfiere tus fondos a {chain}",
+      "cta": "Puente de {chain}"
+    }
+  },
+  "maci": {
+    "heading": {
+      "h1": "Acerca de MACI (Infraestructura Mínima contra Colusión)"
+    },
+    "what": {
+      "h2": "¿Qué es MACI?",
+      "p1": "tl;dr: los sobornadores no lo lograrán (ngmi, por sus siglas en inglés)",
+      "p2": "Clr.fund utiliza MACI, Infraestructura Mínima contra Colusión, para ayudar a prevenir la manipulación de votos como el soborno o la colusión. Para entender por qué esto es importante, repasemos el financiamiento cuadrático..."
+    },
+    "quadratic": {
+      "h2": "Financiamiento Cuadrático",
+      "p1": "Este es el mecanismo que clr.fund utiliza en nuestras rondas de financiamiento. Cuando contribuyes a un proyecto, no solo les estás enviando dinero, estás votando por ellos. Al final, los fondos del matching pool se distribuyen a los proyectos según el número de votos al final de la ronda.",
+      "p2_t1": "Lee más en",
+      "p2_link": "financiamiento cuadrático.",
+      "p3": "Este mecanismo es excelente para el financiamiento democrático, pero presenta algunos riesgos. Puede ser rentable para el propietario de un proyecto sobornar a los usuarios para que voten por su proyecto, ya que la cantidad eventual del matching pool podría ser muy alta. Este tipo de fraude pone en riesgo todo el concepto, ya que ya no se trata de qué proyectos ofrecen el mayor valor para la mayor cantidad de personas."
+    },
+    "background": {
+      "h2": "Antecedentes",
+      "h3": "Manipulación de Votos",
+      "p1": "La manipulación de votos implica cambiar maliciosamente los incentivos de un sistema de votación, y puede adoptar muchas formas, incluyendo:",
+      "li1": "Soborno: cuando una persona u entidad ofrece pagar a otros para que voten por un resultado que de otra manera no hubieran elegido, por ejemplo, pagar a un equipo de fútbol para que pierda un partido.",
+      "li2": "Coerción: cuando una persona u entidad amenaza con castigar a otros de alguna manera si no votan por un resultado en particular, por ejemplo, chantaje.",
+      "p2": "Estos tipos de manipulación rompen los sistemas de votación desviándolos de su objetivo previsto. Los sistemas de votación generalmente están diseñados para descubrir la preferencia de un grupo entre varios resultados especificados. Se espera que cada votante elija cómo votar según sus preferencias y cómo su voto puede afectar el resultado.",
+      "p3": "En una elección donde los resultados son 1) Alice gana y 2) Bob gana, si prefiero que Alice gane y creo que mi voto tiene suficiente probabilidad de influir en el resultado como para que valga la pena el esfuerzo, votaré por Alice. Ahora, supongamos que Charlie me ofrece $1,000,000 para votar por Bob en su lugar. Para mí, los posibles resultados de la elección ahora cambian a 1) Alice gana y 2) Bob gana y yo obtengo $1,000,000. En ese escenario, podría votar por Bob a pesar de que prefiero a Alice, y el resultado de la elección ya no reflejará mi preferencia entre Bob y Alice, como se pretendía. Si suficientes personas son sobornadas con éxito de esta manera, la elección será una farsa."
+    },
+    "vulnerability": {
+      "h3": "Vulnerabilidad de los Sistemas de Votación Pública",
+      "p1": "Para manipular los resultados para un votante en particular, el manipulador necesita conocer las elecciones futuras de ese votante: si Charlie me ofrece $1,000,000 para votar por Bob, él necesita saber que realmente votaré por Bob antes de pagarme. De lo contrario, puedo votar por Alice, decirle a Charlie que voté por Bob para obtener los $1,000,000 y el soborno habrá fracasado.",
+      "p2": "En las elecciones tradicionales, los votos son secretos, lo que dificulta la manipulación de los votantes. ¡Pero no hay secretos en las blockchains públicas como Ethereum! En la mayoría de los sistemas de votación existentes en Ethereum, los votos son públicos, lo que significa que la manipulación es una amenaza grave."
+    },
+    "why": {
+      "h2": "¿Por qué MACI?",
+      "p1": "Ethereum es una parte fundamental de clr.fund y otras soluciones de financiamiento cuadrático como Gitcoin Grants, porque:",
+      "li1": "Ethereum tiene una excelente combinación de bajos costos de infraestructura y alta seguridad (es decir, difícil de piratear) en comparación con otras soluciones de votación electrónica.",
+      "li2": "Ethereum ofrece interoperabilidad perfecta con un ecosistema amplio y en crecimiento de comunidades y herramientas que mejoran y se benefician del financiamiento cuadrático, como las DAO y los sistemas de identidad como BrightID.",
+      "li3": "clr.fund fue construido por y para la comunidad de Ethereum.",
+      "p2": "Si bien alejarse de la publicidad de Ethereum no es una opción atractiva, construir herramientas basadas en Ethereum para resistir la manipulación de votos sí lo es, lo que nos lleva a MACI."
+    },
+    "helps": {
+      "h2_1": "Cómo ayuda MACI",
+      "p1": "El soborno solo funciona si el sobornador puede confirmar que la persona a la que está pagando realmente cumple con las condiciones del soborno. Aquí es donde entra MACI. Con MACI, es imposible probar cómo votaste, por lo que los sobornadores nunca sabrán si hiciste lo que te pagaron hacer.",
+      "h2_2": "MACI: Infraestructura Mínima contra Colusión",
+      "p2": "MACI es un conjunto de contratos inteligentes de Ethereum y scripts complementarios que transforman eficazmente los sistemas de votación públicos en sistemas privados, en los cuales 1) la participación en una votación y la correcta tabulación de votos son públicamente verificables, pero 2) la información de votación específica no es pública, lo que dificulta mucho la manipulación de votos.",
+      "how": {
+        "h3": "Cómo funciona",
+        "p1": "Cuando contribuyes a un proyecto en clr.fund, registras una identidad con el coordinador de la ronda. Pero en cualquier momento antes del final de la ronda, puedes invalidar tu identidad al cambiar secretamente la clave pública asociada con tu identidad antes de emitir el voto. Luego puedes usar un par de claves diferente para firmar el voto (lo cual hace que el voto sea inválido, pero es imposible ver si el voto es inválido).",
+        "p2": "MACI hace todo esto utilizando pruebas de conocimiento cero. Estas pruebas matemáticamente demuestran la autenticidad de los votos sin proporcionar detalles. Por lo tanto, los sobornadores no pueden saber qué acciones tomaron las personas a las que sobornaron.",
+        "p3_t1": "Desde la documentación de introducción de",
+        "p3_link": "MACI:",
+        "p4": "Los votantes autorizados llamados Alice, Bob y Charlie se registran para votar enviando su clave pública a un contrato inteligente. Además, hay un coordinador central llamado Dave, cuya clave pública es conocida por todos.",
+        "p5": "Cuando Alice emite su voto, firma su voto con su clave privada, cifra su firma con la clave pública de Dave y envía el resultado al contrato inteligente.",
+        "p6": "Cada votante puede cambiar su par de claves en cualquier momento. Para hacer esto, crea y firma un comando de cambio de clave, lo cifra y lo envía al contrato inteligente. Esto hace que sea imposible que un sobornador esté seguro de que su soborno tiene algún efecto en el voto del sobornado.",
+        "p7": "Si Bob, por ejemplo, soborna a Alice para que vote de cierta manera, ella simplemente puede usar la primera clave pública que había registrado, que ahora está anulada, para emitir un voto. Dado que dicho voto está cifrado, al igual que el mensaje de cambio de clave que Alice había enviado anteriormente a Dave, Bob no tiene forma de saber si Alice realmente votó de la manera que él quería.",
+        "p8": "Incluso si Alice revela el texto sin formato de su voto a Bob, solo necesita no mostrarle el comando de clave actualizado que usó previamente para invalidar esa clave. En resumen, siempre que haya enviado un solo comando cifrado antes de su voto, no hay forma de saber si dicho voto es válido o no.",
+        "link": "Lee más sobre los detalles técnicos de MACI aquí."
+      }
+    },
+    "constraints": {
+      "h3": "Limitaciones de MACI",
+      "p": "Esta es una tecnología de vanguardia y tiene algunas limitaciones en este momento.",
+      "li1": "Hay límites en el número de proyectos, contribuyentes y contribuciones. Esto significa que podrías quedarte fuera si una ronda alcanza su capacidad, pero debes saber que es por la integridad de la ronda.",
+      "li2": "Solo puedes contribuir una vez por ronda. Una vez que hayas contribuido, puedes agregar/quitar proyectos y reasignar tus fondos, pero no puedes aumentar el monto total de tu contribución."
+    },
+    "more": {
+      "h2": "Más",
+      "h3_1": "Lecturas adicionales",
+      "l1": "Artículo técnico sobre MACI en el blog de clr.fund",
+      "l2": "Documentación completa de MACI en GitHub",
+      "l3": "La especificación técnica",
+      "h3_2": "Fuentes",
+      "li4": "Documentación oficial de clr.fund sobre MACI",
+      "li5": "Introducción técnica de MACI"
+    }
+  },
+  "public_goods": {
+    "heading": {
+      "h1": "Acerca de los Bienes Públicos",
+      "h2": "¿Qué son los bienes públicos?",
+      "p1": "Lo primero que debes entender sobre los 'bienes públicos' es que, fundamentalmente, son bienes totalmente no excluibles y no restables; un bien público puede ser desde lo intangible (es decir, el conocimiento) hasta bienes sociales tangibles (por ejemplo, la iluminación de las calles).",
+      "p2": "En economía, los bienes públicos son bienes que cumplen con las siguientes características:",
+      "li1": "No excluibles: nadie (que sea miembro del 'público') puede ser impedido de usar el bien, por cualquier motivo.",
+      "li2": "No rivales: el uso del bien por parte de una persona no reduce la capacidad de otras personas para usarlo.",
+      "p3": "El aire limpio, la seguridad nacional (para un país determinado) y el software libre y de código abierto (FOSS, por sus siglas en inglés) son ejemplos de bienes públicos, siendo FOSS el más importante para clr.fund.",
+      "p4_t1": "Consulta",
+      "p4_link": "Wikipedia",
+      "p4_t2": "para obtener una descripción y contexto más específicos."
+    },
+    "why": {
+      "h2": "¿Por qué crear nuevos mecanismos de financiamiento para bienes públicos?",
+      "p1": "Los bienes públicos a menudo tienen un financiamiento insuficiente debido a un problema llamado 'problema del pasajero gratuito': dado que los bienes públicos siempre son gratuitos y accesibles para los miembros del público, las personas tienen pocas razones para contribuir a su creación y mantenimiento. En su lugar, pueden elegir ser 'pasajeros gratuitos': usar el bien público pero depender de otros para construirlo y mantenerlo.",
+      "p2": "El problema del pasajero gratuito está bastante presente en el software de código abierto, que sufre de un financiamiento crónico a pesar de ser un componente fundamental de casi todos los productos de software populares en la actualidad.",
+      "p3": "Clr.fund es un intento de abordar el problema del pasajero gratuito para la comunidad de Ethereum, con la esperanza de que esta infraestructura pueda ser útil para otros públicos en el futuro. Diseñados específicamente, las rondas de financiamiento en clr.fund buscan involucrar a los miembros del público desde el inicio, asignando tanto el poder de toma de decisiones como el poder exponencial para aumentar la financiación a través del mecanismo de",
+      "link": "financiamiento cuadrático.",
+      "exponential_power": ""
+    }
+  },
+  "quadratic_funding": {
+    "heading": {
+      "h1": "Acerca de la Financiación Cuadrática",
+      "h2": "Financiación Cuadrática en clr.fund",
+      "p1": "Clr.fund es una implementación de la financiación cuadrática, también conocida como CLR (Liberal Radicalismo con Restricción de Capital). La financiación cuadrática está compuesta por:",
+      "li1": "un fondo de fondos para distribuir",
+      "li2": "un sistema de votación para distribuir esos fondos",
+      "p2": "Dos sistemas de votación comunes que es posible que hayas usado son 1-persona-1-voto y 1-dólar-1-voto. La financiación cuadrática es una solución que combina lo mejor de ambos mundos, donde los usuarios votan con la ",
+      "sqrt": "raíz cuadrada",
+      "more": " del dinero que gastan. Sigue leyendo para obtener más información."
+    },
+    "problems": {
+      "h2": "Problemas con los Mecanismos de Financiación Existentes",
+      "p1": "Los sistemas comunes de distribución de fondos de hoy en día tienen ventajas y desventajas:",
+      "h3": "Mercados",
+      "p2": "Los mercados pueden considerarse como distribuidores de fondos: los vendedores son los beneficiarios de los fondos, y los compradores son los votantes que deciden qué se financiará. En este caso, el 'sistema de votación' es 1-dólar-1-voto: cada comprador tiene exactamente la misma influencia potencial sobre dónde van los fondos que dinero tiene para gastar. Esto también se aplica a plataformas tradicionales de financiación colectiva como Kickstarter.",
+      "p3": "Una ventaja de este sistema es que la influencia de cada votante es directamente proporcional a su necesidad (al menos, si ignoramos la desigualdad de riqueza). Cuanto más necesite Alice una pizza, más pizza comprará y más financiación irá a las pizzerías.",
+      "p4": "La desventaja es que los votantes ricos tienen una influencia desproporcionada en lo que se financia. Alice puede necesitar una pizza exactamente tanto como Bob necesita boletos de cine, pero si Bob es dos veces más rico que Alice, él tiene el doble de 'votos' para gastar en ir al cine."
+    },
+    "private": {
+      "h3": "Otorgantes de Subvenciones Privadas",
+      "p1": "Las instituciones privadas de otorgamiento de subvenciones, como fundaciones sin fines de lucro, son bastante comunes, pero no tienen sistemas de votación. En cambio, los comités de subvenciones y similares solicitan propuestas de subvenciones y luego eligen internamente qué solicitantes recibirán financiamiento.",
+      "p2": "Una ventaja de las organizaciones sin fines de lucro es que su condición de organizaciones sin fines de lucro las obliga a actuar en interés de alguna misión pública, en lugar de buscar el beneficio por encima de todo.",
+      "p3": "Por otro lado, los pequeños intereses privados que controlan estas organizaciones carecen de las herramientas e incentivos para servir de manera efectiva a grandes públicos."
+    },
+    "democratic": {
+      "h3": "Gobiernos Democráticos",
+      "p1": "Las subvenciones gubernamentales son otro mecanismo común de distribución de fondos, y en las democracias, generalmente son controladas por ciudadanos votantes que utilizan políticas de 1-persona-1-voto (con representantes electos y otros intermediarios en el medio).",
+      "p2": "Del lado positivo, estos sistemas son mucho menos oligárquicos que los mercados, si ignoramos la capacidad de convertir el dinero en influencia a través de los medios de comunicación, entre otras complicaciones.",
+      "p3": "A cambio de menos oligarquía, sin embargo, la influencia también refleja pobremente la necesidad en los sistemas de 1-persona-1-voto. Un residente a medio tiempo de Florida tiene el mismo poder de voto en las elecciones de Florida que un residente a tiempo completo, siempre que ambos califiquen para votar, incluso si el residente a tiempo completo tiene el doble en juego."
+    },
+    "balance": {
+      "h3": "Financiación Cuadrática: ¿un mejor equilibrio?",
+      "p1": "La financiación cuadrática es un compromiso entre 1-dólar-1-voto y 1-persona-1-voto. Los participantes votan sobre cómo distribuir los fondos acumulados mediante donaciones individuales, pero la influencia de cada persona, en lugar de ser la cantidad de dinero que gastan, es la raíz cuadrada de esa cantidad.",
+      "p2": "En comparación con 1-dólar-1-voto en el mercado, la financiación cuadrática facilita exponencialmente que la influencia de muchas personas más pobres supere la de una sola persona rica:",
+      "li1": "1-dólar-1-voto: 1 persona que paga $10,000 tiene la misma influencia que 100 personas que pagan $100",
+      "li2": "Financiación cuadrática: 1 persona que paga $10,000 tiene la misma influencia que 100 personas que pagan $1 o 10 personas que pagan $100",
+      "p3": "En comparación con 1-persona-1-voto, la financiación cuadrática permite que la persona que vive a tiempo completo en Florida y se preocupa el doble por el resultado de la votación tenga más influencia:",
+      "li3": "1-persona-1-voto: los dos votantes de Florida tienen igual influencia",
+      "li4": "Financiación cuadrática: el residente de Florida a tiempo completo, que se preocupa el doble, paga el doble y, como resultado, obtiene 2^(1/2) veces la influencia del residente a medio tiempo",
+      "p4": "(Es importante tener en cuenta que si bien estos ejemplos son una buena demostración del argumento a favor de la financiación cuadrática, simplifican en exceso estas situaciones, que son tan sociológicas como matemáticas.)"
+    },
+    "resources": {
+      "h2": "Recursos de Financiación Cuadrática",
+      "li1": "Pagos Cuadráticos: Una Introducción",
+      "li2": "Liberal Radicalism: Un Diseño Flexible para Fondos de Coincidencia Filantrópicos",
+      "li3": "Pagos Cuadráticos: Una Introducción",
+      "li4": "¿Qué es la Financiación Cuadrática?"
+    }
+  },
+  "recipients": {
+    "heading": {
+      "h1": "Guía para los Beneficiarios",
+      "p": "Una descripción general de cómo funcionan las cosas como beneficiario para que puedas saber qué esperar durante todo el período de una ronda de financiamiento."
+    },
+    "funds": {
+      "h2": "Obtener fondos en {chain}",
+      "p1": "Necesitarás tener {currency} en {chain} para poder enviar transacciones a los contratos inteligentes de clr.fund.",
+      "p2_t1": " Sigue",
+      "cta": " estos pasos",
+      "p2_t2": "para transferir tus fondos a {chain}",
+      "link1": "Transfiere tus fondos aquí",
+      "p3": "¿Confundido acerca de qué es {chain}?",
+      "link2": " Lee nuestra explicación sobre cómo clr.fund utiliza la capa 2 en Ethereum."
+    },
+    "register": {
+      "h2": "Registra tu proyecto",
+      "p1": "Para participar en una ronda de financiamiento como proyecto, deberás presentar una solicitud para unirte al registro de beneficiarios (a través de una transacción en la cadena).",
+      "p2_t1": "Nuestra tecnología anti-soborno, MACI, limita actualmente la cantidad de proyectos permitidos por ronda.",
+      "p2_link": "Más sobre MACI",
+      "p2_t2": ". La ronda solo acepta un total de {maxRecipients} proyectos, por lo que te recomendamos que apliques temprano.",
+      "p3": "Nota: todos los datos de la solicitud (excepto la dirección de correo electrónico de contacto) se almacenarán públicamente en la cadena.",
+      "h3": "Envía tu solicitud",
+      "li1": "Dirígete a la ",
+      "li1_link": "página de registro.",
+      "li2": "Haz clic en \"Ver criterios de la ronda\" y familiarízate con los criterios para los proyectos.",
+      "li3": "Una vez que estés familiarizado con los criterios y estés seguro de que tu proyecto los cumple, haz clic en \"Agregar proyecto\". Verás una serie de formularios para completar que solicitarán más información sobre tu proyecto.",
+      "li4": "Una vez que hayas completado los formularios, puedes finalizar tu presentación:",
+      "li5": "Conéctate a la red correcta a través de tu billetera preferida.",
+      "li6": "Envía una transacción (con un depósito de {depositAmount} {depositToken}) al contrato de registro.",
+      "p4": "Los proyectos son aceptados por defecto, pero el administrador del registro puede eliminar proyectos que no cumplan con los criterios.",
+      "p5": "En cualquier caso, tu {depositToken} se te devolverá una vez que tu solicitud haya sido aceptada o denegada. Ten en cuenta que los metadatos que apuntan a toda la información de tu proyecto (pero no a la información de contacto) se almacenarán públicamente en la cadena."
+    },
+    "claim": {
+      "h2": "Reclama tus fondos",
+      "p": "Después de que una ronda de clr.fund haya finalizado, es sencillo reclamar la parte de financiamiento asignada a tu proyecto. Regresa a la página de tu proyecto: verás un botón \"reclamar fondos\" si tu proyecto recibió contribuciones durante la ronda. Envía la transacción de reclamo para recibir tus fondos."
+    },
+    "how": {
+      "h2": "¿Cómo funciona clr.fund?",
+      "p": "¿Buscas una descripción más general?",
+      "link": "Visita nuestra página \"Cómo funciona\""
+    }
+  },
+  "sybilResistance": {
+    "heading": {
+      "h1": "Acerca de la Resistencia Sybil",
+      "h2": "¿Qué son los ataques Sybil?",
+      "p1_t1": "Un \"ataque Sybil\" ocurre cuando una persona finge ser muchas personas para subvertir las reglas de un sistema. Cuanto más depende un sistema de que cada participante sea una persona única, más vulnerable es potencialmente a los ataques Sybil. Las redes sociales son algo vulnerables: los bots que crean spam por correo electrónico y los seguidores o likes falsos son ejemplos de ataques Sybil relativamente inofensivos. Los sistemas de votación digital son más vulnerables: si un atacante puede crear suficientes usuarios falsos para influir en un voto, pueden haber consecuencias significativas y concretas. Dado que clr.fund utiliza",
+      "p1_link": "financiamiento cuadrático",
+      "p1_t2": ", que es esencialmente un sistema de votación, los ataques Sybil son una amenaza grave.",
+      "p2": "En el mundo físico, los ataques Sybil son difíciles de llevar a cabo. Es bastante difícil pretender ser otra persona durante mucho tiempo, especialmente cuando la mayoría de los gobiernos emiten y verifican identificaciones con foto y números de identificación. Sin embargo, en internet, nadie sabe que eres un perro. Las personas no quieren compartir su información personal en línea y las identificaciones gubernamentales son imprácticas para servicios web sin fronteras, por lo que históricamente no hemos tenido métodos sólidos para detener los ataques Sybil en línea."
+    },
+    "brightID": {
+      "h2": "Resistencia Sybil y BrightID",
+      "p1": "BrightID es una plataforma que utilizamos para aumentar nuestra confianza de que estás contribuyendo solo una vez. BrightID es una de las nuevas soluciones de identidad digital para casos de uso como clr.fund que requieren resistencia digital Sybil.",
+      "p2": "BrightID funciona utilizando un modelo de confianza: los usuarios conectan sus cuentas de BrightID con personas en las que confían que son seres humanos únicos (generalmente porque los conocen personalmente) y forman grupos. Estas conexiones son públicas, pero los datos personales de los usuarios no lo son. Si conectas tu BrightID con una aplicación, la aplicación puede analizar tus conexiones y decidir si permitirte o no el acceso según la probabilidad de que seas una persona única. El grafo de conexiones de BrightID se puede analizar con cualquier método, pero generalmente, cuanto más conexiones tiene una identificación con otras identificaciones que parecen confiables, más confiable es.",
+      "p3": "Para contribuir a proyectos en una ronda de clr.fund, debes conectar un BrightID verificado con la aplicación de clr.fund. Esto evita que crees miles de cuentas de Ethereum y distorsiones las contribuciones.",
+      "link": "Verifica tu identidad siguiendo las instrucciones aquí"
+    },
+    "how": {
+      "h2": "Cómo configurar BrightID",
+      "p1_t1": "La aplicación te guiará para ",
+      "p1_link1": "configurar BrightID ",
+      "p1_t2": "y aquí tienes un vistazo rápido de lo que puedes esperar:",
+      "li1_t1": "Descarga BrightID para",
+      "li1_link1": "iOS",
+      "li1_t2": "o",
+      "li1_link2": "Android",
+      "li2": "Verifica tu identidad en BrightID para que sepamos que eres un humano y no un bot.",
+      "li3_t1": "Envía una transacción a clr.fund para que te patrocine en BrightID.",
+      "li3_link1": "Más sobre el patrocinio BrightID",
+      "li4": "Vincula tu billetera a tu perfil de BrightID, para que no puedas usar múltiples direcciones de Ethereum para influir en las votaciones.",
+      "li5_t1": "Agrega tu información al registro de usuarios de clr.fund. Esto es un requisito para",
+      "li5_link1": "MACI, nuestra tecnología anti-soborno",
+      "p2": "Ten en cuenta que solo debes vincular una dirección de Ethereum a tu perfil de BrightID. Si repites nuestro proceso de verificación y agregas otra dirección de Ethereum, todas las contribuciones de tu dirección anterior serán ignoradas por el grupo de coincidencia. Esto es nuevamente para evitar ataques Sybil."
+    }
+  },
+  "join": {
+    "title": {
+      "h1": "Únete a la ronda",
+      "p1": "Revisar información",
+      "p2": "Vista previa del proyecto",
+      "link1": "Cancelar"
+    },
+    "step0": {
+      "h2": "Acerca del proyecto",
+      "label1": "Nombre del proyecto",
+      "input1": "ej: clr.fund",
+      "error1": "Tu proyecto necesita un nombre",
+      "label2": "Lema",
+      "p1": "Describe tu proyecto en una oración. Máximo de caracteres: 140",
+      "input2": "ej: Un protocolo de financiación cuadrática",
+      "error2": "Este lema es demasiado largo. Sé breve para los posibles contribuyentes",
+      "error3": "Tu proyecto necesita un lema",
+      "label3": "Descripción",
+      "p2": "Soporte de Markdown.",
+      "input3": "ej: CLR.fund es un protocolo de financiación cuadrática que tiene como objetivo facilitar al máximo la configuración, gestión y participación en rondas de financiación cuadrática...",
+      "p3": "Vista previa:",
+      "error4": "Tu proyecto necesita una descripción. ¿Para qué estás recaudando dinero?",
+      "label4": "Categoría",
+      "p4": "Elige la mejor opción.",
+      "label5": "Herramientas",
+      "label6": "Contenido",
+      "label7": "Investigación",
+      "label8": "Datos",
+      "label_education": "Educación",
+      "error5": "Debes elegir una categoría",
+      "label9": "Área problemática",
+      "p5": "Explica los problemas que estás tratando de resolver. Soporte de Markdown.",
+      "input8": "ej: no hay forma de iniciar una ronda de financiación cuadrática. En este momento, debes colaborar con GitCoin Grants, que no es un modelo escalable o sostenible.",
+      "error6": "Explica el problema que resuelve tu proyecto",
+      "p6": "Vista previa:"
+    },
+    "step1": {
+      "h2": "Detalles de donación",
+      "label1": "Dirección de Ethereum",
+      "p1": "La dirección de destino para las donaciones, que utilizarás para reclamar los fondos. Esta no tiene que ser la misma dirección que utilizas para enviar tu transacción de solicitud.",
+      "input1": "ejemplo: 0x123...",
+      "error1": "Ingresa una dirección ENS o Ethereum 0x válida",
+      "label2": "¿Cómo utilizarás los fondos?",
+      "p2": "Los posibles contribuyentes pueden decidir según tus planes de financiamiento específicos. Soporte de Markdown.",
+      "input2": "ej: en nuestro plan de desarrollo...",
+      "error2": "Informa a los posibles contribuyentes sobre tus planes para sus donaciones.",
+      "preview1": "Vista previa:",
+      "address_requirement": "Esta dirección, o al menos uno de los firmantes en el caso de una firma múltiple, debería poseer un {link_1}. Alternativamente, el proyecto debería poder demostrar que ha completado el proceso KYC para un programa de subvenciones reputado, como el {link_2}, en el último año."
+    },
+    "step2": {
+      "h2": "Detalles del equipo",
+      "p1": "Cuéntanos acerca de las personas detrás de tu proyecto.",
+      "label1": "Correo electrónico de contacto",
+      "description1": "Para actualizaciones importantes sobre tu proyecto y la ronda de financiamiento.",
+      "input1": "ejemplo: perro{'@'}buenchico.com",
+      "notice1": "No mostraremos esto públicamente ni lo agregaremos al registro en cadena.",
+      "error1": "Esto no parece ser un correo electrónico válido.",
+      "label2": "Nombre del equipo (opcional)",
+      "p2": "Si es diferente al nombre del proyecto.",
+      "input2": "ej: clr.fund",
+      "label3": "Descripción del equipo (opcional)",
+      "p3": "Si es diferente a la descripción del proyecto. Soporte de Markdown.",
+      "input3": "ej: CLR.fund es un protocolo de financiación cuadrática que tiene como objetivo facilitar al máximo la configuración, gestión y participación en rondas de financiación cuadrática...",
+      "preview1": "Vista previa:"
+    },
+    "step3": {
+      "h2": "Enlaces",
+      "p1": "Proporciona a los contribuyentes algunos enlaces para obtener más información sobre tu proyecto. Proporciona al menos uno.",
+      "label1": "GitHub",
+      "input1": "ejemplo: https://github.com/ethereum/clrfund",
+      "error1": "Esto no parece ser una URL válida",
+      "label2": "Radicle",
+      "input2": "ejemplo: https://radicle.xyz/ethereum/clrfund",
+      "error2": "Esto no parece ser una URL válida",
+      "label3": "Sitio web",
+      "input3": "ejemplo: https://clr.fund",
+      "error3": "Esto no parece ser una URL válida",
+      "label4": "Twitter",
+      "input4": "ejemplo: https://twitter.com/ethereum",
+      "error4": "Esto no parece ser una URL válida",
+      "label5": "Chat",
+      "input5": "ej: https://discord.gg/5Prub9zbGz",
+      "error5": "Esto no parece ser una URL válida"
+    },
+    "step4": {
+      "h2": "Imágenes",
+      "p1": "Cargaremos tus imágenes en IPFS, una plataforma de almacenamiento descentralizada.",
+      "link1": "Más información sobre IPFS",
+      "label1": "Imagen de banner",
+      "input1": "Relación de aspecto recomendada: 16x9 • Tamaño máximo de archivo: 512 kB • JPG, PNG o GIF",
+      "label2": "Imagen en miniatura",
+      "input2": "Relación de aspecto recomendada: 1x1 (cuadrada) • Tamaño máximo de archivo: 512 kB • JPG, PNG o GIF"
+    },
+    "step5": {
+      "h2": "Revisa tu información",
+      "warning": "Esta información se almacenará en un contrato inteligente y no se puede editar, así que revísala cuidadosamente.",
+      "h3_1": "Acerca del proyecto",
+      "edit1": "Editar",
+      "h4_1": "Nombre del proyecto",
+      "h4_2": "Lema",
+      "h4_3": "Descripción",
+      "h4_4": "Categoría",
+      "h4_5": "Área problemática",
+      "h3_2": "Detalles de financiamiento",
+      "edit2": "Editar",
+      "h4_6": "Dirección de Ethereum",
+      "link1": "Ver en {blockExplorer} ",
+      "ens": "Dirección ENS resuelta",
+      "h4_7": "Planes de financiamiento",
+      "h3_3": "Detalles del equipo",
+      "edit3": "Editar",
+      "h4_8": "Correo electrónico de contacto",
+      "notice1": "Esta información no se agregará al contrato inteligente.",
+      "h4_9": "Nombre del equipo",
+      "h4_10": "Descripción del equipo",
+      "h3_4": "Enlaces",
+      "edit4": "Editar",
+      "h4_12": "Sitio web",
+      "h3_5": "Imágenes",
+      "edit5": "Editar",
+      "h4_13": "Banner",
+      "h4_14": "Miniatura"
+    },
+    "step6": {
+      "h2": "Enviar proyecto",
+      "p1": "Esta es una transacción de blockchain que agregará la información de tu proyecto a la ronda de financiamiento."
+    },
+    "error": {
+      "not_provided": "No proporcionado"
+    }
+  },
+  "joinLanding": {
+    "loading": "Obteniendo datos de la ronda...",
+    "check_out_these": "Consulta estas",
+    "other_ways_to_source_funding": "otras formas de obtener financiamiento",
+    "or_follow_us_on_twitter": ". O síguenos en Twitter para recibir actualizaciones sobre futuras rondas:",
+    "need_info_about_your_project": "Necesitaremos información sobre tu proyecto y un",
+    "security_deposit": " depósito de seguridad.",
+    "cap_on_projects": "La ronda solo acepta un total de {maxRecipients} proyectos, ¡así que aplica ahora mientras aún haya espacio disponible!",
+    "time_to_complete": "Tiempo para completar",
+    "15_minutes_ish": "15 minutos (aproximadamente)",
+    "see_round_criteria": "Ver criterios de la ronda",
+    "closed": {
+      "h1": "Lo siento, es demasiado tarde para unirse",
+      "subtitle1": "La ronda está cerrada para nuevos proyectos. Ahora es demasiado tarde para unirse."
+    },
+    "full": {
+      "h1": "Lo siento, la ronda está completa",
+      "subtitle1": "La tecnología que utilizamos para protegerte contra el soborno y la colusión, MACI, limita la cantidad de proyectos en este momento. Desafortunadamente, hemos alcanzado el límite y no hay más espacio disponible."
+    },
+    "open": {
+      "h1": "Únete a la ronda de financiamiento",
+      "div1": "Tiempo restante para unirse",
+      "div4": " {spacesRemainingString} restantes, ¡date prisa!",
+      "div5": "MACI, nuestra tecnología contra el soborno, limita actualmente la cantidad de proyectos permitidos por ronda.",
+      "p1": "Recuperarás tu depósito si no logras entrar en la ronda en esta ocasión."
+    },
+    "join": {
+      "h1": "Únete a la próxima ronda de financiamiento"
+    }
+  },
+  "landing": {
+    "button": {
+      "getStarted": "Comenzar",
+      "leaderboard": "Ver resultados"
+    },
+    "hero": {
+      "title": "¡Envía tus proyectos favoritos a la Luna!",
+      "subtitle": "Cada proyecto al que contribuyas obtiene una parte de financiamiento adicional.",
+      "info": "Cómo funciona"
+    },
+    "callout": {
+      "title": "Únete a la ronda de financiamiento",
+      "paragraph": "Agrega tu proyecto a la próxima ronda de financiamiento. Si estás trabajando en algo relacionado con bienes públicos, puedes unirte.",
+      "action": "Agregar proyecto",
+      "deadline": "para unirse"
+    },
+    "how": {
+      "title": "Cada donación se amplifica mediante el matching pool.",
+      "paragraph": "Esta recaudación de fondos recompensa a los proyectos con la demanda única más alta, no solo a aquellos con patrocinadores más adinerados.",
+      "subtitle": "Cómo funciona",
+      "list-1": "El {operator} y otros donantes envían fondos al contrato inteligente del matching pool.",
+      "list-2": "La ronda comienza y puedes donar a tus proyectos favoritos.",
+      "list-3": "Una vez que finaliza la ronda, el contrato inteligente distribuye los fondos del matching pool a los proyectos ponderados principalmente por el número de contribuciones,",
+      "list-3-strong": "no por el valor de las contribuciones",
+      "action": "Cómo funciona la ronda"
+    },
+    "req": {
+      "title": "Lo que necesitarás",
+      "chain": "{chain} para tarifas de transacción rápidas y económicas",
+      "chain-cta": " Obtén fondos en {chain}",
+      "bright": "BrightID para verificación de identidad privada y descentralizada",
+      "bright-cta": "Configurar BrightID"
+    },
+    "about": {
+      "title": "Acerca de",
+      "subtitle-1": "No se trata de cuánto...",
+      "paragraph-1": "Usando financiamiento cuadrático, tu contribución cuenta como un voto. Los proyectos con más contribuciones al final de la ronda reciben la mayor cantidad del matching pool. Esto significa que incluso una pequeña donación puede tener un impacto masivo.",
+      "link-1": "Acerca del financiamiento cuadrático",
+      "subtitle-2": "Protección contra el soborno",
+      "paragraph-2": "Utilizando MACI, una tecnología de conocimiento cero, es imposible demostrar cómo contribuiste. Esto vuelve locos a los sobornadores porque no tienen idea de si realmente hiciste lo que te sobornaron para hacer.",
+      "link-2": "Acerca de MACI",
+      "subtitle-3": "Construido utilizando el protocolo CLR",
+      "paragraph-3": "clr.fund es un protocolo para asignar eficientemente fondos a bienes públicos que benefician a la Red Ethereum según las preferencias de la Comunidad Ethereum.",
+      "link-3": "Acerca de clr.fund"
+    },
+    "footer": {
+      "title": "Más",
+      "link-1": "Acerca de clr.fund",
+      "link-2": "Cómo funciona la ronda",
+      "link-3": "Acerca de {chain}",
+      "link-4": "Acerca de MACI",
+      "link-5": "Acerca de BrightID",
+      "link-6": "GitHub",
+      "link-7": "Discord",
+      "link-8": "Foro",
+      "link-9": "Más sobre Ethereum",
+      "link-blog": "Blog"
+    }
+  },
+  "profile": {
+    "p1": "Cerrar",
+    "h2_1": "Tu billetera",
+    "btn1": "dirección",
+    "tooltip1": "Desconectar billetera",
+    "h2_2": "Saldos de {chain}",
+    "tooltip2": "Saldo de la billetera en la cadena {chain}",
+    "h2_3": "Proyectos",
+    "div1": "En revisión",
+    "btn2_1": "Vista previa",
+    "btn2_2": "Ver",
+    "div2": "No has enviado ningún proyecto"
+  },
+  "projectAdded": {
+    "h1": "¡Proyecto enviado!",
+    "div1": "Estás casi listo para unirte a esta ronda de financiamiento.",
+    "li1": "Tu proyecto solo necesita pasar por algunas verificaciones finales para asegurarse de que cumpla con los criterios de la ronda. Puedes",
+    "link1": "obtener más información sobre el proceso de registro aquí.",
+    "li2": "Una vez que se complete, la página de tu proyecto se publicará.",
+    "li3": "Si tu proyecto no pasa alguna verificación, te lo haremos saber por correo electrónico y te devolveremos tu depósito.",
+    "linkProjects": "Ver proyectos",
+    "link2": "Ver proyecto",
+    "link3": "Ir a inicio"
+  },
+  "projectList": {
+    "h2": "Proyectos",
+    "input": "Buscar proyectos",
+    "link1": "Agregar proyecto",
+    "div1": "😢 No hay proyectos que coincidan con tu búsqueda. Intenta usar el filtro para reducir lo que estás buscando."
+  },
+  "leaderboard": {
+    "no_round": "¡Algo salió mal! No se encontró información de la ronda. Por favor, informa si el problema persiste.",
+    "no_project": "No hay proyecto en esta ronda",
+    "more": "mas",
+    "less": "menos",
+    "header": "Clasificación de líderes",
+    "heading": {
+      "project": "Proyecto",
+      "votes": "Votos",
+      "donation": "Contribuciones",
+      "total": "Total"
+    },
+    "message": "La cantidad de financiamiento para cada proyecto se calcula utilizando la fórmula de financiamiento cuadrático y representa el monto total otorgado al proyecto. Las contribuciones al proyecto provienen de las donaciones de la comunidad. El número de votos que recibe un proyecto se determina tomando la suma de la raíz cuadrada de cada donación, escalada por el factor de crédito de voz de MACI y el decimal del token."
+  },
+  "leaderboardSimpleView": {
+    "funded": "{tokenSymbol} financiados"
+  },
+  "recipientRegistry": {
+    "h2": "Registro de destinatarios",
+    "th1": "Proyecto",
+    "th2": "Tipo de solicitud",
+    "th3": "Estado",
+    "th4": "Acciones",
+    "summary": "Más",
+    "div1": "Hash de transacción",
+    "btn1": "hash",
+    "div2": "ID de proyecto",
+    "btn2": "id",
+    "div3": "Dirección del destinatario",
+    "btn3": "dirección"
+  },
+  "roundList": {
+    "h1": "Rondas",
+    "link1": "Ronda {index}"
+  },
+  "transactionSuccess": {
+    "p1": "¡reubicado!",
+    "p2": "¡Acabas de contribuir!",
+    "p3": "¡Tus elecciones se han actualizado! Puedes actualizar tus elecciones nuevamente en cualquier momento en los próximos",
+    "p4": ".",
+    "p4_t1": "Gracias por contribuir al ecosistema de Ethereum. Si cambias de opinión, tienes",
+    "p4_t2": " para reasignar tus contribuciones.",
+    "btn": "OK"
+  },
+  "verified": {
+    "h1": "¡Listo para contribuir!",
+    "div1": "¡Estás en esta ronda de financiamiento! Y completamente verificado para BrightID en esta ronda de financiamiento.",
+    "p1": "Ahora puedes comenzar a contribuir a tus proyectos favoritos.",
+    "link1": "Ver proyectos",
+    "link2": "Ir a inicio"
+  },
+  "verify": {
+    "subtitle": "Paso {currentStep} de {steps}",
+    "p1": "Paso {currentStep} de {steps}",
+    "h1": "Configurar BrightID",
+    "h2_1": "Conectar",
+    "p2": "Necesitas conectar tu cuenta de BrightID con la dirección de tu billetera.",
+    "click_next": "Una vez que esta aplicación esté vinculada en tu aplicación BrightID, Haz clic en el botón 'Siguiente' para pasar al siguiente paso.",
+    "p4": "Escanea este código QR con tu aplicación BrightID",
+    "p5": "Sigue este enlace para conectar tu billetera con tu aplicación BrightID",
+    "p6": "Este enlace puede parecer intimidante, pero solo establece una conexión entre tu dirección de billetera conectada, nuestra aplicación y BrightID. Asegúrate de que tu dirección sea correcta.",
+    "h2_2": "Registrarse",
+    "p7": "Para proteger la ronda de sobornos y fraudes, debes agregar la dirección de tu billetera a un registro de contrato inteligente. ¡Una vez que hayas terminado, puedes unirte a la ronda de financiamiento!",
+    "btn": "Conviértete en colaborador",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "copy_link": "Copiar Enlace",
+    "verification_status": "Tu dirección de billetera no está vinculada con BrightID. Puede tomar unos minutos verificar la conexión, por favor espera y haz clic en el botón más tarde para verificar el estado.",
+    "skip_sponsorship": "Saltar",
+    "get_sponsored_header": "Obtén un patrocinio",
+    "get_sponsored_text": "Necesitas un token de patrocinio para conectar tu dirección de billetera con BrightID. Esto ayuda a apoyar a BrightID como una plataforma descentralizada. Solo necesitarás hacer esto una vez y te cubrirá para cualquier otra aplicación que funcione con BrightID. Verifica en la aplicación móvil de BrightID si estás patrocinado. Obtén patrocinio al enviar una transacción de patrocinio o salta al siguiente paso.",
+    "get_sponsored_cta": "Obtener Patrocinio"
+  },
+  "verifyLanding": {
+    "h1": "Demuestra que solo usas una cuenta",
+    "subtitle": "Usamos BrightID para detener bots y tramposos, y hacer nuestra financiación más democrática.",
+    "h2": "Lo que necesitarás",
+    "li1_t1": "BrightID: disponible en",
+    "li1_link1": "iOS",
+    "li1_t2": "o",
+    "li1_link2": "Android",
+    "join": "Unirse a una fiesta de ",
+    "brightid_party_link": "BrightId",
+    "get_verified": " para ser verificado",
+    "li_wallet": "Una billetera de Ethereum, con suficiente gas para transacciones.",
+    "unitap_gas_tokens": "Puede que puedas obtener algunos tokens de gas gratis de ",
+    "unitap_link": "Unitap",
+    "unitap_extra_text": ".",
+    "link1": "¿Por qué es importante?",
+    "next_round_notice": "La ronda comenzará el {start_date}. Por favor, revisa nuevamente entonces.",
+    "no_round": "Aún no hemos programado una ronda de financiamiento. ¡Mantente atento/a!",
+    "div2": "La ronda actual ya no acepta nuevas contribuciones. Por favor, intenta nuevamente en la siguiente ronda.",
+    "div3": "Las contribuciones se cerraron anticipadamente, ¡ya no puedes donar! Debido a la generosidad de la comunidad y algunas limitaciones técnicas, tuvimos que cerrar la ronda antes de lo previsto. Si ya has contribuido, todavía tienes tiempo para reasignar si es necesario. Si no tuviste la oportunidad de contribuir, aún puedes ayudar donando al matching pool",
+    "link2": "Tengo BrightID instalado",
+    "link3": "Volver"
+  },
+  "addToCartButton": {
+    "input1": "Agregar al carrito",
+    "input2": "En el carrito 🎉"
+  },
+  "brightIdWidget": {
+    "h2": "Configuración de BrightID",
+    "link1": "Comenzar a contribuir",
+    "link2": "Continuar configuración",
+    "link3": "Comenzar configuración",
+    "tooltip1_1": "¡Eres un humano verificado en BrightID!",
+    "tooltip1_2": "Tu perfil de BrightID aún necesita ser verificado.",
+    "p1_1": "Verificado",
+    "p1_2": "No verificado"
+  },
+  "callToActionCard": {
+    "h2_1": "¿Cambiaste de opinión?",
+    "p1": "Todavía tienes tiempo para reasignar tus contribuciones.",
+    "div1": "Abrir carrito",
+    "h2_2": "Fin de la ronda para contribuciones",
+    "p2": "Ya no puedes hacer ninguna contribución en esta ronda.",
+    "h2_3": "Prepárate",
+    "p3": "Necesitarás configurar algunas cosas antes de contribuir. Puedes hacerlo en cualquier momento antes o durante la ronda de financiamiento.",
+    "link1": "Comenzar preparación",
+    "link2": "Continuar configuración"
+  },
+  "cart": {
+    "sign": "Firmar",
+    "connect": "Conéctate",
+    "sign_the_message_to_see_your_cart": "Por favor, firmar el mesaje para ver tu carrito",
+    "h3_1": "Conéctate para ver tu carrito",
+    "div1": "Ya has contribuido en esta ronda. Puedes editar tus elecciones y agregar nuevos proyectos, pero el total de tu carrito siempre debe ser igual a la cantidad original de tu contribución.",
+    "link1": "¿Por qué?",
+    "div2": "¡Casi terminas! Debes enviar una transacción más para completar tu contribución.",
+    "h2_1": "Editar carrito",
+    "h2_2": "Tu carrito",
+    "div3": "Esta ronda ha terminado. Así es cómo contribuiste. ¡Gracias!",
+    "h3_2": "Demasiado tarde para donar",
+    "div4": "Lo siento, el plazo para donar ha pasado.",
+    "h3_3": "Tu carrito está vacío",
+    "div5": "Elige algunos proyectos a los que quieras contribuir...",
+    "link2": "Ver proyectos",
+    "edit1": "Editar contribuciones",
+    "edit2": "Tus contribuciones",
+    "edit3": "Cancelar",
+    "edit4": "Editar",
+    "div6": "Tus contribuciones",
+    "div7": "Tiempo restante:",
+    "span1": "Contribución original",
+    "span2": "Tu carrito",
+    "div8": "Matching pool",
+    "div9": "Los fondos restantes se destinarán al matching pool",
+    "div10": "Distribuir {contribution} {tokenSymbol} de manera uniforme",
+    "button1": "Retirar {contribution} {tokenSymbol}",
+    "div11": "No puedes",
+    "div11_if2": "reasignar",
+    "div11_if3": "contribuir",
+    "div12": "Los fondos que no contribuyas a proyectos ({total} { tokenSymbol}) se enviarán al matching pool al final de la ronda. Tu carrito debe sumar tu donación original de {contribution} {tokenSymbol}.",
+    "link3": "Verificar con BrightID",
+    "template1": "Contribuir {total} {tokenSymbol} a {cart} proyectos",
+    "template2": "Finalizar contribución",
+    "template3": "Reasignar contribución",
+    "div13": "Tiempo restante:",
+    "span3": "Proyectos",
+    "span4": "Matching Pool",
+    "span5": "Total"
+  },
+  "cartItems": {
+    "button1": "Cantidad"
+  },
+  "claimButton": {
+    "p": "✔️ {allocatedAmount} { tokenSymbol } reclamados",
+    "button": "Reclamar { allocatedAmount } { tokenSymbol }"
+  },
+  "claimModal": {
+    "h2_1": "Reclamar fondos",
+    "h2_2": "¡Se han reclamado los fondos!",
+    "p1": " se ha enviado a",
+    "div1": "Dirección del destinatario",
+    "button1": "Listo"
+  },
+  "contributionModal": {
+    "confirm": "Confirmar contribución de {renderTotal} {nativeTokenSymbol}",
+    "your": "Tu",
+    "contribution_final": "total de contribución es definitivo. No podrás aumentar esta cantidad. Asegúrate de que sea la cantidad máxima que podrías gastar en contribuciones.",
+    "btn_cancel": "Cancelar",
+    "btn_continue": "Continuar",
+    "approve": "Aprobar {renderTotal} {nativeTokenSymbol}",
+    "permission": "Esto le otorga a esta aplicación el permiso para retirar {renderTotal} {nativeTokenSymbol} de tu billetera para tu contribución.",
+    "send_contribution": "Enviar contribución de {renderTotal} {nativeTokenSymbol}",
+    "send_tx": "Esta transacción envía tu contribución de {renderTotal} {nativeTokenSymbol} a los proyectos que elijas.",
+    "magic": "Magia del matching pool ✨",
+    "how_much": "Esta transacción le permite al matching pool saber cuánto {nativeTokenSymbol} enviar a tus proyectos favoritos en función de tus contribuciones."
+  },
+  "copyButton": {
+    "tooltip1": "¡Copiado!",
+    "copy": "Copiar"
+  },
+  "criterialModal": {
+    "h2": "Criterios de la ronda",
+    "p1": "Cerrar",
+    "p2": "El administrador del registro eliminará los proyectos que no cumplan con los criterios de la ronda. ¡Lee detenidamente! En rondas posteriores, esperamos que este proceso de revisión pueda ser realizado por la comunidad.",
+    "p3": "Obtén más información sobre el proceso de solicitud de proyectos en nuestra",
+    "link1": "guía para destinatarios",
+    "link2": "Agregar proyecto"
+  },
+  "formNavigation": {
+    "button1": "Anterior",
+    "button2_1": "Confirmar",
+    "button2_2": "Siguiente"
+  },
+  "formProgressWidget": {
+    "p1": "Paso {currentStep} de {steps}",
+    "div1": "Paso {currentStep} de {steps}",
+    "link1": "Cancelar"
+  },
+  "fundsNeededWarning": {
+    "span1_t1": "¡Necesitas",
+    "span1_l2": "L2",
+    "span1_t2": "fondos!",
+    "p1": "⚠️ ¡Necesitas tanto ETH para el gas como {nativeTokenSymbol} para contribuir!",
+    "link1": " Obtén ayuda para transferir {singleTokenNeeded} a la capa 2",
+    "link2": " Transferir {singleTokenNeeded} a {chain}"
+  },
+  "ipfsCopyWidget": {
+    "tooltip1": "'Ver enlace de IPFS'"
+  },
+  "ipfsImageUpload": {
+    "button1_1": "Subiendo...",
+    "button1_2": "Subir",
+    "p1": "Hash de IPFS",
+    "p2": "Tu imagen ahora está almacenada en una red descentralizada con el siguiente hash. No necesitas hacer nada con él, pero tal vez quieras guardarlo para usarlo en el futuro.",
+    "div1": "Eliminar imagen"
+  },
+  "linkBox": {
+    "h2": "Échales un vistazo",
+    "link1": "Repositorio de GitHub",
+    "link2": "{'@'}Twitter"
+  },
+  "matchingFundsModal": {
+    "title": "Contribuir {tokenSymbol} a al matching pool",
+    "div1": "⚠️ Solo tienes {renderBalance} {tokenSymbol}",
+    "button2": "Contribuir",
+    "h3_2_t1": " Contribuir {renderContributionAmount} {tokenSymbol} a la matching pool",
+    "h3_3": "¡Acabas de aumentar el fondo en {renderContributionAmount} {tokenSymbol}!",
+    "fund_distribution_message": "Los fondos se distribuirán a todos los proyectos en función de las contribuciones que reciban de la comunidad",
+    "div2": "Gracias por ayudar a todos nuestros proyectos.",
+    "button3": "Listo"
+  },
+  "navBar": {
+    "app": "Ver Aplicaciones",
+    "dropdown": {
+      "home": "Inicio",
+      "about": "Acerca de",
+      "how": "Cómo funciona",
+      "maci": "Protección contra sobornos",
+      "sybil": "Resistencia a Sybil",
+      "code": "Código",
+      "recipients": "Destinatarios",
+      "layer2": "Capa 2",
+      "rounds": "Rondas"
+    }
+  },
+  "projectListItem": {
+    "button1": "Más"
+  },
+  "projectProfile": {
+    "info1": "Esto es lo que verán tus contribuyentes cuando visiten la página de tu proyecto.",
+    "div1": "etiqueta",
+    "div2": "Equipo: ",
+    "p1": "✔️ ¡Has contribuido a este proyecto!",
+    "h2_1": "Sobre el proyecto",
+    "h2_2": "El problema que resuelve",
+    "h2_3": "Planes de financiamiento",
+    "div3": "Dirección del destinatario",
+    "button1": "dirección",
+    "link1": "Ver en ",
+    "h2_4": "Equipo: "
+  },
+  "reallocationModal": {
+    "h3": "Reasignar fondos"
+  },
+  "recipientSubmissionWidget": {
+    "div1": "Esperando que se mine la transacción...",
+    "div2": "Verifica tu billetera para ver una solicitud...",
+    "div3_t1": "Algo falló: {txError}",
+    "div3_t2": "Verifica tu billetera o {blockExplorerLabel} para obtener más información.",
+    "div4": "Total a enviar",
+    "tooltip1": "Estimación: este total puede ser ligeramente diferente en tu billetera.",
+    "div5_t1": "No tienes suficientes {depositToken} en tu billetera.",
+    "div5_t2": "Recarga o conecta una billetera diferente.",
+    "p1": "Depósito de seguridad"
+  },
+  "roundInfo": {
+    "link1": "Ver en {blockExplorer}",
+    "div1": "Cancelado",
+    "div2": "Abierto",
+    "div3": "Cerrado",
+    "p1": "La ronda está oficialmente cerrada",
+    "p2": "¡Ya es demasiado tarde para contribuir o reasignar tus donaciones!",
+    "max_messages_reached": "Debido a la generosidad de la comunidad y algunas limitaciones técnicas, tuvimos que cerrar la ronda antes de lo esperado. Aún puedes ayudar donando al matching pool.",
+    "div4": "¡Excelente!",
+    "div5": "⏱️ Apertura de la ronda",
+    "div6": "Tiempo restante para contribuir",
+    "tooltip1": "Durante esta fase, puedes contribuir a tus proyectos favoritos.",
+    "div7": "Fecha límite de contribución: ",
+    "div8_1": "Tiempo restante para reasignar",
+    "div8_2": "Estado de la ronda",
+    "tooltip2": "Durante esta fase, puedes agregar/eliminar proyectos y cambiar las cantidades de tus contribuciones. No puedes hacer una contribución ni aumentar tu total general.",
+    "tooltip3": "Si has contribuido, puedes agregar/eliminar proyectos y cambiar las cantidades de tus contribuciones. Por favor, conecta tu billetera.",
+    "tooltip4": "Esta ronda ha cerrado para nuevas contribuciones.",
+    "div9": "Cerrado para contribuciones",
+    "div10": "Fecha límite de reasignación: ",
+    "div11": "Estado de la ronda",
+    "tooltip5": "Nuestros contratos inteligentes están ocupados calculando las cantidades finales de contribución.",
+    "div12": "Totalizando todas las contribuciones",
+    "div13": "Estado de la ronda",
+    "tooltip6": "Si eres propietario de un proyecto, ¡ahora puedes reclamar tus fondos!",
+    "div14": "Las contribuciones están listas para reclamar 🎉",
+    "div15": "Total en la ronda",
+    "tooltip7": "Este total incluye los fondos en el matching pool y todas las contribuciones de la comunidad.",
+    "div16": "matching pool",
+    "tooltip8": "Estos son los fondos que se distribuirán a todos los proyectos según las contribuciones que reciban de la comunidad.",
+    "tooltip9": "Agregar fondos de contribución",
+    "span1": "Agregar fondos",
+    "div17": "Total de contribuciones",
+    "div18": "Contribuyentes",
+    "div19": "leyenda",
+    "div20": "Sin ronda programada",
+    "div21": "Aún no hemos programado una ronda de financiamiento. ¡Mantente atento/a!",
+    "pluralism": "s",
+    "more": "Más"
+  },
+  "roundStatusBanner": {
+    "span1": "Comienza la financiación 🗓 {startDate}.",
+    "span2": "Las solicitudes de proyectos están cerradas.",
+    "span3": "¡Date prisa, solo quedan {recipientSpacesRemainingString}!",
+    "span4": "Tiempo restante para agregar un proyecto:",
+    "span5_t1": "⌛️ La ronda cerrará en",
+    "span5_t2": ". ¡Envía tus contribuciones ahora!",
+    "span6_t1": "🎉 ¡La ronda está abierta!",
+    "span6_t2": "restantes para contribuir a tus proyectos favoritos",
+    "span7_t1": "¡La financiación está cerrada! Si contribuiste, tienes",
+    "span7_t2": "restantes para cambiar de opinión",
+    "span8": "🎉 ¡La financiación está cerrada! Nuestros contratos inteligentes están ocupados calculando las contribuciones...",
+    "span9": "¡La financiación está cerrada! Las contribuciones están listas para reclamar. Dirígete a tu página de proyecto para reclamar tus fondos.",
+    "link1": "Ver proyectos"
+  },
+  "transactions": {
+    "button1": "Cerrar",
+    "button2": "Reintentar",
+    "div1": "Por favor, aprueba la transacción en tu billetera",
+    "small": "Si has estado esperando mucho tiempo, considera actualizar tu navegador y volver a conectar tu billetera."
+  },
+  "transactionModal": {
+    "button1": "Cerrar"
+  },
+  "transactionReceipt": {
+    "tooltip1": "'Esperando confirmación de transacción'",
+    "tooltip2": "'Transacción confirmada'",
+    "tooltip3": "Ver en {blockExplorer}",
+    "button1": "hash"
+  },
+  "walletModal": {
+    "p1": "Conectando la billetera",
+    "p2": "Conectarse a una billetera",
+    "p3": "MetaMask",
+    "p4": "Instalar MetaMask",
+    "p5": "WalletConnect"
+  },
+  "walletWidget": {
+    "button1": "Conectar"
+  },
+  "withdrawalModal": {
+    "h3_1": "Retirar fondos",
+    "h3_2": "¡Éxito!",
+    "div1": "Has retirado tu contribución exitosamente.",
+    "button1": "OK"
+  },
+  "recipientProfile": {
+    "not_found": "Destinatario no encontrado!"
+  },
+  "dynamic": {
+    "appLink": {
+      "getStarted": "Comenzar",
+      "leaderboard": "Ver resultados"
+    },
+    "category": {
+      "tooling": "Herramientas",
+      "content": "Contenido",
+      "data": "Datos",
+      "research": "Investigación",
+      "other": "Otro",
+      "education": "Educación"
+    },
+    "timeleft": {
+      "unit": {
+        "days": "días",
+        "day": "día",
+        "hours": "horas",
+        "hour": "hora",
+        "minutes": "minutos",
+        "minute": "minuto",
+        "seconds": "segundos",
+        "second": "segundo"
+      }
+    },
+    "criteria": {
+      "free_open_source": {
+        "tagline": "Libre y de código abierto",
+        "description": "Tu proyecto debe ser de uso gratuito y cualquier código asociado a tu proyecto debe estar disponible para cualquier persona bajo una licencia de código abierto."
+      },
+      "no_clones": {
+        "tagline": "Sin clones",
+        "description": "Si has bifurcado código, debes proporcionar un valor adicional y único al ecosistema."
+      },
+      "project_ownership": {
+        "tagline": "Propiedad del proyecto",
+        "description": "El proyecto que envíes debe ser tuyo o debes tener permiso del propietario del proyecto."
+      },
+      "no_scams": {
+        "tagline": "No estafas",
+        "description": "Obviamente, tu proyecto no debe poner en riesgo los fondos o la información de nadie."
+      },
+      "compliance": {
+        "tagline": "Cumplimiento",
+        "description": "La dirección de recepción del proyecto, o al menos uno de los firmantes en el multisig del equipo, debería tener un {link_1}. Alternativamente, el proyecto debería poder demostrar que ha completado el KYC para un programa de subvenciones reputado, como el {link_2}, en el último año."
+      }
+    },
+    "cart": {
+      "error": {
+        "reached_contribution_limit": "Se ha alcanzado el límite en el número de contribuciones.",
+        "connect_wallet": "Por favor, conecta tu billetera.",
+        "incorrect_network": "Por favor, cambia a la red {chain}.",
+        "need_to_setup_brightid": "Para contribuir, necesitas configurar BrightID.",
+        "user_not_registered": "Por favor, contacta a {operator} para realizar el registro.",
+        "invalid_contribution_amount": "Incluye una cantidad de contribución válida.",
+        "exceeded_max_cart_size": "Tu carrito no puede incluir más de {maxCartSize} proyectos.",
+        "round_cancelled": "Lo sentimos, hemos tenido que cancelar esta ronda de financiamiento.",
+        "round_ended": "La ronda de financiamiento ha finalizado.",
+        "cart_changes_exceed_cap": "Los cambios en el carrito excederán la capacidad de contribución de esta ronda.",
+        "contributions_over": "Las contribuciones han finalizado para esta ronda de financiamiento.",
+        "reached_contributor_limit": "Se ha alcanzado el límite en el número de colaboradores.",
+        "must_be_gt_zero": "Tu total debe ser mayor que 0 {nativeTokenSymbol}",
+        "not_enough_funds": "Fondos insuficientes. Tu saldo es de {balance} {nativeTokenSymbol}.",
+        "too_generous": "Tu contribución es demasiado generosa. La contribución máxima es de {maxAmount} {nativeTokenSymbol}.",
+        "need_gas_payment": "Necesitas tener ETH para pagar por el gas.",
+        "contributor_key_missing": "No se encontró la clave del colaborador. Actualiza la página e intenta de nuevo y/o asegúrate de estar utilizando el mismo navegador/máquina con la que hiciste la contribución.",
+        "more_than_original_contribution": "Tu nuevo total no puede ser mayor que tu contribución original de {total} {tokenSymbol}"
+      },
+      "action": {
+        "remove_all": "Eliminar todo",
+        "split_evenly": "Dividir por igual"
+      }
+    },
+    "verify": {
+      "step": {
+        "sponsorship": "Patrocinio",
+        "connect": "Conectar",
+        "registration": "Registrarse"
+      }
+    },
+    "progress": {
+      "step": {
+        "project": "Acerca del proyecto",
+        "fund": "Detalles de la donación",
+        "team": "Detalles del equipo",
+        "links": "Enlaces",
+        "image": "Imágenes",
+        "review": "Revisa",
+        "submit": "Enviar"
+      }
+    },
+    "mobile": {
+      "tab": {
+        "Cart": "Carrito",
+        "Round": "Ronda",
+        "Projects": "Proyectos"
+      }
+    }
+  },
+  "filter": "Filtrar",
+  "home": "Inicio",
+  "cancel": "Cancelar",
+  "copied": "Copied!",
+  "more_on_maci": "Más sobre MACI",
+  "add_project": "Agregar proyecto",
+  "close": "Cerrar",
+  "please_sign_message": "Por favor, firma el mensaje en tu billetera",
+  "compliance": {
+    "humanbound_sbt": "humanbound SBT",
+    "esp": "ESP"
+  }
+}
