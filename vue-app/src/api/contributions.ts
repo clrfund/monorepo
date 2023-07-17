@@ -77,7 +77,7 @@ export async function getContributionAmount(
   }
   const data = await sdk.GetContributionsAmount({
     fundingRoundAddress: fundingRoundAddress.toLowerCase(),
-    contributorAddress,
+    contributorAddress: contributorAddress.toLowerCase(),
   })
 
   if (!data.contributions.length) {
@@ -117,7 +117,7 @@ export async function hasContributorVoted(fundingRoundAddress: string, contribut
   }
   const data = await sdk.GetContributorVotes({
     fundingRoundAddress: fundingRoundAddress.toLowerCase(),
-    contributorAddress,
+    contributorAddress: contributorAddress.toLowerCase(),
   })
   return !!data.fundingRound?.contributors?.[0]?.votes?.length
 }
