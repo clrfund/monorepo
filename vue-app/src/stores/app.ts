@@ -24,7 +24,6 @@ import { getAssetsUrl } from '@/utils/url'
 import { getTokenLogo } from '@/utils/tokens'
 import { assert, ASSERT_MISSING_ROUND, ASSERT_MISSING_SIGNATURE, ASSERT_NOT_CONNECTED_WALLET } from '@/utils/assert'
 import { Keypair } from '@clrfund/maci-utils'
-import { DateTime } from 'luxon'
 
 export type AppState = {
   isAppReady: boolean
