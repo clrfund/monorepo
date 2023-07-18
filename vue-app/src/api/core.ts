@@ -11,6 +11,11 @@ if (!rpcUrl) {
   throw new Error('Please provide ethereum rpc url for connecting to blockchain')
 }
 
+export const walletConnectProjectId = import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID
+if (!walletConnectProjectId) {
+  throw new Error('Please provide wallet connect project id')
+}
+
 export const mainnetProvider = new ethers.providers.StaticJsonRpcProvider(import.meta.env.VITE_ETHEREUM_MAINNET_API_URL)
 export const provider = new ethers.providers.StaticJsonRpcProvider(rpcUrl)
 export const chainId = Number(import.meta.env.VITE_ETHEREUM_API_CHAINID)
@@ -96,3 +101,12 @@ const nextStartDate = import.meta.env.VITE_NEXT_ROUND_START_DATE
   : null
 
 export const nextRoundStartDate = nextStartDate?.isValid ? nextStartDate : null
+
+// Use this deadline to hide the 'Add Project' button
+const deadline = import.meta.env.VITE_RECIPIENT_JOIN_DEADLINE
+  ? DateTime.fromFormat(import.meta.env.VITE_RECIPIENT_JOIN_DEADLINE, 'yyyy-MM-dd', { zone: 'utc' })
+  : null
+export const recipientJoinDeadlineConfig = deadline?.isValid ? deadline : null
+
+// make sure walletconnect qrcode modal is not blocked by the Wallet Modal
+export const walletConnectZIndex = import.meta.env.VITE_WALLET_CONNECT_Z_INDEX || '1500'

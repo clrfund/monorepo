@@ -45,6 +45,7 @@ import { useAppStore, useUserStore, useRecipientStore, useWalletStore } from '@/
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import { useMeta } from 'vue-meta'
+import type { WalletUser } from '@/stores'
 
 const route = useRoute()
 const appStore = useAppStore()
@@ -183,9 +184,14 @@ onBeforeUnmount(() => {
 watch(walletUser, async () => {
   try {
     if (walletUser.value) {
+      const user: WalletUser = {
+        chainId: walletUser.value.chainId,
+        walletAddress: walletUser.value.walletAddress,
+        web3Provider: walletUser.value.web3Provider,
+      }
       // make sure factory is loaded
       await appStore.loadFactoryInfo()
-      userStore.loginUser(walletUser.value)
+      userStore.loginUser(user)
       await userStore.loadUserInfo()
       await userStore.loadBrightID()
     } else {

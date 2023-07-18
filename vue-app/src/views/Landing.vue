@@ -24,7 +24,7 @@
               </div>
             </div>
           </div>
-          <div class="apply-callout" v-if="(!currentRound || isRoundJoinPhase) && !isRecipientRegistryFull">
+          <div class="apply-callout" v-if="isRoundJoinPhase && !isRecipientRegistryFull">
             <div class="column">
               <h2>{{ $t('landing.callout.title') }}</h2>
               <p>
@@ -32,8 +32,8 @@
               </p>
               <div class="button-group">
                 <links to="/join" class="btn-primary w100">{{ $t('landing.callout.action') }}</links>
-                <div v-if="signUpDeadline">
-                  <time-left unitClass="none" :date="signUpDeadline" />
+                <div v-if="recipientJoinDeadline">
+                  <time-left unitClass="none" :date="recipientJoinDeadline" />
                   {{ $t('landing.callout.deadline') }}
                 </div>
               </div>
@@ -171,10 +171,15 @@ import { storeToRefs } from 'pinia'
 import { getAssetsUrl } from '@/utils/url'
 
 const appStore = useAppStore()
-const { operator, isRoundJoinPhase, isRecipientRegistryFull, currentRound, currentRoundAddress, isAppReady } =
-  storeToRefs(appStore)
-
-const signUpDeadline = computed(() => appStore.currentRound?.signUpDeadline)
+const {
+  operator,
+  isRoundJoinPhase,
+  recipientJoinDeadline,
+  isRecipientRegistryFull,
+  currentRound,
+  currentRoundAddress,
+  isAppReady,
+} = storeToRefs(appStore)
 
 function scrollToHowItWorks() {
   document.getElementById('section-how-it-works')?.scrollIntoView({ behavior: 'smooth' })
