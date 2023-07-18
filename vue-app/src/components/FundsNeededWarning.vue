@@ -28,7 +28,7 @@
           })
         }}
       </links>
-      <links v-else :to="chain.bridge">
+      <links v-else-if="chain.bridge" :to="chain.bridge">
         {{
           $t('fundsNeededWarning.link2', {
             singleTokenNeeded: singleTokenNeeded,
