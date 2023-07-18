@@ -1,10 +1,12 @@
-import { ethers } from 'ethers'
+import { utils } from 'ethers'
 import { mainnetProvider } from '@/api/core'
 import { isAddress } from '@ethersproject/address'
 
+const SIGNATURE_LENGTH = 65
+
 export function isSameAddress(address1: string, address2: string): boolean {
   // check for empty address to avoid getAddress() from throwing
-  return !!address1 && !!address2 && ethers.utils.getAddress(address1) === ethers.utils.getAddress(address2)
+  return !!address1 && !!address2 && utils.getAddress(address1) === utils.getAddress(address2)
 }
 
 // Looks up possible ENS for given 0x address
@@ -35,4 +37,8 @@ export function renderAddressOrHash(address: string, digitsToShow?: number): str
     return `${begin}…${end}`
   }
   return address
+}
+
+export function isValidSignature(signature: string): boolean {
+  return utils.isHexString(signature, SIGNATURE_LENGTH)
 }
