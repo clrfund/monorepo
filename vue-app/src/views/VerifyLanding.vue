@@ -83,6 +83,7 @@ import { useAppStore, useUserStore } from '@/stores'
 import { useRouter } from 'vue-router'
 import { useModal } from 'vue-final-modal'
 import SignatureModal from '@/components/SignatureModal.vue'
+import { ASSERT_NOT_CONNECTED_WALLET, assert } from '@/utils/assert'
 
 import { formatDateWithOptions } from '@/utils/dates'
 import type { DateTime } from 'luxon'
@@ -133,10 +134,11 @@ async function promptSignagure() {
 }
 
 function handleBrightIdButtonClicked() {
-  if (currentUser.value && !currentUser.value.encryptionKey) {
-    promptSignagure()
-  } else {
+  assert(currentUser.value, ASSERT_NOT_CONNECTED_WALLET)
+  if (currentUser.value.encryptionKey) {
     gotoVerify()
+  } else {
+    promptSignagure()
   }
 }
 
