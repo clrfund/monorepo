@@ -20,7 +20,7 @@
       </div>
       <div class="mobile mb2">
         <add-to-cart-button v-if="shouldShowCartInput && hasContributeBtn()" :project="project" />
-        <claim-button :project="project" />
+        <claim-button v-if="isCurrentRound" :project="project" />
         <p v-if="hasUserContributed && !canUserReallocate">
           {{ $t('projectProfile.p1') }}
         </p>

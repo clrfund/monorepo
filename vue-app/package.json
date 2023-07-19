@@ -1,6 +1,6 @@
 {
   "name": "@clrfund/vue-app",
-  "version": "4.2.3",
+  "version": "4.2.4",
   "private": true,
   "license": "GPL-3.0",
   "scripts": {
@@ -22,12 +22,14 @@
     ]
   },
   "dependencies": {
+    "@clrfund/maci-utils": "^0.0.1",
     "@kleros/gtcr-encoder": "1.4.0",
     "@openfonts/inter_all": "^1.0.2",
     "@vuelidate/core": "^2.0.0",
     "@vuelidate/validators": "^2.0.0",
     "@vueuse/core": "^9.6.0",
-    "@walletconnect/web3-provider": "^1.8.0",
+    "@walletconnect/ethereum-provider": "^2.9.0",
+    "@walletconnect/modal": "^2.6.0",
     "crypto-js": "^4.1.1",
     "ethereum-blockies-base64": "^1.0.2",
     "ethers": "^5.7.2",
@@ -48,8 +50,7 @@
     "vue-final-modal": "^4.3.0",
     "vue-i18n": "9",
     "vue-meta": "3.0.0-alpha.8",
-    "vue-router": "4",
-    "@clrfund/maci-utils": "^0.0.1"
+    "vue-router": "4"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^3.3.0",

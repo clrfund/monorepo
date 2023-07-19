@@ -214,9 +214,9 @@ export async function getLeaderboardProject(
   const project = data.projects.find(project => project.id === projectId)
 
   const metadata = project.metadata
-  const thumbnailHash = metadata.imageHash
+  const thumbnailHash = metadata.thumbnailImageHash || metadata.imageHash
   const thumbnailImageUrl = thumbnailHash ? `${ipfsGatewayUrl}/ipfs/${thumbnailHash}` : undefined
-  const bannerHash = metadata.imageHash
+  const bannerHash = metadata.bannerImageHash || metadata.imageHash
   const bannerImageUrl = bannerHash ? `${ipfsGatewayUrl}/ipfs/${bannerHash}` : undefined
 
   return {
@@ -225,6 +225,16 @@ export async function getLeaderboardProject(
     name: project.name,
     description: metadata.description,
     tagline: metadata.tagline,
+    category: metadata.category,
+    problemSpace: metadata.problemSpace,
+    plans: metadata.plans,
+    teamName: metadata.teamName,
+    teamDescription: metadata.teamDescription,
+    githubUrl: metadata.githubUrl,
+    radicleUrl: metadata.radicleUrl,
+    websiteUrl: metadata.websiteUrl,
+    twitterUrl: metadata.twitterUrl,
+    discordUrl: metadata.discordUrl,
     thumbnailImageUrl,
     bannerImageUrl,
     index: project.recipientIndex,
