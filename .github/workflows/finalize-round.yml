@@ -1,10 +1,19 @@
 name: Finalize a test round
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      branch_name:
+        description: 'Clrfund branch name'
+        required: true
+        default: 'develop'
+      subgraph_name:
+        description: 'Clrfund subgraph name'
+        required: true
+        default: 'yuetloo/clrfund-dev'
 
 env:
   NODE_VERSION: 16.x
-  SUBGRPAH_URL: "https://api.thegraph.com/subgraphs/name/clrfund/clrfund-arbitrum-goerli"
   NETWORK: "arbitrum-goerli"
   COORDINATOR_ETH_PK: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_WALLET_PRIVATE_KEY }}
   COORDINATOR_PK: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_MACI_PRIVATE_KEY }}
@@ -33,6 +42,8 @@ jobs:
         cargo install zkutil --version 0.3.2
     - name: Checkout source code
       uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.inputs.branch_name }}
     - name: Download batch 64 params
       run: |
         ls -la $GITHUB_WORKSPACE
@@ -42,6 +53,8 @@ jobs:
         yarn && yarn build
     - name: Run finalize scripts
       run: |
+        export SUBGRPAH_URL="https://api.thegraph.com/subgraphs/name/${{ github.event.inputs.subgraph_name }}"
+        echo $SUBGRAPH_URL
         export NODE_CONFIG=$(node -e "const snarkParamsPath=process.env.GITHUB_WORKSPACE + '/params'; console.log(JSON.stringify({ snarkParamsPath }));")
         export ROUND=$(curl -X POST -d '{"query":"{fundingRoundFactories {id currentRound {id maci}}}"}' $SUBGRPAH_URL)
         export FACTORY_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.fundingRoundFactories[0].id)')
