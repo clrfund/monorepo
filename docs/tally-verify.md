@@ -243,9 +243,10 @@ After finalizing the round, enable the leaderboard view in the vue-app by export
 ```sh
 cd contracts
 
-yarn hardhat fetch-round --output-dir ../vue-app/src/rounds --network xdai --round-address <round address>
+yarn hardhat fetch-round --output-dir ../vue-app/src/rounds --network xdai --round-address <round address> --operator <operator>
 
 ```
+3) Build and deploy the app
 
 
 
