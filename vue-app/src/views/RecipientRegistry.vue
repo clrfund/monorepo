@@ -192,8 +192,12 @@ function isExecuted(request: Request): boolean {
   return request.status === RequestStatus.Executed
 }
 
+function isPendingRemoval(request: Request): boolean {
+  return request.status === RequestStatus.PendingRemoval
+}
+
 function hasProjectLink(request: Request): boolean {
-  return request.type === RequestType.Registration && request.status === RequestStatus.Executed
+  return isExecuted(request) || isPendingRemoval(request)
 }
 
 async function approve(request: Request): Promise<void> {

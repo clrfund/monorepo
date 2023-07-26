@@ -37,15 +37,33 @@ export function handleRequestResolved(event: RequestResolved): void {
   let recipientId = event.params._recipientId.toHexString()
   let recipient = new Recipient(recipientId)
 
-  recipient.requestType = BigInt.fromI32(event.params._type).toString()
-  recipient.requester = event.transaction.from.toHexString()
-  recipient.submissionTime = event.params._timestamp.toString()
-  recipient.rejected = event.params._rejected
+  recipient.recipientRegistry = recipientRegistryId
+  recipient.requestResolvedHash = event.transaction.hash
   // verified means the request is resolved
   recipient.verified = true
-  recipient.recipientRegistry = recipientRegistryId
-  recipient.recipientIndex = event.params._recipientIndex
-  recipient.requestResolvedHash = event.transaction.hash
+
+  if (event.params._rejected) {
+    // this is a challengeRequest
+    if (event.params._type == 0) {
+      // reject add request
+      recipient.rejected = event.params._rejected
+      recipient.recipientIndex = event.params._recipientIndex
+      recipient.requester = event.transaction.from.toHexString()
+      recipient.submissionTime = event.params._timestamp.toString()
+    } else {
+      // reject delete request - revert request type back to 'Add'
+      // to clear the 'Pending removal' status
+      recipient.requestType = '0'
+    }
+  } else {
+    // this is a executeRequest
+    recipient.requestType = BigInt.fromI32(event.params._type).toString()
+    recipient.recipientIndex = event.params._recipientIndex
+    // reject the recipient if it was a 'delete recipient request'
+    recipient.rejected = event.params._rejected
+    recipient.requester = event.transaction.from.toHexString()
+    recipient.submissionTime = event.params._timestamp.toString()
+  }
 
   recipient.save()
 }
@@ -57,11 +75,15 @@ export function handleRequestSubmitted(event: RequestSubmitted): void {
   //TODO: create RecipientRegistry entity here if it does not exist.
 
   let recipientId = event.params._recipientId.toHexString()
+  let recipient = new Recipient(recipientId)
+  recipient.recipientRegistry = recipientRegistryId
+  recipient.submissionTime = event.params._timestamp.toString()
+  recipient.lastUpdatedAt = event.block.timestamp.toString()
 
   if (event.params._type == 0) {
     // add recipient request
-    let recipient = new Recipient(recipientId)
-    recipient.recipientRegistry = recipientRegistryId
+    recipient.requestType = BigInt.fromI32(event.params._type).toString()
+    recipient.recipientIndex = null
     recipient.recipientAddress = event.params._recipient
     recipient.requester = event.transaction.from.toHexString()
     recipient.deposit = event.transaction.value
@@ -70,23 +92,29 @@ export function handleRequestSubmitted(event: RequestSubmitted): void {
     // requestSubmittedHash stores the transaction hash for add recipient request
     // the UI uses it to look up the newly added recipient record
     recipient.requestSubmittedHash = event.transaction.hash
-    recipient.requestType = BigInt.fromI32(event.params._type).toString()
-    recipient.submissionTime = event.params._timestamp.toString()
+
+    // reset these fields in case the same recipient was added and removed
+    // in which case these fields could hold values for previous record
+    recipient.requestResolvedHash = null
     recipient.verified = false
-    recipient.save()
+    recipient.rejected = false
+    recipient.createdAt = event.block.timestamp.toString()
+  } else if (event.params._type == 1) {
+    // mark the record as pending delete
+    recipient.requestType = BigInt.fromI32(event.params._type).toString()
+    recipient.verified = false
+    log.info('handleRequestSubmitted - delete id {}', [recipientId])
   } else {
-    // deleteRecipient request
-    // no need to update metadata and recipient address as they are not available for delete requests
-    let recipient = Recipient.load(recipientId)
-    if (recipient == null) {
-      // this should not happen, record the transaction hash for troubleshooting
-      recipient = new Recipient(recipientId)
-      recipient.requestSubmittedHash = event.transaction.hash
-    }
-    recipient.recipientRegistry = recipientRegistryId
+    // don't know how to process this request
     recipient.requestType = BigInt.fromI32(event.params._type).toString()
-    recipient.submissionTime = event.params._timestamp.toString()
-    recipient.verified = false
-    recipient.save()
+    log.warning(
+      'handleRequestSubmitted - ignore unknown type {} from txHash {}',
+      [
+        BigInt.fromI32(event.params._type).toString(),
+        event.transaction.hash.toString(),
+      ]
+    )
   }
+
+  recipient.save()
 }
