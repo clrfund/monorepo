@@ -27,12 +27,20 @@ Note, all the links provided below are from our test site for testing and illust
   - Verify with BrightID
   - Goto https://clrfund-testnet.netlify.app/#/verify to get registered
 
-  ![](gifs/register.gif)
+  
+
+https://github.com/clrfund/monorepo/assets/18424940/4db99ce5-ae49-4efd-a443-11e3ea131d47
+
+
 
 2. Contribute to projects
   - Goto https://clrfund-testnet.netlify.app/#/projects to contribute to projects
 
-  ![](gifs/contribute.gif)
+  
+
+https://github.com/clrfund/monorepo/assets/18424940/68d3f8ef-319d-405f-a246-6716d1482f3c
+
+
 
 3. Reallocate contributions
   - Goto https://clrfund-testnet.netlify.app/#/projects to change your contribution allocations
