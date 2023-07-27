@@ -25,19 +25,19 @@ Note, all the links provided below are from our test site for testing and illust
 ## How to contribute to projects
 1. Register as a contributor
   - Verify with BrightID
-  - Goto https://clrfund-testnet.netlify.app/#/verify to get verified
+  - Goto https://clrfund-testnet.netlify.app/#/verify to get registered
 
-  https://raw.githubusercontent.com/clrfund/monorepo/clrfund-testnet/docs/videos/register.mp4
+  ![](gifs/register.gif)
 
 2. Contribute to projects
   - Goto https://clrfund-testnet.netlify.app/#/projects to contribute to projects
 
-  ![](docs/gifs/contribute.gif)
+  ![](gifs/contribute.gif)
 
 3. Reallocate contributions
   - Goto https://clrfund-testnet.netlify.app/#/projects to change your contribution allocations
 
-  https://raw.githubusercontent.com/clrfund/monorepo/clrfund-testnet/docs/videos/reallocate.mp4
+  ![](gifs/reallocate.gif)
 
 ## Bug report
 You can report any issues with one of the following ways:
