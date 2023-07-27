@@ -32,8 +32,7 @@ Note, all the links provided below are from our test site for testing and illust
 2. Contribute to projects
   - Goto https://clrfund-testnet.netlify.app/#/projects to contribute to projects
 
-  https://raw.githubusercontent.com/clrfund/monorepo/clrfund-testnet/docs/videos/contribute.mp4
-
+  ![](docs/contribute.gif)
 
 3. Reallocate contributions
   - Goto https://clrfund-testnet.netlify.app/#/projects to change your contribution allocations
