@@ -32,7 +32,7 @@ Note, all the links provided below are from our test site for testing and illust
 2. Contribute to projects
   - Goto https://clrfund-testnet.netlify.app/#/projects to contribute to projects
 
-  ![](docs/contribute.gif)
+  ![](docs/gifs/contribute.gif)
 
 3. Reallocate contributions
   - Goto https://clrfund-testnet.netlify.app/#/projects to change your contribution allocations
