@@ -37,7 +37,11 @@ Note, all the links provided below are from our test site for testing and illust
 3. Reallocate contributions
   - Goto https://clrfund-testnet.netlify.app/#/projects to change your contribution allocations
 
-  ![](gifs/reallocate.gif)
+  
+
+https://github.com/clrfund/monorepo/assets/18424940/43188b69-9ece-4c2e-9ecc-babc1cdc09a3
+
+
 
 ## Bug report
 You can report any issues with one of the following ways:
