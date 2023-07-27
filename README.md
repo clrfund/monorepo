@@ -55,6 +55,7 @@ In a future version, we plan to address this by routing ETH and token contributi
 - [Deployment](docs/deployment.md)
 - [Providing matching funds](docs/funding-source.md)
 - [How to tally votes and verify results](docs/tally-verify.md)
+- [How to donate to projects](docs/howto-use-app.md)
 - [Running the subgraph](docs/subgraph.md)
 - [Sitemap](docs/sitemap.md)
 - [Website theme and customization](docs/theme.md)
