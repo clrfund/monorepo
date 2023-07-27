@@ -9,7 +9,7 @@
 
 2. Contribution tokens
 
-  > For testing,the test DAI tokens can be minted using the `mint()` function from the [etherscan contract page](https://goerli.arbiscan.io//address/0x65bc8dd04808d99cf8aa6749f128d55c2051edde#writeContract) with the follow inputs:
+  > For testing, mint the DAI tokens using the `mint()` function from the [etherscan contract page](https://goerli.arbiscan.io//address/0x65bc8dd04808d99cf8aa6749f128d55c2051edde#writeContract) with the follow inputs:
   
   - usr (address): Your wallet address
   - wad (uint256): How many DAI tokens to mint, e.g. 20000000000000000000 is 20 DAI
@@ -17,14 +17,14 @@
 Note, all the links provided below are from our test site for testing and illustration purposes only. For production, please replace https://clrfund-testnet.netlify.app with https://clr.fund
 
 ## How to add your project as a fund recipient
-1. Submit your project
-  - Goto https://clrfund-testnet.netlify.app/#/join to submit your application
+
+  - Goto https://clrfund-testnet.netlify.app/#/join to submit your project
   - Once your project is approved, it will show up on the project page and start receiving donations
   - To check your project status, goto https://clrfund-testnet.netlify.app/#/recipients
 
 ## How to contribute to projects
 1. Register as a contributor
-  - Verify with BrightID
+  - Verify with [BrightID](https://www.brightid.org)
   - Goto https://clrfund-testnet.netlify.app/#/verify to get registered
 
   
