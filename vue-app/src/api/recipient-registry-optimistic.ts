@@ -52,6 +52,7 @@ export enum RequestStatus {
   Accepted = 'Accepted',
   Rejected = 'Rejected',
   Executed = 'Live',
+  PendingRemoval = 'Pending removal',
   Removed = 'Removed',
 }
 
@@ -131,6 +132,10 @@ export async function getRequests(registryInfo: RegistryInfo, registryAddress: s
 
     if (recipient.verified) {
       request.status = requestType === RequestTypeCode.Removal ? RequestStatus.Removed : RequestStatus.Executed
+    } else {
+      if (requestType === RequestTypeCode.Removal) {
+        request.status = RequestStatus.PendingRemoval
+      }
     }
 
     // In case there are two requests submissions events, we always prioritize
@@ -245,14 +250,19 @@ export async function getProjects(registryAddress: string, startTime?: number, e
       }
 
       if (requestType === RequestTypeCode.Removal) {
-        const removedAt = submissionTime
-        if (!startTime || removedAt <= startTime) {
-          // Start time not specified
-          // or recipient had been removed before start time
-          project.isHidden = true
+        if (recipient.verified) {
+          const removedAt = submissionTime
+          if (!startTime || removedAt <= startTime) {
+            // Start time not specified
+            // or recipient had been removed before start time
+            project.isHidden = true
+          } else {
+            // Disallow contributions to removed recipient, but don't hide it
+            project.isLocked = true
+          }
         } else {
-          // Disallow contributions to removed recipient, but don't hide it
-          project.isLocked = true
+          // project is not removed yet, keep the index so that it can still receive contributions
+          project.index = recipient.recipientIndex
         }
       }
 
@@ -307,9 +317,14 @@ export async function getProject(recipientId: string, filter = true): Promise<Pr
     }
   }
 
-  if (requestType === RequestTypeCode.Removal && recipient.verified) {
-    // Disallow contributions to removed recipient
-    project.isLocked = true
+  if (requestType === RequestTypeCode.Removal) {
+    if (recipient.verified) {
+      // Disallow contributions to removed recipient
+      project.isLocked = true
+    } else {
+      // project is not removed yet, keep the index so that it can still receive contributions
+      project.index = recipient.recipientIndex
+    }
   }
   return project
 }
