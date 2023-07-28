@@ -1,6 +1,6 @@
 import sdk from '@/graphql/sdk'
 import extraRounds from '@/rounds/rounds.json'
-import { chain } from './core'
+import { chain, voidedRounds } from './core'
 
 export interface Round {
   index: number
@@ -8,6 +8,10 @@ export interface Round {
   network?: string
   hasLeaderboard: boolean
   startTime: number
+}
+
+export function isVoidedRound(address: string): boolean {
+  return voidedRounds.has(address.toLowerCase())
 }
 
 function toRoundId({ network, address }: { network: string; address: string }): string {
@@ -26,16 +30,14 @@ export async function getRounds(): Promise<Round[]> {
 
   const leaderboardRounds = new Set(rounds.map(r => toRoundId({ network: r.network || '', address: r.address })))
 
-  const firstRound = Number(import.meta.env.VITE_FIRST_ROUND || 0)
+  for (const fundingRound of data.fundingRounds) {
+    const address = fundingRound.id
 
-  for (let roundIndex = 0; roundIndex < data.fundingRounds.length; roundIndex++) {
-    if (roundIndex < firstRound) {
+    if (isVoidedRound(address)) {
       // filter out cancelled or test rounds
       continue
     }
 
-    const fundingRound = data.fundingRounds[roundIndex]
-    const address = fundingRound.id
     const isLeaderboardRound = leaderboardRounds.has(toRoundId({ network: chain.label, address }))
     if (!isLeaderboardRound) {
       rounds.push({
