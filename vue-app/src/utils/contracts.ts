@@ -43,14 +43,14 @@ export async function waitForTransaction(
  */
 export async function waitForTransactionAndCheck(
   pendingTransaction: Promise<TransactionResponse>,
-  checkFn: (hash: string) => Promise<boolean>,
+  checkFn: (receipt: TransactionReceipt) => Promise<boolean>,
   onTransactionHash?: (hash: string) => void,
 ): Promise<TransactionReceipt> {
   const receipt = await waitForTransaction(pendingTransaction, onTransactionHash)
 
   return new Promise(resolve => {
     async function checkAndWait(depth = 0) {
-      if (await checkFn(receipt.transactionHash)) {
+      if (await checkFn(receipt)) {
         resolve(receipt)
       } else {
         if (depth > MAX_WAIT_DEPTH) {

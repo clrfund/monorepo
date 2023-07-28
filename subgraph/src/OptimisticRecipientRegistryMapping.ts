@@ -5,7 +5,7 @@ import {
   RequestSubmitted,
 } from '../generated/OptimisticRecipientRegistry/OptimisticRecipientRegistry'
 
-import { Recipient } from '../generated/schema'
+import { Recipient, RecipientRegistry } from '../generated/schema'
 
 // It is also possible to access smart contracts from mappings. For
 // example, the contract that has emitted the event can be connected to
@@ -31,9 +31,18 @@ export function handleOwnershipTransferred(event: OwnershipTransferred): void {
 }
 
 export function handleRequestResolved(event: RequestResolved): void {
-  let recipientRegistryId = event.address.toHexString()
-
   log.info('handleRequestResolved', [])
+
+  let recipientRegistryId = event.address.toHexString()
+  let recipientRegistry = RecipientRegistry.load(recipientRegistryId)
+  if (!recipientRegistry) {
+    log.warning(
+      'handleRequestResolved - ignore unknown recipient registry {} hash {}',
+      [event.address.toHexString(), event.transaction.hash.toHex()]
+    )
+    return
+  }
+
   let recipientId = event.params._recipientId.toHexString()
   let recipient = new Recipient(recipientId)
 
@@ -72,7 +81,14 @@ export function handleRequestSubmitted(event: RequestSubmitted): void {
   log.info('handleRequestSubmitted', [])
   let recipientRegistryId = event.address.toHexString()
 
-  //TODO: create RecipientRegistry entity here if it does not exist.
+  let recipientRegistery = RecipientRegistry.load(recipientRegistryId)
+  if (!recipientRegistery) {
+    log.warning(
+      'handleRequestSubmitted - ignore unknown recipient registry {} hash {}',
+      [event.address.toHexString(), event.transaction.hash.toHex()]
+    )
+    return
+  }
 
   let recipientId = event.params._recipientId.toHexString()
   let recipient = new Recipient(recipientId)
