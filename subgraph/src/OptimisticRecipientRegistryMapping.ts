@@ -104,9 +104,6 @@ export function handleRequestSubmitted(event: RequestSubmitted): void {
     recipient.requester = event.transaction.from.toHexString()
     recipient.deposit = event.transaction.value
     recipient.recipientMetadata = event.params._metadata
-
-    // requestSubmittedHash stores the transaction hash for add recipient request
-    // the UI uses it to look up the newly added recipient record
     recipient.requestSubmittedHash = event.transaction.hash
 
     // reset these fields in case the same recipient was added and removed
