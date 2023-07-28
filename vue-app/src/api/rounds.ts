@@ -1,6 +1,6 @@
 import sdk from '@/graphql/sdk'
 import extraRounds from '@/rounds/rounds.json'
-import { chain } from './core'
+import { chain, voidedRounds } from './core'
 
 export interface Round {
   index: number
@@ -10,6 +10,10 @@ export interface Round {
   startTime: number
 }
 
+export function isVoidedRound(address: string): boolean {
+  return voidedRounds.has(address.toLowerCase())
+}
+
 function toRoundId({ network, address }: { network: string; address: string }): string {
   return `${network}-${address}`.toLowerCase()
 }
@@ -17,8 +21,13 @@ function toRoundId({ network, address }: { network: string; address: string }): 
 //TODO: update to take factory address as a parameter
 export async function getRounds(): Promise<Round[]> {
   //TODO: updateto pass factory address as a parameter, default to env. variable
-  //NOTE: why not instantiate the sdk here?
-  const data = await sdk.GetRounds()
+
+  let data
+  try {
+    data = await sdk.GetRounds()
+  } catch {
+    return []
+  }
 
   const rounds: Round[] = extraRounds.map(({ address, network, startTime }, index): Round => {
     return { index, address, network, hasLeaderboard: true, startTime }
@@ -26,16 +35,14 @@ export async function getRounds(): Promise<Round[]> {
 
   const leaderboardRounds = new Set(rounds.map(r => toRoundId({ network: r.network || '', address: r.address })))
 
-  const firstRound = Number(import.meta.env.VITE_FIRST_ROUND || 0)
+  for (const fundingRound of data.fundingRounds) {
+    const address = fundingRound.id
 
-  for (let roundIndex = 0; roundIndex < data.fundingRounds.length; roundIndex++) {
-    if (roundIndex < firstRound) {
+    if (isVoidedRound(address)) {
       // filter out cancelled or test rounds
       continue
     }
 
-    const fundingRound = data.fundingRounds[roundIndex]
-    const address = fundingRound.id
     const isLeaderboardRound = leaderboardRounds.has(toRoundId({ network: chain.label, address }))
     if (!isLeaderboardRound) {
       rounds.push({

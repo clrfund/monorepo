@@ -177,6 +177,7 @@ import ImageResponsive from '@/components/ImageResponsive.vue'
 import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { getAssetsUrl } from '@/utils/url'
+import { isSameAddress } from '@/utils/accounts'
 
 const appStore = useAppStore()
 const {
@@ -200,7 +201,7 @@ const leaderboardRoute = computed(() => {
   }
 
   const roundAddress = currentRoundAddress.value || ''
-  const leaderboard = leaderboardRounds.find(round => round.address === roundAddress)
+  const leaderboard = leaderboardRounds.find(round => isSameAddress(round.address, roundAddress))
   return leaderboard ? { name: 'leaderboard', params: { network: leaderboard.network, address: roundAddress } } : null
 })
 
