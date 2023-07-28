@@ -21,8 +21,13 @@ function toRoundId({ network, address }: { network: string; address: string }): 
 //TODO: update to take factory address as a parameter
 export async function getRounds(): Promise<Round[]> {
   //TODO: updateto pass factory address as a parameter, default to env. variable
-  //NOTE: why not instantiate the sdk here?
-  const data = await sdk.GetRounds()
+
+  let data
+  try {
+    data = await sdk.GetRounds()
+  } catch {
+    return []
+  }
 
   const rounds: Round[] = extraRounds.map(({ address, network, startTime }, index): Round => {
     return { index, address, network, hasLeaderboard: true, startTime }
