@@ -10,8 +10,8 @@ export async function getIpfsHash(object: any): Promise<string> {
 }
 
 export class Ipfs {
-  static async fetchJson(hash: string): Promise<any> {
-    const url = `${IPFS_BASE_URL}/ipfs/${hash}`
+  static async fetchJson(hash: string, gatewayUrl?: string): Promise<any> {
+    const url = `${gatewayUrl || IPFS_BASE_URL}/ipfs/${hash}`
     const result = utils.fetchJson(url)
     return result
   }
