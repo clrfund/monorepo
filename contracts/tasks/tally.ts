@@ -217,7 +217,7 @@ task('tally', 'Tally votes for the current round')
         startBlock,
         numBlocksPerRequest,
         batchSize,
-        voteOptionTreeDepth: voteOptionTreeDepth.toNumber(),
+        voteOptionTreeDepth: Number(voteOptionTreeDepth),
         logsFile,
         providerUrl,
         maciStateFile: maciStateFile
