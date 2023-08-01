@@ -146,7 +146,8 @@ task('tally', 'Tally votes for the current round')
     ) => {
       let fundingRoundAddress = roundAddress
       let coordinatorMaciPrivKey = process.env.COORDINATOR_PK || ''
-      let coordinatorEthPrivKey = process.env.COORDINATOR_ETH_PK || ''
+      let coordinatorEthPrivKey =
+        process.env.COORDINATOR_ETH_PK || process.env.WALLET_PRIVATE_KEY || ''
       const providerUrl = (network.config as any).url
 
       if (network.name === 'localhost') {
@@ -161,19 +162,19 @@ task('tally', 'Tally votes for the current round')
       } else {
         if (!coordinatorEthPrivKey) {
           throw Error(
-            'Please set the environment variable COORDINATOR_ETH_PK, the coordinator private key'
+            `Please set the environment variable COORDINATOR_ETH_PK, the coordinator's wallet private key`
           )
         }
 
         if (!coordinatorMaciPrivKey) {
           throw Error(
-            'Please set the environment variable COORDINATOR_PK, the MACI private key'
+            `Please set the environment variable COORDINATOR_PK, the coordinator's MACI private key`
           )
         }
       }
 
       if (!fundingRoundAddress) {
-        throw Error('round-address is required')
+        throw Error(`The '--round-address' parameter is required`)
       }
 
       console.log('Funding round address: ', fundingRoundAddress)
