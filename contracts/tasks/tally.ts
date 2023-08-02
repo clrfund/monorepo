@@ -6,6 +6,25 @@ import { genProofs, proveOnChain, fetchLogs } from 'maci-cli'
 import { getIpfsHash } from '../utils/ipfs'
 import { addTallyResultsBatch } from '../utils/maci'
 
+/**
+ * Tally votes for the specified funding round. This task can be rerun by
+ * passing in additional parameters: --maci-logs, --maci-state-file
+ *
+ * Make sure to set the following environment variables in the .env file
+ * if not running test using the localhost network
+ * 1) COORDINATOR_ETH_PK - coordinator's wallet private key to interact with contracts
+ * 2) COORDINATOR_PK - coordinator's MACI private key to decrypt messages
+ *
+ * Sample usage:
+ *
+ *  yarn hardhat tally --round-address <address> --start-block <maci-start-block> --network <network>
+ *
+ * To rerun:
+ *
+ *  yarn hardhat tally --round-address <address> --network <network> \
+ *    --maci-logs <maci-log-files> --maci-state-file <maci-state-file>
+ */
+
 type TallyArgs = {
   fundingRound: Contract
   coordinatorMaciPrivKey: string
