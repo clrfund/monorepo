@@ -3,7 +3,7 @@ import fs from 'fs'
 import { Contract, Wallet } from 'ethers'
 import { genProofs, proveOnChain, fetchLogs } from 'maci-cli'
 
-import { getIpfsHash, Ipfs } from '../utils/ipfs'
+import { getIpfsHash } from '../utils/ipfs'
 import { addTallyResultsBatch } from '../utils/maci'
 
 type TallyArgs = {
@@ -70,9 +70,12 @@ async function main(args: TallyArgs) {
     await fundingRound.publishTallyHash(tallyHash)
     console.log(`Tally hash is ${tallyHash}`)
   } else {
-    // read the tally file from ipfs
+    // read the tally.json file
+    console.log(`Tally hash is ${publishedTallyHash}`)
     try {
-      tally = await Ipfs.fetchJson(publishedTallyHash)
+      console.log(`Reading tally.json file...`)
+      const tallyStr = fs.readFileSync('tally.json').toString()
+      tally = JSON.parse(tallyStr)
     } catch (err) {
       console.log('Failed to get tally file', publishedTallyHash, err)
       throw err
@@ -125,12 +128,6 @@ task('tally', 'Tally votes for the current round')
   .addOptionalParam(
     'maciStateFile',
     'The MACI state file, genProof will continue from it last run'
-  )
-  .addOptionalParam(
-    'ipfsGateway',
-    'The IPFS gateway url',
-    'https://ipfs.io',
-    types.string
   )
   .setAction(
     async (
