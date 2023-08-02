@@ -24,6 +24,9 @@ cd circuits/params
 chmod u+x qvt32 batchUst32
 ```
 
+Or, run the script monorepo/.github/scripts/download-batch64-params.sh to download the parameter files.
+
+
 The contract deployment scripts, `deploy*.ts` in the [clrfund repository](https://github.com/clrfund/monorepo/tree/develop/contracts/scripts) currently use the `batch 64` circuits, if you want to use a smaller size circuits, you can find them [here](../contracts/contracts/snarkVerifiers/README.md). You will need to update the deploy script to call `deployMaciFactory()` with your circuit and redeploy the contracts.
 
 ```
@@ -166,25 +169,33 @@ cd snark-params
 chmod u+x qvt32 batchUst32
 ```
 
+Or, run the script monorepo/.github/scripts/download-batch64-params.sh to download the parameter files.
+
+
+
 Set the path to downloaded parameter files and also the path to `zkutil` binary (if needed):
 
 ```
-export NODE_CONFIG='{"snarkParamsPath": "../../../contracts/snark-params/", "zkutil_bin": "/usr/bin/zkutil"}'
+export NODE_CONFIG='{"snarkParamsPath": "path-to/snark-params/", "zkutil_bin": "/usr/bin/zkutil"}'
 ```
 
 Set the following env vars in `.env`:
 
 ```
-ROUND_ADDRESS=<funding-round-address>
+# private key for decrypting messages
 COORDINATOR_PK=<coordinator-private-key>
+
+# private key for interacting with contracts
 COORDINATOR_ETH_PK=<eth-private-key>
 ```
 
 Decrypt messages and tally the votes:
 
 ```
-yarn hardhat run --network {network} scripts/tally.ts
+yarn hardhat tally --network {network} --round-address {funding-round-address} --start-block {maci-contract-start-block}
 ```
+
+If there's error and the tally task was stopped prematurely, it can be resumed by passing 2 additional parameters, '--maci-logs' and/or '--maci-state-file', if the files were generated.
 
 Result will be saved to `tally.json` file, which must then be published via IPFS.
 
