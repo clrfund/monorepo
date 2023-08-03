@@ -1,5 +1,5 @@
 <template>
-  <vue-final-modal class="modal-container">
+  <vue-final-modal class="modal-container" background="interactive">
     <div class="modal-body">
       <div v-if="step === 1">
         <h3>{{ $t('withdrawalModal.h3_1') }}</h3>
