@@ -1,6 +1,6 @@
 {
   "name": "@clrfund/contracts",
-  "version": "4.2.4",
+  "version": "4.2.5",
   "license": "GPL-3.0",
   "scripts": {
     "hardhat": "hardhat",
@@ -11,7 +11,7 @@
     "deployTestRound:local": "hardhat run --network localhost scripts/deployTestRound.ts",
     "contribute:local": "hardhat run --network localhost scripts/contribute.ts",
     "vote:local": "hardhat run --network localhost scripts/vote.ts",
-    "tally:local": "hardhat run --network localhost scripts/tally.ts",
+    "tally:local": "hardhat --network localhost tally",
     "finalize:local": "hardhat run --network localhost scripts/finalize.ts",
     "claim:local": "hardhat run --network localhost scripts/claim.ts",
     "test": "hardhat test",

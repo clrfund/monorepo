@@ -131,7 +131,6 @@ import CopyButton from '@/components/CopyButton.vue'
 
 import { chainId, exportBatchSize, recipientRegistryType } from '@/api/core'
 import {
-  RequestType,
   RequestStatus,
   type Request,
   getRequests,
