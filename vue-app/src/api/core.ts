@@ -110,3 +110,8 @@ export const recipientJoinDeadlineConfig = deadline?.isValid ? deadline : null
 
 // make sure walletconnect qrcode modal is not blocked by the Wallet Modal
 export const walletConnectZIndex = import.meta.env.VITE_WALLET_CONNECT_Z_INDEX || '1500'
+
+// use this to filter out rounds that should not be displayed on the app
+export const voidedRounds = new Set(
+  (import.meta.env.VITE_VOIDED_ROUNDS || '').split(',').map(round => round.toLowerCase()),
+)
