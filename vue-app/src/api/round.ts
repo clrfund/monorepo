@@ -5,7 +5,7 @@ import { PubKey } from '@clrfund/maci-utils'
 import { FundingRound, MACI } from './abi'
 import { provider, factory } from './core'
 import { getTotalContributed } from './contributions'
-import { getRounds } from './rounds'
+import { isVoidedRound } from './rounds'
 import sdk from '@/graphql/sdk'
 
 import { isSameAddress } from '@/utils/accounts'
@@ -59,13 +59,8 @@ export async function getCurrentRound(): Promise<string | null> {
   if (fundingRoundAddress === '0x0000000000000000000000000000000000000000') {
     return null
   }
-  const rounds = await getRounds()
-  const roundIndex = rounds.findIndex(round => isSameAddress(round.address, fundingRoundAddress))
 
-  if (roundIndex >= Number(import.meta.env.VITE_FIRST_ROUND || 0)) {
-    return fundingRoundAddress
-  }
-  return null
+  return isVoidedRound(fundingRoundAddress) ? null : fundingRoundAddress
 }
 
 function toRoundInfo(data: any, network: string): RoundInfo {

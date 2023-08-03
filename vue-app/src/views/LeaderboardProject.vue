@@ -1,10 +1,13 @@
 <template>
   <div>
     <loader v-if="isLoading"></loader>
-    <div :class="`grid`" v-if="project">
+    <div :class="`grid ${showCartPanel ? 'cart-open' : 'cart-closed'}`" v-if="project">
       <img class="project-image banner" :src="project.bannerImageUrl" :alt="project.name" />
       <project-profile class="details" :project="project" :previewMode="false" />
       <div class="sticky-column">
+        <div class="desktop">
+          <claim-button v-if="showClaimButton" :project="project" />
+        </div>
         <link-box :project="project" />
       </div>
     </div>
@@ -23,6 +26,10 @@ import { useRoute, useRouter } from 'vue-router'
 import { operator } from '@/api/core'
 import { getLeaderboardProject } from '@/api/projects'
 import { getRouteParamValue } from '@/utils/route'
+import { useAppStore } from '@/stores'
+
+const appStore = useAppStore()
+const { isAppReady, showCartPanel } = storeToRefs(appStore)
 
 const route = useRoute()
 const router = useRouter()
@@ -63,6 +70,8 @@ useMeta(
     }
   }),
 )
+
+const showClaimButton = computed(() => isAppReady.value && appStore.isCurrentRound(roundAddress.value))
 </script>
 
 <style scoped lang="scss">

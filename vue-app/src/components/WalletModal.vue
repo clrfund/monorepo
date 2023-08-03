@@ -1,5 +1,5 @@
 <template>
-  <vue-final-modal class="modal-container">
+  <vue-final-modal class="modal-container" background="interactive">
     <div v-if="connectingWallet" class="modal-body loading">
       <loader />
       <p>{{ $t('walletModal.p1') }}</p>
