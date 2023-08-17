@@ -111,6 +111,9 @@ export const recipientJoinDeadlineConfig = deadline?.isValid ? deadline : null
 export const walletConnectZIndex = import.meta.env.VITE_WALLET_CONNECT_Z_INDEX || '1500'
 
 // use this to filter out rounds that should not be displayed on the app
+// hardcode this for spaggetheth as it failed to deploy on neltify due to env vars > 4K limit
 export const voidedRounds = new Set(
-  (import.meta.env.VITE_VOIDED_ROUNDS || '').split(',').map(round => round.toLowerCase()),
+  (import.meta.env.VITE_VOIDED_ROUNDS || '0x1a039a6850ab7046b8a87c38855f03ea6d4e5040')
+    .split(',')
+    .map(round => round.toLowerCase()),
 )
