@@ -16312,10 +16312,10 @@ solhint@^3.3.2:
   optionalDependencies:
     prettier "^2.8.3"
 
-solidity-rlp@2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/solidity-rlp/-/solidity-rlp-2.0.3.tgz#5116b50407b00f45e803a8a32145190d7b315d89"
-  integrity sha512-d61KdqL1Fm1LoIzHVvvh4SONE5jM4wzYzM6MY53p1DBFy7ZDIHyXdq/CIGhWMItOjr/mvbXJP9BEHX2Q0TZqfg==
+solidity-rlp@2.0.8:
+  version "2.0.8"
+  resolved "https://registry.yarnpkg.com/solidity-rlp/-/solidity-rlp-2.0.8.tgz#1548370b690ef06dbb62af06b7675bc86b19bbe3"
+  integrity sha512-gzYzHoFKRH1ydJeCfzm3z/BvKrZGK/V9+qbOlNbBcRAYeizjCdDNhLTTE8iIJrHqsRrZRSOo+7mhbnxoBoZvJQ==
 
 sonic-boom@^2.2.1:
   version "2.8.0"

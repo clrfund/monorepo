@@ -794,7 +794,7 @@
   "verify": {
     "subtitle": " Step {currentStep} of {steps}",
     "p1": "Step {currentStep} of {steps}",
-    "h1": "Set up BrightID",
+    "h1": "User Registration",
     "h2_1": "Connect",
     "p2": "You need to connect your BrightID account with your wallet address.",
     "click_next": "Once this app is linked in your BrightID app, click the 'Next' button to transition to the next step.",
@@ -1170,6 +1170,7 @@
         "connect_wallet": "Please connect your wallet",
         "incorrect_network": "Please change network to {chain} network.",
         "need_to_setup_brightid": "To contribute, you need to set up BrightID.",
+        "need_to_register": "To contribute, you need to sign up as a contributor.",
         "user_not_registered": "Please contact {operator} for registration",
         "invalid_contribution_amount": "Include valid contribution amount.",
         "exceeded_max_cart_size": "Your cart can't include over {maxCartSize} projects.",

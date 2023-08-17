@@ -175,6 +175,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import QRCode from 'qrcode'
 import { getBrightIdLink, getBrightIdUniversalLink, registerUser, selfSponsor, sponsorUser } from '@/api/bright-id'
+import { registerSnapshotUser } from '@/api/user'
 import Transaction from '@/components/Transaction.vue'
 import Loader from '@/components/Loader.vue'
 import Links from '@/components/Links.vue'
@@ -182,16 +183,27 @@ import { waitForTransaction } from '@/utils/contracts'
 import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
-import { brightIdSponsorUrl } from '@/api/core'
+import { UserRegistryType, brightIdSponsorUrl, userRegistryType } from '@/api/core'
 import { assert } from '@/utils/assert'
 
-interface BrightIDStep {
+interface VerificationStep {
   page: 'connect' | 'registration' | 'sponsorship'
 }
 
-const pages: Array<BrightIDStep> = [{ page: 'sponsorship' }, { page: 'connect' }, { page: 'registration' }]
-const steps = brightIdSponsorUrl ? pages.filter(p => p.page !== 'sponsorship') : pages
+function getVerificationSteps(): Array<VerificationStep> {
+  switch (userRegistryType) {
+    case UserRegistryType.BRIGHT_ID:
+      return brightIdSponsorUrl
+        ? [{ page: 'connect' }, { page: 'registration' }]
+        : [{ page: 'sponsorship' }, { page: 'connect' }, { page: 'registration' }]
+    case UserRegistryType.SNAPSHOT:
+      return [{ page: 'registration' }]
+    default:
+      return []
+  }
+}
 
+const steps = getVerificationSteps()
 const router = useRouter()
 const appStore = useAppStore()
 
@@ -199,8 +211,6 @@ const appStore = useAppStore()
 const { hasContributionPhaseEnded, userRegistryAddress } = storeToRefs(appStore)
 const userStore = useUserStore()
 const { currentUser } = storeToRefs(userStore)
-
-// do onchain sponsorship if the brightId url is not setup
 
 const stepNumbers: { [key: string]: number } = steps.reduce((res, step, index) => {
   res[step.page] = index
@@ -335,6 +345,29 @@ async function selfSponsorAndWait() {
 
 async function register() {
   const signer = userStore.signer
+
+  if (userRegistryType === UserRegistryType.SNAPSHOT) {
+    loadingTx.value = true
+    registrationTxError.value = ''
+    try {
+      const walletAddress = currentUser.value?.walletAddress
+      assert(walletAddress, 'User is not connected with their wallet')
+      assert(userRegistryAddress.value, 'Missing the user registry address')
+      await waitForTransaction(
+        registerSnapshotUser(userRegistryAddress.value, walletAddress, signer),
+        hash => (registrationTxHash.value = hash),
+      )
+      loadingTx.value = false
+      router.push({
+        name: 'verified',
+        params: { hash: registrationTxHash.value },
+      })
+    } catch (error) {
+      registrationTxError.value = (error as Error).message
+      return
+    }
+    userStore.loadUserInfo()
+  }
 
   if (brightId.value?.verification) {
     loadingTx.value = true

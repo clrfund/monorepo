@@ -81,11 +81,20 @@ async function main() {
       process.env.BRIGHTID_VERIFIER_ADDR,
       process.env.BRIGHTID_SPONSOR
     )
+  } else if (userRegistryType === 'snapshot') {
+    const SnapshotUserRegistry = await ethers.getContractFactory(
+      'SnapshotUserRegistry',
+      deployer
+    )
+    userRegistry = await SnapshotUserRegistry.deploy()
   } else {
     throw new Error('unsupported user registry type')
   }
+
   await userRegistry.deployTransaction.wait()
-  console.log(`User registry deployed: ${userRegistry.address}`)
+  console.log(
+    `User registry (${userRegistryType}) deployed: ${userRegistry.address}`
+  )
 
   const setUserRegistryTx = await fundingRoundFactory.setUserRegistry(
     userRegistry.address

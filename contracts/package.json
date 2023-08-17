@@ -25,7 +25,7 @@
     "@openzeppelin/contracts": "3.2.0",
     "dotenv": "^8.2.0",
     "maci-contracts": "0.10.1",
-    "solidity-rlp": "2.0.3"
+    "solidity-rlp": "2.0.8"
   },
   "devDependencies": {
     "@clrfund/maci-utils": "^0.0.1",
