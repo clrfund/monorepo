@@ -52,7 +52,7 @@ async function addUser(
   return userRegistry.addUser(userAccount, proofRlpBytes)
 }
 
-describe.only('SnapshotUserRegistry', function () {
+describe('SnapshotUserRegistry', function () {
   let userRegistry: Contract
   let block: Block
 
