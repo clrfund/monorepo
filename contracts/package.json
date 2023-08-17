@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@clrfund/maci-utils": "^0.0.1",
+    "@clrfund/common": "^0.0.1",
     "@ethereum-waffle/mock-contract": "^3.4.4",
     "@kleros/gtcr-encoder": "^1.4.0",
     "@nomiclabs/hardhat-ethers": "^2.2.1",
