@@ -199,7 +199,7 @@ If there's error and the tally task was stopped prematurely, it can be resumed b
 
 Result will be saved to `tally.json` file, which must then be published via IPFS.
 
-**Using [command line](https://docs.ipfs.io/reference/cli/)**
+**Using [command line](https://docs.ipfs.tech/reference/kubo/cli/#ipfs)**
 
 ```
 # start ipfs daemon in one terminal
@@ -254,7 +254,7 @@ After finalizing the round, enable the leaderboard view in the vue-app by export
 ```sh
 cd contracts
 
-yarn hardhat fetch-round --output-dir ../vue-app/src/rounds --network xdai --round-address <round address> --operator <operator>
+yarn hardhat export-round --output-dir ../vue-app/src/rounds --network <network> --round-address <round address> --operator <operator> --start-block <recipient-registry-start-block> --ipfs <ipfs-gateway-url>
 
 ```
 3) Build and deploy the app
