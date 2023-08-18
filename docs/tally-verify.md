@@ -98,7 +98,7 @@ The Ethereum private key (`eth-private-key`) can be any private key that control
 
 The process may take several hours. Results can be found in `tally.json` file, which must then be published via IPFS.
 
-Finally, the [CID](https://ipfs.io/ipns/docs.ipfs.io/concepts/content-addressing/) of tally file must be submitted to `FundingRound` contract:
+Finally, the [CID](https://docs.ipfs.tech/concepts/content-addressing/) of tally file must be submitted to `FundingRound` contract:
 
 ```
 await fundingRound.publishTallyHash('<CID>')
