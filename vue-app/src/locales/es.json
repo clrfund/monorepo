@@ -786,7 +786,7 @@
   },
   "verified": {
     "h1": "¡Listo para contribuir!",
-    "div1": "¡Estás en esta ronda de financiamiento! Y completamente verificado para BrightID en esta ronda de financiamiento.",
+    "div1": "¡Estás en esta ronda de financiamiento! Y completamente verificado en esta ronda de financiamiento.",
     "p1": "Ahora puedes comenzar a contribuir a tus proyectos favoritos.",
     "link1": "Ver proyectos",
     "link2": "Ir a inicio"
@@ -836,7 +836,8 @@
     "div3": "Las contribuciones se cerraron anticipadamente, ¡ya no puedes donar! Debido a la generosidad de la comunidad y algunas limitaciones técnicas, tuvimos que cerrar la ronda antes de lo previsto. Si ya has contribuido, todavía tienes tiempo para reasignar si es necesario. Si no tuviste la oportunidad de contribuir, aún puedes ayudar donando al matching pool",
     "link2": "Tengo BrightID instalado",
     "link3": "Volver",
-    "linkVerify": "Estoy listo!"
+    "linkVerify": "Estoy listo!",
+    "already_registered": "Estás registrado. Ahora puedes comenzar a contribuir a tus proyectos favoritos."
   },
   "addToCartButton": {
     "input1": "Agregar",

@@ -61,6 +61,9 @@
         <div v-else-if="isRoundFull" class="warning-message">
           {{ $t('verifyLanding.div3') }}
         </div>
+        <div v-else-if="Boolean(currentUser?.isRegistered)" class="warning-message">
+          {{ $t('verifyLanding.already_registered') }}
+        </div>
         <div class="btn-container mt2">
           <div v-if="!isRoundOver">
             <wallet-widget v-if="!currentUser" :isActionButton="true" :fullWidthMobile="true" />

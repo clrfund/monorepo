@@ -786,7 +786,7 @@
   },
   "verified": {
     "h1": "Ready to contribute!",
-    "div1": "You’re on board this funding round! And fully verified for BrightID for this funding round.",
+    "div1": "You’re on board this funding round! And fully verified for this funding round.",
     "p1": "You can now start contributing to your favorite projects.",
     "link1": "View projects",
     "link2": "Go home"
@@ -836,7 +836,8 @@
     "div3": "Contributions closed early – you can no longer donate! Due to the community's generosity and some technical constraints we had to close the round earlier than expected. If you already contributed, you still have time to reallocate if you need to. If you didn't get a chance to contribute, you can still help by donating to the matching pool",
     "link2": "I am BrightID verified",
     "link3": "Go back",
-    "linkVerify": "I am ready!"
+    "linkVerify": "I am ready!",
+    "already_registered": "You are registered. You can now start contributing to your favorite projects."
   },
   "addToCartButton": {
     "input1": "Add to cart",
