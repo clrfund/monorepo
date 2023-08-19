@@ -35,6 +35,16 @@
     <links v-if="!hasStartedVerification" to="/verify" class="btn-action">{{ $t('callToActionCard.link1') }}</links>
     <links v-else to="/verify/connect" class="btn-action">{{ $t('callToActionCard.link2') }}</links>
   </div>
+  <div class="get-prepared" v-else-if="showUserRegistration">
+    <span aria-label="rocket" class="emoji">🚀</span>
+    <div>
+      <h2 class="prep-title">{{ $t('callToActionCard.h2_3') }}</h2>
+      <p class="prep-text">
+        {{ $t('callToActionCard.p3') }}
+      </p>
+    </div>
+    <links to="/verify/register" class="btn-action">{{ $t('callToActionCard.link1') }}</links>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -58,6 +68,15 @@ const hasStartedVerification = computed(
 const showUserVerification = computed(() => {
   return (
     userRegistryType === UserRegistryType.BRIGHT_ID &&
+    currentRound.value &&
+    currentUser.value?.isRegistered !== undefined &&
+    !currentUser.value.isRegistered
+  )
+})
+
+const showUserRegistration = computed(() => {
+  return (
+    userRegistryType === UserRegistryType.SNAPSHOT &&
     currentRound.value &&
     currentUser.value?.isRegistered !== undefined &&
     !currentUser.value.isRegistered

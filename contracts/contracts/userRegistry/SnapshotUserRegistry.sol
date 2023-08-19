@@ -11,7 +11,8 @@ import {StateProofVerifier} from "./StateProofVerifier.sol";
 
 
 /**
- * @dev A user registry based on a specific block snapshot
+ * @dev A user registry that verifies users based on ownership of a token
+ * at a specific block snapshot
  */
 contract SnapshotUserRegistry is Ownable, IUserRegistry {
   using RLPReader for RLPReader.RLPItem;
@@ -26,7 +27,7 @@ contract SnapshotUserRegistry is Ownable, IUserRegistry {
   // User must hold this token at a specific block to be added to this registry
   address public token;
 
-  // 
+  // block hash of the snapshot block
   bytes32 public blockHash;
 
   // The storage root for the token at a specified block
@@ -38,6 +39,7 @@ contract SnapshotUserRegistry is Ownable, IUserRegistry {
   // The minimum balance the user must hold to be verified 
   uint256 public minBalance = 1;
 
+  // verified users
   mapping(address => Status) public users;
   
   // Events

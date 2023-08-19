@@ -12,7 +12,7 @@ This contract consist of:
 
 ### SnapshotUserRegistry
 
-This is a contract to register verified users by the proof that the users held the minimum amount of ERC20 tokens at a given block.
+This is a contract to register verified users by the proof that the users held the minimum amount of tokens at a given block.
 
 The main functions:
 

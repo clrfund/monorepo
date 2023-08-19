@@ -12,7 +12,7 @@
 
 import { task, types } from 'hardhat/config'
 import { Contract, BigNumber } from 'ethers'
-import { getStorageKey } from '../utils/contracts'
+import { getStorageKey } from '@clrfund/common'
 
 const ERC20_ABI = [
   'function balanceOf(address _owner) public view returns (uint256 balance)',

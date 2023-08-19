@@ -1,7 +1,7 @@
 /**
  * This script set the storage root in the snapshot user registry
  *
- * Usage: hardhat set-storage-root --registry <user-registry-address> --slot <slot> --token <ERC20-token-address> --block <block-number> --network arbitrum-goerli
+ * Usage: hardhat set-storage-root --registry <user-registry-address> --slot <slot> --token <token-address> --block <block-number> --network arbitrum-goerli
  *
  * Note: get the slot number using the `find-storage-slot` task
  */
@@ -12,7 +12,7 @@ import { providers } from 'ethers'
 
 task('set-storage-root', 'Set the storage root in the snapshot user registry')
   .addParam('registry', 'The snapshot user registry contract address')
-  .addParam('token', 'The ERC20 token address')
+  .addParam('token', 'The token address')
   .addParam('block', 'The block number', undefined, types.int)
   .addParam(
     'slot',

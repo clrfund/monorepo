@@ -183,7 +183,7 @@ import { waitForTransaction } from '@/utils/contracts'
 import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
-import { UserRegistryType, brightIdSponsorUrl, userRegistryType } from '@/api/core'
+import { UserRegistryType, isBrightIdRequired, brightIdSponsorUrl, userRegistryType } from '@/api/core'
 import { assert } from '@/utils/assert'
 
 interface VerificationStep {
@@ -231,14 +231,16 @@ const selfSponsorTxHash = ref('')
 const brightId = computed(() => currentUser.value?.brightId)
 
 const currentStep = computed(() => {
-  if (!brightId.value) {
-    return 0
-  }
-  if (isSponsoring.value) {
-    return stepNumbers['sponsorship']
-  }
-  if (!brightId.value.isVerified) {
-    return stepNumbers['connect']
+  if (isBrightIdRequired) {
+    if (!brightId.value) {
+      return 0
+    }
+    if (isSponsoring.value) {
+      return stepNumbers['sponsorship']
+    }
+    if (!brightId.value.isVerified) {
+      return stepNumbers['connect']
+    }
   }
   if (!currentUser.value?.isRegistered) {
     return stepNumbers['registration']
@@ -278,8 +280,10 @@ onMounted(async () => {
     router.replace({ name: 'verify' })
   }
 
-  // make sure BrightId status is availabel before page load
-  await userStore.loadBrightID()
+  if (isBrightIdRequired) {
+    // make sure BrightId status is available before page load
+    await userStore.loadBrightID()
+  }
 
   // redirect to the verify success page if the user is registered
   if (currentStep.value < 0) {
@@ -287,7 +291,7 @@ onMounted(async () => {
   }
 
   // mounted
-  if (currentUser.value && !brightId.value?.isVerified) {
+  if (isBrightIdRequired && currentUser.value && !brightId.value?.isVerified) {
     const walletAddress = currentUser.value.walletAddress
     // send sponsorship request if automatic sponsoring is enabled
     if (brightIdSponsorUrl) {
@@ -346,49 +350,39 @@ async function selfSponsorAndWait() {
 async function register() {
   const signer = userStore.signer
 
-  if (userRegistryType === UserRegistryType.SNAPSHOT) {
-    loadingTx.value = true
-    registrationTxError.value = ''
-    try {
-      const walletAddress = currentUser.value?.walletAddress
-      assert(walletAddress, 'User is not connected with their wallet')
-      assert(userRegistryAddress.value, 'Missing the user registry address')
-      await waitForTransaction(
-        registerSnapshotUser(userRegistryAddress.value, walletAddress, signer),
-        hash => (registrationTxHash.value = hash),
-      )
-      loadingTx.value = false
-      router.push({
-        name: 'verified',
-        params: { hash: registrationTxHash.value },
-      })
-    } catch (error) {
-      registrationTxError.value = (error as Error).message
-      return
-    }
-    userStore.loadUserInfo()
+  if (isBrightIdRequired && !brightId.value?.verification) {
+    return
   }
 
-  if (brightId.value?.verification) {
-    loadingTx.value = true
-    registrationTxError.value = ''
-    try {
-      assert(userRegistryAddress.value, 'Missing the user registry address')
+  loadingTx.value = true
+  registrationTxError.value = ''
+  try {
+    assert(userRegistryAddress.value, 'Missing the user registry address')
+    if (isBrightIdRequired) {
+      assert(brightId.value?.verification, 'Missing BrightID verification')
       await waitForTransaction(
         registerUser(userRegistryAddress.value, brightId.value.verification, signer),
         hash => (registrationTxHash.value = hash),
       )
-      loadingTx.value = false
-      router.push({
-        name: 'verified',
-        params: { hash: registrationTxHash.value },
-      })
-    } catch (error) {
-      registrationTxError.value = (error as Error).message
-      return
+    } else if (userRegistryType === UserRegistryType.SNAPSHOT) {
+      const walletAddress = currentUser.value?.walletAddress
+      assert(walletAddress, 'User is not connected with their wallet')
+
+      await waitForTransaction(
+        registerSnapshotUser(userRegistryAddress.value, walletAddress, signer),
+        hash => (registrationTxHash.value = hash),
+      )
     }
-    userStore.loadUserInfo()
+    loadingTx.value = false
+    router.push({
+      name: 'verified',
+      params: { hash: registrationTxHash.value },
+    })
+  } catch (error) {
+    registrationTxError.value = (error as Error).message
+    return
   }
+  userStore.loadUserInfo()
 }
 
 function isStepValid(step: number): boolean {
