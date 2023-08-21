@@ -15,6 +15,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { ipfsGatewayUrl } from '@/api/core'
 
 const { t } = useI18n()
 
@@ -25,7 +26,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const isCopied = ref(false)
-const ipfsUrl = computed(() => `https://ipfs.io/ipfs/${props.hash}`)
+const ipfsUrl = computed(() => `${ipfsGatewayUrl}/ipfs/${props.hash}`)
 
 const renderCopiedOrHash = computed(() => {
   return isCopied.value ? t('copied').toString() : props.hash
