@@ -44,9 +44,8 @@ contract SnapshotUserRegistry is Ownable, IUserRegistry {
   
   // Events
   event UserAdded(address indexed _user);
-  event UserRejected(address indexed _user);
-  event UserReset(address indexed _user);
   event MinBalanceChanged(uint256 newBalance);
+  event StorageRootChanged(address indexed _token, bytes32 indexed _blockHash, uint256 storageSlot);
 
   /**
   * @dev Set the storage root for the token contract at a specific block
@@ -80,6 +79,8 @@ contract SnapshotUserRegistry is Ownable, IUserRegistry {
     blockHash = _blockHash;
     storageRoot = account.storageRoot;
     storageSlot = _slotIndex;
+
+    emit StorageRootChanged(token, blockHash, storageSlot);
   }
 
   /**
@@ -93,17 +94,17 @@ contract SnapshotUserRegistry is Ownable, IUserRegistry {
   )
     external
   {
-    require(storageRoot != bytes32(0), 'UserRegistry: Registry is not initialized');
-    require(_user != address(0), 'UserRegistry: User address is zero');
-    require(users[_user] == Status.Unverified, 'UserRegistry: User already added');
+    require(storageRoot != bytes32(0), 'SnapshotUserRegistry: Registry is not initialized');
+    require(_user != address(0), 'SnapshotUserRegistry: User address is zero');
+    require(users[_user] == Status.Unverified, 'SnapshotUserRegistry: User already added');
 
     RLPReader.RLPItem[] memory proof = storageProofRlpBytes.toRlpItem().toList();
 
     bytes32 userSlotHash = keccak256(abi.encodePacked(uint256(uint160(_user)), storageSlot));
     bytes32 proofPath = keccak256(abi.encodePacked(userSlotHash));
     StateProofVerifier.SlotValue memory slotValue = StateProofVerifier.extractSlotValueFromProof(proofPath, storageRoot, proof);
-    require(slotValue.exists, 'UserRegistry: User not qualified as a contributor');
-    require(slotValue.value >= minBalance , 'UserRegistry: User did not meet the minimum balance requirement');
+    require(slotValue.exists, 'SnapshotUserRegistry: User is not qualified');
+    require(slotValue.value >= minBalance , 'SnapshotUserRegistry: User did not meet the minimum balance requirement');
     
     users[_user] = Status.Verified;
     emit UserAdded(_user);
@@ -126,28 +127,10 @@ contract SnapshotUserRegistry is Ownable, IUserRegistry {
    * @param newMinBalance The new minimum balance
    */
   function setMinBalance(uint256 newMinBalance) external onlyOwner {
-    require(newMinBalance > 0, 'The minimum balance must be greater than 0');
+    require(newMinBalance > 0, 'SnapshotUserRegistry: The minimum balance must be greater than 0');
     
     minBalance = newMinBalance;
 
     emit MinBalanceChanged(minBalance);
-  }
-
-  /**
-   * @dev Reject user
-    * @param _user user account address
-   */
-  function rejectUser(address _user) external onlyOwner {
-    users[_user] = Status.Rejected;
-    emit UserRejected(_user);
-  }
-
-  /**
-   * @dev Reset user status so that it can be added again
-    * @param _user user account address
-   */
-  function resetUser(address _user) external onlyOwner {
-    delete users[_user];
-    emit UserReset(_user);
   }
 }
