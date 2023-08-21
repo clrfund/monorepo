@@ -1,3 +1,12 @@
+/**
+ * For cancelled rounds, merge the allocation data to the round JSON file
+ * This task must be run after the export-round task as this is merging
+ * data into the output file of the export-round task
+ *
+ * Sample usage:
+ * yarn hardhat merge-allocations --allocation-file /tmp/downloads/clr.fund-round8.tsv --round-file ../vue-app/src/rounds/xdai/0xd07aa7faeba14efde87f2538699c0d6c9a566c20.json
+ */
+
 import { task, types } from 'hardhat/config'
 import { utils, BigNumber } from 'ethers'
 import fs from 'fs'
@@ -104,13 +113,8 @@ function readAllocationFile(
   return allocations
 }
 
-/**
- * For cancelled rounds, merge the allocation data to the round JSON file
- * This task must be run after the fetch-round task as this is merging
- * data into the output file of the fetch-round task
- */
 task('merge-allocations', 'Merge the allocations data into the round JSON file')
-  .addParam('roundFile', 'The JSON file exported from the fetch-round task')
+  .addParam('roundFile', 'The JSON file exported from the export-round task')
   .addParam('allocationFile', 'The allocation file in tab separated format')
   .addOptionalParam(
     'skipAllocationRows',

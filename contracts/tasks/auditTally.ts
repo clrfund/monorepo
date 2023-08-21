@@ -1,6 +1,14 @@
+/**
+ * This script is used for auditing the tally result for a round
+ *
+ * Sample usage:
+ * yarn hardhat audit-tally --round-address 0x4a2d90844eb9c815ef10db0371726f0ceb2848b0 --network arbitrum --output ./ethcolombia.json
+ */
+
 import { task, types } from 'hardhat/config'
 import { utils, providers, Contract, BigNumber } from 'ethers'
 import { EventFilter, Log } from '@ethersproject/abstract-provider'
+import { Ipfs } from '../utils/ipfs'
 import fs from 'fs'
 
 interface Project {
@@ -19,12 +27,6 @@ interface Project {
 
 function isRemoval(state: number): boolean {
   return state === 1
-}
-
-async function fetchTally(tallyHash: string): Promise<any> {
-  const url = `https://ipfs.io/ipfs/${tallyHash}`
-  const result = utils.fetchJson(url)
-  return result
 }
 
 async function fetchLogs({
@@ -152,12 +154,10 @@ function tsvStringify(projects: Project[]): string {
   return outputString
 }
 
-/**
- * Audit the tally result for a round
- */
 task('audit-tally', 'Audit the tally result for a round')
   .addParam('roundAddress', 'Funding round contract address')
   .addParam('output', 'Output file path')
+  .addOptionalParam('ipfs', 'The IPFS gateway url')
   .addOptionalParam(
     'tsv',
     'Create tab seperated values as output file format, default JSON format',
@@ -184,7 +184,7 @@ task('audit-tally', 'Audit the tally result for a round')
   )
   .setAction(
     async (
-      { roundAddress, output, tsv, startBlock, endBlock, blocksPerBatch },
+      { roundAddress, output, tsv, ipfs, startBlock, endBlock, blocksPerBatch },
       { ethers, network }
     ) => {
       console.log('Processing on ', network.name)
@@ -243,7 +243,7 @@ task('audit-tally', 'Audit the tally result for a round')
       })
 
       const tallyHash = await round.tallyHash()
-      const tally = await fetchTally(tallyHash)
+      const tally = await Ipfs.fetchJson(tallyHash, ipfs)
 
       console.log('Merging projects and tally results...')
       const projects: Project[] = []
