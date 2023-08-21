@@ -2,8 +2,9 @@ import fetch from 'node-fetch'
 import { ethers } from 'hardhat'
 import { Event } from 'ethers'
 import { gtcrDecode } from '@kleros/gtcr-encoder'
+import { DEFAULT_IPFS_GATEWAY } from '../utils/constants'
 
-const ipfsGatewayUrl = 'https://ipfs.io/'
+const ipfsGatewayUrl = process.env.IPFS_GATEWAY_URL || DEFAULT_IPFS_GATEWAY
 
 interface Project {
   id: string

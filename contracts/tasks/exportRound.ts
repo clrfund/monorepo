@@ -1,3 +1,13 @@
+/**
+ * Export all the round data after finalization to generate the leaderboard view
+ *
+ * Sample usage:
+ *
+ *  yarn hardhat export-round --round-address <address> --out-dir ../vue-app/src/rounds --operator <operator> --ipfs <ipfs-gateway-url> --start-block <recipient-registry-start-block> --network <network>
+ *
+ * To generate the leaderboard view, deploy the clrfund website with the generated round data in the vue-app/src/rounds folder
+ */
+
 import { task, types } from 'hardhat/config'
 import { HardhatConfig } from 'hardhat/types'
 import { utils, Contract, BigNumber } from 'ethers'
@@ -245,21 +255,22 @@ async function getRoundInfo(
 }
 
 /**
- * Fetch all the round data for static site
+ * Export all the round data for the leaderboard
  */
-task('fetch-round', 'Fetch round data')
+task('export-round', 'Export round data for the leaderboard')
   .addParam('roundAddress', 'Funding round contract address')
   .addParam('outputDir', 'Output directory')
   .addParam('operator', 'Funding round operator, e.g. ETHColombia')
+  .addOptionalParam('ipfs', 'The IPFS gateway url')
   .addOptionalParam(
     'startBlock',
-    'First block to process from the recipient registry contract',
+    'First block to process events from the recipient registry contract',
     0,
     types.int
   )
   .addOptionalParam(
     'endBlock',
-    'Last block to process from the recipient registry',
+    'Last block to process events from the recipient registry',
     undefined,
     types.int
   )
@@ -278,6 +289,7 @@ task('fetch-round', 'Fetch round data')
         endBlock,
         blocksPerBatch,
         operator,
+        ipfs,
       },
       { ethers, network, config }
     ) => {
@@ -328,7 +340,7 @@ task('fetch-round', 'Fetch round data')
         }
 
         try {
-          tally = await Ipfs.fetchJson(round.tallyHash)
+          tally = await Ipfs.fetchJson(round.tallyHash, ipfs)
         } catch (err) {
           console.log('Failed to get tally file', round.tallyHash, err)
           throw err

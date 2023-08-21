@@ -36,6 +36,7 @@ type TallyArgs = {
   maciStateFile: string
   providerUrl: string
   voteOptionTreeDepth: number
+  shouldFetchLogs: boolean
 }
 
 async function main(args: TallyArgs) {
@@ -48,6 +49,9 @@ async function main(args: TallyArgs) {
     maciStateFile,
     providerUrl,
     voteOptionTreeDepth,
+    shouldFetchLogs,
+    startBlock,
+    numBlocksPerRequest,
   } = args
 
   console.log('funding round address', fundingRound.address)
@@ -55,10 +59,32 @@ async function main(args: TallyArgs) {
   console.log('maci address', maciAddress)
 
   const publishedTallyHash = await fundingRound.tallyHash()
+  console.log('publishedTallyHash', publishedTallyHash)
 
   let tally
-
   if (!publishedTallyHash) {
+    const maciAddress = await fundingRound.maci()
+    console.log('maci address', maciAddress)
+
+    if (shouldFetchLogs) {
+      // Fetch Maci logs
+      console.log('Fetching MACI logs from block', startBlock)
+      try {
+        await fetchLogs({
+          contract: maciAddress,
+          eth_provider: providerUrl,
+          privkey: coordinatorMaciPrivKey,
+          start_block: startBlock,
+          num_blocks_per_request: numBlocksPerRequest,
+          output: logsFile,
+        })
+        console.log('MACI logs generated at', logsFile)
+      } catch (err) {
+        console.log('Failed to fetchLogs', err)
+        throw err
+      }
+    }
+
     // Process messages and tally votes
     const results = await genProofs({
       contract: maciAddress,
@@ -210,22 +236,6 @@ task('tally', 'Tally votes for the current round')
 
       const timeMs = new Date().getTime()
       const logsFile = maciLogs ? maciLogs : `maci_logs_${timeMs}.json`
-      if (!maciLogs) {
-        const maciAddress = await fundingRound.maci()
-        console.log('maci address', maciAddress)
-
-        // Fetch Maci logs
-        console.log('Fetching MACI logs from block', startBlock)
-        await fetchLogs({
-          contract: maciAddress,
-          eth_provider: (network.config as any).url,
-          privkey: coordinatorMaciPrivKey,
-          start_block: startBlock,
-          num_blocks_per_request: numBlocksPerRequest,
-          output: logsFile,
-        })
-        console.log('MACI logs generated at', logsFile)
-      }
 
       await main({
         fundingRound,
@@ -237,6 +247,7 @@ task('tally', 'Tally votes for the current round')
         voteOptionTreeDepth: Number(voteOptionTreeDepth),
         logsFile,
         providerUrl,
+        shouldFetchLogs: !maciLogs,
         maciStateFile: maciStateFile
           ? maciStateFile
           : `maci_state_${timeMs}.json`,

@@ -476,7 +476,7 @@
             <h2 class="step-title">{{ $t('join.step4.h2') }}</h2>
             <p>
               {{ $t('join.step4.p1') }}
-              <links to="https://ipfs.io/#how">{{ $t('join.step4.link1') }}</links>
+              <links to="https://ipfs.tech/#how">{{ $t('join.step4.link1') }}</links>
             </p>
             <div class="inputs">
               <div class="form-background">
