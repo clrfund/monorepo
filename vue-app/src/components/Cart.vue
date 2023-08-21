@@ -164,7 +164,7 @@
             })
           }}
         </div>
-        <div class="p1" v-if="isBrightIdRequired">
+        <div class="p1" v-if="isRegistrationRequired">
           <links to="/verify" class="btn-primary">{{ $t('cart.link3') }} </links>
         </div>
         <button
@@ -475,11 +475,21 @@ const isBrightIdRequired = computed(
   () => userRegistryType === UserRegistryType.BRIGHT_ID && !currentUser.value?.isRegistered,
 )
 
+const isRegistrationRequired = computed(
+  () =>
+    [UserRegistryType.BRIGHT_ID, UserRegistryType.SNAPSHOT].includes(userRegistryType as UserRegistryType) &&
+    !currentUser.value?.isRegistered,
+)
+
 const errorMessage = computed<string | null>(() => {
   if (isMessageLimitReached.value) return t('dynamic.cart.error.reached_contribution_limit')
   if (!currentUser.value) return t('dynamic.cart.error.connect_wallet')
   if (isBrightIdRequired.value) return t('dynamic.cart.error.need_to_setup_brightid')
-  if (!currentUser.value.isRegistered) return t('dynamic.cart.error.user_not_registered', { operator })
+  if (!currentUser.value.isRegistered) {
+    return userRegistryType === UserRegistryType.SNAPSHOT
+      ? t('dynamic.cart.error.need_to_register')
+      : t('dynamic.cart.error.user_not_registered', { operator })
+  }
   if (!isFormValid()) return t('dynamic.cart.error.invalid_contribution_amount')
   if (cart.value.length > MAX_CART_SIZE)
     return t('dynamic.cart.error.exceeded_max_cart_size', {

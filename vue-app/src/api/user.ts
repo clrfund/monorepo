@@ -1,10 +1,12 @@
 import makeBlockie from 'ethereum-blockies-base64'
-import { BigNumber, Contract } from 'ethers'
+import { BigNumber, Contract, Signer, type ContractTransaction } from 'ethers'
 import type { Web3Provider } from '@ethersproject/providers'
 
 import { UserRegistry, ERC20 } from './abi'
 import { factory, ipfsGatewayUrl, provider, operator } from './core'
 import type { BrightId } from './bright-id'
+import { SnapshotUserRegistry } from './abi'
+import { getStorageProof, rlpEncodeProof } from '@clrfund/common'
 
 //TODO: update anywhere this is called to take factory address as a parameter, default to env. variable
 export const LOGIN_MESSAGE = `Welcome to ${operator}!
@@ -52,4 +54,22 @@ export async function getTokenBalance(tokenAddress: string, walletAddress: strin
 
 export async function getEtherBalance(walletAddress: string): Promise<BigNumber> {
   return await provider.getBalance(walletAddress)
+}
+
+export async function registerSnapshotUser(
+  registryAddress: string,
+  walletAddress: string,
+  signer: Signer,
+): Promise<ContractTransaction> {
+  const registry = new Contract(registryAddress, SnapshotUserRegistry, signer)
+  const [tokenAddress, blockHash, storageSlot] = await Promise.all([
+    registry.token(),
+    registry.blockHash(),
+    registry.storageSlot(),
+  ])
+
+  const proof = await getStorageProof(tokenAddress, blockHash, walletAddress, storageSlot, provider)
+  const proofRlpBytes = rlpEncodeProof(proof.storageProof[0].proof)
+
+  return registry.addUser(walletAddress, proofRlpBytes)
 }

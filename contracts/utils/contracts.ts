@@ -1,4 +1,4 @@
-import { BigNumber, Contract } from 'ethers'
+import { BigNumber, Contract, utils } from 'ethers'
 import { TransactionResponse } from '@ethersproject/abstract-provider'
 
 export async function getGasUsage(

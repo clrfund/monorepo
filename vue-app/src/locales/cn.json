@@ -786,7 +786,7 @@
   },
   "verified": {
     "h1": "准备好贡献了!",
-    "div1": "您已经参加了这次筹款！并且得到 BrightID 验证了。",
+    "div1": "您可以参加这次筹款了！我们已验证了您的账户。",
     "p1": "您现在可以开始做捐献给您喜欢的项目了。",
     "link1": "查看项目",
     "link2": "回首页"
@@ -816,6 +816,7 @@
   "verifyLanding": {
     "h1": "证明您只使用一个帐户",
     "subtitle": "我们使用 BrightID 来防止机器人和作弊者, 并使我们的资金更加民主。",
+    "subtitle2": "我们需要验证您的账户以防止机器人和作弊者, 并使我们的资金更加民主。",
     "h2": "您需要:",
     "li1_t1": "BrightID app: ",
     "li1_link1": "iOS",
@@ -834,7 +835,9 @@
     "div2": "当前筹款活动不再接受新的捐款。请在下一轮再试。",
     "div3": "捐赠提早关闭 - 您不能再捐款了！由于社区的慷慨和一些技术限制，我们不得不比预期更早地结束这一次筹款活动。如果您已经捐赠过，您仍然有时间重新分配。如果您没有机会捐赠，您仍然可以通过捐赠匹配池来帮助。",
     "link2": "我已验证了 BrightID",
-    "link3": "返回"
+    "link3": "返回",
+    "linkVerify": "我准备好了!",
+    "already_registered": "您已注册。您可以开始捐献给您喜欢的项目了。"
   },
   "addToCartButton": {
     "input1": "加入捐款车",
@@ -1170,6 +1173,7 @@
         "connect_wallet": "请连接您的钱包",
         "incorrect_network": "请将网络更改为 {chain} 网络.",
         "need_to_setup_brightid": "要进行贡献, 您需要设置 BrightID。",
+        "need_to_register": "您需要注册成为贡献者才能贡献。",
         "user_not_registered": "请联系 {operator} 进行注册。",
         "invalid_contribution_amount": "请输入有效的贡献金额",
         "exceeded_max_cart_size": "您的捐款车不能超过 {maxCartSize} 个项目",

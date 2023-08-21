@@ -40,6 +40,12 @@ async function main() {
       process.env.BRIGHTID_SPONSOR
     )
     console.log('transaction hash', userRegistry.deployTransaction.hash)
+  } else if (userRegistryType === 'snapshot') {
+    const SnapshotUserRegistry = await ethers.getContractFactory(
+      'SnapshotUserRegistry',
+      deployer
+    )
+    userRegistry = await SnapshotUserRegistry.deploy()
   } else {
     throw new Error('unsupported user registry type')
   }
