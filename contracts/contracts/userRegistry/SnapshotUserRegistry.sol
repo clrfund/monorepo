@@ -7,7 +7,7 @@ import '@openzeppelin/contracts/access/Ownable.sol';
 import './IUserRegistry.sol';
 
 import {RLPReader} from "solidity-rlp/contracts/RLPReader.sol";
-import {StateProofVerifier} from "./StateProofVerifier.sol";
+import {StateProofVerifier} from "../utils/cryptography/StateProofVerifier.sol";
 
 
 /**
