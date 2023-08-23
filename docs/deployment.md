@@ -65,6 +65,15 @@ yarn hardhat --network {network} set-storage-root --registry 0x7113b39Eb26A6F0a4
 
 Note: to get the storage slot '--slot' value, run the `find-storage-slot` task.
 
+5. If using a merkle user registry, run the `load-merkle-users` task to set the merkle root for all the authorized users
+
+```
+# for example:
+yarn hardhat load-merkle-users --address-file ./addresses.txt --user-registry 0x9E1c12Af45504e66D16D592cAF3B877ddc6fF643 --network arbitrum-goerli
+```
+
+Note: Make sure to upload generated merkle tree file to IPFS.
+
 
 6. Run the `newRound.ts` script to deploy a new funding round:
 
