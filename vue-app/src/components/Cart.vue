@@ -165,7 +165,10 @@
           }}
         </div>
         <div class="p1" v-if="isRegistrationRequired">
-          <links to="/verify" class="btn-primary">{{ $t('cart.link3') }} </links>
+          <links to="/verify" class="btn-primary">
+            <span v-if="isBrightIdRequired">{{ $t('cart.link3') }}</span>
+            <span v-else>{{ $t('cart.linkRegister') }}</span>
+          </links>
         </div>
         <button
           v-if="!isCartEmpty"
@@ -235,7 +238,7 @@ import CartItems from '@/components/CartItems.vue'
 import Links from '@/components/Links.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import { MAX_CONTRIBUTION_AMOUNT, MAX_CART_SIZE, type CartItem, isContributionAmountValid } from '@/api/contributions'
-import { userRegistryType, UserRegistryType, operator } from '@/api/core'
+import { userRegistryType, UserRegistryType, operator, isBrightIdRequired } from '@/api/core'
 import { RoundStatus } from '@/api/round'
 import { formatAmount as _formatAmount } from '@/utils/amounts'
 import FundsNeededWarning from '@/components/FundsNeededWarning.vue'
@@ -476,9 +479,7 @@ const isBrightIdRequired = computed(
 )
 
 const isRegistrationRequired = computed(
-  () =>
-    [UserRegistryType.BRIGHT_ID, UserRegistryType.SNAPSHOT].includes(userRegistryType as UserRegistryType) &&
-    !currentUser.value?.isRegistered,
+  () => userRegistryType !== UserRegistryType.SIMPLE && !currentUser.value?.isRegistered,
 )
 
 const errorMessage = computed<string | null>(() => {
@@ -486,9 +487,9 @@ const errorMessage = computed<string | null>(() => {
   if (!currentUser.value) return t('dynamic.cart.error.connect_wallet')
   if (isBrightIdRequired.value) return t('dynamic.cart.error.need_to_setup_brightid')
   if (!currentUser.value.isRegistered) {
-    return userRegistryType === UserRegistryType.SNAPSHOT
-      ? t('dynamic.cart.error.need_to_register')
-      : t('dynamic.cart.error.user_not_registered', { operator })
+    return userRegistryType === UserRegistryType.SIMPLE
+      ? t('dynamic.cart.error.user_not_registered', { operator })
+      : t('dynamic.cart.error.need_to_register')
   }
   if (!isFormValid()) return t('dynamic.cart.error.invalid_contribution_amount')
   if (cart.value.length > MAX_CART_SIZE)

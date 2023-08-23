@@ -175,7 +175,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import QRCode from 'qrcode'
 import { getBrightIdLink, getBrightIdUniversalLink, registerUser, selfSponsor, sponsorUser } from '@/api/bright-id'
-import { registerSnapshotUser } from '@/api/user'
+import { registerSnapshotUser, registerMerkleUser } from '@/api/user'
 import Transaction from '@/components/Transaction.vue'
 import Loader from '@/components/Loader.vue'
 import Links from '@/components/Links.vue'
@@ -196,10 +196,8 @@ function getVerificationSteps(): Array<VerificationStep> {
       return brightIdSponsorUrl
         ? [{ page: 'connect' }, { page: 'registration' }]
         : [{ page: 'sponsorship' }, { page: 'connect' }, { page: 'registration' }]
-    case UserRegistryType.SNAPSHOT:
-      return [{ page: 'registration' }]
     default:
-      return []
+      return [{ page: 'registration' }]
   }
 }
 
@@ -364,14 +362,20 @@ async function register() {
         registerUser(userRegistryAddress.value, brightId.value.verification, signer),
         hash => (registrationTxHash.value = hash),
       )
-    } else if (userRegistryType === UserRegistryType.SNAPSHOT) {
-      const walletAddress = currentUser.value?.walletAddress
-      assert(walletAddress, 'User is not connected with their wallet')
-
-      await waitForTransaction(
-        registerSnapshotUser(userRegistryAddress.value, walletAddress, signer),
-        hash => (registrationTxHash.value = hash),
-      )
+    } else {
+      if (userRegistryType === UserRegistryType.SNAPSHOT) {
+        await waitForTransaction(
+          registerSnapshotUser(userRegistryAddress.value, signer),
+          hash => (registrationTxHash.value = hash),
+        )
+      } else if (userRegistryType === UserRegistryType.MERKLE) {
+        await waitForTransaction(
+          registerMerkleUser(userRegistryAddress.value, signer),
+          hash => (registrationTxHash.value = hash),
+        )
+      } else {
+        throw new Error('Unsupported registry type: ' + userRegistryType)
+      }
     }
     loadingTx.value = false
     router.push({

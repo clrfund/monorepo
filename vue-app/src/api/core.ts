@@ -47,6 +47,7 @@ export enum UserRegistryType {
   BRIGHT_ID = 'brightid',
   SIMPLE = 'simple',
   SNAPSHOT = 'snapshot',
+  MERKLE = 'merkle',
 }
 
 if (!Object.values(UserRegistryType).includes(userRegistryType as UserRegistryType)) {

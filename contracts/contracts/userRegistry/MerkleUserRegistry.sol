@@ -14,24 +14,38 @@ import {MerkleProof} from "../utils/cryptography/MerkleProof.sol";
  * the funding round coordinator.
  */
 contract MerkleUserRegistry is Ownable, IUserRegistry {
+
+  // verified users
   mapping(address => bool) private users;
+
+  // merkle root
   bytes32 public merkleRoot;
+
+  // ipfs hash of the merkle tree file
+  string public merkleHash;
 
   // Events
   event UserAdded(address indexed _user);
-  event UserRemoved(address indexed _user);
+  event MerkleRootChanged(bytes32 indexed root, string ipfsHash);
 
-  function setMerkleRoot(bytes32 root) external onlyOwner {
+  /**
+    * @dev Set the merkle root used to verify users
+    * @param root Merkle root
+    * @param ipfsHash The IPFS hash of the merkle tree file
+   */
+  function setMerkleRoot(bytes32 root, string calldata ipfsHash) external onlyOwner {
     require(root != bytes32(0), 'MerkleUserRegistry: Merkle root is zero');
     merkleRoot = root;
+    merkleHash = ipfsHash;
+
+    emit MerkleRootChanged(root, ipfsHash);
   }
 
   /**
     * @dev Add verified unique user to the registry.
     */
-  function addUser(bytes32[] calldata proof, address _user)
+  function addUser(address _user, bytes32[] calldata proof)
     external
-    onlyOwner
   {
     require(merkleRoot != bytes32(0), 'MerkleUserRegistry: Merkle root is not initialized');
     require(_user != address(0), 'MerkleUserRegistry: User address is zero');

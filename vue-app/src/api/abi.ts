@@ -6,6 +6,7 @@ import { abi as MACI } from '../../../contracts/build/contracts/maci-contracts/s
 import { abi as UserRegistry } from '../../../contracts/build/contracts/contracts/userRegistry/IUserRegistry.sol/IUserRegistry.json'
 import { abi as BrightIdUserRegistry } from '../../../contracts/build/contracts/contracts/userRegistry/BrightIdUserRegistry.sol/BrightIdUserRegistry.json'
 import { abi as SnapshotUserRegistry } from '../../../contracts/build/contracts/contracts/userRegistry/SnapshotUserRegistry.sol/SnapshotUserRegistry.json'
+import { abi as MerkleUserRegistry } from '../../../contracts/build/contracts/contracts/userRegistry/MerkleUserRegistry.sol/MerkleUserRegistry.json'
 import { abi as SimpleRecipientRegistry } from '../../../contracts/build/contracts/contracts/recipientRegistry/SimpleRecipientRegistry.sol/SimpleRecipientRegistry.json'
 import { abi as OptimisticRecipientRegistry } from '../../../contracts/build/contracts/contracts/recipientRegistry/OptimisticRecipientRegistry.sol/OptimisticRecipientRegistry.json'
 import { abi as KlerosGTCR } from '../../../contracts/build/contracts/contracts/recipientRegistry/IKlerosGTCR.sol/IKlerosGTCR.json'
@@ -19,6 +20,7 @@ export {
   MACI,
   UserRegistry,
   SnapshotUserRegistry,
+  MerkleUserRegistry,
   BrightIdUserRegistry,
   SimpleRecipientRegistry,
   OptimisticRecipientRegistry,

@@ -5,8 +5,14 @@ import type { Web3Provider } from '@ethersproject/providers'
 import { UserRegistry, ERC20 } from './abi'
 import { factory, ipfsGatewayUrl, provider, operator } from './core'
 import type { BrightId } from './bright-id'
-import { SnapshotUserRegistry } from './abi'
-import { getStorageProof, rlpEncodeProof } from '@clrfund/common'
+import { SnapshotUserRegistry, MerkleUserRegistry } from './abi'
+import {
+  getUserMerkleProof,
+  getStorageProof,
+  rlpEncodeProof,
+  getIpfsContent,
+  StandardMerkleTree,
+} from '@clrfund/common'
 
 //TODO: update anywhere this is called to take factory address as a parameter, default to env. variable
 export const LOGIN_MESSAGE = `Welcome to ${operator}!
@@ -56,11 +62,13 @@ export async function getEtherBalance(walletAddress: string): Promise<BigNumber>
   return await provider.getBalance(walletAddress)
 }
 
-export async function registerSnapshotUser(
-  registryAddress: string,
-  walletAddress: string,
-  signer: Signer,
-): Promise<ContractTransaction> {
+/**
+ * Register a user in the Snapshot user registry
+ * @param registryAddress The snapshot user registry contract address
+ * @param signer The signer
+ * @returns The contract transaction
+ */
+export async function registerSnapshotUser(registryAddress: string, signer: Signer): Promise<ContractTransaction> {
   const registry = new Contract(registryAddress, SnapshotUserRegistry, signer)
   const [tokenAddress, blockHash, storageSlot] = await Promise.all([
     registry.token(),
@@ -68,8 +76,30 @@ export async function registerSnapshotUser(
     registry.storageSlot(),
   ])
 
+  const walletAddress = await signer.getAddress()
   const proof = await getStorageProof(tokenAddress, blockHash, walletAddress, storageSlot, provider)
   const proofRlpBytes = rlpEncodeProof(proof.storageProof[0].proof)
 
   return registry.addUser(walletAddress, proofRlpBytes)
+}
+
+/**
+ * Register a user in the merkle user registry
+ * @param registryAddress The merkle user registry
+ * @param signer The user to be registered
+ * @returns The contract transaction
+ */
+export async function registerMerkleUser(registryAddress: string, signer: Signer): Promise<ContractTransaction> {
+  const registry = new Contract(registryAddress, MerkleUserRegistry, signer)
+  const merkleHash = await registry.merkleHash()
+
+  const treeRaw = await getIpfsContent(merkleHash, ipfsGatewayUrl)
+  const tree = StandardMerkleTree.load(treeRaw)
+  const walletAddress = await signer.getAddress()
+  const proof = await getUserMerkleProof(walletAddress, tree)
+  if (!proof) {
+    throw new Error('User is not authorized')
+  }
+
+  return registry.addUser(walletAddress, proof)
 }
