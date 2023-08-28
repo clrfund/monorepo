@@ -66,7 +66,10 @@ contract SnapshotUserRegistry is Ownable, IUserRegistry {
     external
     onlyOwner
   {
-    
+    require(_tokenAddress != address(0), 'SnapshotUserRegistry: Token address is zero');
+    require(_blockHash != bytes32(0), 'SnapshotUserRegistry: Block hash is zero');
+    require(_stateRoot != bytes32(0), 'SnapshotUserRegistry: State root is zero');
+
     RLPReader.RLPItem[] memory proof = _accountProofRlpBytes.toRlpItem().toList();
     bytes32 addressHash = keccak256(abi.encodePacked(uint160(_tokenAddress)));
 

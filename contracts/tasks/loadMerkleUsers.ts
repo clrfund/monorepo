@@ -17,6 +17,8 @@ import { getIpfsHash } from '../utils/ipfs'
  *  yarn hardhat load-merkle-users --address-file addresses.txt --user-registry <address> --network goerli
  */
 
+const MAX_ADDRESSES_SUPPORTED = 10000
+
 /**
  * Load users in the file into the simple user registry
  *
@@ -70,20 +72,29 @@ async function loadFile(
     }
   }
 
-  if (validAddresses.length > 0) {
-    const tree = StandardMerkleTree.of(
-      validAddresses.map((address) => [address]),
-      ['address']
-    )
-
-    const treeDump = tree.dump()
-    fs.writeFileSync(output, JSON.stringify(treeDump, null, 4))
-
-    const ipfsHash = await getIpfsHash(treeDump)
-
-    const tx = await registry.setMerkleRoot(tree.root, ipfsHash)
-    return tx
+  if (validAddresses.length === 0) {
+    throw new Error(`No valid address found in ${addressFile}`)
   }
+
+  if (validAddresses.length > MAX_ADDRESSES_SUPPORTED) {
+    // If the tree output file is too large, the web app will get error reading it from IPFS
+    throw new Error(
+      `We currently support loading a maximum of ${MAX_ADDRESSES_SUPPORTED} addresses`
+    )
+  }
+
+  const tree = StandardMerkleTree.of(
+    validAddresses.map((address) => [address]),
+    ['address']
+  )
+
+  const treeDump = tree.dump()
+  fs.writeFileSync(output, JSON.stringify(treeDump, null, 4))
+
+  const ipfsHash = await getIpfsHash(treeDump)
+
+  const tx = await registry.setMerkleRoot(tree.root, ipfsHash)
+  return tx
 }
 
 task('load-merkle-users', 'Bulkload recipients into the simple user registry')

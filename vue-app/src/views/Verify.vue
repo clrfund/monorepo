@@ -157,6 +157,7 @@
                 {{ $t('verify.btn') }}
               </button>
               <p v-if="gettingProof">{{ $t('verify.getting_proof') }}</p>
+              <p v-if="notAuthorized" class="error">{{ $t('verify.not_authorized') }}</p>
               <transaction
                 v-if="registrationTxHash || loadingTx || registrationTxError"
                 :display-close-btn="false"
@@ -186,9 +187,6 @@ import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 import { UserRegistryType, isBrightIdRequired, brightIdSponsorUrl, userRegistryType } from '@/api/core'
 import { assert } from '@/utils/assert'
-import { useI18n } from 'vue-i18n'
-
-const { t } = useI18n()
 
 interface VerificationStep {
   page: 'connect' | 'registration' | 'sponsorship'
@@ -223,6 +221,7 @@ const appLink = ref('')
 const appLinkQrCode = ref('')
 const registrationTxHash = ref('')
 const registrationTxError = ref('')
+const notAuthorized = ref(false)
 const loadingTx = ref(false)
 const gettingProof = ref(false)
 const isSponsoring = ref(!brightIdSponsorUrl)
@@ -358,6 +357,7 @@ async function register() {
   }
 
   registrationTxError.value = ''
+  notAuthorized.value = false
   try {
     assert(userRegistryAddress.value, 'Missing the user registry address')
     if (isBrightIdRequired) {
@@ -388,7 +388,7 @@ async function register() {
             hash => (registrationTxHash.value = hash),
           )
         } else {
-          registrationTxError.value = t('verify.not_authorized')
+          notAuthorized.value = true
           return
         }
       } else {

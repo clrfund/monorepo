@@ -1,7 +1,13 @@
 import { ethers } from 'hardhat'
 import { use, expect } from 'chai'
 import { solidity } from 'ethereum-waffle'
-import { Contract, ContractTransaction, providers } from 'ethers'
+import {
+  Contract,
+  ContractTransaction,
+  providers,
+  constants,
+  utils,
+} from 'ethers'
 import {
   Block,
   getBlock,
@@ -86,6 +92,53 @@ describe('SnapshotUserRegistry', function () {
       deployer
     )
     userRegistry = await SnapshotUserRegistry.deploy()
+  })
+
+  describe('Set Storage Root', function () {
+    const token = tokens[0]
+    let accountProofRlpBytes: string
+    before(async function () {
+      block = await getBlock(token.snapshotBlock, provider)
+
+      const proof = await getAccountProof(token.address, block.hash, provider)
+      accountProofRlpBytes = rlpEncodeProof(proof.accountProof)
+    })
+
+    it('Should throw if token address is 0', async function () {
+      await expect(
+        userRegistry.setStorageRoot(
+          constants.AddressZero,
+          block.hash,
+          block.stateRoot,
+          token.storageSlot,
+          accountProofRlpBytes
+        )
+      ).to.be.revertedWith('SnapshotUserRegistry: Token address is zero')
+    })
+
+    it('Should throw if block hash is 0', async function () {
+      await expect(
+        userRegistry.setStorageRoot(
+          token.address,
+          utils.hexZeroPad('0x00', 32),
+          block.stateRoot,
+          token.storageSlot,
+          accountProofRlpBytes
+        )
+      ).to.be.revertedWith('SnapshotUserRegistry: Block hash is zero')
+    })
+
+    it('Should throw if state root is 0', async function () {
+      await expect(
+        userRegistry.setStorageRoot(
+          token.address,
+          block.hash,
+          utils.hexZeroPad('0x00', 32),
+          token.storageSlot,
+          accountProofRlpBytes
+        )
+      ).to.be.revertedWith('SnapshotUserRegistry: State root is zero')
+    })
   })
 
   describe('Add user', function () {
