@@ -23,11 +23,13 @@ import { getIpfsHash } from '../utils/ipfs'
  * @param registry Merkle user registry contract
  * @param addressFile The path of the file containing the addresses
  * @param output The path for the merkle tree output file
+ * @param silent true - do not print every address as it's being processed
  */
 async function loadFile(
   registry: Contract,
   addressFile: string,
-  output: string
+  output: string,
+  silent: boolean
 ) {
   let content: string | null = null
   try {
@@ -44,13 +46,16 @@ async function loadFile(
 
   const validAddresses: string[] = []
 
+  console.log('Processing addresses...')
   for (let i = 0; i < addresses.length; i++) {
     const address = addresses[i]
     const isValidAddress = Boolean(address) && utils.isAddress(address)
     if (isValidAddress) {
-      console.log('Adding address', address)
       try {
         validAddresses.push(address)
+        if (!silent) {
+          console.log('Added address', address)
+        }
       } catch (err: any) {
         if (err.reason) {
           console.error('Failed to add address', address, err.reason)
@@ -59,7 +64,9 @@ async function loadFile(
         }
       }
     } else {
-      console.warn('Skipping invalid address', address)
+      if (address) {
+        console.warn('Skipping invalid address', address)
+      }
     }
   }
 
@@ -91,21 +98,29 @@ task('load-merkle-users', 'Bulkload recipients into the simple user registry')
     undefined,
     types.string
   )
-  .setAction(async ({ userRegistry, addressFile, output }, { ethers }) => {
-    const registry = await ethers.getContractAt(
-      'MerkleUserRegistry',
-      userRegistry
-    )
+  .addOptionalParam(
+    'silent',
+    'Do not log every address being processed',
+    true,
+    types.boolean
+  )
+  .setAction(
+    async ({ userRegistry, addressFile, output, silent }, { ethers }) => {
+      const registry = await ethers.getContractAt(
+        'MerkleUserRegistry',
+        userRegistry
+      )
 
-    console.log('User merkle registry', userRegistry)
-    console.log('Deployer', await registry.signer.getAddress())
-    const timeMs = new Date().getTime()
-    const outputFile = output ? output : `./merkle_users_${timeMs}.json`
-    const tx = await loadFile(registry, addressFile, outputFile)
-    console.log('User merkle root updated at tx hash', tx.hash)
-    await tx.wait()
+      console.log('User merkle registry', userRegistry)
+      console.log('Deployer', await registry.signer.getAddress())
+      const timeMs = new Date().getTime()
+      const outputFile = output ? output : `./merkle_users_${timeMs}.json`
+      const tx = await loadFile(registry, addressFile, outputFile, silent)
+      console.log('User merkle root updated at tx hash', tx.hash)
+      await tx.wait()
 
-    console.log(
-      `User merkle tree file generated at ${outputFile}, make sure to upload it to IPFS.`
-    )
-  })
+      console.log(
+        `User merkle tree file generated at ${outputFile}, make sure to upload it to IPFS.`
+      )
+    }
+  )

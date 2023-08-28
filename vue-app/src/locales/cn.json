@@ -808,6 +808,8 @@
     "previous": "前一步",
     "copy_link": "复制",
     "verification_status": "您的钱包地址没有连接到 BrightID 的户口。 这可能需要几分钟的时间，稍等候后点击按钮再试。",
+    "getting_proof": "正在获取验证证明...",
+    "not_authorized": "您没有权限注册",
     "skip_sponsorship": "跳过",
     "get_sponsored_header": "赞助",
     "get_sponsored_text": "您需要一个赞助令牌才能为 BrightID 认证。这有助于支持 BrightID 作为去中心化平台。您只需这样做一次, 就可以应用任何 BrightID APPS。检查 BrightID 移动应用程序，看看您是否受到赞助。如果没有，请点击按钮提交赞助请求。如果您已受到赞助，您可跳过这一步。",

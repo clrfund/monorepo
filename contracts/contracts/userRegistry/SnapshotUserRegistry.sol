@@ -40,10 +40,11 @@ contract SnapshotUserRegistry is Ownable, IUserRegistry {
   uint256 public minBalance = 1;
 
   // verified users
-  mapping(address => Status) public users;
+  // blockHash -> user -> status
+  mapping(bytes32 => mapping(address => Status)) public users;
   
   // Events
-  event UserAdded(address indexed _user);
+  event UserAdded(address indexed _user, bytes32 indexed blockHash);
   event MinBalanceChanged(uint256 newBalance);
   event StorageRootChanged(address indexed _token, bytes32 indexed _blockHash, uint256 storageSlot);
 
@@ -96,7 +97,7 @@ contract SnapshotUserRegistry is Ownable, IUserRegistry {
   {
     require(storageRoot != bytes32(0), 'SnapshotUserRegistry: Registry is not initialized');
     require(_user != address(0), 'SnapshotUserRegistry: User address is zero');
-    require(users[_user] == Status.Unverified, 'SnapshotUserRegistry: User already added');
+    require(users[blockHash][_user] == Status.Unverified, 'SnapshotUserRegistry: User already added');
 
     RLPReader.RLPItem[] memory proof = storageProofRlpBytes.toRlpItem().toList();
 
@@ -106,8 +107,8 @@ contract SnapshotUserRegistry is Ownable, IUserRegistry {
     require(slotValue.exists, 'SnapshotUserRegistry: User is not qualified');
     require(slotValue.value >= minBalance , 'SnapshotUserRegistry: User did not meet the minimum balance requirement');
     
-    users[_user] = Status.Verified;
-    emit UserAdded(_user);
+    users[blockHash][_user] = Status.Verified;
+    emit UserAdded(_user, blockHash);
   }
 
   /**
@@ -119,7 +120,7 @@ contract SnapshotUserRegistry is Ownable, IUserRegistry {
     view
     returns (bool)
   {
-    return users[_user] == Status.Verified;
+    return users[blockHash][_user] == Status.Verified;
   }
 
   /**

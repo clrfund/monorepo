@@ -15,8 +15,9 @@ import {MerkleProof} from "../utils/cryptography/MerkleProof.sol";
  */
 contract MerkleUserRegistry is Ownable, IUserRegistry {
 
-  // verified users
-  mapping(address => bool) private users;
+  // verified users grouped by merkleRoot
+  // merkleRoot -> user -> status
+  mapping(bytes32 => mapping(address => bool)) private users;
 
   // merkle root
   bytes32 public merkleRoot;
@@ -25,7 +26,7 @@ contract MerkleUserRegistry is Ownable, IUserRegistry {
   string public merkleHash;
 
   // Events
-  event UserAdded(address indexed _user);
+  event UserAdded(address indexed _user, bytes32 indexed merkleRoot);
   event MerkleRootChanged(bytes32 indexed root, string ipfsHash);
 
   /**
@@ -35,6 +36,8 @@ contract MerkleUserRegistry is Ownable, IUserRegistry {
    */
   function setMerkleRoot(bytes32 root, string calldata ipfsHash) external onlyOwner {
     require(root != bytes32(0), 'MerkleUserRegistry: Merkle root is zero');
+    require(bytes(ipfsHash).length != 0, 'MerkleUserRegistry: Merkle hash is empty string');
+
     merkleRoot = root;
     merkleHash = ipfsHash;
 
@@ -49,15 +52,15 @@ contract MerkleUserRegistry is Ownable, IUserRegistry {
   {
     require(merkleRoot != bytes32(0), 'MerkleUserRegistry: Merkle root is not initialized');
     require(_user != address(0), 'MerkleUserRegistry: User address is zero');
-    require(!users[_user], 'MerkleUserRegistry: User already verified');
+    require(!users[merkleRoot][_user], 'MerkleUserRegistry: User already verified');
 
     // verifies user against the merkle root
     bytes32 leaf = keccak256(abi.encodePacked(keccak256(abi.encode(_user))));
     bool verified = MerkleProof.verifyCalldata(proof, merkleRoot, leaf);
     require(verified, 'MerkleUserRegistry: User is not authorized');
 
-    users[_user] = true;
-    emit UserAdded(_user);
+    users[merkleRoot][_user] = true;
+    emit UserAdded(_user, merkleRoot);
     
   }
 
@@ -70,6 +73,6 @@ contract MerkleUserRegistry is Ownable, IUserRegistry {
     view
     returns (bool)
   {
-    return users[_user];
+    return users[merkleRoot][_user];
   }
 }

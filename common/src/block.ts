@@ -1,4 +1,4 @@
-import { providers } from 'ethers'
+import { providers, utils } from 'ethers'
 
 export interface Block {
   blockNumber: number
@@ -13,8 +13,8 @@ export async function getBlock(
   blockNumber: number,
   provider: providers.JsonRpcProvider
 ): Promise<Block> {
-  const block = await provider.getBlock(blockNumber)
-  const blockParams = [block.hash, false]
-  const rawBlock = await provider.send('eth_getBlockByHash', blockParams)
-  return { blockNumber, hash: block.hash, stateRoot: rawBlock.stateRoot }
+  const blockNumberHex = utils.hexValue(blockNumber)
+  const blockParams = [blockNumberHex, false]
+  const rawBlock = await provider.send('eth_getBlockByNumber', blockParams)
+  return { blockNumber, hash: rawBlock.hash, stateRoot: rawBlock.stateRoot }
 }

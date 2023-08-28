@@ -156,6 +156,7 @@
               >
                 {{ $t('verify.btn') }}
               </button>
+              <p v-if="gettingProof">{{ $t('verify.getting_proof') }}</p>
               <transaction
                 v-if="registrationTxHash || loadingTx || registrationTxError"
                 :display-close-btn="false"
@@ -175,7 +176,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import QRCode from 'qrcode'
 import { getBrightIdLink, getBrightIdUniversalLink, registerUser, selfSponsor, sponsorUser } from '@/api/bright-id'
-import { registerSnapshotUser, registerMerkleUser } from '@/api/user'
+import { getProofSnapshot, getProofMerkle, registerUserSnapshot, registerUserMerkle } from '@/api/user'
 import Transaction from '@/components/Transaction.vue'
 import Loader from '@/components/Loader.vue'
 import Links from '@/components/Links.vue'
@@ -185,6 +186,9 @@ import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 import { UserRegistryType, isBrightIdRequired, brightIdSponsorUrl, userRegistryType } from '@/api/core'
 import { assert } from '@/utils/assert'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 interface VerificationStep {
   page: 'connect' | 'registration' | 'sponsorship'
@@ -220,6 +224,7 @@ const appLinkQrCode = ref('')
 const registrationTxHash = ref('')
 const registrationTxError = ref('')
 const loadingTx = ref(false)
+const gettingProof = ref(false)
 const isSponsoring = ref(!brightIdSponsorUrl)
 const showVerificationStatus = ref(false)
 const autoSponsorError = ref('')
@@ -352,27 +357,40 @@ async function register() {
     return
   }
 
-  loadingTx.value = true
   registrationTxError.value = ''
   try {
     assert(userRegistryAddress.value, 'Missing the user registry address')
     if (isBrightIdRequired) {
       assert(brightId.value?.verification, 'Missing BrightID verification')
+      loadingTx.value = true
       await waitForTransaction(
         registerUser(userRegistryAddress.value, brightId.value.verification, signer),
         hash => (registrationTxHash.value = hash),
       )
     } else {
       if (userRegistryType === UserRegistryType.SNAPSHOT) {
+        gettingProof.value = true
+        const proof = await getProofSnapshot(userRegistryAddress.value, signer)
+        gettingProof.value = false
+        loadingTx.value = true
         await waitForTransaction(
-          registerSnapshotUser(userRegistryAddress.value, signer),
+          registerUserSnapshot(userRegistryAddress.value, proof, signer),
           hash => (registrationTxHash.value = hash),
         )
       } else if (userRegistryType === UserRegistryType.MERKLE) {
-        await waitForTransaction(
-          registerMerkleUser(userRegistryAddress.value, signer),
-          hash => (registrationTxHash.value = hash),
-        )
+        gettingProof.value = true
+        const proof = await getProofMerkle(userRegistryAddress.value, signer)
+        gettingProof.value = false
+        if (proof) {
+          loadingTx.value = true
+          await waitForTransaction(
+            registerUserMerkle(userRegistryAddress.value, proof, signer),
+            hash => (registrationTxHash.value = hash),
+          )
+        } else {
+          registrationTxError.value = t('verify.not_authorized')
+          return
+        }
       } else {
         throw new Error('Unsupported registry type: ' + userRegistryType)
       }

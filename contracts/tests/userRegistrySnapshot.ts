@@ -129,7 +129,7 @@ describe('SnapshotUserRegistry', function () {
             )
           )
             .to.emit(userRegistry, 'UserAdded')
-            .withArgs(userAccount)
+            .withArgs(userAccount, block.hash)
           expect(await userRegistry.isVerifiedUser(userAccount)).to.equal(true)
         })
 
@@ -199,7 +199,7 @@ describe('SnapshotUserRegistry', function () {
             )
           )
             .to.emit(userRegistry, 'UserAdded')
-            .withArgs(userAddress)
+            .withArgs(userAddress, block.hash)
           expect(await userRegistry.isVerifiedUser(userAddress)).to.equal(true)
         })
       })

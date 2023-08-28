@@ -808,6 +808,8 @@
     "previous": "Anterior",
     "copy_link": "Copiar Enlace",
     "verification_status": "Tu dirección de billetera no está vinculada con BrightID. Puede tomar unos minutos verificar la conexión, por favor espera y haz clic en el botón más tarde para verificar el estado.",
+    "getting_proof": "Recuperando la prueba de verificación...",
+    "not_authorized": "No está autorizado/a para registrarse",
     "skip_sponsorship": "Saltar",
     "get_sponsored_header": "Obtén un patrocinio",
     "get_sponsored_text": "Necesitas un token de patrocinio para conectar tu dirección de billetera con BrightID. Esto ayuda a apoyar a BrightID como una plataforma descentralizada. Solo necesitarás hacer esto una vez y te cubrirá para cualquier otra aplicación que funcione con BrightID. Verifica en la aplicación móvil de BrightID si estás patrocinado. Obtén patrocinio al enviar una transacción de patrocinio o salta al siguiente paso.",

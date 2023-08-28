@@ -36,7 +36,7 @@
       <links v-if="!hasStartedVerification" to="/verify" class="btn-action">{{ $t('callToActionCard.link1') }}</links>
       <links v-else to="/verify/connect" class="btn-action">{{ $t('callToActionCard.link2') }}</links>
     </div>
-    <v-else>
+    <div v-else>
       <span aria-label="rocket" class="emoji">🚀</span>
       <div>
         <h2 class="prep-title">{{ $t('callToActionCard.h2_3') }}</h2>
@@ -45,7 +45,7 @@
         </p>
       </div>
       <links to="/verify/register" class="btn-action">{{ $t('callToActionCard.link1') }}</links>
-    </v-else>
+    </div>
   </div>
 </template>
 
