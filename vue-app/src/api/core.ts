@@ -46,8 +46,11 @@ export const userRegistryType = import.meta.env.VITE_USER_REGISTRY_TYPE
 export enum UserRegistryType {
   BRIGHT_ID = 'brightid',
   SIMPLE = 'simple',
+  SNAPSHOT = 'snapshot',
+  MERKLE = 'merkle',
 }
-if (![UserRegistryType.BRIGHT_ID, UserRegistryType.SIMPLE].includes(userRegistryType as UserRegistryType)) {
+
+if (!Object.values(UserRegistryType).includes(userRegistryType as UserRegistryType)) {
   throw new Error('invalid user registry type')
 }
 export const recipientRegistryType = import.meta.env.VITE_RECIPIENT_REGISTRY_TYPE
@@ -92,6 +95,7 @@ export const showComplianceRequirement = /^yes$/i.test(import.meta.env.VITE_SHOW
 
 export const isBrightIdRequired = userRegistryType === 'brightid'
 export const isOptimisticRecipientRegistry = recipientRegistryType === 'optimistic'
+export const isUserRegistrationRequired = userRegistryType !== UserRegistryType.SIMPLE
 
 // Try to get the next scheduled start date
 const nextStartDate = import.meta.env.VITE_NEXT_ROUND_START_DATE

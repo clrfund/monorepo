@@ -156,6 +156,8 @@
               >
                 {{ $t('verify.btn') }}
               </button>
+              <p v-if="gettingProof">{{ $t('verify.getting_proof') }}</p>
+              <p v-if="notAuthorized" class="error">{{ $t('verify.not_authorized') }}</p>
               <transaction
                 v-if="registrationTxHash || loadingTx || registrationTxError"
                 :display-close-btn="false"
@@ -175,6 +177,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import QRCode from 'qrcode'
 import { getBrightIdLink, getBrightIdUniversalLink, registerUser, selfSponsor, sponsorUser } from '@/api/bright-id'
+import { getProofSnapshot, getProofMerkle, registerUserSnapshot, registerUserMerkle } from '@/api/user'
 import Transaction from '@/components/Transaction.vue'
 import Loader from '@/components/Loader.vue'
 import Links from '@/components/Links.vue'
@@ -182,16 +185,25 @@ import { waitForTransaction } from '@/utils/contracts'
 import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
-import { brightIdSponsorUrl } from '@/api/core'
+import { UserRegistryType, isBrightIdRequired, brightIdSponsorUrl, userRegistryType } from '@/api/core'
 import { assert } from '@/utils/assert'
 
-interface BrightIDStep {
+interface VerificationStep {
   page: 'connect' | 'registration' | 'sponsorship'
 }
 
-const pages: Array<BrightIDStep> = [{ page: 'sponsorship' }, { page: 'connect' }, { page: 'registration' }]
-const steps = brightIdSponsorUrl ? pages.filter(p => p.page !== 'sponsorship') : pages
+function getVerificationSteps(): Array<VerificationStep> {
+  switch (userRegistryType) {
+    case UserRegistryType.BRIGHT_ID:
+      return brightIdSponsorUrl
+        ? [{ page: 'connect' }, { page: 'registration' }]
+        : [{ page: 'sponsorship' }, { page: 'connect' }, { page: 'registration' }]
+    default:
+      return [{ page: 'registration' }]
+  }
+}
 
+const steps = getVerificationSteps()
 const router = useRouter()
 const appStore = useAppStore()
 
@@ -199,8 +211,6 @@ const appStore = useAppStore()
 const { hasContributionPhaseEnded, userRegistryAddress } = storeToRefs(appStore)
 const userStore = useUserStore()
 const { currentUser } = storeToRefs(userStore)
-
-// do onchain sponsorship if the brightId url is not setup
 
 const stepNumbers: { [key: string]: number } = steps.reduce((res, step, index) => {
   res[step.page] = index
@@ -211,7 +221,9 @@ const appLink = ref('')
 const appLinkQrCode = ref('')
 const registrationTxHash = ref('')
 const registrationTxError = ref('')
+const notAuthorized = ref(false)
 const loadingTx = ref(false)
+const gettingProof = ref(false)
 const isSponsoring = ref(!brightIdSponsorUrl)
 const showVerificationStatus = ref(false)
 const autoSponsorError = ref('')
@@ -221,14 +233,16 @@ const selfSponsorTxHash = ref('')
 const brightId = computed(() => currentUser.value?.brightId)
 
 const currentStep = computed(() => {
-  if (!brightId.value) {
-    return 0
-  }
-  if (isSponsoring.value) {
-    return stepNumbers['sponsorship']
-  }
-  if (!brightId.value.isVerified) {
-    return stepNumbers['connect']
+  if (isBrightIdRequired) {
+    if (!brightId.value) {
+      return 0
+    }
+    if (isSponsoring.value) {
+      return stepNumbers['sponsorship']
+    }
+    if (!brightId.value.isVerified) {
+      return stepNumbers['connect']
+    }
   }
   if (!currentUser.value?.isRegistered) {
     return stepNumbers['registration']
@@ -268,8 +282,10 @@ onMounted(async () => {
     router.replace({ name: 'verify' })
   }
 
-  // make sure BrightId status is availabel before page load
-  await userStore.loadBrightID()
+  if (isBrightIdRequired) {
+    // make sure BrightId status is available before page load
+    await userStore.loadBrightID()
+  }
 
   // redirect to the verify success page if the user is registered
   if (currentStep.value < 0) {
@@ -277,7 +293,7 @@ onMounted(async () => {
   }
 
   // mounted
-  if (currentUser.value && !brightId.value?.isVerified) {
+  if (isBrightIdRequired && currentUser.value && !brightId.value?.isVerified) {
     const walletAddress = currentUser.value.walletAddress
     // send sponsorship request if automatic sponsoring is enabled
     if (brightIdSponsorUrl) {
@@ -336,26 +352,59 @@ async function selfSponsorAndWait() {
 async function register() {
   const signer = userStore.signer
 
-  if (brightId.value?.verification) {
-    loadingTx.value = true
-    registrationTxError.value = ''
-    try {
-      assert(userRegistryAddress.value, 'Missing the user registry address')
+  if (isBrightIdRequired && !brightId.value?.verification) {
+    return
+  }
+
+  registrationTxError.value = ''
+  notAuthorized.value = false
+  try {
+    assert(userRegistryAddress.value, 'Missing the user registry address')
+    if (isBrightIdRequired) {
+      assert(brightId.value?.verification, 'Missing BrightID verification')
+      loadingTx.value = true
       await waitForTransaction(
         registerUser(userRegistryAddress.value, brightId.value.verification, signer),
         hash => (registrationTxHash.value = hash),
       )
-      loadingTx.value = false
-      router.push({
-        name: 'verified',
-        params: { hash: registrationTxHash.value },
-      })
-    } catch (error) {
-      registrationTxError.value = (error as Error).message
-      return
+    } else {
+      if (userRegistryType === UserRegistryType.SNAPSHOT) {
+        gettingProof.value = true
+        const proof = await getProofSnapshot(userRegistryAddress.value, signer)
+        gettingProof.value = false
+        loadingTx.value = true
+        await waitForTransaction(
+          registerUserSnapshot(userRegistryAddress.value, proof, signer),
+          hash => (registrationTxHash.value = hash),
+        )
+      } else if (userRegistryType === UserRegistryType.MERKLE) {
+        gettingProof.value = true
+        const proof = await getProofMerkle(userRegistryAddress.value, signer)
+        gettingProof.value = false
+        if (proof) {
+          loadingTx.value = true
+          await waitForTransaction(
+            registerUserMerkle(userRegistryAddress.value, proof, signer),
+            hash => (registrationTxHash.value = hash),
+          )
+        } else {
+          notAuthorized.value = true
+          return
+        }
+      } else {
+        throw new Error('Unsupported registry type: ' + userRegistryType)
+      }
     }
-    userStore.loadUserInfo()
+    loadingTx.value = false
+    router.push({
+      name: 'verified',
+      params: { hash: registrationTxHash.value },
+    })
+  } catch (error) {
+    registrationTxError.value = (error as Error).message
+    return
   }
+  userStore.loadUserInfo()
 }
 
 function isStepValid(step: number): boolean {

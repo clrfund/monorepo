@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
-import { isBrightIdRequired, isOptimisticRecipientRegistry } from '@/api/core'
+import { isUserRegistrationRequired, isOptimisticRecipientRegistry } from '@/api/core'
 
 const Landing = () => import('@/views/Landing.vue')
 const JoinLanding = () => import('@/views/JoinLanding.vue')
@@ -233,7 +233,7 @@ const routes: Array<RouteRecordRaw> = [
   },
 ]
 
-if (isBrightIdRequired) {
+if (isUserRegistrationRequired) {
   routes.push(
     {
       path: '/verify',

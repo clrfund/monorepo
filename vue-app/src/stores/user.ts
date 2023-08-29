@@ -1,4 +1,4 @@
-import { getEtherBalance, getTokenBalance, isVerifiedUser, type User } from '@/api/user'
+import { getEtherBalance, getTokenBalance, isVerifiedUser, isRegisteredUser, type User } from '@/api/user'
 import { defineStore } from 'pinia'
 import { useAppStore } from '@/stores'
 import type { WalletUser } from '@/stores'
@@ -83,10 +83,12 @@ export const useUserStore = defineStore('user', {
           appStore.contribution = contribution
           appStore.hasVoted = hasVoted
         }
+
+        isRegistered = await isRegisteredUser(appStore.currentRound.fundingRoundAddress, walletAddress)
       }
 
       // Check if this user is in our user registry
-      if (userRegistryAddress) {
+      if (!isRegistered && userRegistryAddress) {
         isRegistered = await isVerifiedUser(userRegistryAddress, walletAddress)
       }
 

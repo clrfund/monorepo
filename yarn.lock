@@ -3011,6 +3011,14 @@
   resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-3.2.0.tgz#3e6b3a7662d8ed64271ade96ef42655db983fd9d"
   integrity sha512-bUOmkSoPkjnUyMiKo6RYnb0VHBk5D9KKDAgNLzF41aqAM3TeE0yGdFF5dVRcV60pZdJLlyFT/jjXIZCWyyEzAQ==
 
+"@openzeppelin/merkle-tree@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/merkle-tree/-/merkle-tree-1.0.5.tgz#4836d377777a7e39f31674f06ec3d6909def7913"
+  integrity sha512-JkwG2ysdHeIphrScNxYagPy6jZeNONgDRyqU6lbFgE8HKCZFSkcP8r6AjZs+3HZk4uRNV0kNBBzuWhKQ3YV7Kw==
+  dependencies:
+    "@ethersproject/abi" "^5.7.0"
+    ethereum-cryptography "^1.1.2"
+
 "@parcel/watcher@^2.1.0":
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/@parcel/watcher/-/watcher-2.1.0.tgz#5f32969362db4893922c526a842d8af7a8538545"
@@ -8717,7 +8725,7 @@ ethereum-cryptography@0.1.3, ethereum-cryptography@^0.1.3:
     secp256k1 "^4.0.1"
     setimmediate "^1.0.5"
 
-ethereum-cryptography@^1.0.3:
+ethereum-cryptography@^1.0.3, ethereum-cryptography@^1.1.2:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/ethereum-cryptography/-/ethereum-cryptography-1.2.0.tgz#5ccfa183e85fdaf9f9b299a79430c044268c9b3a"
   integrity sha512-6yFQC9b5ug6/17CQpCyE3k9eKBMdhyVjzUy1WkiuY/E4vj/SXDBbCw8QEIaXqf0Mf2SnY6RmpDcwlUmBSS0EJw==
@@ -16312,10 +16320,10 @@ solhint@^3.3.2:
   optionalDependencies:
     prettier "^2.8.3"
 
-solidity-rlp@2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/solidity-rlp/-/solidity-rlp-2.0.3.tgz#5116b50407b00f45e803a8a32145190d7b315d89"
-  integrity sha512-d61KdqL1Fm1LoIzHVvvh4SONE5jM4wzYzM6MY53p1DBFy7ZDIHyXdq/CIGhWMItOjr/mvbXJP9BEHX2Q0TZqfg==
+solidity-rlp@2.0.8:
+  version "2.0.8"
+  resolved "https://registry.yarnpkg.com/solidity-rlp/-/solidity-rlp-2.0.8.tgz#1548370b690ef06dbb62af06b7675bc86b19bbe3"
+  integrity sha512-gzYzHoFKRH1ydJeCfzm3z/BvKrZGK/V9+qbOlNbBcRAYeizjCdDNhLTTE8iIJrHqsRrZRSOo+7mhbnxoBoZvJQ==
 
 sonic-boom@^2.2.1:
   version "2.8.0"
