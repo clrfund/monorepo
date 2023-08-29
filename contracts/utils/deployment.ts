@@ -1,11 +1,52 @@
 import { ethers, config } from 'hardhat'
 import { Libraries } from 'hardhat/types/runtime'
-import { Signer, Contract } from 'ethers'
+import { Signer, Contract, utils } from 'ethers'
 import { link } from 'ethereum-waffle'
 import path from 'path'
 
 import { MaciParameters } from './maci'
 import { readFileSync } from 'fs'
+
+const userRegistryNames: Record<string, string> = {
+  simple: 'SimpleUserRegistry',
+  brightid: 'BrightIdUserRegistry',
+  snapshot: 'SnapshotUserRegistry',
+  merkle: 'MerkleUserRegistry',
+}
+
+export interface BrightIdParams {
+  context: string
+  verifierAddress: string
+  sponsor: string
+}
+
+/**
+ * Return the brightid user registry contructor parameter values
+ * @param userRegistryType user registry type
+ * @returns BrightIdParams or null
+ */
+export function getBrightIdParams(
+  userRegistryType: string
+): BrightIdParams | null {
+  if (userRegistryType === 'brightid') {
+    const verifierAddress = process.env.BRIGHTID_VERIFIER_ADDR
+    const sponsor = process.env.BRIGHTID_SPONSOR
+    if (!verifierAddress) {
+      throw new Error('Missing environment variable BRIGHTID_VERIFIER_ADDR')
+    }
+    if (!sponsor) {
+      throw new Error('Missing environment variable BRIGHTID_SPONSOR')
+    }
+
+    return {
+      context: process.env.BRIGHTID_CONTEXT || 'clr.fund',
+      verifierAddress,
+      sponsor,
+    }
+  } else {
+    return null
+  }
+}
 
 export function linkBytecode(
   bytecode: string,
@@ -192,4 +233,42 @@ export async function deployMaciFactory(
   await maciFactory.deployTransaction.wait()
 
   return maciFactory
+}
+
+export async function deployUserRegistry(
+  userRegistryType: string,
+  deployer: Signer,
+  brightid: BrightIdParams | null
+): Promise<Contract> {
+  let userRegistry: Contract
+  if (userRegistryType === 'brightid') {
+    if (!brightid) {
+      throw new Error('Missing BrightId parameter')
+    }
+
+    const BrightIdUserRegistry = await ethers.getContractFactory(
+      'BrightIdUserRegistry',
+      deployer
+    )
+
+    userRegistry = await BrightIdUserRegistry.deploy(
+      utils.formatBytes32String(brightid.context),
+      brightid.verifierAddress,
+      brightid.sponsor
+    )
+  } else {
+    const userRegistryName = userRegistryNames[userRegistryType]
+    if (!userRegistryName) {
+      throw new Error('unsupported user registry type: ' + userRegistryType)
+    }
+
+    const UserRegistry = await ethers.getContractFactory(
+      userRegistryName,
+      deployer
+    )
+    userRegistry = await UserRegistry.deploy()
+  }
+
+  await userRegistry.deployTransaction.wait()
+  return userRegistry
 }

@@ -20,7 +20,7 @@ Once the app is registered, you will get an appId which will be set to `BRIGHTID
 
 ## Deploy Contracts
 
-### Deploy the BrightID sponsor contract
+### Deploy the BrightID sponsor contract (if using BrightID)
 
 1. Run `yarn hardhat --network {network} deploy-sponsor`
 2. Verify the contract by running `yarn hardhat --network arbitrum-goerli verify {contract address}`
@@ -44,20 +44,44 @@ BRIGHTID_SPONSOR=
 
 1. Adjust the `/contracts/scripts/deploy.ts` as you wish.
 2. Run `yarn hardhat run --network {network} scripts/deploy.ts` or use one of the `yarn deploy:{network}` available in `/contracts/package.json`.
-3. Make sure to save in a safe place the serializedCoordinatorPrivKey and the serializedCoordinatorPubKey, you are going to need them for the website and tallying the votes in future steps.
-4. To deploy a new funding round, update the .env file with the funding round factory address and the COORDINATOR_PK (with serializedCoordinatorPrivKey) deployed in the previous step and run the `newRound.ts` script:
+3. Make sure to save in a safe place the serializedCoordinatorPrivKey, you are going to need it for tallying the votes in future steps.
+4. To deploy a new funding round, update the .env file:
 
 ```
 # .env
+# The funding round factory address
 FACTORY_ADDRESS=
+# The coordinator MACI private key (serializedCoordinatorPrivKey saved in step 3)
 COORDINATOR_PK=
+# The coordinator wallet private key
+COORDINATOR_ETH_PK=
 ```
+
+5. If using a snapshot user registry, run the `set-storage-root` task to set the storage root for the block snapshot for user account verification
+
+```
+yarn hardhat --network {network} set-storage-root --registry 0x7113b39Eb26A6F0a4a5872E7F6b865c57EDB53E0 --slot 2 --token 0x65bc8dd04808d99cf8aa6749f128d55c2051edde --block 34677758 --network arbitrum-goerli
+```
+
+Note: to get the storage slot '--slot' value, run the `find-storage-slot` task.
+
+5. If using a merkle user registry, run the `load-merkle-users` task to set the merkle root for all the authorized users
+
+```
+# for example:
+yarn hardhat load-merkle-users --address-file ./addresses.txt --user-registry 0x9E1c12Af45504e66D16D592cAF3B877ddc6fF643 --network arbitrum-goerli
+```
+
+Note: Make sure to upload generated merkle tree file to IPFS.
+
+
+6. Run the `newRound.ts` script to deploy a new funding round:
 
 ```
 yarn hardhat run --network {network} scripts/newRound.ts
 ```
 
-4. Verify all deployed contracts:
+5. Verify all deployed contracts:
 
 ```
 yarn hardhat verify-all {funding-round-factory-address} --network {network}

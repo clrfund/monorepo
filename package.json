@@ -5,6 +5,7 @@
   "private": true,
   "workspaces": {
     "packages": [
+      "common",
       "contracts",
       "maci-utils",
       "vue-app",

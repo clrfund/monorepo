@@ -1,8 +1,12 @@
 import { ethers } from 'hardhat'
-import { Contract, utils, Wallet } from 'ethers'
+import { Contract, Wallet } from 'ethers'
 
 import { UNIT } from '../utils/constants'
-import { deployMaciFactory } from '../utils/deployment'
+import {
+  deployMaciFactory,
+  deployUserRegistry,
+  getBrightIdParams,
+} from '../utils/deployment'
 import { Keypair, PrivKey } from '@clrfund/maci-utils'
 
 // Number.MAX_SAFE_INTEGER - 1
@@ -63,29 +67,15 @@ async function main() {
   await transferOwnershipTx.wait()
 
   const userRegistryType = process.env.USER_REGISTRY_TYPE || 'simple'
-  let userRegistry: Contract
-  if (userRegistryType === 'simple') {
-    const SimpleUserRegistry = await ethers.getContractFactory(
-      'SimpleUserRegistry',
-      deployer
-    )
-    userRegistry = await SimpleUserRegistry.deploy()
-  } else if (userRegistryType === 'brightid') {
-    const BrightIdUserRegistry = await ethers.getContractFactory(
-      'BrightIdUserRegistry',
-      deployer
-    )
-
-    userRegistry = await BrightIdUserRegistry.deploy(
-      utils.formatBytes32String(process.env.BRIGHTID_CONTEXT || 'clr.fund'),
-      process.env.BRIGHTID_VERIFIER_ADDR,
-      process.env.BRIGHTID_SPONSOR
-    )
-  } else {
-    throw new Error('unsupported user registry type')
-  }
-  await userRegistry.deployTransaction.wait()
-  console.log(`User registry deployed: ${userRegistry.address}`)
+  const brightidParams = getBrightIdParams(userRegistryType)
+  const userRegistry: Contract = await deployUserRegistry(
+    userRegistryType,
+    deployer,
+    brightidParams
+  )
+  console.log(
+    `User registry (${userRegistryType}) deployed: ${userRegistry.address}`
+  )
 
   const setUserRegistryTx = await fundingRoundFactory.setUserRegistry(
     userRegistry.address
