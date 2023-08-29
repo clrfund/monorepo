@@ -786,7 +786,7 @@
   },
   "verified": {
     "h1": "Ready to contribute!",
-    "div1": "You’re on board this funding round! And fully verified for BrightID for this funding round.",
+    "div1": "You’re on board this funding round! And fully verified for this funding round.",
     "p1": "You can now start contributing to your favorite projects.",
     "link1": "View projects",
     "link2": "Go home"
@@ -794,7 +794,7 @@
   "verify": {
     "subtitle": " Step {currentStep} of {steps}",
     "p1": "Step {currentStep} of {steps}",
-    "h1": "Set up BrightID",
+    "h1": "User Registration",
     "h2_1": "Connect",
     "p2": "You need to connect your BrightID account with your wallet address.",
     "click_next": "Once this app is linked in your BrightID app, click the 'Next' button to transition to the next step.",
@@ -808,6 +808,8 @@
     "previous": "Previous",
     "copy_link": "Copy Link",
     "verification_status": "Your wallet address is not linked with BrightID. It may take a few minutes to verify the connection, please wait and click the button later to check the status.",
+    "getting_proof": "Retrieving the verification proof...",
+    "not_authorized": "You are not authorized to register",
     "skip_sponsorship": "Skip",
     "get_sponsored_header": "Get sponsored",
     "get_sponsored_text": "You need a sponsorship token to connect your wallet address with BrightID. This helps support BrightID as a decentralized platform. You’ll only ever need to do this once and it covers you for any other app that works with BrightID. Check the BrightID mobile app to see if you're sponsored. Get sponsored by submitting a sponsorship transaction or skip to the next step.",
@@ -816,6 +818,7 @@
   "verifyLanding": {
     "h1": "Prove you’re only using one account",
     "subtitle": "We use BrightID to stop bots and cheaters, and make our funding more democratic.",
+    "subtitle2": "We have to verify your account to stop bots and cheaters, and make our funding more democratic.",
     "h2": "What you'll need",
     "li1_t1": "BrightID – available on",
     "li1_link1": "iOS",
@@ -834,7 +837,9 @@
     "div2": "The current round is no longer accepting new contributions. Please try again next round.",
     "div3": "Contributions closed early – you can no longer donate! Due to the community's generosity and some technical constraints we had to close the round earlier than expected. If you already contributed, you still have time to reallocate if you need to. If you didn't get a chance to contribute, you can still help by donating to the matching pool",
     "link2": "I am BrightID verified",
-    "link3": "Go back"
+    "link3": "Go back",
+    "linkVerify": "I am ready!",
+    "already_registered": "You are registered. You can now start contributing to your favorite projects."
   },
   "addToCartButton": {
     "input1": "Add to cart",
@@ -894,6 +899,7 @@
     "div11_if3": "contribute",
     "div12": "Funds you don't contribute to projects ({total} {tokenSymbol}) will be sent to the matching pool at the end of the round. Your cart must add up to your original {contribution} {tokenSymbol} donation.",
     "link3": "Verify with BrightID",
+    "linkRegister": "Get registered",
     "template1": "Contribute {total} {tokenSymbol} to {cart} projects",
     "template2": "Finish contribution",
     "template3": "Reallocate contribution",
@@ -1170,6 +1176,7 @@
         "connect_wallet": "Please connect your wallet",
         "incorrect_network": "Please change network to {chain} network.",
         "need_to_setup_brightid": "To contribute, you need to set up BrightID.",
+        "need_to_register": "To contribute, you need to be verified and registered as a contributor.",
         "user_not_registered": "Please contact {operator} for registration",
         "invalid_contribution_amount": "Include valid contribution amount.",
         "exceeded_max_cart_size": "Your cart can't include over {maxCartSize} projects.",

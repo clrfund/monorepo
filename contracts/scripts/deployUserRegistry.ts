@@ -1,5 +1,5 @@
 import { ethers } from 'hardhat'
-import { Contract, utils } from 'ethers'
+import { deployUserRegistry, getBrightIdParams } from '../utils/deployment'
 
 async function main() {
   console.log('*******************')
@@ -20,32 +20,14 @@ async function main() {
   console.log('funding round factory address ', fundingRoundFactory.address)
 
   const userRegistryType = process.env.USER_REGISTRY_TYPE || 'simple'
-  let userRegistry: Contract
-  if (userRegistryType === 'simple') {
-    const SimpleUserRegistry = await ethers.getContractFactory(
-      'SimpleUserRegistry',
-      deployer
-    )
-    userRegistry = await SimpleUserRegistry.deploy()
-  } else if (userRegistryType === 'brightid') {
-    console.log('deploying brightid user registry')
-    const BrightIdUserRegistry = await ethers.getContractFactory(
-      'BrightIdUserRegistry',
-      deployer
-    )
-
-    userRegistry = await BrightIdUserRegistry.deploy(
-      utils.formatBytes32String(process.env.BRIGHTID_CONTEXT || 'clr.fund'),
-      process.env.BRIGHTID_VERIFIER_ADDR,
-      process.env.BRIGHTID_SPONSOR
-    )
-    console.log('transaction hash', userRegistry.deployTransaction.hash)
-  } else {
-    throw new Error('unsupported user registry type')
-  }
-  await userRegistry.deployTransaction.wait()
+  const brightidParams = getBrightIdParams(userRegistryType)
+  const userRegistry = await deployUserRegistry(
+    userRegistryType,
+    deployer,
+    brightidParams
+  )
   console.log(
-    `Deployed ${userRegistryType} user registry at ${userRegistry.address}`
+    `deployed ${userRegistryType} user registry at ${userRegistry.address}`
   )
 
   const setUserRegistryTx = await fundingRoundFactory.setUserRegistry(
@@ -53,7 +35,7 @@ async function main() {
   )
   await setUserRegistryTx.wait()
   console.log(
-    'set user registry in funding round factory',
+    'set user registry in funding round factory at tx hash',
     setUserRegistryTx.hash
   )
 
