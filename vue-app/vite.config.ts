@@ -33,7 +33,7 @@ export default defineConfig({
     alias: { '@': path.resolve(__dirname, 'src'), ...nodeStdlibBrowser },
   },
   optimizeDeps: {
-    include: ['@clrfund/maci-utils'],
+    include: ['@clrfund/common'],
     esbuildOptions: {
       target: 'esnext', // to enable nable Big integer literals
       inject: [require.resolve('node-stdlib-browser/helpers/esbuild/shim')],
@@ -42,17 +42,13 @@ export default defineConfig({
   build: {
     target: 'esnext', // to enable Big integer literals
     chunkSizeWarningLimit: 6300,
-    commonjsOptions: {
-      transformMixedEsModules: true, // to enable @walletconnect/web3-provider which has some code in CommonJS
-    },
     rollupOptions: {
       output: {
         manualChunks: {
           'google-spreadsheet': ['google-spreadsheet'],
           '@kleros/gtcr-encoder': ['@kleros/gtcr-encoder'],
           '@vuelidate': ['@vuelidate/core', '@vuelidate/validators'],
-          maci: ['@clrfund/maci-utils'],
-          '@walletconnect/web3-provider': ['@walletconnect/web3-provider'],
+          common: ['@clrfund/common'],
           qrcode: ['qrcode'],
         },
       },

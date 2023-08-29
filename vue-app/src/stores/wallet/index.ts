@@ -3,11 +3,10 @@ import MetamaskConnector from './connectors/MetamaskConnector'
 import WalletConnectConnector from './connectors/WalletConnectConnector'
 import { lsGet, lsSet, lsRemove } from '@/utils/localStorage'
 import { CHAIN_INFO } from '@/utils/chains'
-import WalletConnectProvider from '@walletconnect/web3-provider'
 import type { Provider } from './types'
+import { EthereumProvider } from '@walletconnect/ethereum-provider'
 import { chainId } from '@/api/core'
 import { providers } from 'ethers'
-import { LOGIN_MESSAGE } from '@/api/user'
 
 const CONNECTED_PROVIDER = 'connected-provider'
 const DISCONNECT_EVENT = 'disconnect'
@@ -80,7 +79,7 @@ export const useWalletStore = defineStore('wallet', {
       // Check if user is using the supported chain id
       const supportedChainId = chainId
       if (conn.chainId !== supportedChainId) {
-        if (conn.provider instanceof WalletConnectProvider) {
+        if (conn.provider instanceof EthereumProvider) {
           // Close walletconnect session
           await conn.provider.disconnect()
         }

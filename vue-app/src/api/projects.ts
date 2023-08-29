@@ -1,6 +1,6 @@
 import { BigNumber, Contract, Signer } from 'ethers'
 import type { TransactionResponse } from '@ethersproject/abstract-provider'
-import { FundingRound } from './abi'
+import { FundingRound, OptimisticRecipientRegistry } from './abi'
 import { factory, provider, recipientRegistryType, ipfsGatewayUrl } from './core'
 
 import SimpleRegistry from './recipient-registry-simple'
@@ -9,6 +9,7 @@ import KlerosRegistry from './recipient-registry-kleros'
 import sdk from '@/graphql/sdk'
 import { getLeaderboardData } from '@/api/leaderboard'
 import type { RecipientApplicationData } from '@/api/types'
+import { getEventArg } from '@/utils/contracts'
 
 export interface LeaderboardProject {
   id: string // Address or another ID depending on registry implementation
@@ -164,28 +165,28 @@ export async function getProjectByIndex(
 }
 
 /**
- * Check if the recipient with the submission hash exists in the subgraph
+ * Return the recipientId for the given transaction hash
  * @param transactionHash recipient submission hash
- * @returns true if recipients with the submission hash was found
+ * @returns recipientId or null for not found
  */
-export async function recipientExists(transactionHash: string): Promise<boolean> {
-  const data = await sdk.GetRecipientBySubmitHash({ transactionHash })
-  return data.recipients.length > 0
-}
-
-/**
- * Return the recipient for the given submission hash
- * @param transactionHash recipient submission hash
- * @returns project or null for not found
- */
-export async function getRecipientBySubmitHash(transactionHash: string): Promise<Project | null> {
+export async function getRecipientIdByHash(transactionHash: string): Promise<string | null> {
   try {
-    const data = await sdk.GetRecipientBySubmitHash({ transactionHash })
-    const exists = data.recipients.length > 0
-    return exists ? OptimisticRegistry.decodeProject(data.recipients[0]) : null
+    const receipt = await provider.getTransactionReceipt(transactionHash)
+
+    // should only have 1 event, just in case, return the first matching event
+    for (const log of receipt.logs) {
+      const registry = new Contract(log.address, OptimisticRecipientRegistry, provider)
+      try {
+        const recipientId = getEventArg(receipt, registry, 'RequestSubmitted', '_recipientId')
+        return recipientId
+      } catch {
+        // try next log
+      }
+    }
   } catch {
     return null
   }
+  return null
 }
 
 export function toLeaderboardProject(project: any): LeaderboardProject {
@@ -214,9 +215,9 @@ export async function getLeaderboardProject(
   const project = data.projects.find(project => project.id === projectId)
 
   const metadata = project.metadata
-  const thumbnailHash = metadata.imageHash
+  const thumbnailHash = metadata.thumbnailImageHash || metadata.imageHash
   const thumbnailImageUrl = thumbnailHash ? `${ipfsGatewayUrl}/ipfs/${thumbnailHash}` : undefined
-  const bannerHash = metadata.imageHash
+  const bannerHash = metadata.bannerImageHash || metadata.imageHash
   const bannerImageUrl = bannerHash ? `${ipfsGatewayUrl}/ipfs/${bannerHash}` : undefined
 
   return {
@@ -225,6 +226,16 @@ export async function getLeaderboardProject(
     name: project.name,
     description: metadata.description,
     tagline: metadata.tagline,
+    category: metadata.category,
+    problemSpace: metadata.problemSpace,
+    plans: metadata.plans,
+    teamName: metadata.teamName,
+    teamDescription: metadata.teamDescription,
+    githubUrl: metadata.githubUrl,
+    radicleUrl: metadata.radicleUrl,
+    websiteUrl: metadata.websiteUrl,
+    twitterUrl: metadata.twitterUrl,
+    discordUrl: metadata.discordUrl,
     thumbnailImageUrl,
     bannerImageUrl,
     index: project.recipientIndex,

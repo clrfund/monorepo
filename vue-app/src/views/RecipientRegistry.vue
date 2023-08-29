@@ -113,11 +113,7 @@
                 >
                   <img src="@/assets/checkmark.svg" />
                 </div>
-                <div
-                  class="icon-btn-reject"
-                  v-if="isOwner && (isPending(request) || isAccepted(request))"
-                  @click="reject(request)"
-                >
+                <div class="icon-btn-reject" v-if="isOwner && isPending(request)" @click="reject(request)">
                   <img src="@/assets/close.svg" />
                 </div>
               </div>
@@ -135,7 +131,6 @@ import CopyButton from '@/components/CopyButton.vue'
 
 import { chainId, exportBatchSize, recipientRegistryType } from '@/api/core'
 import {
-  RequestType,
   RequestStatus,
   type Request,
   getRequests,
@@ -149,6 +144,7 @@ import { useUserStore, useRecipientStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import type { TransactionResponse } from '@ethersproject/abstract-provider'
 import { useModal } from 'vue-final-modal'
+import { showError } from '@/utils/modal'
 
 const recipientStore = useRecipientStore()
 const userStore = useUserStore()
@@ -195,8 +191,12 @@ function isExecuted(request: Request): boolean {
   return request.status === RequestStatus.Executed
 }
 
+function isPendingRemoval(request: Request): boolean {
+  return request.status === RequestStatus.PendingRemoval
+}
+
 function hasProjectLink(request: Request): boolean {
-  return request.type === RequestType.Registration && request.status === RequestStatus.Executed
+  return isExecuted(request) || isPendingRemoval(request)
 }
 
 async function approve(request: Request): Promise<void> {
@@ -221,12 +221,16 @@ async function waitForTransactionAndLoad(transaction: Promise<TransactionRespons
         // time the subgraph to index the new state from the tx. Perhaps we could
         // avoid querying the subgraph and query directly the chain to get the
         // request state.
-        await new Promise(resolve => {
-          setTimeout(async () => {
-            await loadRequests()
-            resolve(true)
-          }, 2000)
-        })
+        try {
+          await new Promise(resolve => {
+            setTimeout(async () => {
+              await loadRequests()
+              resolve(true)
+            }, 2000)
+          })
+        } catch (err) {
+          showError((err as Error).message)
+        }
       },
       transaction,
       onClose() {

@@ -15,7 +15,6 @@ dotenv.config()
 const GAS_LIMIT = 20000000
 const WALLET_MNEMONIC = process.env.WALLET_MNEMONIC
 const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY
-const WALLET_PRIVATE_KEY_2 = process.env.WALLET_PRIVATE_KEY_2
 
 let accounts
 if (WALLET_MNEMONIC) {
@@ -23,10 +22,6 @@ if (WALLET_MNEMONIC) {
 }
 if (WALLET_PRIVATE_KEY) {
   accounts = [WALLET_PRIVATE_KEY]
-}
-
-if (WALLET_PRIVATE_KEY_2) {
-  accounts = [...accounts, WALLET_PRIVATE_KEY_2]
 }
 
 const config: HardhatUserConfig = {

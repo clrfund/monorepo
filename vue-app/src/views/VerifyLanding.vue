@@ -14,35 +14,42 @@
         <div class="flex-title">
           <h1>{{ $t('verifyLanding.h1') }}</h1>
         </div>
-        <div class="subtitle">
-          {{ $t('verifyLanding.subtitle') }}
+        <div v-if="isBrightIdRequired">
+          <div class="subtitle">
+            {{ $t('verifyLanding.subtitle') }}
+          </div>
+          <h2>
+            {{ $t('verifyLanding.h2') }}
+          </h2>
+          <ul>
+            <li>
+              {{ $t('verifyLanding.li1_t1') }}
+              <a href="https://apps.apple.com/us/app/brightid/id1428946820" target="_blank">
+                {{ $t('verifyLanding.li1_link1') }}</a
+              >
+              {{ $t('verifyLanding.li1_t2') }}
+              <a href="https://play.google.com/store/apps/details?id=org.brightid" target="_blank">{{
+                $t('verifyLanding.li1_link2')
+              }}</a>
+            </li>
+            <li>
+              {{ $t('verifyLanding.join') }}
+              <links to="https://meet.brightid.org">{{ $t('verifyLanding.brightid_party_link') }}</links>
+              {{ $t('verifyLanding.get_verified') }}
+            </li>
+            <li>
+              {{ $t('verifyLanding.li_wallet') }}
+              {{ $t('verifyLanding.unitap_gas_tokens')
+              }}<links to="https://unitap.app/">{{ $t('verifyLanding.unitap_link') }}</links
+              >{{ $t('verifyLanding.unitap_extra_text') }}
+            </li>
+          </ul>
         </div>
-        <h2>
-          {{ $t('verifyLanding.h2') }}
-        </h2>
-        <ul>
-          <li>
-            {{ $t('verifyLanding.li1_t1') }}
-            <a href="https://apps.apple.com/us/app/brightid/id1428946820" target="_blank">
-              {{ $t('verifyLanding.li1_link1') }}</a
-            >
-            {{ $t('verifyLanding.li1_t2') }}
-            <a href="https://play.google.com/store/apps/details?id=org.brightid" target="_blank">{{
-              $t('verifyLanding.li1_link2')
-            }}</a>
-          </li>
-          <li>
-            {{ $t('verifyLanding.join') }}
-            <links to="https://meet.brightid.org">{{ $t('verifyLanding.brightid_party_link') }}</links>
-            {{ $t('verifyLanding.get_verified') }}
-          </li>
-          <li>
-            {{ $t('verifyLanding.li_wallet') }}
-            {{ $t('verifyLanding.unitap_gas_tokens')
-            }}<links to="https://unitap.app/">{{ $t('verifyLanding.unitap_link') }}</links
-            >{{ $t('verifyLanding.unitap_extra_text') }}
-          </li>
-        </ul>
+        <div v-else>
+          <div class="subtitle">
+            {{ $t('verifyLanding.subtitle2') }}
+          </div>
+        </div>
         <links to="/about/sybil-resistance">{{ $t('verifyLanding.link1') }}</links>
         <div v-if="isRoundOver" class="warning-message">
           <i18n-t v-if="nextRoundStartDate" keypath="verifyLanding.next_round_notice" scope="global">
@@ -54,11 +61,17 @@
         <div v-else-if="isRoundFull" class="warning-message">
           {{ $t('verifyLanding.div3') }}
         </div>
+        <div v-else-if="Boolean(currentUser?.isRegistered)" class="warning-message">
+          {{ $t('verifyLanding.already_registered') }}
+        </div>
         <div class="btn-container mt2">
           <div v-if="!isRoundOver">
             <wallet-widget v-if="!currentUser" :isActionButton="true" :fullWidthMobile="true" />
-            <button v-else-if="showBrightIdButton" @click="handleBrightIdButtonClicked" class="btn-primary">
+            <button v-else-if="showBrightIdButton" @click="handleButtonClicked" class="btn-primary">
               {{ $t('verifyLanding.link2') }}
+            </button>
+            <button v-else-if="showVerifyButton" @click="handleButtonClicked" class="btn-primary">
+              {{ $t('verifyLanding.linkVerify') }}
             </button>
           </div>
           <links to="/projects" class="btn-secondary">{{ $t('verifyLanding.link3') }}</links>
@@ -71,7 +84,7 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
 import { getCurrentRound } from '@/api/round'
-import { nextRoundStartDate } from '@/api/core'
+import { isBrightIdRequired, isUserRegistrationRequired, nextRoundStartDate } from '@/api/core'
 
 import Breadcrumbs from '@/components/Breadcrumbs.vue'
 import Links from '@/components/Links.vue'
@@ -83,6 +96,7 @@ import { useAppStore, useUserStore } from '@/stores'
 import { useRouter } from 'vue-router'
 import { useModal } from 'vue-final-modal'
 import SignatureModal from '@/components/SignatureModal.vue'
+import { ASSERT_NOT_CONNECTED_WALLET, assert } from '@/utils/assert'
 
 import { formatDateWithOptions } from '@/utils/dates'
 import type { DateTime } from 'luxon'
@@ -106,7 +120,8 @@ onMounted(async () => {
 
 const isRoundFull = computed(() => isRoundContributorLimitReached.value)
 const isRoundOver = computed(() => !currentRound.value || hasContributionPhaseEnded.value)
-const showBrightIdButton = computed(() => currentUser.value?.isRegistered === false)
+const showBrightIdButton = computed(() => isBrightIdRequired && currentUser.value?.isRegistered === false)
+const showVerifyButton = computed(() => isUserRegistrationRequired && currentUser.value?.isRegistered === false)
 
 function translateDate(date: DateTime): string {
   return formatDateWithOptions(date, {
@@ -132,11 +147,12 @@ async function promptSignagure() {
   open()
 }
 
-function handleBrightIdButtonClicked() {
-  if (currentUser.value && !currentUser.value.encryptionKey) {
-    promptSignagure()
-  } else {
+function handleButtonClicked() {
+  assert(currentUser.value, ASSERT_NOT_CONNECTED_WALLET)
+  if (currentUser.value.encryptionKey) {
     gotoVerify()
+  } else {
+    promptSignagure()
   }
 }
 

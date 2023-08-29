@@ -1,4 +1,4 @@
-import { Keypair } from '@clrfund/maci-utils'
+import { Keypair } from '@clrfund/common'
 
 async function main() {
   const keypair = new Keypair()

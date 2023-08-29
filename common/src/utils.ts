@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers'
 import { genRandomSalt, IncrementalQuinTree, hash5 } from 'maci-crypto'
-import { PubKey, Command, Message } from 'maci-domainobjs'
+import { PubKey, PCommand, Message } from 'maci-domainobjs'
 import { Keypair } from './keypair'
 import { utils } from 'ethers'
 import { Tally } from './tally'
@@ -43,6 +43,7 @@ export function createMessage(
   voteOptionIndex: number | null,
   voiceCredits: BigNumber | null,
   nonce: number,
+  pollId: BigInt,
   salt?: bigint
 ): [Message, PubKey] {
   const encKeypair = newUserKeypair ? newUserKeypair : userKeypair
@@ -54,12 +55,13 @@ export function createMessage(
     ? bnSqrt(voiceCredits)
     : BigNumber.from(0)
 
-  const command = new Command(
+  const command = new PCommand(
     BigInt(userStateIndex),
     encKeypair.pubKey,
     BigInt(voteOptionIndex || 0),
     BigInt(quadraticVoteWeight.toString()),
     BigInt(nonce),
+    pollId,
     salt
   )
   const signature = command.sign(userKeypair.privKey)
@@ -108,4 +110,10 @@ export function getPubKeyId(pubKey: PubKey): string {
   return id
 }
 
-export { Message, Command, IncrementalQuinTree, hash5, LEAVES_PER_NODE }
+export {
+  Message,
+  PCommand as Command,
+  IncrementalQuinTree,
+  hash5,
+  LEAVES_PER_NODE,
+}

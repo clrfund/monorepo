@@ -164,7 +164,11 @@ const tokenSymbol = computed(() => {
   height: 2rem;
   overflow: hidden;
   justify-self: center;
-  box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
+  box-shadow:
+    0px 4px 4px 0px 0,
+    0,
+    0,
+    0.25;
   flex: 0 0 auto;
   border: 2px solid var(--border-color);
 

@@ -2,7 +2,7 @@ import { BigNumber, Contract, Signer, FixedNumber } from 'ethers'
 import { parseFixed } from '@ethersproject/bignumber'
 
 import type { TransactionResponse } from '@ethersproject/abstract-provider'
-import { Keypair, PubKey, PrivKey, Message, Command, getPubKeyId } from '@clrfund/maci-utils'
+import { Keypair, PubKey, PrivKey, Message, Command, getPubKeyId } from '@clrfund/common'
 
 import type { RoundInfo } from './round'
 import { FundingRound, ERC20 } from './abi'
@@ -77,7 +77,7 @@ export async function getContributionAmount(
   }
   const data = await sdk.GetContributionsAmount({
     fundingRoundAddress: fundingRoundAddress.toLowerCase(),
-    contributorAddress,
+    contributorAddress: contributorAddress.toLowerCase(),
   })
 
   if (!data.contributions.length) {
@@ -117,7 +117,7 @@ export async function hasContributorVoted(fundingRoundAddress: string, contribut
   }
   const data = await sdk.GetContributorVotes({
     fundingRoundAddress: fundingRoundAddress.toLowerCase(),
-    contributorAddress,
+    contributorAddress: contributorAddress.toLowerCase(),
   })
   return !!data.fundingRound?.contributors?.[0]?.votes?.length
 }

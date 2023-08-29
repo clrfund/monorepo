@@ -5,7 +5,7 @@ import { deployMockContract } from '@ethereum-waffle/mock-contract'
 import { Contract, BigNumber } from 'ethers'
 import { defaultAbiCoder } from '@ethersproject/abi'
 import { genRandomSalt } from 'maci-crypto'
-import { Keypair } from '@clrfund/maci-utils'
+import { Keypair } from '@clrfund/common'
 
 import {
   ZERO_ADDRESS,
@@ -102,9 +102,8 @@ describe('Funding Round', () => {
     userRegistry = await deployMockContract(deployer, IUserRegistryArtifact.abi)
     await userRegistry.mock.isVerifiedUser.returns(true)
 
-    const IRecipientRegistryArtifact = await artifacts.readArtifact(
-      'IRecipientRegistry'
-    )
+    const IRecipientRegistryArtifact =
+      await artifacts.readArtifact('IRecipientRegistry')
     recipientRegistry = await deployMockContract(
       deployer,
       IRecipientRegistryArtifact.abi

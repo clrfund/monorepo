@@ -476,7 +476,7 @@
             <h2 class="step-title">{{ $t('join.step4.h2') }}</h2>
             <p>
               {{ $t('join.step4.p1') }}
-              <links to="https://ipfs.io/#how">{{ $t('join.step4.link1') }}</links>
+              <links to="https://ipfs.tech/#how">{{ $t('join.step4.link1') }}</links>
             </p>
             <div class="inputs">
               <div class="form-background">
@@ -717,7 +717,8 @@ import { useVuelidate } from '@vuelidate/core'
 import { required, requiredIf, email, maxLength, url, helpers } from '@vuelidate/validators'
 import type { RecipientApplicationData } from '@/api/types'
 import type { Project } from '@/api/projects'
-import { recipientExists, formToProjectInterface } from '@/api/projects'
+import { isTransactionInSubgraph } from '@/api/subgraph'
+import { formToProjectInterface } from '@/api/projects'
 import { chain, showComplianceRequirement, isOptimisticRecipientRegistry } from '@/api/core'
 import { DateTime } from 'luxon'
 import { useRecipientStore, useAppStore, useUserStore } from '@/stores'
@@ -948,8 +949,8 @@ async function addRecipient() {
           recipientRegistryInfo.value.deposit,
           currentUser.value.walletProvider.getSigner(),
         ),
-        hash => {
-          return isOptimisticRecipientRegistry ? recipientExists(hash) : Promise.resolve(true)
+        receipt => {
+          return isOptimisticRecipientRegistry ? isTransactionInSubgraph(receipt) : Promise.resolve(true)
         },
         hash => (txHash.value = hash),
       )
@@ -1189,7 +1190,11 @@ async function checkEns(): Promise<void> {
   &:hover {
     background: var(--bg-primary-color);
     border: 2px solid var(--border-color);
-    box-shadow: 0px 4px 16px 0px 25, 22, 35, 0.4;
+    box-shadow:
+      0px 4px 16px 0px 25,
+      22,
+      35,
+      0.4;
   }
   &:optional {
     border: 2px solid var(--border-color);

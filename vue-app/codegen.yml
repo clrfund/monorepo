@@ -1,5 +1,5 @@
 overwrite: true
-schema: 'https://api.thegraph.com/subgraphs/name/clrfund/clrfund'
+schema: 'https://api.thegraph.com/subgraphs/name/clrfund/clrfund-arbitrum'
 documents: 'src/graphql/**/*.graphql'
 generates:
   src/graphql/API.ts:

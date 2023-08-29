@@ -19,7 +19,7 @@ The clr.fund smart contracts consist of a factory contract that deploys a new co
 3. **Contributor:** Any address that contributes tokens to the funding round.
 4. **Recipient:** Any address that is registered as funding recipient.
 
-The clr.fund application can use any [EVM-compatible chain](https://ethereum.org/) as a backend. The application can be hosted on [IPFS](https://ipfs.io/) and can also run locally.
+The clr.fund application can use any [EVM-compatible chain](https://ethereum.org/) as a backend. The application can be hosted on [IPFS](https://ipfs.tech/) and can also run locally.
 
 For more details, see the [sequence diagram](docs/clrfund.svg) and [clr.fund constitution](https://github.com/clrfund/constitution).
 
@@ -55,6 +55,7 @@ In a future version, we plan to address this by routing ETH and token contributi
 - [Deployment](docs/deployment.md)
 - [Providing matching funds](docs/funding-source.md)
 - [How to tally votes and verify results](docs/tally-verify.md)
+- [How to donate to projects](docs/howto-use-app.md)
 - [Running the subgraph](docs/subgraph.md)
 - [Sitemap](docs/sitemap.md)
 - [Website theme and customization](docs/theme.md)

@@ -1,10 +1,10 @@
-import { getEtherBalance, getTokenBalance, isVerifiedUser, type User } from '@/api/user'
+import { getEtherBalance, getTokenBalance, isVerifiedUser, isRegisteredUser, type User } from '@/api/user'
 import { defineStore } from 'pinia'
 import { useAppStore } from '@/stores'
 import type { WalletUser } from '@/stores'
 import { getContributionAmount, hasContributorVoted } from '@/api/contributions'
 import type { BigNumber, Signer } from 'ethers'
-import { ensLookup } from '@/utils/accounts'
+import { ensLookup, isValidSignature } from '@/utils/accounts'
 import { UserRegistryType, userRegistryType } from '@/api/core'
 import { getBrightId, type BrightId } from '@/api/bright-id'
 import { assert, ASSERT_NOT_CONNECTED_WALLET } from '@/utils/assert'
@@ -44,6 +44,12 @@ export const useUserStore = defineStore('user', {
       assert(this.currentUser, ASSERT_NOT_CONNECTED_WALLET)
       if (!this.currentUser.encryptionKey) {
         const signature = await this.signer.signMessage(LOGIN_MESSAGE)
+
+        if (!isValidSignature(signature)) {
+          // gnosis safe does not return signature in hex string
+          // show the result as error
+          throw new Error(signature)
+        }
         this.currentUser.encryptionKey = sha256(signature)
       }
     },
@@ -71,23 +77,18 @@ export const useUserStore = defineStore('user', {
 
         let contribution = appStore.contribution
         if (!contribution || contribution.isZero()) {
-          contribution = await getContributionAmount(
-            appStore.currentRound.fundingRoundAddress,
-            this.currentUser.walletAddress,
-          )
-
-          const hasVoted = await hasContributorVoted(
-            appStore.currentRound.fundingRoundAddress,
-            this.currentUser.walletAddress,
-          )
+          contribution = await getContributionAmount(appStore.currentRound.fundingRoundAddress, walletAddress)
+          const hasVoted = await hasContributorVoted(appStore.currentRound.fundingRoundAddress, walletAddress)
 
           appStore.contribution = contribution
           appStore.hasVoted = hasVoted
         }
+
+        isRegistered = await isRegisteredUser(appStore.currentRound.fundingRoundAddress, walletAddress)
       }
 
       // Check if this user is in our user registry
-      if (userRegistryAddress) {
+      if (!isRegistered && userRegistryAddress) {
         isRegistered = await isVerifiedUser(userRegistryAddress, walletAddress)
       }
 

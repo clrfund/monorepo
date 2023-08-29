@@ -3,7 +3,7 @@ import { Contract } from 'ethers'
 import { use, expect } from 'chai'
 import { solidity } from 'ethereum-waffle'
 import { deployMockContract } from '@ethereum-waffle/mock-contract'
-import { Keypair } from '@clrfund/maci-utils'
+import { Keypair } from '@clrfund/common'
 
 import { getEventArg, getGasUsage } from '../utils/contracts'
 import { deployMaciFactory } from '../utils/deployment'
@@ -27,9 +27,8 @@ describe('MACI factory', () => {
     expect(await getGasUsage(maciFactory.deployTransaction)).lessThan(5600000)
     maciParameters = await MaciParameters.read(maciFactory)
 
-    const SignUpGatekeeperArtifact = await artifacts.readArtifact(
-      'SignUpGatekeeper'
-    )
+    const SignUpGatekeeperArtifact =
+      await artifacts.readArtifact('SignUpGatekeeper')
     signUpGatekeeper = await deployMockContract(
       deployer,
       SignUpGatekeeperArtifact.abi

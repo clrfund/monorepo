@@ -1,5 +1,5 @@
 <template>
-  <vue-final-modal class="modal-container">
+  <vue-final-modal class="modal-container" background="interactive">
     <div class="modal-body">
       <div v-if="step === 0">
         <h2>
@@ -122,7 +122,7 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
 import { BigNumber, Contract } from 'ethers'
-import { Keypair, PubKey, Message, createMessage } from '@clrfund/maci-utils'
+import { Keypair, PubKey, Message, createMessage } from '@clrfund/common'
 
 import Transaction from '@/components/Transaction.vue'
 import { formatAmount } from '@/utils/amounts'

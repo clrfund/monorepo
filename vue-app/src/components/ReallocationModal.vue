@@ -1,5 +1,5 @@
 <template>
-  <vue-final-modal class="modal-container">
+  <vue-final-modal class="modal-container" background="interactive">
     <div class="modal-body">
       <div v-if="step === 1">
         <h3>{{ $t('reallocationModal.h3') }}</h3>
@@ -22,10 +22,10 @@
 
 <script lang="ts" setup>
 import { BigNumber, Contract } from 'ethers'
-import type { PubKey, Message } from '@clrfund/maci-utils'
+import type { PubKey, Message } from '@clrfund/common'
 import Transaction from '@/components/Transaction.vue'
 import { waitForTransaction } from '@/utils/contracts'
-import { createMessage } from '@clrfund/maci-utils'
+import { createMessage } from '@clrfund/common'
 import { VueFinalModal } from 'vue-final-modal'
 
 import { FundingRound } from '@/api/abi'

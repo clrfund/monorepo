@@ -1,6 +1,6 @@
 import fs from 'fs'
 import { ethers } from 'hardhat'
-import { Keypair } from '@clrfund/maci-utils'
+import { Keypair } from '@clrfund/common'
 
 import { UNIT } from '../utils/constants'
 import { getEventArg } from '../utils/contracts'

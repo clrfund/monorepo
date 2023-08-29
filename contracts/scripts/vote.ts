@@ -1,7 +1,7 @@
 import fs from 'fs'
 import { ethers } from 'hardhat'
 import { BigNumber } from 'ethers'
-import { PrivKey, Keypair } from '@clrfund/maci-utils'
+import { PrivKey, Keypair } from '@clrfund/common'
 
 import { createMessage } from '../utils/maci'
 

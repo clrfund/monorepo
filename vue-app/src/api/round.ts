@@ -1,15 +1,15 @@
 import { BigNumber, Contract, utils } from 'ethers'
 import { DateTime } from 'luxon'
-import { PubKey } from '@clrfund/maci-utils'
+import { PubKey } from '@clrfund/common'
 
 import { FundingRound, MACI } from './abi'
 import { provider, factory } from './core'
 import { getTotalContributed } from './contributions'
-import { getRounds } from './rounds'
+import { isVoidedRound } from './rounds'
 import sdk from '@/graphql/sdk'
 
 import { isSameAddress } from '@/utils/accounts'
-import { Keypair } from '@clrfund/maci-utils'
+import { Keypair } from '@clrfund/common'
 import { getLeaderboardData } from '@/api/leaderboard'
 
 export interface RoundInfo {
@@ -59,13 +59,8 @@ export async function getCurrentRound(): Promise<string | null> {
   if (fundingRoundAddress === '0x0000000000000000000000000000000000000000') {
     return null
   }
-  const rounds = await getRounds()
-  const roundIndex = rounds.findIndex(round => isSameAddress(round.address, fundingRoundAddress))
 
-  if (roundIndex >= Number(import.meta.env.VITE_FIRST_ROUND || 0)) {
-    return fundingRoundAddress
-  }
-  return null
+  return isVoidedRound(fundingRoundAddress) ? null : fundingRoundAddress
 }
 
 function toRoundInfo(data: any, network: string): RoundInfo {

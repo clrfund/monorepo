@@ -786,7 +786,7 @@
   },
   "verified": {
     "h1": "准备好贡献了!",
-    "div1": "您已经参加了这次筹款！并且得到 BrightID 验证了。",
+    "div1": "您可以参加这次筹款了！我们已验证了您的账户。",
     "p1": "您现在可以开始做捐献给您喜欢的项目了。",
     "link1": "查看项目",
     "link2": "回首页"
@@ -808,6 +808,8 @@
     "previous": "前一步",
     "copy_link": "复制",
     "verification_status": "您的钱包地址没有连接到 BrightID 的户口。 这可能需要几分钟的时间，稍等候后点击按钮再试。",
+    "getting_proof": "正在获取验证证明...",
+    "not_authorized": "您没有权限注册",
     "skip_sponsorship": "跳过",
     "get_sponsored_header": "赞助",
     "get_sponsored_text": "您需要一个赞助令牌才能为 BrightID 认证。这有助于支持 BrightID 作为去中心化平台。您只需这样做一次, 就可以应用任何 BrightID APPS。检查 BrightID 移动应用程序，看看您是否受到赞助。如果没有，请点击按钮提交赞助请求。如果您已受到赞助，您可跳过这一步。",
@@ -816,6 +818,7 @@
   "verifyLanding": {
     "h1": "证明您只使用一个帐户",
     "subtitle": "我们使用 BrightID 来防止机器人和作弊者, 并使我们的资金更加民主。",
+    "subtitle2": "我们需要验证您的账户以防止机器人和作弊者, 并使我们的资金更加民主。",
     "h2": "您需要:",
     "li1_t1": "BrightID app: ",
     "li1_link1": "iOS",
@@ -834,7 +837,9 @@
     "div2": "当前筹款活动不再接受新的捐款。请在下一轮再试。",
     "div3": "捐赠提早关闭 - 您不能再捐款了！由于社区的慷慨和一些技术限制，我们不得不比预期更早地结束这一次筹款活动。如果您已经捐赠过，您仍然有时间重新分配。如果您没有机会捐赠，您仍然可以通过捐赠匹配池来帮助。",
     "link2": "我已验证了 BrightID",
-    "link3": "返回"
+    "link3": "返回",
+    "linkVerify": "我准备好了!",
+    "already_registered": "您已注册。您可以开始捐献给您喜欢的项目了。"
   },
   "addToCartButton": {
     "input1": "加入捐款车",
@@ -894,6 +899,7 @@
     "div11_if3": "捐赠",
     "div12": "您没有把资金捐给项目 ({total} {tokenSymbol}) 将在筹款结束时发送到匹配池。您的捐款车必须相加等于您原来的 {total} {tokenSymbol} 捐款。",
     "link3": "BrightID 验证",
+    "linkRegister": "注册",
     "template1": "捐赠 {total} {tokenSymbol} 给 {cart} 相目",
     "template2": "完成赠捐",
     "template3": "重新分配捐款",
@@ -1170,6 +1176,7 @@
         "connect_wallet": "请连接您的钱包",
         "incorrect_network": "请将网络更改为 {chain} 网络.",
         "need_to_setup_brightid": "要进行贡献, 您需要设置 BrightID。",
+        "need_to_register": "您需要过通验证并注册成为贡献者才能贡献。",
         "user_not_registered": "请联系 {operator} 进行注册。",
         "invalid_contribution_amount": "请输入有效的贡献金额",
         "exceeded_max_cart_size": "您的捐款车不能超过 {maxCartSize} 个项目",

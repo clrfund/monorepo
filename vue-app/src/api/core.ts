@@ -11,6 +11,11 @@ if (!rpcUrl) {
   throw new Error('Please provide ethereum rpc url for connecting to blockchain')
 }
 
+export const walletConnectProjectId = import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID
+if (!walletConnectProjectId) {
+  throw new Error('Please provide wallet connect project id')
+}
+
 export const mainnetProvider = new ethers.providers.StaticJsonRpcProvider(import.meta.env.VITE_ETHEREUM_MAINNET_API_URL)
 export const provider = new ethers.providers.StaticJsonRpcProvider(rpcUrl)
 export const chainId = Number(import.meta.env.VITE_ETHEREUM_API_CHAINID)
@@ -41,8 +46,11 @@ export const userRegistryType = import.meta.env.VITE_USER_REGISTRY_TYPE
 export enum UserRegistryType {
   BRIGHT_ID = 'brightid',
   SIMPLE = 'simple',
+  SNAPSHOT = 'snapshot',
+  MERKLE = 'merkle',
 }
-if (![UserRegistryType.BRIGHT_ID, UserRegistryType.SIMPLE].includes(userRegistryType as UserRegistryType)) {
+
+if (!Object.values(UserRegistryType).includes(userRegistryType as UserRegistryType)) {
   throw new Error('invalid user registry type')
 }
 export const recipientRegistryType = import.meta.env.VITE_RECIPIENT_REGISTRY_TYPE
@@ -87,6 +95,7 @@ export const showComplianceRequirement = /^yes$/i.test(import.meta.env.VITE_SHOW
 
 export const isBrightIdRequired = userRegistryType === 'brightid'
 export const isOptimisticRecipientRegistry = recipientRegistryType === 'optimistic'
+export const isUserRegistrationRequired = userRegistryType !== UserRegistryType.SIMPLE
 
 // Try to get the next scheduled start date
 const nextStartDate = import.meta.env.VITE_NEXT_ROUND_START_DATE
@@ -94,3 +103,17 @@ const nextStartDate = import.meta.env.VITE_NEXT_ROUND_START_DATE
   : null
 
 export const nextRoundStartDate = nextStartDate?.isValid ? nextStartDate : null
+
+// Use this deadline to hide the 'Add Project' button
+const deadline = import.meta.env.VITE_RECIPIENT_JOIN_DEADLINE
+  ? DateTime.fromFormat(import.meta.env.VITE_RECIPIENT_JOIN_DEADLINE, 'yyyy-MM-dd', { zone: 'utc' })
+  : null
+export const recipientJoinDeadlineConfig = deadline?.isValid ? deadline : null
+
+// make sure walletconnect qrcode modal is not blocked by the Wallet Modal
+export const walletConnectZIndex = import.meta.env.VITE_WALLET_CONNECT_Z_INDEX || '1500'
+
+// use this to filter out rounds that should not be displayed on the app
+export const voidedRounds = new Set(
+  (import.meta.env.VITE_VOIDED_ROUNDS || '').split(',').map(round => round.toLowerCase()),
+)

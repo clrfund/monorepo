@@ -3,7 +3,7 @@ import { use, expect } from 'chai'
 import { solidity } from 'ethereum-waffle'
 import { Contract } from 'ethers'
 import { genRandomSalt } from 'maci-crypto'
-import { Keypair } from '@clrfund/maci-utils'
+import { Keypair } from '@clrfund/common'
 
 import { ZERO_ADDRESS, UNIT } from '../utils/constants'
 import { getGasUsage, getEventArg } from '../utils/contracts'

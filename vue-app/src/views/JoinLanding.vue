@@ -11,12 +11,12 @@
     <div class="breadcrumbs">
       <breadcrumbs />
     </div>
-    <div class="content" v-if="loading">
+    <div class="content" v-if="loading || !isAppReady">
       <h1>{{ $t('joinLanding.loading') }}</h1>
       <loader />
     </div>
 
-    <div class="content" v-else-if="hasContributionPhaseEnded">
+    <div class="content" v-else-if="recipientJoinDeadline && !isRoundJoinPhase">
       <div class="big-emoji">☹</div>
       <h1>{{ $t('joinLanding.closed.h1') }}</h1>
       <div id="subtitle" class="subtitle">
@@ -75,7 +75,7 @@
             {{ $t('joinLanding.open.div1') }}
           </div>
           <div class="countdown caps">
-            <time-left v-if="signUpDeadline" valueClass="none" unitClass="none" :date="signUpDeadline" />
+            <time-left v-if="recipientJoinDeadline" valueClass="none" unitClass="none" :date="recipientJoinDeadline" />
           </div>
         </div>
         <div class="apply-callout">
@@ -167,7 +167,8 @@ import { useAppStore, useRecipientStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
 const appStore = useAppStore()
-const { maxRecipients, isMessageLimitReached, hasContributionPhaseEnded } = storeToRefs(appStore)
+const { maxRecipients, isMessageLimitReached, isRoundJoinPhase, recipientJoinDeadline, isAppReady } =
+  storeToRefs(appStore)
 const recipientStore = useRecipientStore()
 const { recipientRegistryInfo } = storeToRefs(recipientStore)
 
@@ -181,7 +182,6 @@ const registryInfo = computed<RegistryInfo | null>(() => recipientRegistryInfo.v
 
 const deposit = computed<BigNumber | undefined>(() => registryInfo.value?.deposit)
 const depositToken = computed<string | null>(() => registryInfo.value?.depositToken || null)
-const signUpDeadline = computed(() => appStore.currentRound?.signUpDeadline)
 const spacesRemaining = computed(() => {
   // eslint-disable-next-line
   if (!appStore.currentRound || !registryInfo.value) {

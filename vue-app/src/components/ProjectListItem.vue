@@ -103,7 +103,11 @@ const projectRoute = computed<RouteLocationRaw>(() => {
   z-index: 0;
   &:hover {
     transform: scale(1.01);
-    box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
+    box-shadow:
+      0px 4px 4px 0px 0,
+      0,
+      0,
+      0.25;
   }
 }
 
@@ -111,7 +115,11 @@ const projectRoute = computed<RouteLocationRaw>(() => {
   background: var(--bg-primary-color);
   border-radius: 32px;
   padding: 0.5rem;
-  box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
+  box-shadow:
+    0px 4px 4px 0px 0,
+    0,
+    0,
+    0.25;
   font-family: Inter;
   font-size: 16px;
   font-style: normal;
@@ -136,7 +144,11 @@ const projectRoute = computed<RouteLocationRaw>(() => {
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
+  box-shadow:
+    0px 4px 4px 0px 0,
+    0,
+    0,
+    0.25;
   position: relative;
 
   img {

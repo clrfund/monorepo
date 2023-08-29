@@ -1,0 +1,31 @@
+{
+  "name": "@clrfund/common",
+  "version": "0.0.1",
+  "description": "Common utility functions used by clrfund scripts and app",
+  "main": "src/index",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint 'src/**/*.ts'",
+    "clean": "rm -rf build"
+  },
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "eslint": "^8.31.0",
+    "typescript": "^4.9.3"
+  },
+  "dependencies": {
+    "@openzeppelin/merkle-tree": "^1.0.5",
+    "ethers": "^5.7.2",
+    "maci-crypto": "1.1.1",
+    "maci-domainobjs": "1.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/clrfund/monorepo.git"
+  },
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/clrfund/monorepo/issues"
+  },
+  "homepage": "https://github.com/clrfund/monorepo#readme"
+}

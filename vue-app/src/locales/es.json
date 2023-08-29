@@ -786,7 +786,7 @@
   },
   "verified": {
     "h1": "¡Listo para contribuir!",
-    "div1": "¡Estás en esta ronda de financiamiento! Y completamente verificado para BrightID en esta ronda de financiamiento.",
+    "div1": "¡Estás en esta ronda de financiamiento! Y completamente verificado en esta ronda de financiamiento.",
     "p1": "Ahora puedes comenzar a contribuir a tus proyectos favoritos.",
     "link1": "Ver proyectos",
     "link2": "Ir a inicio"
@@ -808,6 +808,8 @@
     "previous": "Anterior",
     "copy_link": "Copiar Enlace",
     "verification_status": "Tu dirección de billetera no está vinculada con BrightID. Puede tomar unos minutos verificar la conexión, por favor espera y haz clic en el botón más tarde para verificar el estado.",
+    "getting_proof": "Recuperando la prueba de verificación...",
+    "not_authorized": "No está autorizado/a para registrarse",
     "skip_sponsorship": "Saltar",
     "get_sponsored_header": "Obtén un patrocinio",
     "get_sponsored_text": "Necesitas un token de patrocinio para conectar tu dirección de billetera con BrightID. Esto ayuda a apoyar a BrightID como una plataforma descentralizada. Solo necesitarás hacer esto una vez y te cubrirá para cualquier otra aplicación que funcione con BrightID. Verifica en la aplicación móvil de BrightID si estás patrocinado. Obtén patrocinio al enviar una transacción de patrocinio o salta al siguiente paso.",
@@ -816,6 +818,7 @@
   "verifyLanding": {
     "h1": "Demuestra que solo usas una cuenta",
     "subtitle": "Usamos BrightID para detener bots y tramposos, y hacer nuestra financiación más democrática.",
+    "subtitle2": "Tenemos que verificar tu cuenta para detener bots y tramposos, y hacer nuestra financiación más democrática.",
     "h2": "Lo que necesitarás",
     "li1_t1": "BrightID: disponible en",
     "li1_link1": "iOS",
@@ -834,10 +837,12 @@
     "div2": "La ronda actual ya no acepta nuevas contribuciones. Por favor, intenta nuevamente en la siguiente ronda.",
     "div3": "Las contribuciones se cerraron anticipadamente, ¡ya no puedes donar! Debido a la generosidad de la comunidad y algunas limitaciones técnicas, tuvimos que cerrar la ronda antes de lo previsto. Si ya has contribuido, todavía tienes tiempo para reasignar si es necesario. Si no tuviste la oportunidad de contribuir, aún puedes ayudar donando al matching pool",
     "link2": "Tengo BrightID instalado",
-    "link3": "Volver"
+    "link3": "Volver",
+    "linkVerify": "Estoy listo!",
+    "already_registered": "Estás registrado. Ahora puedes comenzar a contribuir a tus proyectos favoritos."
   },
   "addToCartButton": {
-    "input1": "Agregar al carrito",
+    "input1": "Agregar",
     "input2": "En el carrito 🎉"
   },
   "brightIdWidget": {
@@ -894,6 +899,7 @@
     "div11_if3": "contribuir",
     "div12": "Los fondos que no contribuyas a proyectos ({total} { tokenSymbol}) se enviarán al matching pool al final de la ronda. Tu carrito debe sumar tu donación original de {contribution} {tokenSymbol}.",
     "link3": "Verificar con BrightID",
+    "linkRegister": "Registrarse",
     "template1": "Contribuir {total} {tokenSymbol} a {cart} proyectos",
     "template2": "Finalizar contribución",
     "template3": "Reasignar contribución",
@@ -1170,6 +1176,7 @@
         "connect_wallet": "Por favor, conecta tu billetera.",
         "incorrect_network": "Por favor, cambia a la red {chain}.",
         "need_to_setup_brightid": "Para contribuir, necesitas configurar BrightID.",
+        "need_to_register": "Para contribuir, necesitas ser verificado y registrado como colaborador.",
         "user_not_registered": "Por favor, contacta a {operator} para realizar el registro.",
         "invalid_contribution_amount": "Incluye una cantidad de contribución válida.",
         "exceeded_max_cart_size": "Tu carrito no puede incluir más de {maxCartSize} proyectos.",

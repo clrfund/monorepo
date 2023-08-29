@@ -6,7 +6,7 @@ import {
   IncrementalQuinTree,
   hash5,
   LEAVES_PER_NODE,
-} from '@clrfund/maci-utils'
+} from '@clrfund/common'
 
 export class MaciParameters {
   stateTreeDepth = 32
