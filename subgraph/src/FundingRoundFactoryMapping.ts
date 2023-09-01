@@ -31,10 +31,50 @@ import {
   Token,
 } from '../generated/schema'
 
-import { createRecipientRegistry } from './RecipientRegistryMapping'
-
 function isAddressZero(addr: Address): bool {
   return addr.toHexString() == '0x0000000000000000000000000000000000000000'
+}
+
+function createRecipientRegistry(
+  fundingRoundFactoryAddress: Address,
+  recipientRegistryAddress: Address
+): RecipientRegistry {
+  log.info('New recipientRegistry {}', [recipientRegistryAddress.toHex()])
+  let recipientRegistryId = recipientRegistryAddress.toHexString()
+  let recipientRegistry = new RecipientRegistry(recipientRegistryId)
+
+  recipientRegistryTemplate.create(recipientRegistryAddress)
+  let recipientRegistryContract = RecipientRegistryContract.bind(
+    recipientRegistryAddress
+  )
+  let baseDeposit = recipientRegistryContract.try_baseDeposit()
+  if (baseDeposit.reverted) {
+    recipientRegistry.baseDeposit = BigInt.fromI32(0)
+    recipientRegistry.challengePeriodDuration = BigInt.fromI32(0)
+  } else {
+    recipientRegistry.baseDeposit = baseDeposit.value
+    let challengePeriodDuration =
+      recipientRegistryContract.challengePeriodDuration()
+    recipientRegistry.challengePeriodDuration = challengePeriodDuration
+  }
+  let controller = recipientRegistryContract.try_controller()
+  let maxRecipients = recipientRegistryContract.try_maxRecipients()
+  let owner = recipientRegistryContract.try_owner()
+
+  if (!controller.reverted) {
+    recipientRegistry.controller = controller.value
+  }
+  if (!maxRecipients.reverted) {
+    recipientRegistry.maxRecipients = maxRecipients.value
+  }
+  if (!owner.reverted) {
+    recipientRegistry.owner = owner.value
+  }
+  recipientRegistry.fundingRoundFactory =
+    fundingRoundFactoryAddress.toHexString()
+  recipientRegistry.save()
+
+  return recipientRegistry
 }
 
 function createContributorRegistry(
@@ -152,16 +192,16 @@ function createOrUpdateFundingRoundFactory(
 
   //Check if these registries already exist/are being tracked
   let recipientRegistryAddress = fundingRoundFactoryContract.recipientRegistry()
+  let recipientRegistryId = recipientRegistryAddress.toHexString()
 
   if (!isAddressZero(recipientRegistryAddress)) {
-    let recipientRegistryId = recipientRegistryAddress.toHexString()
     let recipientRegistry = RecipientRegistry.load(recipientRegistryId)
     if (!recipientRegistry) {
-      let registry = createRecipientRegistry(recipientRegistryAddress)
-      registry.fundingRoundFactory = fundingRoundFactoryAddress.toHexString()
-      registry.save()
+      createRecipientRegistry(
+        fundingRoundFactoryAddress,
+        recipientRegistryAddress
+      )
     }
-    fundingRoundFactory.recipientRegistry = recipientRegistryId
   }
 
   let contributorRegistryAddress = fundingRoundFactoryContract.userRegistry()
@@ -175,6 +215,7 @@ function createOrUpdateFundingRoundFactory(
   }
 
   fundingRoundFactory.contributorRegistry = contributorRegistryId
+  fundingRoundFactory.recipientRegistry = recipientRegistryId
   fundingRoundFactory.contributorRegistryAddress = contributorRegistryAddress
   fundingRoundFactory.recipientRegistryAddress = recipientRegistryAddress
   fundingRoundFactory.nativeToken = nativeToken

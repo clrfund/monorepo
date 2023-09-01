@@ -6,7 +6,6 @@ import {
 } from '../generated/OptimisticRecipientRegistry/OptimisticRecipientRegistry'
 
 import { Recipient, RecipientRegistry } from '../generated/schema'
-import { createRecipientRegistry } from './RecipientRegistryMapping'
 
 // It is also possible to access smart contracts from mappings. For
 // example, the contract that has emitted the event can be connected to
@@ -35,11 +34,6 @@ export function handleRequestResolved(event: RequestResolved): void {
   log.info('handleRequestResolved', [])
 
   let recipientRegistryId = event.address.toHexString()
-  let recipientRegistry = RecipientRegistry.load(recipientRegistryId)
-  if (!recipientRegistry) {
-    createRecipientRegistry(event.address)
-  }
-
   let recipientId = event.params._recipientId.toHexString()
   let recipient = new Recipient(recipientId)
 
@@ -76,13 +70,15 @@ export function handleRequestResolved(event: RequestResolved): void {
 
 export function handleRequestSubmitted(event: RequestSubmitted): void {
   log.info('handleRequestSubmitted', [])
+
+  // NOTE: this event might not be from our recipient registry
+  // but we still have to track this in case our round will
+  // use this registry later through setRecipientRegistry().
+  //
+  // The factory's RoundStarted event will trigger the creation of
+  // the recipient registry entry
+
   let recipientRegistryId = event.address.toHexString()
-
-  let recipientRegistry = RecipientRegistry.load(recipientRegistryId)
-  if (!recipientRegistry) {
-    createRecipientRegistry(event.address)
-  }
-
   let recipientId = event.params._recipientId.toHexString()
   let recipient = new Recipient(recipientId)
   recipient.recipientRegistry = recipientRegistryId
