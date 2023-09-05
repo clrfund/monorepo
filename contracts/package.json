@@ -1,6 +1,6 @@
 {
   "name": "@clrfund/contracts",
-  "version": "4.2.6",
+  "version": "4.3.1",
   "license": "GPL-3.0",
   "scripts": {
     "hardhat": "hardhat",
@@ -25,10 +25,11 @@
     "@openzeppelin/contracts": "3.2.0",
     "dotenv": "^8.2.0",
     "maci-contracts": "0.10.1",
-    "solidity-rlp": "2.0.3"
+    "solidity-rlp": "2.0.8"
   },
   "devDependencies": {
     "@clrfund/maci-utils": "^0.0.1",
+    "@clrfund/common": "^0.0.1",
     "@ethereum-waffle/mock-contract": "^3.4.4",
     "@kleros/gtcr-encoder": "^1.4.0",
     "@nomiclabs/hardhat-ethers": "^2.2.1",

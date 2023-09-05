@@ -24,16 +24,28 @@
   </div>
   <!-- Get prepared CTA -->
   <div class="get-prepared" v-else-if="showUserVerification">
-    <bright-id-widget v-if="hasStartedVerification" :isProjectCard="true" />
-    <span v-else aria-label="rocket" class="emoji">🚀</span>
-    <div>
-      <h2 class="prep-title">{{ $t('callToActionCard.h2_3') }}</h2>
-      <p class="prep-text">
-        {{ $t('callToActionCard.p3') }}
-      </p>
+    <div v-if="isBrightIdRequired">
+      <bright-id-widget v-if="hasStartedVerification" :isProjectCard="true" />
+      <span v-else aria-label="rocket" class="emoji">🚀</span>
+      <div>
+        <h2 class="prep-title">{{ $t('callToActionCard.h2_3') }}</h2>
+        <p class="prep-text">
+          {{ $t('callToActionCard.p3') }}
+        </p>
+      </div>
+      <links v-if="!hasStartedVerification" to="/verify" class="btn-action">{{ $t('callToActionCard.link1') }}</links>
+      <links v-else to="/verify/connect" class="btn-action">{{ $t('callToActionCard.link2') }}</links>
     </div>
-    <links v-if="!hasStartedVerification" to="/verify" class="btn-action">{{ $t('callToActionCard.link1') }}</links>
-    <links v-else to="/verify/connect" class="btn-action">{{ $t('callToActionCard.link2') }}</links>
+    <div v-else>
+      <span aria-label="rocket" class="emoji">🚀</span>
+      <div>
+        <h2 class="prep-title">{{ $t('callToActionCard.h2_3') }}</h2>
+        <p class="prep-text">
+          {{ $t('callToActionCard.p3') }}
+        </p>
+      </div>
+      <links to="/verify/register" class="btn-action">{{ $t('callToActionCard.link1') }}</links>
+    </div>
   </div>
 </template>
 
@@ -43,7 +55,7 @@ import { computed } from 'vue'
 import BrightIdWidget from '@/components/BrightIdWidget.vue'
 import Links from '@/components/Links.vue'
 
-import { userRegistryType, UserRegistryType } from '@/api/core'
+import { userRegistryType, UserRegistryType, isBrightIdRequired } from '@/api/core'
 import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
@@ -57,7 +69,7 @@ const hasStartedVerification = computed(
 )
 const showUserVerification = computed(() => {
   return (
-    userRegistryType === UserRegistryType.BRIGHT_ID &&
+    userRegistryType !== UserRegistryType.SIMPLE &&
     currentRound.value &&
     currentUser.value?.isRegistered !== undefined &&
     !currentUser.value.isRegistered
