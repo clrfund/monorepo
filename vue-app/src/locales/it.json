@@ -808,6 +808,8 @@
     "previous": "Precedente",
     "copy_link": "Copia Link",
     "verification_status": "Il tuo indirizzo wallet non è collegato con BrightID. Potrebbe essere necessario qualche minuto per verificare la connessione, attendi e fai clic sul pulsante più tardi per controllare lo stato.",
+    "getting_proof": "Recupero della prova di verifica...",
+    "not_authorized": "Non sei autorizzato a registrarti",
     "skip_sponsorship": "Salta",
     "get_sponsored_header": "Ottieni uno sponsor",
     "get_sponsored_text": "È necessario un token di sponsorizzazione per collegare l'indirizzo del tuo portafoglio con BrightID. Questo aiuta a sostenere BrightID come piattaforma decentralizzata. Dovrai farlo solo una volta e ti coprirà per qualsiasi altra app che funziona con BrightID. Controlla l'app mobile BrightID per vedere se sei sponsorizzato. Ottieni una sponsorizzazione inviando una transazione di sponsorizzazione o passa al passaggio successivo.",
@@ -816,6 +818,7 @@
   "verifyLanding": {
     "h1": "Dimostra di utilizzare un solo account",
     "subtitle": "Utilizziamo BrightID per fermare i bot e i malicious players, e rendere il nostro finanziamento più democratico.",
+    "subtitle2": "Dobbiamo verificare il tuo account per fermare i bot e i malicious players, e rendere il nostro finanziamento più democratico.",
     "h2": "Di cosa avrai bisogno",
     "li1_t1": "BrightID - disponibile su",
     "li1_link1": "iOS",
@@ -834,7 +837,9 @@
     "div2": "Il round attuale non accetta più nuovi contributi. Si prega di riprovare nel prossimo round.",
     "div3": "Le donazioni sono chiuse in anticipo: non è più possibile donare! A causa della generosità della comunità e di alcune limitazioni tecniche, abbiamo dovuto chiudere il round prima del previsto. Se hai già contribuito, hai ancora tempo per riassegnare se necessario. Se non hai avuto l'opportunità di contribuire, puoi comunque aiutare donando al fondo di corrispondenza.",
     "link2": "Sono verificato con BrightID",
-    "link3": "Torna indietro"
+    "link3": "Torna indietro",
+    "linkVerify": "Sono pronto!",
+    "already_registered": "Sei registrato. Ora puoi iniziare a contribuire ai tuoi progetti preferiti."
   },
   "addToCartButton": {
     "input1": "Aggiungi al carrello",
@@ -894,6 +899,7 @@
     "div11_if3": "contribuisci",
     "div12": "I fondi che non contribuisci ai progetti ({total} {tokenSymbol}) verranno inviati al fondo di corrispondenza alla fine del turno. Il tuo carrello deve essere pari alla tua donazione originale di {contribution} {tokenSymbol}.",
     "link3": "Verifica con BrightID",
+    "linkRegister": "Registrati",
     "template1": "Contribuisci {total} {tokenSymbol} a {cart} progetti",
     "template2": "Termina contributo",
     "template3": "Rialloca contributo",
@@ -1170,6 +1176,7 @@
         "connect_wallet": "Si prega di collegare il vostro portafoglio",
         "incorrect_network": "Si prega di cambiare rete alla rete {chain}.",
         "need_to_setup_brightid": "Per contribuire, devi configurare BrightID.",
+        "need_to_register": "Per contribuire, è necessario essere verificati e registrati come contributori.",
         "user_not_registered": "Si prega di contattare {operator} per la registrazione.",
         "invalid_contribution_amount": "Includi un importo di contribuzione valido.",
         "exceeded_max_cart_size": "Il tuo carrello non può includere più di {maxCartSize} progetti.",
