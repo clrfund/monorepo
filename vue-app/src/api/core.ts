@@ -117,3 +117,5 @@ export const walletConnectZIndex = import.meta.env.VITE_WALLET_CONNECT_Z_INDEX |
 export const voidedRounds = new Set(
   (import.meta.env.VITE_VOIDED_ROUNDS || '').split(',').map(round => round.toLowerCase()),
 )
+
+export const showThemeButton = Boolean(import.meta.env.VITE_SHOW_THEME_BUTTON)

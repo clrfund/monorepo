@@ -54,6 +54,14 @@ const config: HardhatUserConfig = {
       timeout: 60000,
       accounts,
     },
+    mantle: {
+      url: process.env.JSONRPC_HTTP_URL || 'https://rpc.mantle.xyz',
+      accounts,
+    },
+    'mantle-testnet': {
+      url: process.env.JSONRPC_HTTP_URL || 'https://rpc.testnet.mantle.xyz',
+      accounts,
+    },
     'arbitrum-goerli': {
       url:
         process.env.JSONRPC_HTTP_URL || 'https://goerli-rollup.arbitrum.io/rpc',
@@ -69,7 +77,28 @@ const config: HardhatUserConfig = {
     },
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY || 'YOUR_ETHERSCAN_API_KEY',
+    apiKey: {
+      'mantle-testnet': 'mantle-does-not-use-api-key',
+      mantle: 'mantle-does-not-use-api-key',
+    },
+    customChains: [
+      {
+        network: 'mantle',
+        chainId: 5000,
+        urls: {
+          apiURL: 'https://explorer.mantle.xyz/api',
+          browserURL: 'https://explorer.mantle.xyz',
+        },
+      },
+      {
+        network: 'mantle-testnet',
+        chainId: 5001,
+        urls: {
+          apiURL: 'https://explorer.testnet.mantle.xyz/api',
+          browserURL: 'https://explorer.testnet.mantle.xyz',
+        },
+      },
+    ],
   },
   paths: {
     artifacts: 'build/contracts',
