@@ -1,0 +1,6 @@
+{
+  "network": "testnet",
+  "address": "0x006f39E6a6D15323334Be1db34C73088550BB20a",
+  "factoryStartBlock": 19402526,
+  "recipientRegistryStartBlock": 19402526
+}
