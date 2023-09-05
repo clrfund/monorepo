@@ -4,7 +4,7 @@
       <img class="clr-logo" :alt="operator" src="@/assets/logo.svg" />
     </links>
     <div class="btn-row">
-      <div v-if="showThemeButton">
+      <div v-if="!hideThemeButton">
         <img class="navbar-btn" :src="sunImageUrl" @click="toggleTheme()" />
       </div>
       <div v-click-outside="closeHelpDropdown" class="help-dropdown">
@@ -87,7 +87,7 @@
 </template>
 
 <script setup lang="ts">
-import { chain, ThemeMode, isOptimisticRecipientRegistry, showThemeButton } from '@/api/core'
+import { chain, ThemeMode, isOptimisticRecipientRegistry, hideThemeButton } from '@/api/core'
 import { lsGet, lsSet } from '@/utils/localStorage'
 import { isValidTheme, getDefaultColorScheme } from '@/utils/theme'
 import { useAppStore } from '@/stores'
