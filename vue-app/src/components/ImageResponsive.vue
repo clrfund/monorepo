@@ -6,7 +6,7 @@
 import { computed } from 'vue'
 import { getAssetsUrl } from '@/utils/url'
 
-const BREAKPOINTS = [360, 720, 1080, 1440, 2160, 2880]
+const BREAKPOINTS = [360, 720, 1080]
 
 interface Props {
   title: string

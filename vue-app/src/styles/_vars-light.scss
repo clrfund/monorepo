@@ -23,8 +23,8 @@
   --border-strong: #d0d7de;
   --border-highlight: none;
 
-  --shadow-light-rgb: 196, 196, 196;
-  --shadow-dark-rgb: 249, 243, 243;
+  --shadow-light-rgb: 0, 0, 0;
+  --shadow-dark-rgb: 255, 255, 255;
 
   --bg-primary-color: #fff;
   --bg-secondary-color: #fff;
@@ -40,7 +40,7 @@
   --bg-gradient: white;
   --bg-gradient-hero: transparent;
   --bg-address-box: #f3d2f9;
-  --bg-how-it-works: var(--bg-primary-color);
+  --bg-how-it-works: #f96467;
   --bg-inactive: #9789c4;
   --bg-circle: #d2fff6;
 

@@ -3,9 +3,11 @@
     <round-status-banner v-if="currentRound" />
     <div id="page">
       <div id="hero">
-        <img src="@/assets/moon.png" id="moon" />
         <div class="image-wrapper">
-          <image-responsive title="docking" alt="Image of docking spaceship" />
+          <image-responsive title="main" alt="Main image" />
+        </div>
+        <div class="rainbow-wrapper">
+          <image-responsive title="rainbow" alt="Rainbow background image" />
         </div>
         <div>
           <div class="hero-content">
@@ -43,22 +45,15 @@
         </div>
       </div>
       <div id="section-how-it-works">
-        <div class="wormhole-wrapper desktop-l">
-          <image-responsive
-            title="wormhole"
-            class="wormhole"
-            alt="Image of spaceships funneling through a wormhole and getting bigger"
-          />
+        <div class="cross-wrapper desktop-l">
+          <image-responsive title="cross" class="cross" alt="Image of crossroads of collaboration & innovation" />
         </div>
         <div id="how-it-works-content">
           <h2>{{ $t('landing.how.title') }}</h2>
           <p>
             {{ $t('landing.how.paragraph') }}
           </p>
-          <image-responsive
-            title="wormhole"
-            alt="Image of spaceships funneling through a wormhole and getting bigger"
-          />
+          <image-responsive title="cross" alt="Image of crossroads of collaboration & innovation" />
           <h2>{{ $t('landing.how.subtitle') }}</h2>
           <ol>
             <li>
@@ -72,7 +67,7 @@
               <strong>{{ $t('landing.how.list-3-strong') }}.</strong>
             </li>
           </ol>
-          <links class="btn-secondary" to="/about/how-it-works">{{ $t('landing.how.action') }}</links>
+          <links class="btn-info" to="/about/how-it-works">{{ $t('landing.how.action') }}</links>
         </div>
       </div>
       <div class="section-header">
@@ -261,17 +256,20 @@ ol li::before {
   height: 2rem;
   font-family: Inter;
   font-style: normal;
-  font-weight: bold;
+  font-weight: normal;
   font-size: 16px;
   line-height: 100%;
   border-radius: 50%;
-  color: var(--text-secondary);
-  background: var(--bg-circle);
-  border: 2px solid var(--link-color);
+  border: 2px solid var(--loader-color);
   box-sizing: border-box;
   text-align: center;
   padding-top: 0.375rem;
   /* vertical-align: baseline; */
+
+  @media (max-width: $breakpoint-l) {
+    color: var(--text-tertiary);
+    border: 2px solid var(--text-tertiary);
+  }
 }
 .button-group {
   display: flex;
@@ -342,22 +340,31 @@ ol li::before {
   }
   .image-wrapper img {
     position: absolute;
-    mix-blend-mode: exclusion;
-    width: 70%;
+    width: 100%;
     max-width: 880px;
     height: auto;
-    transform: rotate(15deg);
-    /* top: -20px; */
+    top: -100px;
     right: 0;
     @media (max-width: $breakpoint-m) {
       width: auto;
       height: 100%;
       right: -100px;
+      opacity: 0.7;
+      filter: blur(2px);
     }
   }
+  .rainbow-wrapper img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    @media (max-width: $breakpoint-m) {
+      width: auto;
+    }
+  }
+
   .hero-content {
     position: relative;
-    max-width: 40%;
+    max-width: 50%;
     min-height: 400px;
     display: flex;
     flex-direction: column;
@@ -485,18 +492,18 @@ ol li::before {
   grid-template-areas: 'image content' 'image .';
   @media (max-width: $breakpoint-l) {
     display: flex;
+    color: var(--text-tertiary);
   }
-  .wormhole-wrapper {
+  .cross-wrapper {
     grid-area: image;
     position: relative;
     display: flex;
-    width: 100%;
+    width: 90%;
     align-items: center;
-    .wormhole {
+    .cross {
       width: 100%;
       height: auto;
-      aspect-ratio: 16/9;
-      mix-blend-mode: exclusion;
+      aspect-ratio: 1.016924208977189/1;
     }
   }
   #how-it-works-content {
