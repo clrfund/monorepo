@@ -236,6 +236,9 @@ a {
   color: var(--link-color);
   cursor: pointer;
   text-decoration: none;
+  &:hover {
+    color: var(--text-color);
+  }
 }
 textarea {
   resize: vertical;
@@ -554,7 +557,7 @@ summary:focus {
   font-size: 14px;
   border: 1px solid $button-color;
   border-radius: 0.5rem;
-  padding: 5px 10px 4px;
+  padding: 0;
   max-width: 30ch;
   text-align: center;
   .v-popper__arrow-outer {

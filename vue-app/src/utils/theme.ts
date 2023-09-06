@@ -1,7 +1,7 @@
 import { ThemeMode } from '@/api/core'
 
 export function getDefaultColorScheme(): ThemeMode {
-  const colorScheme = ThemeMode.DARK
+  const colorScheme = ThemeMode.LIGHT
   return colorScheme
 }
 

@@ -2,20 +2,21 @@
   color-scheme: light;
   --text-color: #212529;
   --text-body: #212529;
-  --text-secondary: #808094;
+  --text-secondary: #ff0000;
+  --text-tertiary: #fff;
   // workaround for using css variables with sass mixins
   --text-color-rgb: 33, 37, 41;
 
-  --brand-primary: #6f3ff5;
-  --brand-secondary: #00e3a1;
-  --brand-tertiary: #f3d2f9;
+  --brand-primary: #2f2f2f;
+  --brand-secondary: #ff0000;
+  --brand-tertiary: #212529;
 
   --error-color: #bd6b5e;
   --warning-color: var(--text-color);
   --warning-background: rgb(255, 248, 197);
   --warning-border: rgba(212, 167, 44, 0.4);
   --attention-color: #bd6b5e;
-  --link-color: #00e3a1;
+  --link-color: #ff0000;
   --loader-color: #d0d7de;
 
   --border-color: #d0d7de;
@@ -31,7 +32,7 @@
 
   // alternative mapping for secondary and light background
   --bg-secondary-highlight: #f5f2ff;
-  --bg-secondary-accent: #9789c4;
+  --bg-secondary-accent: #e2e7eb;
   --bg-light-highlight: #f5f2ff;
   --bg-light-accent: #6f3ff5;
 
@@ -46,7 +47,7 @@
   --button-secondary-color: #212529;
   --button-secondary-bg: #d2fff6;
   --button-secondary-border: none;
-  --button-action: #00e3a1;
+  --button-action: #212529;
 
   --explorer-border: var(--border-color);
   --explorer-hover: none;

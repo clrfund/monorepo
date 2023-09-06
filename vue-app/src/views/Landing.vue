@@ -79,14 +79,14 @@
         <h2>{{ $t('landing.req.title') }}</h2>
       </div>
       <div id="what-you-will-need">
-        <div class="pre-req">
+        <div class="pre-req" id="bridge-funds">
           <div class="icon-row">
             <img :src="chainIconUrl" id="chain-icon" />
             <p>
               <b>{{ $t('landing.req.chain', { chain: chain.label }) }}</b>
             </p>
           </div>
-          <links v-if="chain.isLayer2" to="/about/layer-2" class="btn-action">
+          <links v-if="chain.isLayer2" to="/about/layer-2" class="btn-primary">
             {{ $t('landing.req.chain-cta', { chain: chain.label }) }}
           </links>
         </div>
@@ -109,9 +109,9 @@
           <p>
             {{ $t('landing.about.paragraph-1') }}
           </p>
-          <p>
+          <div>
             <links to="/about/quadratic-funding">{{ $t('landing.about.link-1') }}</links>
-          </p>
+          </div>
         </div>
         <div id="about-2">
           <h2>{{ $t('landing.about.subtitle-2') }}</h2>
@@ -286,7 +286,7 @@ ol li::before {
   }
 }
 .link-li {
-  text-decoration: underline;
+  text-decoration: none;
   margin-bottom: 1rem;
   font-size: 16px;
 }
@@ -304,6 +304,11 @@ ol li::before {
   padding: 0.5rem;
   background: var(--bright-id-icon-bg);
 }
+
+#bridge-funds {
+  color: var(--text-tertiary);
+}
+
 .pre-req,
 #about-1,
 #about-2,
@@ -385,7 +390,7 @@ ol li::before {
   }
   .apply-callout {
     background: var(--bg-transparent);
-    border: 2px solid $highlight-color;
+    border: 2px solid var(--border-color);
     box-sizing: border-box;
     border-radius: 8px;
     padding: 1rem;
@@ -447,9 +452,6 @@ ol li::before {
 
   @media (max-width: $breakpoint-l) {
     border-radius: 0;
-  }
-  a {
-    color: var(--link-color);
   }
 }
 #about-1 {

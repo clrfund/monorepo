@@ -554,12 +554,14 @@ const blockExplorer = computed(() => ({
   justify-content: space-between;
   align-items: flex-start;
   background: var(--bg-light-highlight);
+  border: 1px solid var(--border-color);
   padding: 1rem;
   border-radius: 0.5rem;
   box-sizing: border-box;
   width: 100%;
   img {
     opacity: 0.6;
+    filter: var(--img-filter, invert(0.7));
   }
 }
 .round-info-item-top {
@@ -567,6 +569,9 @@ const blockExplorer = computed(() => ({
   display: flex;
   gap: 0.5rem;
   align-items: flex-start;
+  img {
+    filter: var(--img-filter, invert(0.7));
+  }
 }
 .round-info-sub-item {
   flex: 1 0 10%;
@@ -574,6 +579,7 @@ const blockExplorer = computed(() => ({
   padding: 1rem;
   img {
     opacity: 0.6;
+    filter: var(--img-filter, invert(0.7));
   }
 }
 .round-info-title {

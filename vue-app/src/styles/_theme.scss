@@ -46,7 +46,7 @@
 
 .navbar-btn,
 .dropdown-btn {
-  @include button(white, #2c2938, 1px solid rgba(115, 117, 166, 0.3));
+  @include button(white, var(--brand-primary), 1px solid rgba(115, 117, 166, 0.3));
   padding: 0.25rem 0.5rem;
   border-radius: 8px;
   margin-right: 0.5rem;
