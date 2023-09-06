@@ -6,11 +6,15 @@ on:
       branch_name:
         description: 'Clrfund branch name'
         required: true
-        default: 'cohort/ethSingapore'
+        default: 'cohort/EthSingapore'
       subgraph_url:
         description: 'Clrfund subgraph url'
         required: true
         default: 'https://graph.testnet.mantle.xyz/subgraphs/name/clrfund-ethsingapore-test'
+      maci_start_block:
+        description: 'MACI start block'
+        required: true
+        default: '0'
 
 env:
   NODE_VERSION: 16.x
@@ -59,7 +63,7 @@ jobs:
         export MACI_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.fundingRoundFactories[0].currentRound.maci)')
         # tally and finalize
         cd contracts
-        yarn hardhat tally --round-address "${ROUND_ADDRESS}" --network "${NETWORK}"
+        yarn hardhat tally --round-address "${ROUND_ADDRESS}" --start-block "${{ github.event.inputs.maci_start_block }}" --network "${NETWORK}"
         curl --location --request POST 'https://api.pinata.cloud/pinning/pinFileToIPFS' \
           --header "Authorization: Bearer ${{ secrets.PINATA_JWT }}" \
           --form 'file=@"tally.json"'
