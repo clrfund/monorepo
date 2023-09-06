@@ -189,9 +189,9 @@ watch(walletUser, async () => {
         walletAddress: walletUser.value.walletAddress,
         web3Provider: walletUser.value.web3Provider,
       }
+      userStore.loginUser(user)
       // make sure factory is loaded
       await appStore.loadFactoryInfo()
-      userStore.loginUser(user)
       await userStore.loadUserInfo()
       await userStore.loadBrightID()
     } else {
