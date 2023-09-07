@@ -6,9 +6,6 @@
         <div class="image-wrapper">
           <image-responsive title="main" alt="Main image" />
         </div>
-        <div class="rainbow-wrapper">
-          <image-responsive title="rainbow" alt="Rainbow background image" />
-        </div>
         <div>
           <div class="hero-content">
             <h1>{{ $t('landing.hero.title') }}</h1>

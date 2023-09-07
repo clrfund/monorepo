@@ -231,6 +231,7 @@ function hasContributeBtn(): boolean {
       border-radius: 0.5rem;
       box-shadow: var(--box-shadow);
       background: var(--bg-address-box);
+      border: 1px solid var(--border-color);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -265,6 +266,7 @@ function hasContributeBtn(): boolean {
       border-radius: 0.5rem;
       box-shadow: var(--box-shadow);
       background: var(--bg-address-box);
+      border: 1px solid var(--border-color);
       display: flex;
       align-items: center;
       justify-content: space-between;

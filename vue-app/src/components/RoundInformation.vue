@@ -525,6 +525,7 @@ const blockExplorer = computed(() => ({
   align-items: center;
   margin-bottom: 3rem;
   border-radius: 0.5rem;
+  border: 1px solid var(--border-color);
   img {
     opacity: 0.6;
   }
@@ -746,7 +747,7 @@ const blockExplorer = computed(() => ({
   align-items: center;
   width: 300px;
   padding: 1rem;
-  border: solid 1px var(--border-highlight);
+  border: solid 1px var(--border-color);
   border-radius: 6px;
   box-shadow: 0 6px 30px #0000001a;
 }

@@ -214,7 +214,7 @@ function toggleTheme(): void {
           color: var(--text-color);
         }
         &:hover {
-          background: var(--bg-light-color);
+          background: var(--bg-light-accent);
         }
 
         .item-text {

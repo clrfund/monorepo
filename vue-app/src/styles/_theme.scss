@@ -89,7 +89,7 @@
   font-family: 'Glacial Indifference', sans-serif;
   padding: 0.5rem 0.75rem;
   background: var(--bg-light-accent);
-  color: $button-disabled-text-color;
+  color: var(--text-color);
   width: fit-content;
   border-radius: 4px;
 }
