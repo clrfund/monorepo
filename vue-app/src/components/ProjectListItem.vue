@@ -108,7 +108,7 @@ const projectRoute = computed<RouteLocationRaw>(() => {
 }
 
 .more-btn {
-  background: var(--bg-primary-color);
+  background: var(--brand-primary);
   border-radius: 32px;
   padding: 0.5rem;
   box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
@@ -119,7 +119,7 @@ const projectRoute = computed<RouteLocationRaw>(() => {
   line-height: 24px;
   letter-spacing: 0em;
   text-align: center;
-  color: var(--text-body);
+  color: var(--text-tertiary);
   width: 100%;
   border: none;
   cursor: pointer;

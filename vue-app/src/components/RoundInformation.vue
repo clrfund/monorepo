@@ -695,7 +695,7 @@ const blockExplorer = computed(() => ({
 .add-link {
   display: flex;
   gap: 0.25rem;
-  color: $clr-green;
+  color: var(--link-color);
   margin-left: auto;
   cursor: pointer;
   &:hover {

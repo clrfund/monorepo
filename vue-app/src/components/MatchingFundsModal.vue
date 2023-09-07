@@ -27,7 +27,7 @@
         </div>
         <div class="btn-row">
           <button class="btn-secondary" @click="$emit('close')">{{ $t('cancel') }}</button>
-          <button class="btn-action" :disabled="!isAmountValid" @click="contributeMatchingFunds()">
+          <button class="btn-primary" :disabled="!isAmountValid" @click="contributeMatchingFunds()">
             {{ $t('matchingFundsModal.button2') }}
           </button>
         </div>
@@ -54,7 +54,7 @@
           }}
         </h3>
         <div class="mb2">{{ $t('matchingFundsModal.div2') }}</div>
-        <button class="btn-primary" @click="$emit('close')">{{ $t('matchingFundsModal.button3') }}</button>
+        <button class="btn-info" @click="$emit('close')">{{ $t('matchingFundsModal.button3') }}</button>
       </div>
     </div>
   </vue-final-modal>

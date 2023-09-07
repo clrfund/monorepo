@@ -41,11 +41,11 @@
   --bg-gradient-hero: transparent;
   --bg-address-box: var(--bg-primary-color);
   --bg-how-it-works: #f96467;
-  --bg-inactive: #9789c4;
+  --bg-inactive: var(--loader-color);
   --bg-circle: #d2fff6;
 
-  --button-secondary-color: #212529;
-  --button-secondary-bg: #d2fff6;
+  --button-secondary-color: var(--text-tertiary);
+  --button-secondary-bg: var(--brand-primary);
   --button-secondary-border: none;
   --button-action: #212529;
 

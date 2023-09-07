@@ -87,7 +87,7 @@ async function checkTxStatus(): Promise<void> {
   padding: 0.25rem;
   cursor: pointer;
   &:hover {
-    background: var(--brand-secondary);
+    background: var(--bg-primary-color);
     border-radius: 16px;
   }
 }
