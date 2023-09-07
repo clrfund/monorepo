@@ -303,6 +303,7 @@ p.no-margin {
 
           img {
             margin: 0;
+            filter: var(--img-filter, invert(1));
           }
         }
       }

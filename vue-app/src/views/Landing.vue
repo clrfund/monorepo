@@ -71,7 +71,7 @@
         <h2>{{ $t('landing.req.title') }}</h2>
       </div>
       <div id="what-you-will-need">
-        <div class="pre-req" id="bridge-funds">
+        <div class="pre-req">
           <div class="icon-row">
             <img :src="chainIconUrl" id="chain-icon" />
             <p>
@@ -300,10 +300,6 @@ ol li::before {
   background: var(--bright-id-icon-bg);
 }
 
-#bridge-funds {
-  color: var(--text-tertiary);
-}
-
 .pre-req,
 #about-1,
 #about-2,
@@ -420,7 +416,7 @@ ol li::before {
   justify-content: space-between;
   flex-direction: column;
   border-radius: 1rem;
-  background: var(--brand-tertiary);
+  border: 2px solid var(--border-color);
   @media (max-width: $breakpoint-l) {
     border-radius: 0;
   }

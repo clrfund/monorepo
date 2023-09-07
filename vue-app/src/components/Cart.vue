@@ -1073,9 +1073,6 @@ h2 {
 .dropdown {
   position: relative;
   display: inline-block;
-  &:hover {
-    filter: var(--img-filter, invert(1));
-  }
 
   img.dropdown-btn {
     margin: 0;
@@ -1106,7 +1103,7 @@ h2 {
       gap: 0.5rem;
       color: var(--text-body);
       &:hover {
-        background: var(--bg-primary-color);
+        color: var(--link-color);
       }
 
       .item-text {
