@@ -725,8 +725,8 @@ import { useRecipientStore, useAppStore, useUserStore } from '@/stores'
 import { waitForTransactionAndCheck } from '@/utils/contracts'
 import { addRecipient as _addRecipient } from '@/api/recipient-registry'
 import { isValidEthAddress, resolveEns } from '@/utils/accounts'
-import * as isIPFS from 'is-ipfs'
 import { toReactive } from '@vueuse/core'
+import { IPFS } from '@/api/ipfs'
 
 const route = useRoute()
 const router = useRouter()
@@ -798,8 +798,7 @@ const txHash = ref('')
 const txError = ref('')
 
 function validIpfsHash(hash: string): boolean {
-  const isValid = Boolean(hash) && isIPFS.cid(hash)
-  return isValid
+  return IPFS.isValidCid(hash)
 }
 
 const isNavDisabled = computed<boolean>(

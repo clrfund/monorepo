@@ -39,7 +39,6 @@
     "graphql-request": "5.1.0",
     "graphql-tag": "^2.12.6",
     "humanize-duration": "^3.27.3",
-    "is-ipfs": "^7.0.3",
     "luxon": "^3.1.1",
     "markdown-it": "^13.0.1",
     "markdown-it-link-attributes": "^4.0.1",
