@@ -20,6 +20,13 @@ export interface BrightIdParams {
   sponsor: string
 }
 
+export interface PoseidonContracts {
+  PoseidonT3Contract: Contract
+  PoseidonT4Contract: Contract
+  PoseidonT5Contract: Contract
+  PoseidonT6Contract: Contract
+}
+
 /**
  * Return the brightid user registry contructor parameter values
  * @param userRegistryType user registry type
@@ -114,22 +121,33 @@ export const CIRCUITS: { [name: string]: any } = {
       messageBatchSize: 8,
     },
   },
-  prod: {
-    batchUstVerifier: 'BatchUpdateStateTreeVerifierBatch64',
-    qvtVerifier: 'QuadVoteTallyVerifierBatch64',
+  micro: {
+    //https://github.com/privacy-scaling-explorations/maci/wiki/Precompiled-v1.1.1#micro-size
+    processMessagesZkey: 'ProcessMessages_10-2-1-2_test.0.zkey',
+    tallyVotesZkey: 'TallyVotes_10-1-2_test.0.zkey',
     treeDepths: {
-      stateTreeDepth: 32,
-      messageTreeDepth: 32,
-      voteOptionTreeDepth: 3,
+      stateTreeDepth: 10,
+      messageTreeDepth: 2,
+      messageBatchTreeDepth: 1,
+      voteOptionTreeDepth: 2,
+      intStateTreeDepth: 1,
     },
-    batchSizes: {
-      tallyBatchSize: 64,
-      messageBatchSize: 64,
+  },
+  //https://github.com/privacy-scaling-explorations/maci/wiki/Precompiled-v1.1.1#prod-size
+  prod: {
+    processMessagesZkey: 'ProcessMessages_7-9-3-4_test.0.zkey',
+    tallyVotesZkey: 'TallyVotes_7-3-4_test.0.zkey',
+    treeDepths: {
+      stateTreeDepth: 7,
+      messageTreeDepth: 9,
+      messageBatchTreeDepth: 3,
+      voteOptionTreeDepth: 4,
+      intStateTreeDepth: 3,
     },
   },
 }
 
-type PoseidonName = 'PoseidonT3' | 'PoseidonT6'
+type PoseidonName = 'PoseidonT3' | 'PoseidonT4' | 'PoseidonT5' | 'PoseidonT6'
 
 /**
  * Deploy the PoseidonT3 or PoseidonT6 contracts. These 2 contracts
@@ -175,61 +193,22 @@ export async function deployContract(
   return await contract.deployed()
 }
 
-interface MaciFactoryDependencies {
-  poseidonT3?: Contract
-  poseidonT6?: Contract
-  batchUstVerifier?: Contract
-  qvtVerifier?: Contract
-}
+export async function deployMaciFactory(account: Signer): Promise<Contract> {
+  const poseidonContracts = await deployPoseidonContracts(account)
 
-export async function deployMaciFactory(
-  account: Signer,
-  circuit = 'x32',
-  {
-    poseidonT3,
-    poseidonT6,
-    batchUstVerifier,
-    qvtVerifier,
-  }: MaciFactoryDependencies = {}
-): Promise<Contract> {
-  if (!poseidonT3) {
-    poseidonT3 = await deployPoseidon(account, 'PoseidonT3')
-  }
-  if (!poseidonT6) {
-    poseidonT6 = await deployPoseidon(account, 'PoseidonT6')
-  }
-  if (!batchUstVerifier) {
-    const BatchUstVerifier = await ethers.getContractFactory(
-      CIRCUITS[circuit].batchUstVerifier,
-      account
-    )
-    batchUstVerifier = await BatchUstVerifier.deploy()
-  }
-  if (!qvtVerifier) {
-    const QvtVerifier = await ethers.getContractFactory(
-      CIRCUITS[circuit].qvtVerifier,
-      account
-    )
-    qvtVerifier = await QvtVerifier.deploy()
-  }
-
-  const maciLibraries: Libraries = {
-    'maci-contracts/sol/Poseidon.sol:PoseidonT3': poseidonT3.address,
-    'maci-contracts/sol/Poseidon.sol:PoseidonT6': poseidonT6.address,
+  const libraries = {
+    PoseidonT3: poseidonContracts.PoseidonT3Contract.address,
+    PoseidonT4: poseidonContracts.PoseidonT4Contract.address,
+    PoseidonT5: poseidonContracts.PoseidonT5Contract.address,
+    PoseidonT6: poseidonContracts.PoseidonT6Contract.address,
   }
 
   const MACIFactory = await ethers.getContractFactory('MACIFactory', {
     signer: account,
-    libraries: maciLibraries,
-  })
-  const maciParameters = new MaciParameters({
-    batchUstVerifier: batchUstVerifier.address,
-    qvtVerifier: qvtVerifier.address,
-    ...CIRCUITS[circuit].treeDepths,
-    ...CIRCUITS[circuit].batchSizes,
+    libraries,
   })
 
-  const maciFactory = await MACIFactory.deploy(...maciParameters.values())
+  const maciFactory = await MACIFactory.deploy()
   await maciFactory.deployTransaction.wait()
 
   return maciFactory
@@ -271,4 +250,42 @@ export async function deployUserRegistry(
 
   await userRegistry.deployTransaction.wait()
   return userRegistry
+}
+
+/**
+ * Get the zkey file path
+ * @param name zkey file name
+ * @returns zkey file path
+ */
+export function getZkeyFilePath(name: string): string {
+  const config = JSON.parse(process.env.NODE_CONFIG || '')
+  if (!config?.snarkParamsPath) {
+    throw new Error(
+      'Please set the env. variable NODE_CONFIG={"snarkParamsPath": "path-to-zkey-file"}'
+    )
+  }
+
+  return path.join(config.snarkParamsPath, name)
+}
+
+/**
+ * Deploy all the poseidon contracts
+ *
+ * @param signer The signer for the deployment transaction
+ * @returns the deployed poseidon contracts
+ */
+export async function deployPoseidonContracts(
+  signer: Signer
+): Promise<PoseidonContracts> {
+  const PoseidonT3Contract = await deployPoseidon(signer, 'PoseidonT3')
+  const PoseidonT4Contract = await deployPoseidon(signer, 'PoseidonT4')
+  const PoseidonT5Contract = await deployPoseidon(signer, 'PoseidonT5')
+  const PoseidonT6Contract = await deployPoseidon(signer, 'PoseidonT6')
+
+  return {
+    PoseidonT3Contract,
+    PoseidonT4Contract,
+    PoseidonT5Contract,
+    PoseidonT6Contract,
+  }
 }

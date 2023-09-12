@@ -604,6 +604,34 @@
     "@chainsafe/persistent-merkle-tree" "^0.4.2"
     case "^1.6.3"
 
+"@clrfund/maci-cli@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@clrfund/maci-cli/-/maci-cli-1.1.1.tgz#5274bf3b49c09bed71d8b5ed5bbdb3280b47151f"
+  integrity sha512-j/woChsnH7b2ElcAvBSuozK+od5H8dyW01F3jyA/FXk/gTdCbn9ABNpClnVjp1dGHQFlYfahEuLJ4TUciPsLhw==
+  dependencies:
+    "@nomiclabs/hardhat-ethers" "^2.0.2"
+    argparse "^1.0.10"
+    circom_runtime "^0.1.22"
+    circomlib "^2.0.5"
+    ethers "^5.0.0"
+    ffiasm "0.1.3"
+    hardhat "^2.0.11"
+    js-yaml "4.0.0"
+    maci-circuits "1.1.1"
+    maci-common "1.1.1"
+    maci-contracts "1.1.1"
+    maci-core "1.1.1"
+    maci-crypto "1.1.1"
+    maci-domainobjs "1.1.1"
+    prompt-async "^0.9.9"
+    shelljs "^0.8.4"
+    snarkjs "^0.5.0"
+    source-map-support "^0.5.19"
+    typescript "^4.2.3"
+    web3 "^1.3.4"
+    xmlhttprequest "1.8.0"
+    zkey-manager "^0.1.1"
+
 "@colors/colors@1.5.0":
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/@colors/colors/-/colors-1.5.0.tgz#bb504579c1cae923e6576a4f5da43d25f97bdbd9"
@@ -7462,6 +7490,11 @@ circomlib@^2.0.0, circomlib@^2.0.5:
     circom "0.5.45"
     ffjavascript "0.1.0"
     web3-utils "^1.3.0"
+
+"circomlib@github:weijiekoh/circomlib#ac85e82c1914d47789e2032fb11ceb2cfdd38a2b":
+  version "1.0.0"
+  uid ac85e82c1914d47789e2032fb11ceb2cfdd38a2b
+  resolved "https://codeload.github.com/weijiekoh/circomlib/tar.gz/ac85e82c1914d47789e2032fb11ceb2cfdd38a2b"
 
 "circomlib@https://github.com/weijiekoh/circomlib#ac85e82c1914d47789e2032fb11ceb2cfdd38a2b":
   version "1.0.0"
@@ -14721,6 +14754,17 @@ luxon@^3.1.1, luxon@^3.2.1:
   resolved "https://registry.yarnpkg.com/luxon/-/luxon-3.4.2.tgz#f5bcab779f3d6a943ee7c8621c2b416bc10abd24"
   integrity sha512-uBoAVCVcajsrqy3pv7eo5jEUz1oeLmCcnMv8n4AJpT5hbpN9lUssAXibNElpbLce3Mhm9dyBzwYLs9zctM/0tA==
 
+maci-circuits@1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/maci-circuits/-/maci-circuits-1.1.1.tgz#640d2cf9950013ca192e83f39cb4bbc5dbf59ea4"
+  integrity sha512-t5Vk8Z45joTot/Yc63rBT0LGNIaENzGHQiZXsFYSFv92waAEpHlDyP5KzE6m2x73i9I8IFx6HNHxm11Ppc8umA==
+  dependencies:
+    argparse "^2.0.1"
+    circomlib "github:weijiekoh/circomlib#ac85e82c1914d47789e2032fb11ceb2cfdd38a2b"
+    shelljs "^0.8.3"
+    snarkjs "^0.5.0"
+    tmp "^0.2.1"
+
 maci-circuits@^1.1.1:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/maci-circuits/-/maci-circuits-1.1.2.tgz#56aebc6e8f121dad5c5b3de32a5edd7c920fa5d3"
@@ -14759,6 +14803,11 @@ maci-cli@1.1.1:
     xmlhttprequest "1.8.0"
     zkey-manager "^0.1.1"
 
+maci-common@1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/maci-common/-/maci-common-1.1.1.tgz#63b0ff5e42ec5f2a6f549b0e88b0066fcaf5b45e"
+  integrity sha512-+t+LMJHvmfyl6Q5j9Qxf1IbtUno9PxS0jdHcjBa7jdZLsuXu0eYDCD0Z+oTg4oA2jdqn68xua2s2moU43pgOMw==
+
 maci-common@^1.1.1:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/maci-common/-/maci-common-1.1.2.tgz#8105633d2425a3ce7cf7b3d6700cf82987287b08"
@@ -14794,6 +14843,15 @@ maci-contracts@^1.1.1:
     hardhat-contract-sizer "^2.0.3"
     module-alias "^2.2.2"
     typescript "^4.2.3"
+
+maci-core@1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/maci-core/-/maci-core-1.1.1.tgz#1dd767b2a222c49b7c9bc0f270a0b7096f10463c"
+  integrity sha512-zoB1sGW2b/l2/bXVYd3YM69GSkmnGmouML1W7IbGTjDZiAXY1FqALug5PEsvVww/wA/+lbu+UoPeKAQM7FDAVg==
+  dependencies:
+    maci-crypto "^1.1.1"
+    maci-domainobjs "^1.1.1"
+    module-alias "^2.2.2"
 
 maci-core@^1.1.1:
   version "1.1.2"

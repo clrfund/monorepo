@@ -4,6 +4,7 @@ import { PubKey, PCommand, Message } from 'maci-domainobjs'
 import { Keypair } from './keypair'
 import { utils } from 'ethers'
 import { Tally } from './tally'
+import { genProof, proofOnChain } from '@clrfund/maci-cli'
 
 const LEAVES_PER_NODE = 5
 
@@ -94,7 +95,7 @@ export function getRecipientClaimData(
   return [
     recipientIndex,
     spent,
-    spentProof.pathElements.map((x) => x.map((y) => y.toString())),
+    spentProof.pathElements.map(x => x.map(y => y.toString())),
     spentSalt,
   ]
 }
@@ -116,4 +117,6 @@ export {
   IncrementalQuinTree,
   hash5,
   LEAVES_PER_NODE,
+  proofOnChain,
+  genProof,
 }

@@ -3,16 +3,21 @@ import { ethers, waffle } from 'hardhat'
 import { use, expect } from 'chai'
 import { solidity } from 'ethereum-waffle'
 import { BigNumber, Contract, Signer, Wallet, utils } from 'ethers'
-import { genProofs, proveOnChain } from 'maci-cli'
-import { Keypair, createMessage, Message, PubKey } from '@clrfund/common'
+import {
+  Keypair,
+  createMessage,
+  Message,
+  PubKey,
+  genProofs,
+  proveOnChain,
+} from '@clrfund/common'
 
 import { UNIT } from '../utils/constants'
 import { getEventArg } from '../utils/contracts'
 import {
-  deployContract,
   deployMaciFactory,
-  deployPoseidon,
   CIRCUITS,
+  getZkeyFilePath,
 } from '../utils/deployment'
 import { getIpfsHash } from '../utils/ipfs'
 import {
@@ -25,7 +30,7 @@ use(solidity)
 
 const ZERO = BigNumber.from(0)
 
-describe('End-to-end Tests', function () {
+describe('End-to-end Tests', function() {
   this.timeout(60 * 60 * 1000)
   this.bail(true)
 
@@ -46,6 +51,7 @@ describe('End-to-end Tests', function () {
   let token: Contract
   let fundingRound: Contract
   let maci: Contract
+  let pollId: bigint
 
   let maciParameters: MaciParameters
   let coordinatorKeypair: Keypair
@@ -69,27 +75,34 @@ describe('End-to-end Tests', function () {
     })
 
     // Deploy funding round factory
-    const poseidonT3 = await deployPoseidon(deployer, 'PoseidonT3')
-    const poseidonT6 = await deployPoseidon(deployer, 'PoseidonT6')
-    const circuit = process.env.CIRCUIT_TYPE || 'prod'
+    const circuit = process.env.CIRCUIT_TYPE || 'micro'
     const params = CIRCUITS[circuit]
-    const batchUstVerifier = await deployContract(
-      deployer,
-      params.batchUstVerifier
+
+    const processMessagesZkey = getZkeyFilePath(params.processMessagesZkey)
+    const tallyVotesZkey = getZkeyFilePath(params.tallyVotesZkey)
+
+    const maciFactory = await deployMaciFactory(deployer)
+    const setMaciTx = await maciFactory.setMaciParameters(
+      params.treeDepths.stateTreeDepth,
+      params.treeDepths.intStateTreeDepth,
+      params.treeDepths.messageTreeDepth,
+      params.treeDepths.voteOptionTreeDepth,
+      params.treeDepths.messageBatchTreeDepth,
+      processMessagesZkey,
+      tallyVotesZkey
     )
-    const qvtVerifier = await deployContract(deployer, params.qvtVerifier)
-    const maciFactory = await deployMaciFactory(deployer, circuit, {
-      poseidonT3,
-      poseidonT6,
-      batchUstVerifier,
-      qvtVerifier,
-    })
+    await setMaciTx.wait()
+
     const FundingRoundFactory = await ethers.getContractFactory(
       'FundingRoundFactory',
       deployer
     )
     fundingRoundFactory = await FundingRoundFactory.deploy(maciFactory.address)
-    await maciFactory.transferOwnership(fundingRoundFactory.address)
+    const transferTx = await maciFactory.transferOwnership(
+      fundingRoundFactory.address
+    )
+    await transferTx.wait()
+
     const SimpleUserRegistry = await ethers.getContractFactory(
       'SimpleUserRegistry',
       deployer
@@ -104,7 +117,6 @@ describe('End-to-end Tests', function () {
       fundingRoundFactory.address
     )
     await fundingRoundFactory.setRecipientRegistry(recipientRegistry.address)
-    maciParameters = await MaciParameters.read(maciFactory)
 
     // Deploy ERC20 token contract
     const Token = await ethers.getContractFactory('AnyOldERC20Token', deployer)
@@ -123,7 +135,6 @@ describe('End-to-end Tests', function () {
       coordinator.address,
       coordinatorKeypair.pubKey.asContractParam()
     )
-    await fundingRoundFactory.setMaciParameters(...maciParameters.values())
 
     // Add funds to matching pool
     const poolContributionAmount = UNIT.mul(5)
@@ -166,7 +177,7 @@ describe('End-to-end Tests', function () {
     )
 
     // Deploy new funding round and MACI
-    await fundingRoundFactory.deployNewRound()
+    const newRoundTx = await fundingRoundFactory.deployNewRound()
     const fundingRoundAddress = await fundingRoundFactory.getCurrentRound()
     fundingRound = await ethers.getContractAt(
       'FundingRound',
@@ -174,6 +185,13 @@ describe('End-to-end Tests', function () {
     )
     const maciAddress = await fundingRound.maci()
     maci = await ethers.getContractAt('MACI', maciAddress)
+
+    pollId = BigInt(
+      await getEventArg(newRoundTx, maciAddress, 'DeployPoll', '_pollId')
+    )
+
+    const setPollTx = await fundingRound.setPoll(pollId)
+    await setPollTx.wait()
   })
 
   async function makeContributions(amounts: BigNumber[]) {
@@ -312,7 +330,8 @@ describe('End-to-end Tests', function () {
         coordinatorKeypair.pubKey,
         null,
         null,
-        nonce
+        nonce,
+        pollId
       )
       messages.push(message)
       encPubKeys.push(encPubKey)
@@ -328,7 +347,8 @@ describe('End-to-end Tests', function () {
           coordinatorKeypair.pubKey,
           recipientIndex,
           voiceCredits,
-          nonce
+          nonce,
+          pollId
         )
         messages.push(message)
         encPubKeys.push(encPubKey)
@@ -336,8 +356,8 @@ describe('End-to-end Tests', function () {
       }
 
       await fundingRound.connect(contributor).submitMessageBatch(
-        messages.reverse().map((msg) => msg.asContractParam()),
-        encPubKeys.reverse().map((key) => key.asContractParam())
+        messages.reverse().map(msg => msg.asContractParam()),
+        encPubKeys.reverse().map(key => key.asContractParam())
       )
     }
 
@@ -371,15 +391,16 @@ describe('End-to-end Tests', function () {
           coordinatorKeypair.pubKey,
           recipientIndex,
           voiceCredits,
-          nonce
+          nonce,
+          pollId
         )
         messages.push(message)
         encPubKeys.push(encPubKey)
         nonce += 1
       }
       await fundingRound.connect(contributor).submitMessageBatch(
-        messages.reverse().map((msg) => msg.asContractParam()),
-        encPubKeys.reverse().map((key) => key.asContractParam())
+        messages.reverse().map(msg => msg.asContractParam()),
+        encPubKeys.reverse().map(key => key.asContractParam())
       )
     }
 
@@ -413,15 +434,16 @@ describe('End-to-end Tests', function () {
         coordinatorKeypair.pubKey,
         recipientIndex,
         voiceCredits,
-        nonce
+        nonce,
+        pollId
       )
       nonce += 1
       messages.push(message)
       encPubKeys.push(encPubKey)
     }
     await fundingRound.connect(contributor).submitMessageBatch(
-      messages.reverse().map((msg) => msg.asContractParam()),
-      encPubKeys.reverse().map((key) => key.asContractParam())
+      messages.reverse().map(msg => msg.asContractParam()),
+      encPubKeys.reverse().map(key => key.asContractParam())
     )
     const [message, encPubKey] = createMessage(
       contribution2.stateIndex,
@@ -430,7 +452,8 @@ describe('End-to-end Tests', function () {
       coordinatorKeypair.pubKey,
       2,
       contribution2.voiceCredits,
-      1
+      1,
+      pollId
     )
     await fundingRound
       .connect(contribution2.signer)
@@ -472,15 +495,16 @@ describe('End-to-end Tests', function () {
         coordinatorKeypair.pubKey,
         recipientIndex,
         voiceCredits,
-        nonce
+        nonce,
+        pollId
       )
       nonce += 1
       messages.push(message)
       encPubKeys.push(encPubKey)
     }
     await fundingRound.connect(contributor).submitMessageBatch(
-      messages.reverse().map((msg) => msg.asContractParam()),
-      encPubKeys.reverse().map((key) => key.asContractParam())
+      messages.reverse().map(msg => msg.asContractParam()),
+      encPubKeys.reverse().map(key => key.asContractParam())
     )
 
     // contribution 2
@@ -491,7 +515,8 @@ describe('End-to-end Tests', function () {
       coordinatorKeypair.pubKey,
       2,
       contribution2.voiceCredits,
-      1
+      1,
+      pollId
     )
     await fundingRound
       .connect(contribution2.signer)
@@ -540,15 +565,16 @@ describe('End-to-end Tests', function () {
           coordinatorKeypair.pubKey,
           recipientIndex,
           voiceCredits,
-          nonce
+          nonce,
+          pollId
         )
         nonce += 1
         messages.push(message)
         encPubKeys.push(encPubKey)
       }
       await fundingRound.connect(contributor).submitMessageBatch(
-        messages.reverse().map((msg) => msg.asContractParam()),
-        encPubKeys.reverse().map((key) => key.asContractParam())
+        messages.reverse().map(msg => msg.asContractParam()),
+        encPubKeys.reverse().map(key => key.asContractParam())
       )
     }
 
@@ -560,7 +586,8 @@ describe('End-to-end Tests', function () {
       coordinatorKeypair.pubKey,
       2,
       contribution2.voiceCredits,
-      1
+      1,
+      pollId
     )
     await fundingRound
       .connect(contribution2.signer)
@@ -599,7 +626,8 @@ describe('End-to-end Tests', function () {
       coordinatorKeypair.pubKey,
       1,
       contribution.voiceCredits,
-      1
+      1,
+      pollId
     )
     messageBatch1.push(message)
     encPubKeyBatch1.push(encPubKey)
@@ -611,13 +639,14 @@ describe('End-to-end Tests', function () {
       coordinatorKeypair.pubKey,
       null,
       null,
-      2
+      2,
+      pollId
     )
     messageBatch1.push(message)
     encPubKeyBatch1.push(encPubKey)
     await fundingRound.connect(contributor).submitMessageBatch(
-      messageBatch1.reverse().map((msg) => msg.asContractParam()),
-      encPubKeyBatch1.reverse().map((key) => key.asContractParam())
+      messageBatch1.reverse().map(msg => msg.asContractParam()),
+      encPubKeyBatch1.reverse().map(key => key.asContractParam())
     )
 
     // Wait for signup period to end to override votes
@@ -633,7 +662,8 @@ describe('End-to-end Tests', function () {
       coordinatorKeypair.pubKey,
       null,
       null,
-      1
+      1,
+      pollId
     )
     messageBatch2.push(message)
     encPubKeyBatch2.push(encPubKey)
@@ -645,7 +675,8 @@ describe('End-to-end Tests', function () {
       coordinatorKeypair.pubKey,
       1,
       BigNumber.from(0),
-      2
+      2,
+      pollId
     )
     messageBatch2.push(message)
     encPubKeyBatch2.push(encPubKey)
@@ -657,13 +688,14 @@ describe('End-to-end Tests', function () {
       coordinatorKeypair.pubKey,
       2,
       contribution.voiceCredits,
-      3
+      3,
+      pollId
     )
     messageBatch2.push(message)
     encPubKeyBatch2.push(encPubKey)
     await fundingRound.connect(contributor).submitMessageBatch(
-      messageBatch2.reverse().map((msg) => msg.asContractParam()),
-      encPubKeyBatch2.reverse().map((key) => key.asContractParam())
+      messageBatch2.reverse().map(msg => msg.asContractParam()),
+      encPubKeyBatch2.reverse().map(key => key.asContractParam())
     )
 
     // contribution 2
@@ -674,7 +706,8 @@ describe('End-to-end Tests', function () {
       coordinatorKeypair.pubKey,
       2,
       contribution2.voiceCredits,
-      1
+      1,
+      pollId
     )
     await fundingRound
       .connect(contribution2.signer)
