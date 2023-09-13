@@ -1,15 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.10;
+pragma solidity 0.8.10;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 
 import {DomainObjs} from 'maci-contracts/contracts/DomainObjs.sol';
-import 'maci-contracts/contracts/MACI.sol';
-import 'maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol';
-import 'maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
+import {MACI} from 'maci-contracts/contracts/MACI.sol';
+import {Poll,PollProcessorAndTallyer} from 'maci-contracts/contracts/Poll.sol';
+import {SignUpGatekeeper} from "maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol";
+import {InitialVoiceCreditProxy} from "maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol";
 
 import './userRegistry/IUserRegistry.sol';
 import './recipientRegistry/IRecipientRegistry.sol';
@@ -47,8 +48,13 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   bool public isFinalized = false;
   bool public isCancelled = false;
 
+  uint256 public pollId;
   Poll public poll;
+
+  PollProcessorAndTallyer public tallyer;
+
   address public coordinator;
+  MACI public maci;
   ERC20 public nativeToken;
   IUserRegistry public userRegistry;
   IRecipientRegistry public recipientRegistry;
@@ -70,11 +76,25 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   event TallyPublished(string _tallyHash);
   event Voted(address indexed _contributor);
   event TallyResultsAdded(uint256 indexed _voteOptionIndex, uint256 _tally);
+  event PollSet(uint256 indexed _pollId, address indexed poll);
+  event TallyerSet(address indexed tallyer);
 
   modifier onlyCoordinator() {
     require(msg.sender == coordinator, 'FundingRound: Sender is not the coordinator');
     _;
   }
+
+  /*
+   * A modifier that causes the function to revert if the voting period is
+   * not over.
+   */
+  modifier isAfterVotingDeadline() {
+      (uint256 deployTime, uint256 duration) = poll.getDeployTimeAndDuration();
+      uint256 secondsPassed = block.timestamp - deployTime;
+      require(secondsPassed > duration, 'FundingRound: Voting period still active');
+      _;
+  }
+
 
   /**
     * @dev Set round parameters.
@@ -102,32 +122,63 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
    * @dev Have the votes been tallied
    */
   function isTallied() internal view returns (bool) {
-    return poll.stateAqMerged();
-  }
+    require(address(tallyer) != address(0), 'FundingRound: Poll tallyer not set');
 
-  function votingPeriodOver() internal view {
-    (uint256 deployTime, uint256 duration) = poll
-        .getDeployTimeAndDuration();
-    // Require that the voting period is over
-    uint256 secondsPassed = block.timestamp - deployTime;
-    if (secondsPassed <= duration ) {
-        revert VOTING_PERIOD_NOT_PASSED();
-    }
+    (uint256 numSignUps, ) = poll.numSignUpsAndMessages();
+    (, uint256 tallyBatchSize, ) = poll.batchSizes();
+    uint256 tallyBatchNum = tallyer.tallyBatchNum();
+    uint256 totalTallied = tallyBatchNum * tallyBatchSize;
+
+    return totalTallied > numSignUps;
   }
 
   /**
-    * @dev Set MACI poll.
-    * @param _poll Address of MACI poll.
+    * @dev Set the pollId used to look up the poll in MACI.
+    * @param _pollId The poll id.
     */
-  function setPoll(Poll _poll)
+  function setPollAndTallyer(uint256 _pollId, PollProcessorAndTallyer _tallyer)
     external
     onlyCoordinator
   {
-    require(address(_poll) != address(0), 'FundingRound: Invalid poll');
-    require(address(poll) == address(0), 'FundingRound: Poll was already set');
-    poll = _poll;
+    require(address(tallyer) != address(0), 'FundingRound: Invalid PollProcessorAndTallyer');
+
+    poll = maci.getPoll(_pollId);
+    require(address(poll) != address(0), 'FundingRound: Poll not found');
+
+    pollId = _pollId;
+    tallyer = _tallyer;
+
+    emit PollSet(pollId, address(poll));
   }
 
+  /**
+    * @dev Set the poll tallyer
+    * @param _tallyer The poll id.
+    */
+  function setPollAndTallyer(PollProcessorAndTallyer _tallyer)
+    external
+    onlyCoordinator
+  {
+    require(address(tallyer) != address(0), 'FundingRound: Invalid PollProcessorAndTallyer');
+
+    tallyer = _tallyer;
+
+    emit TallyerSet(address(tallyer));
+  }
+
+  /**
+    * @dev Link MACI instance to this funding round.
+    */
+  function setMaci(
+    MACI _maci
+  )
+    external
+    onlyOwner
+  {
+    require(address(maci) == address(0), 'FundingRound: Already linked to MACI instance');
+
+    maci = _maci;
+  }
 
   /**
     * @dev Contribute tokens to this funding round.
@@ -141,7 +192,7 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   )
     external
   {
-    require(address(poll) != address(0), 'FundingRound: Poll not deployed');
+    require(address(maci) != address(0), 'FundingRound: MACI not deployed');
     require(!isFinalized, 'FundingRound: Round finalized');
     require(amount > 0, 'FundingRound: Contribution amount must be greater than zero');
     require(amount <= MAX_VOICE_CREDITS * voiceCreditFactor, 'FundingRound: Contribution amount is too large');
@@ -149,9 +200,15 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
     uint256 currentVoiceCredits = contributors[msg.sender].voiceCredits;
     contributors[msg.sender] = ContributorStatus(voiceCredits + currentVoiceCredits);
     contributorCount += 1;
+    bytes memory signUpGatekeeperData = abi.encode(msg.sender, voiceCredits);
+    bytes memory initialVoiceCreditProxyData = abi.encode(msg.sender);
     nativeToken.safeTransferFrom(msg.sender, address(this), amount);
 
-    poll.topup(contributorIndex, voiceCredits);
+    maci.signUp(
+      pubKey,
+      signUpGatekeeperData,
+      initialVoiceCreditProxyData
+    );
     emit Contribution(msg.sender, amount);
   }
 
@@ -164,6 +221,8 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   )
     external
   {
+    require(address(poll) != address(0), 'FundingRound: Poll not deployed');
+
     uint256 batchSize = _messages.length;
     for (uint8 i = 0; i < batchSize; i++) {
       poll.publishMessage(_messages[i], _encPubKeys[i]);
@@ -210,7 +269,7 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   }
 
   /**
-    * @dev Publish the IPFS hash of the vote tally. Only coordinator can publish.
+    * @dev Publish the IPFS hash of the vote tally and set the tally contract address. Only coordinator can publish.
     * @param _tallyHash IPFS hash of the vote tally.
     */
   function publishTallyHash(string calldata _tallyHash)
@@ -219,6 +278,7 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   {
     require(!isFinalized, 'FundingRound: Round finalized');
     require(bytes(_tallyHash).length != 0, 'FundingRound: Tally hash is empty string');
+
     tallyHash = _tallyHash;
     emit TallyPublished(_tallyHash);
   }
@@ -264,25 +324,27 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   )
     external
     onlyOwner
+    isAfterVotingDeadline
   {
     require(!isFinalized, 'FundingRound: Already finalized');
-    require(address(poll) != address(0), 'FundingRound: MACI not deployed');
-    votingPeriodOver();
+    require(address(maci) != address(0), 'FundingRound: MACI not deployed');
+    require(address(poll) != address(0), 'FundingRound: Poll not deployed');
     require(isTallied(), 'FundingRound: Votes has not been tallied');
-    require(bytes(tallyHash).length != 0, 'FundingRound: Tally hash has not been published');
 
     // make sure we have received all the tally results
     (,,, uint8 voteOptionTreeDepth) = poll.treeDepths();
     uint256 totalResults = uint256(LEAVES_PER_NODE) ** uint256(voteOptionTreeDepth);
     require(totalTallyResults == totalResults, 'FundingRound: Incomplete tally results');
 
-/* TODO fix this
+/* TODO how to check this in maci v1??
     totalVotes = maci.totalVotes();
     // If nobody voted, the round should be cancelled to avoid locking of matching funds
     require(totalVotes > 0, 'FundingRound: No votes');
-    bool verified = maci.verifySpentVoiceCredits(_totalSpent, _totalSpentSalt);
+*/
+    bool verified = poll.verifySpentVoiceCredits(_totalSpent, _totalSpentSalt);
     require(verified, 'FundingRound: Incorrect total amount of spent voice credits');
- */
+
+
     totalSpent = _totalSpent;
     // Total amount of spent voice credits is the size of the pool of direct rewards.
     // Everything else, including unspent voice credits and downscaling error,
@@ -331,7 +393,6 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
     * @param _voteOptionIndex Vote option index.
     * @param _spent The amount of voice credits spent on the recipients.
     * @param _spentProof Proof of correctness for the amount of spent credits.
-    * @param _spentSalt Salt.
     */
   function claimFunds(
     uint256 _voteOptionIndex,
@@ -348,17 +409,14 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
 
     {
       // create scope to avoid 'stack too deep' error
-      (,,, uint8 voteOptionTreeDepth) = poll.treeDepths();
-      /* TODO fix this
-      bool spentVerified = tally.computeMerkleRootFromPath(
-        voteOptionTreeDepth,
+      bool verified = poll.verifyPerVOSpentVoiceCredits(
         _voteOptionIndex,
         _spent,
-        _spentProof
+        _spentProof,
+        _spentSalt
       );
-      */
-      bool spentVerified = true;
-      require(spentVerified, 'FundingRound: Incorrect amount of spent voice credits');
+
+      require(verified, 'FundingRound: Incorrect amount of spent voice credits');
     }
 
     (uint256 startTime, uint256 duration) = poll.getDeployTimeAndDuration();
@@ -383,30 +441,30 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
     * @param _voteOptionIndex Vote option index.
     * @param _tallyResult The results of vote tally for the recipients.
     * @param _tallyResultProof Proofs of correctness of the vote tally results.
-    * @param _tallyResultSalt Salt.
     */
   function _addTallyResult(
     uint8 _voteOptionTreeDepth,
     uint256 _voteOptionIndex,
     uint256 _tallyResult,
     uint256[][] calldata _tallyResultProof,
-    uint256 _tallyResultSalt
+    uint256 _spentVoiceCreditsHash,
+    uint256 _perVOSpentVoiceCreditsHash,
+    uint256 _tallyCommitment
   )
     private
   {
     RecipientStatus storage recipient = recipients[_voteOptionIndex];
     require(!recipient.tallyVerified, 'FundingRound: Vote results already verified');
 
-/* TODO fix this
-    bool resultVerified = maci.verifyTallyResult(
-      _voteOptionTreeDepth,
+    bool resultVerified = poll.verifyTallyResult(
       _voteOptionIndex,
       _tallyResult,
       _tallyResultProof,
-      _tallyResultSalt
+      _spentVoiceCreditsHash,
+      _perVOSpentVoiceCreditsHash,
+      _tallyCommitment
     );
     require(resultVerified, 'FundingRound: Incorrect tally result');
-*/
 
     recipient.tallyVerified = true;
     recipient.tallyResult = _tallyResult;
@@ -421,14 +479,15 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
     * @param _voteOptionIndices Vote option index.
     * @param _tallyResults The results of vote tally for the recipients.
     * @param _tallyResultProofs Proofs of correctness of the vote tally results.
-    * @param _tallyResultSalt Salt.
     */
   function addTallyResultsBatch(
     uint8 _voteOptionTreeDepth,
     uint256[] calldata _voteOptionIndices,
     uint256[] calldata _tallyResults,
     uint256[][][] calldata _tallyResultProofs,
-    uint256 _tallyResultSalt
+    uint256[] calldata _spentVoiceCreditsHashes,
+    uint256[] calldata _perVOSpentVoiceCreditsHash,
+    uint256 _tallyCommitment
   )
     external
     onlyCoordinator
@@ -442,7 +501,9 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
         _voteOptionIndices[i],
         _tallyResults[i],
         _tallyResultProofs[i],
-        _tallyResultSalt
+        _spentVoiceCreditsHashes[i],
+        _perVOSpentVoiceCreditsHash[i],
+        _tallyCommitment
       );
     }
   }

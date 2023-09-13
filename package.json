@@ -11,7 +11,9 @@
       "subgraph"
     ],
     "nohoist": [
-      "**/@nomiclabs/**"
+      "**/@nomiclabs/**",
+      "**/maci-contracts/**",
+      "**/maci-contracts"
     ]
   },
   "lint-staged": {

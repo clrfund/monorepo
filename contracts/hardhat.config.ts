@@ -86,7 +86,7 @@ const config: HardhatUserConfig = {
     },
     overrides: {
       'contracts/FundingRoundFactory.sol': {
-        version: '0.6.12',
+        version: '0.8.10',
         settings: {
           optimizer: {
             enabled: true,
@@ -95,7 +95,7 @@ const config: HardhatUserConfig = {
         },
       },
       'contracts/FundingRound.sol': {
-        version: '0.6.12',
+        version: '0.8.10',
         settings: {
           optimizer: {
             enabled: true,
@@ -158,8 +158,7 @@ subtask(TASK_COMPILE_SOLIDITY_GET_SOURCE_PATHS, async (_, __, runSuper) => {
 
   return paths.filter((filePath: string) => {
     return !(
-      filePath.includes('snarkVerifiers') ||
-      filePath.includes('FundingRoundFactory.sol')
+      filePath.includes('snarkVerifiers') || filePath.includes('ClrFund.sol')
     )
   })
 })
@@ -180,7 +179,7 @@ task(
       const artifact = JSON.parse(
         fs
           .readFileSync(
-            `../node_modules/maci-contracts/artifacts/contracts/crypto/Hasher.sol/${contractName}.json`
+            `./node_modules/maci-contracts/artifacts/contracts/crypto/Hasher.sol/${contractName}.json`
           )
           .toString()
       )

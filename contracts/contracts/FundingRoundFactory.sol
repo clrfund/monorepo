@@ -1,24 +1,25 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.6.12;
-pragma experimental ABIEncoderV2;
+pragma solidity 0.8.10;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
-import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
-import '@openzeppelin/contracts/utils/EnumerableSet.sol';
+import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
+import '@openzeppelin/contracts/utils/structs/EnumerableSet.sol';
 
-import 'maci-contracts/sol/MACI.sol';
-import 'maci-contracts/sol/MACISharedObjs.sol';
-import 'maci-contracts/sol/gatekeepers/SignUpGatekeeper.sol';
-import 'maci-contracts/sol/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
+import {MACI} from 'maci-contracts/contracts/MACI.sol';
+import {SignUpGatekeeper} from "maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol";
+import {InitialVoiceCreditProxy} from "maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol";
+import {SnarkCommon} from 'maci-contracts/contracts/crypto/SnarkCommon.sol';
+import {Params} from 'maci-contracts/contracts/Params.sol';
+import {DomainObjs} from 'maci-contracts/contracts/DomainObjs.sol';
 
 import './userRegistry/IUserRegistry.sol';
 import './recipientRegistry/IRecipientRegistry.sol';
 import './MACIFactory.sol';
 import './FundingRound.sol';
 
-contract FundingRoundFactory is Ownable, MACISharedObjs {
+contract FundingRoundFactory is Ownable, SnarkCommon, Params, DomainObjs {
   using EnumerableSet for EnumerableSet.AddressSet;
   using SafeERC20 for ERC20;
 
@@ -45,7 +46,6 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
   constructor(
     MACIFactory _maciFactory
   )
-    public
   {
     maciFactory = _maciFactory;
   }
@@ -70,7 +70,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
     onlyOwner
   {
     recipientRegistry = _recipientRegistry;
-    (,, uint256 maxVoteOptions) = maciFactory.maxValues();
+    (, uint256 maxVoteOptions) = maciFactory.maxValues();
     recipientRegistry.setMaxRecipients(maxVoteOptions);
   }
 
@@ -112,36 +112,24 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
   }
 
   function setMaciParameters(
-    uint8 _stateTreeDepth,
     uint8 _messageTreeDepth,
-    uint8 _voteOptionTreeDepth,
-    uint8 _tallyBatchSize,
-    uint8 _messageBatchSize,
-    SnarkVerifier _batchUstVerifier,
-    SnarkVerifier _qvtVerifier,
-    uint256 _signUpDuration,
-    uint256 _votingDuration
+    uint8 _voteOptionTreeDepth
   )
     external
     onlyOwner
   {
     maciFactory.setMaciParameters(
-      _stateTreeDepth,
       _messageTreeDepth,
-      _voteOptionTreeDepth,
-      _tallyBatchSize,
-      _messageBatchSize,
-      _batchUstVerifier,
-      _qvtVerifier,
-      _signUpDuration,
-      _votingDuration
+      _voteOptionTreeDepth
     );
   }
 
   /**
     * @dev Deploy new funding round.
+    * @param duration The poll duration in seconds
+    * @param vkRegistry The VkRegistry contract address
     */
-  function deployNewRound()
+  function deployNewRound(uint256 duration, address vkRegistry, address pollFactory, TreeDepths calldata treeDepths)
     external
     onlyOwner
   {
@@ -156,7 +144,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
       'Factory: Current round is not finalized'
     );
     // Make sure that the max number of recipients is set correctly
-    (,, uint256 maxVoteOptions) = maciFactory.maxValues();
+    (uint256 maxMessages, uint256 maxVoteOptions) = maciFactory.maxValues();
     recipientRegistry.setMaxRecipients(maxVoteOptions);
     // Deploy funding round and MACI contracts
     FundingRound newRound = new FundingRound(
@@ -166,12 +154,18 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
       coordinator
     );
     rounds.push(newRound);
+
     MACI maci = maciFactory.deployMaci(
       SignUpGatekeeper(newRound),
       InitialVoiceCreditProxy(newRound),
-      coordinator,
-      coordinatorPubKey
+      vkRegistry,
+      pollFactory,
+      address(nativeToken)
     );
+
+    MaxValues memory maxValues = MaxValues(maxMessages, maxVoteOptions);
+    maci.deployPoll(duration, maxValues, treeDepths, coordinatorPubKey);
+
     newRound.setMaci(maci);
     emit RoundStarted(address(newRound));
   }

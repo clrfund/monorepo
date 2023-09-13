@@ -1,10 +1,9 @@
 import { ethers, config } from 'hardhat'
-import { Libraries } from 'hardhat/types/runtime'
 import { Signer, Contract, utils } from 'ethers'
 import { link } from 'ethereum-waffle'
 import path from 'path'
+import { setVerifyingKeys, genProofs, proveOnChain } from '@clrfund/maci-cli'
 
-import { MaciParameters } from './maci'
 import { readFileSync } from 'fs'
 
 const userRegistryNames: Record<string, string> = {
@@ -193,6 +192,34 @@ export async function deployContract(
   return await contract.deployed()
 }
 
+export async function deployVkRegistry(
+  account: Signer,
+  processVkPath: string,
+  tallyVkPath: string,
+  owner: string,
+  circuit = 'micro'
+): Promise<Contract> {
+  const vkRegistry = await deployContract(account, 'VkRegistry')
+
+  const params = CIRCUITS[circuit]
+
+  await setVerifyingKeys({
+    vk_registry: vkRegistry.address,
+    state_tree_depth: params.treeDepths.stateTreeDepth,
+    int_state_tree_depth: params.treeDepths.intStateTreeDepth,
+    msg_tree_depth: params.treeDepths.messageTreeDepth,
+    vote_option_tree_depth: params.treeDepths.voteOptionTreeDepth,
+    msg_batch_depth: params.treeDepths.messageBatchTreeDepth,
+    process_messages_zkey: processVkPath,
+    tally_votes_zkey: tallyVkPath,
+  })
+
+  const ownerTx = await vkRegistry.transferOwnership(owner)
+  await ownerTx.wait()
+
+  return vkRegistry
+}
+
 export async function deployMaciFactory(account: Signer): Promise<Contract> {
   const poseidonContracts = await deployPoseidonContracts(account)
 
@@ -289,3 +316,5 @@ export async function deployPoseidonContracts(
     PoseidonT6Contract,
   }
 }
+
+export { proveOnChain, genProofs }

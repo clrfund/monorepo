@@ -1,27 +1,28 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.10;
+pragma solidity 0.8.10;
 
-import {ERC20} from '@openzeppelin/contracts/token/ERC20/ERC20.sol';
-import {SafeERC20} from '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
-import {EnumerableSet} from '@openzeppelin/contracts/utils/structs/EnumerableSet.sol';
+import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
+import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
+import '@openzeppelin/contracts/utils/structs/EnumerableSet.sol';
 
 // Import ownable from OpenZeppelin contracts
 
 import {MACI} from 'maci-contracts/contracts/MACI.sol';
-import {SignUpGatekeeper} from 'maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol';
-import {InitialVoiceCreditProxy} from 'maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
-import {VkRegistry} from "maci-contracts/contracts/VkRegistry.sol";
-import {TopupCredit} from "maci-contracts/contracts/TopupCredit.sol";
+import {SnarkCommon} from 'maci-contracts/contracts/crypto/SnarkCommon.sol';
+import {SignUpGatekeeper} from "maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol";
+import {InitialVoiceCreditProxy} from "maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol";
 import {Params} from 'maci-contracts/contracts/Params.sol';
+import {PollFactory} from 'maci-contracts/contracts/Poll.sol';
+import {DomainObjs} from 'maci-contracts/contracts/DomainObjs.sol';
 
 import './userRegistry/IUserRegistry.sol';
 import './recipientRegistry/IRecipientRegistry.sol';
 import './MACIFactory.sol';
 import './FundingRound.sol';
-import "./OwnableUpgradeable.sol";
+import './OwnableUpgradeable.sol';
 
-contract ClrFund is OwnableUpgradeable, DomainObjs, Params, SignUpGatekeeper, InitialVoiceCreditProxy {
+contract ClrFund is OwnableUpgradeable, SnarkCommon, Params, DomainObjs {
   using EnumerableSet for EnumerableSet.AddressSet;
   using SafeERC20 for ERC20;
 
@@ -29,15 +30,13 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params, SignUpGatekeeper, In
   address public coordinator;
 
   ERC20 public nativeToken;
-  MACI public maci;
-
+  MACIFactory public maciFactory;
   IUserRegistry public userRegistry;
   IRecipientRegistry public recipientRegistry;
   PubKey public coordinatorPubKey;
 
   EnumerableSet.AddressSet private fundingSources;
   FundingRound[] private rounds;
-  mapping(address => bool) public contributors;
 
   // Events
   event FundingSourceAdded(address _source);
@@ -48,16 +47,12 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params, SignUpGatekeeper, In
   event CoordinatorChanged(address _coordinator);
 
   function init(
-    MACI _maci,
-    VkRegistry vkRegistry,
-    MessageAqFactory messageAqFactory,
-    TopupCredit topupCredit
+    MACIFactory _maciFactory
   ) 
     external
   {
     __Ownable_init();
-    maci = _maci;
-    maci.init(vkRegistry, messageAqFactory, topupCredit);
+    maciFactory = _maciFactory;
   }
 
   /**
@@ -74,13 +69,13 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params, SignUpGatekeeper, In
   /**
     * @dev Set recipient registry.
     * @param _recipientRegistry Address of a recipient registry.
-    * @param maxVoteOptions Maximum number of recipients to accept
     */
-  function setRecipientRegistry(IRecipientRegistry _recipientRegistry, uint256 maxVoteOptions)
+  function setRecipientRegistry(IRecipientRegistry _recipientRegistry)
     external
     onlyOwner
   {
     recipientRegistry = _recipientRegistry;
+    (, uint256 maxVoteOptions) = maciFactory.maxValues();
     recipientRegistry.setMaxRecipients(maxVoteOptions);
   }
 
@@ -121,48 +116,29 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params, SignUpGatekeeper, In
     return rounds[rounds.length - 1];
   }
 
-/* TODO - init vkRegistry here..
   function setMaciParameters(
-    uint8 _stateTreeDepth,
     uint8 _messageTreeDepth,
-    uint8 _voteOptionTreeDepth,
-    uint8 _tallyBatchSize,
-    uint8 _messageBatchSize,
-    SnarkVerifier _batchUstVerifier,
-    SnarkVerifier _qvtVerifier,
-    uint256 _signUpDuration,
-    uint256 _votingDuration
-  )
+    uint8 _voteOptionTreeDepth
+    )
     external
     onlyOwner
   {
     maciFactory.setMaciParameters(
-      _stateTreeDepth,
       _messageTreeDepth,
-      _voteOptionTreeDepth,
-      _tallyBatchSize,
-      _messageBatchSize,
-      _batchUstVerifier,
-      _qvtVerifier,
-      _signUpDuration,
-      _votingDuration
+      _voteOptionTreeDepth
     );
   }
-*/
 
   /**
     * @dev Deploy new funding round.
+    * @param duration The poll duration in seconds
+    * @param vkRegistry The VkRegistry contract address
     */
-  function deployNewRound(
-    uint256 maxVoteOptions,
-    uint256 duration,
-    MaxValues memory maxValues,
-    TreeDepths memory treeDepths
-  )
+  function deployNewRound(uint256 duration, address vkRegistry, address pollFactory, TreeDepths calldata treeDepths)
     external
     onlyOwner
   {
-    require(address(maci) != address(0), 'Factory: MACI not deployed');
+    require(maciFactory.owner() == address(this), 'Factory: MACI factory is not owned by FR factory');
     require(address(userRegistry) != address(0), 'Factory: User registry is not set');
     require(address(recipientRegistry) != address(0), 'Factory: Recipient registry is not set');
     require(address(nativeToken) != address(0), 'Factory: Native token is not set');
@@ -173,18 +149,9 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params, SignUpGatekeeper, In
       'Factory: Current round is not finalized'
     );
     // Make sure that the max number of recipients is set correctly
+    (uint256 maxMessages, uint256 maxVoteOptions) = maciFactory.maxValues();
     recipientRegistry.setMaxRecipients(maxVoteOptions);
-
-    // deploy a new poll in MACI
-    // TODO set the poll later after retrieving the address from the event
-    maci.deployPoll(
-      duration,
-      maxValues,
-      treeDepths,
-      coordinatorPubKey
-    );
-
-    // Deploy funding round
+    // Deploy funding round and MACI contracts
     FundingRound newRound = new FundingRound(
       nativeToken,
       userRegistry,
@@ -192,6 +159,18 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params, SignUpGatekeeper, In
       coordinator
     );
     rounds.push(newRound);
+    MACI maci = maciFactory.deployMaci(
+      SignUpGatekeeper(newRound),
+      InitialVoiceCreditProxy(newRound),
+      vkRegistry,
+      pollFactory,
+      address(nativeToken)
+    );
+
+    MaxValues memory maxValues = MaxValues(maxMessages, maxVoteOptions);
+    maci.deployPoll(duration, maxValues, treeDepths, coordinatorPubKey);
+    newRound.setMaci(maci);
+
     emit RoundStarted(address(newRound));
   }
 
@@ -267,7 +246,7 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params, SignUpGatekeeper, In
     * @param _token Address of the token contract.
     */
   function setToken(address _token)
-    internal
+    external
     onlyOwner
   {
     nativeToken = ERC20(_token);
@@ -310,47 +289,5 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params, SignUpGatekeeper, In
   modifier onlyCoordinator() {
     require(msg.sender == coordinator, 'Factory: Sender is not the coordinator');
     _;
-  }
-
-  /**
-    * @dev Register user for voting.
-    * This function is part of SignUpGatekeeper interface.
-    * @param _data Encoded address of a contributor.
-    */
-  function register(
-    address /* _caller */,
-    bytes memory _data
-  )
-    public
-    override
-  {
-    require(address(userRegistry) != address(0), 'FundingRound: User registry not deployed');
-    require(msg.sender == address(maci), 'FundingRound: Only MACI contract can register voters');
-    address user = abi.decode(_data, (address));
-    bool verified = userRegistry.isVerifiedUser(user);
-    require(verified, 'FundingRound: User has not been verified');
-    require(!contributors[user], 'FundingRound: User already registered');
-    contributors[user] = true;
-    // maci.signup();
-  }
-
-    /**
-    * @dev Get the amount of voice credits for a given address.
-    * This function is a part of the InitialVoiceCreditProxy interface.
-    *
-    */
-  function getVoiceCredits(
-    address /* _caller */,
-    bytes memory /* _data // Encoded address of contributor */
-  )
-    public
-    override
-    pure
-    returns (uint256)
-  {
-    // always zero as users do not contribute on signup.
-    // They only contribute during a funding round when they are ready to vote,
-    // via the MACI topup function
-    return 0;
   }
 }

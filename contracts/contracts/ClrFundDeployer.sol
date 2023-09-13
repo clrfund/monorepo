@@ -21,16 +21,12 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-pragma solidity ^0.8.10;
+pragma solidity 0.8.10;
+
 import './MACIFactory.sol';
-import './PollFactoryDeployer.sol';
-import './VkRegistryDeployer.sol';
-import './TopupCreditDeployer.sol';
-import './MessageAqFactoryDeployer.sol';
 import './ClrFund.sol';
-import {MessageAqFactory, PollFactory} from 'maci-contracts/contracts/Poll.sol';
-import {SignUpGatekeeper} from 'maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol';
-import {InitialVoiceCreditProxy} from 'maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
+import {SignUpGatekeeper} from "maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol";
+import {InitialVoiceCreditProxy} from "maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol";
 
 contract CloneFactory { // implementation of eip-1167 - see https://eips.ethereum.org/EIPS/eip-1167
     function createClone(address target) internal returns (address result) {
@@ -66,26 +62,12 @@ contract ClrFundDeployer is CloneFactory, ClrFundParams {
     event NewInstance(address indexed clrfund);
     event Register(address indexed clrfund, string metadata);
      
-    function deployClrFund(
-      MACIFactory              _maciFactory,
-      PollFactoryDeployer      _pollFactoryDeployer,
-      VkRegistryDeployer       _vkRegistryDeployer,
-      TopupCreditDeployer      _topupCreditDeployer,
-      MessageAqFactoryDeployer _messageAqFactoryDeployer
-    ) public returns (address) {
+    function deployClrFund(MACIFactory _maciFactory) public returns (address) {
 
         clrfund = ClrFund(createClone(template));
 
-        PollFactory pollFactory = _pollFactoryDeployer.deploy(address(clrfund));
-        VkRegistry vkRegistry = _vkRegistryDeployer.deploy(address(clrfund));
-        TopupCredit topupCredit = _topupCreditDeployer.deploy(address(clrfund));
-        MessageAqFactory messageAqFactory = _messageAqFactoryDeployer.deploy(address(clrfund));
-
-        MACI maci = _maciFactory.deployMaci(pollFactory, clrfund, clrfund);
-        clrfund.init(maci, vkRegistry, messageAqFactory, topupCredit);
-
         emit NewInstance(address(clrfund));
-        
+
         return address(clrfund);
     }
     

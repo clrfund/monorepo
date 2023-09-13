@@ -1,7 +1,6 @@
 import { extractVk } from 'maci-circuits'
 import { VerifyingKey } from 'maci-domainobjs'
 import { genProcessVkSig, genTallyVkSig, genSubsidyVkSig } from 'maci-core'
-import { deployMaci, linkPoseidonLibraries } from 'maci-contracts'
 
 export * from './block'
 export * from './proof'
@@ -17,6 +16,4 @@ export {
   genProcessVkSig,
   genTallyVkSig,
   genSubsidyVkSig,
-  deployMaci,
-  linkPoseidonLibraries,
 }
