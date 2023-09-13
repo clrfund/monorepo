@@ -20,7 +20,9 @@ jobs:
       with:
         node-version: ${{ env.NODE_VERSION }}
     - name: Install
-      run: yarn
+      run: |
+        git config --global url."https://".insteadOf git://
+        yarn
     - name: Run tests
       run: yarn test:contracts
 

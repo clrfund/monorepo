@@ -11,6 +11,8 @@ yarn.lock
 vue-app/src/graphql/API.ts
 subgraph/generated
 vue-app/.eslintrc-auto-import.json
+vue-app/src/auto-import.d.ts
+vue-app/src/components.d.ts
 
 # local config
 vetur.config.js
