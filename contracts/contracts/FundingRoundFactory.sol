@@ -8,20 +8,32 @@ import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 import '@openzeppelin/contracts/utils/structs/EnumerableSet.sol';
 
 import {MACI} from 'maci-contracts/contracts/MACI.sol';
-import {SignUpGatekeeper} from "maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol";
-import {InitialVoiceCreditProxy} from "maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol";
+import {SignUpGatekeeper} from 'maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol';
+import {InitialVoiceCreditProxy} from 'maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
+import {IPubKey} from 'maci-contracts/contracts/DomainObjs.sol';
 import {SnarkCommon} from 'maci-contracts/contracts/crypto/SnarkCommon.sol';
-import {Params} from 'maci-contracts/contracts/Params.sol';
-import {DomainObjs} from 'maci-contracts/contracts/DomainObjs.sol';
 
 import './userRegistry/IUserRegistry.sol';
 import './recipientRegistry/IRecipientRegistry.sol';
 import './MACIFactory.sol';
 import './FundingRound.sol';
 
-contract FundingRoundFactory is Ownable, SnarkCommon, Params, DomainObjs {
+contract FundingRoundFactory is Ownable, IPubKey, SnarkCommon {
   using EnumerableSet for EnumerableSet.AddressSet;
   using SafeERC20 for ERC20;
+
+  // errors
+  error FundingSourceAlreadyAdded();
+  error FundingSourceNotFound();
+  error AlreadyFinalized();
+  error NotFinalized();
+  error NotAuthorized();
+  error NoCurrentRound();
+  error NoCoordinator();
+  error NoToken();
+  error NoRecipientRegistry();
+  error NoUserRegistry();
+  error NotOwnerOfMaciFactory();
 
   // State
   address public coordinator;
@@ -83,7 +95,9 @@ contract FundingRoundFactory is Ownable, SnarkCommon, Params, DomainObjs {
     onlyOwner
   {
     bool result = fundingSources.add(_source);
-    require(result, 'Factory: Funding source already added');
+    if (!result) {
+      revert FundingSourceAlreadyAdded();
+    }
     emit FundingSourceAdded(_source);
   }
 
@@ -96,7 +110,9 @@ contract FundingRoundFactory is Ownable, SnarkCommon, Params, DomainObjs {
     onlyOwner
   {
     bool result = fundingSources.remove(_source);
-    require(result, 'Factory: Funding source not found');
+    if (!result) {
+      revert FundingSourceNotFound();
+    }
     emit FundingSourceRemoved(_source);
   }
 
@@ -112,39 +128,55 @@ contract FundingRoundFactory is Ownable, SnarkCommon, Params, DomainObjs {
   }
 
   function setMaciParameters(
-    uint8 _messageTreeDepth,
-    uint8 _voteOptionTreeDepth
+    uint8 stateTreeDepth,
+    uint8 intStateTreeDepth,
+    uint8 messageTreeSubDepth,
+    uint8 messageTreeDepth,
+    uint8 voteOptionTreeDepth,
+    uint256 maxMessages,
+    uint256 maxVoteOptions,
+    uint256 messageBatchSize,
+    VerifyingKey calldata processVk,
+    VerifyingKey calldata tallyVk
   )
     external
-    onlyOwner
+    onlyCoordinator
   {
     maciFactory.setMaciParameters(
-      _messageTreeDepth,
-      _voteOptionTreeDepth
+      stateTreeDepth,
+      intStateTreeDepth,
+      messageTreeSubDepth,
+      messageTreeDepth,
+      voteOptionTreeDepth,
+      maxMessages,
+      maxVoteOptions,
+      messageBatchSize,
+      processVk,
+      tallyVk
     );
   }
 
   /**
     * @dev Deploy new funding round.
     * @param duration The poll duration in seconds
-    * @param vkRegistry The VkRegistry contract address
     */
-  function deployNewRound(uint256 duration, address vkRegistry, address pollFactory, TreeDepths calldata treeDepths)
+  function deployNewRound(uint256 duration)
     external
     onlyOwner
+    requireToken
+    requireCoordinator
+    requireRecipientRegistry
+    requireUserRegistry
   {
-    require(maciFactory.owner() == address(this), 'Factory: MACI factory is not owned by FR factory');
-    require(address(userRegistry) != address(0), 'Factory: User registry is not set');
-    require(address(recipientRegistry) != address(0), 'Factory: Recipient registry is not set');
-    require(address(nativeToken) != address(0), 'Factory: Native token is not set');
-    require(coordinator != address(0), 'Factory: No coordinator');
+    if (maciFactory.owner() != address(this)) {
+      revert NotOwnerOfMaciFactory();
+    }
     FundingRound currentRound = getCurrentRound();
-    require(
-      address(currentRound) == address(0) || currentRound.isFinalized(),
-      'Factory: Current round is not finalized'
-    );
+    if (address(currentRound) != address(0) && !currentRound.isFinalized()) {
+      revert NotFinalized();
+    }
     // Make sure that the max number of recipients is set correctly
-    (uint256 maxMessages, uint256 maxVoteOptions) = maciFactory.maxValues();
+    (, uint256 maxVoteOptions) = maciFactory.maxValues();
     recipientRegistry.setMaxRecipients(maxVoteOptions);
     // Deploy funding round and MACI contracts
     FundingRound newRound = new FundingRound(
@@ -158,13 +190,10 @@ contract FundingRoundFactory is Ownable, SnarkCommon, Params, DomainObjs {
     MACI maci = maciFactory.deployMaci(
       SignUpGatekeeper(newRound),
       InitialVoiceCreditProxy(newRound),
-      vkRegistry,
-      pollFactory,
-      address(nativeToken)
+      address(nativeToken),
+      duration,
+      coordinatorPubKey
     );
-
-    MaxValues memory maxValues = MaxValues(maxMessages, maxVoteOptions);
-    maci.deployPoll(duration, maxValues, treeDepths, coordinatorPubKey);
 
     newRound.setMaci(maci);
     emit RoundStarted(address(newRound));
@@ -202,7 +231,8 @@ contract FundingRoundFactory is Ownable, SnarkCommon, Params, DomainObjs {
     onlyOwner
   {
     FundingRound currentRound = getCurrentRound();
-    require(address(currentRound) != address(0), 'Factory: Funding round has not been deployed');
+    requireCurrentRound(currentRound);
+
     ERC20 roundToken = currentRound.nativeToken();
     // Factory contract is the default funding source
     uint256 matchingPoolSize = roundToken.balanceOf(address(this));
@@ -231,8 +261,12 @@ contract FundingRoundFactory is Ownable, SnarkCommon, Params, DomainObjs {
     onlyOwner
   {
     FundingRound currentRound = getCurrentRound();
-    require(address(currentRound) != address(0), 'Factory: Funding round has not been deployed');
-    require(!currentRound.isFinalized(), 'Factory: Current round is finalized');
+    requireCurrentRound(currentRound);
+
+    if (currentRound.isFinalized()) {
+      revert AlreadyFinalized();
+    }
+
     currentRound.cancel();
     emit RoundFinalized(address(currentRound));
   }
@@ -283,7 +317,43 @@ contract FundingRoundFactory is Ownable, SnarkCommon, Params, DomainObjs {
   }
 
   modifier onlyCoordinator() {
-    require(msg.sender == coordinator, 'Factory: Sender is not the coordinator');
+    if (msg.sender != coordinator) {
+      revert NotAuthorized();
+    }
+    _;
+  }
+
+  function requireCurrentRound(FundingRound currentRound) private {
+    if (address(currentRound) == address(0)) {
+      revert NoCurrentRound();
+    }
+  }
+
+  modifier requireToken() {
+    if (address(nativeToken) == address(0)) {
+      revert NoToken();
+    }
+    _;
+  }
+
+  modifier requireCoordinator() {
+    if (coordinator == address(0)) {
+      revert NoCoordinator();
+    }
+    _;
+  }
+
+  modifier requireUserRegistry() {
+    if (address(userRegistry) == address(0)) {
+      revert NoUserRegistry();
+    }
+    _;
+  }
+
+  modifier requireRecipientRegistry() {
+    if (address(recipientRegistry) == address(0)) {
+      revert NoRecipientRegistry();
+    }
     _;
   }
 }
