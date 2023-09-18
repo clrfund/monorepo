@@ -28,6 +28,7 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   // Structs
   struct ContributorStatus {
     uint256 voiceCredits;
+    bool isRegistered;
   }
 
   struct RecipientStatus {
@@ -84,18 +85,6 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
     _;
   }
 
-  /*
-   * A modifier that causes the function to revert if the voting period is
-   * not over.
-   */
-  modifier isAfterVotingDeadline() {
-      (uint256 deployTime, uint256 duration) = poll.getDeployTimeAndDuration();
-      uint256 secondsPassed = block.timestamp - deployTime;
-      require(secondsPassed > duration, 'FundingRound: Voting period still active');
-      _;
-  }
-
-
   /**
     * @dev Set round parameters.
     * @param _nativeToken Address of a token which will be accepted for contributions.
@@ -119,6 +108,16 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   }
 
   /**
+   * @dev Check if the voting period is over.
+   */
+  function isVotingOver() internal view returns (bool) {
+    require(address(poll) != address(0), 'FundingRound: Poll not set');
+    (uint256 deployTime, uint256 duration) = poll.getDeployTimeAndDuration();
+    uint256 secondsPassed = block.timestamp - deployTime;
+    return (secondsPassed >= duration);
+  }
+
+  /**
    * @dev Have the votes been tallied
    */
   function isTallied() internal view returns (bool) {
@@ -133,33 +132,29 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   }
 
   /**
-    * @dev Set the pollId used to look up the poll in MACI.
+    * @dev Set the MACI poll
     * @param _pollId The poll id.
     */
-  function setPollAndTallyer(uint256 _pollId, PollProcessorAndTallyer _tallyer)
+  function setPoll(uint256 _pollId)
     external
-    onlyCoordinator
+    onlyOwner
   {
-    require(address(tallyer) != address(0), 'FundingRound: Invalid PollProcessorAndTallyer');
-
     poll = maci.getPoll(_pollId);
     require(address(poll) != address(0), 'FundingRound: Poll not found');
 
     pollId = _pollId;
-    tallyer = _tallyer;
-
     emit PollSet(pollId, address(poll));
   }
 
   /**
     * @dev Set the poll tallyer
-    * @param _tallyer The poll id.
+    * @param _tallyer The poll processor and tallyer contract address
     */
-  function setPollAndTallyer(PollProcessorAndTallyer _tallyer)
+  function setTallyer(PollProcessorAndTallyer _tallyer)
     external
     onlyCoordinator
   {
-    require(address(tallyer) != address(0), 'FundingRound: Invalid PollProcessorAndTallyer');
+    require(address(_tallyer) != address(0), 'FundingRound: PollProcessorAndTallyer cannot be zero');
 
     tallyer = _tallyer;
 
@@ -186,7 +181,6 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
     * @param amount Contribution amount.
     */
   function contribute(
-    uint256 contributorIndex,
     PubKey calldata pubKey,
     uint256 amount
   )
@@ -212,6 +206,47 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
     emit Contribution(msg.sender, amount);
   }
 
+    /**
+    * @dev Register user for voting.
+    * This function is part of SignUpGatekeeper interface.
+    * @param _data Encoded address of a contributor.
+    */
+  function register(
+    address /* _caller */,
+    bytes memory _data
+  )
+    override
+    public
+  {
+    require(msg.sender == address(maci), 'FundingRound: Only MACI contract can register voters');
+    address user = abi.decode(_data, (address));
+    bool verified = userRegistry.isVerifiedUser(user);
+    require(verified, 'FundingRound: User has not been verified');
+    require(contributors[user].voiceCredits > 0, 'FundingRound: User has not contributed');
+    require(!contributors[user].isRegistered, 'FundingRound: User already registered');
+    contributors[user].isRegistered = true;
+  }
+
+  /**
+    * @dev Get the amount of voice credits for a given address.
+    * This function is a part of the InitialVoiceCreditProxy interface.
+    * @param _data Encoded address of a user.
+    */
+  function getVoiceCredits(
+    address /* _caller */,
+    bytes memory _data
+  )
+    override
+    public
+    view
+    returns (uint256)
+  {
+    address user = abi.decode(_data, (address));
+    uint256 initialVoiceCredits = contributors[user].voiceCredits;
+    require(initialVoiceCredits > 0, 'FundingRound: User does not have any voice credits');
+    return initialVoiceCredits;
+  }
+
   /**
     * @dev Submit a batch of messages along with corresponding ephemeral public keys.
     */
@@ -221,7 +256,7 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   )
     external
   {
-    require(address(poll) != address(0), 'FundingRound: Poll not deployed');
+    require(address(poll) != address(0), 'FundingRound: Poll not set');
 
     uint256 batchSize = _messages.length;
     for (uint8 i = 0; i < batchSize; i++) {
@@ -324,26 +359,26 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   )
     external
     onlyOwner
-    isAfterVotingDeadline
   {
     require(!isFinalized, 'FundingRound: Already finalized');
     require(address(maci) != address(0), 'FundingRound: MACI not deployed');
-    require(address(poll) != address(0), 'FundingRound: Poll not deployed');
+    require(isVotingOver(), 'FundingRound: Voting has not been finished');
     require(isTallied(), 'FundingRound: Votes has not been tallied');
+    
 
     // make sure we have received all the tally results
-    (,,, uint8 voteOptionTreeDepth) = poll.treeDepths();
+   /* (,,, uint8 voteOptionTreeDepth) = poll.treeDepths();
     uint256 totalResults = uint256(LEAVES_PER_NODE) ** uint256(voteOptionTreeDepth);
     require(totalTallyResults == totalResults, 'FundingRound: Incomplete tally results');
-
+   */
 /* TODO how to check this in maci v1??
     totalVotes = maci.totalVotes();
     // If nobody voted, the round should be cancelled to avoid locking of matching funds
     require(totalVotes > 0, 'FundingRound: No votes');
 */
+
     bool verified = poll.verifySpentVoiceCredits(_totalSpent, _totalSpentSalt);
     require(verified, 'FundingRound: Incorrect total amount of spent voice credits');
-
 
     totalSpent = _totalSpent;
     // Total amount of spent voice credits is the size of the pool of direct rewards.

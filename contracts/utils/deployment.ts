@@ -6,6 +6,8 @@ import { setVerifyingKeys, genProofs, proveOnChain } from '@clrfund/maci-cli'
 
 import { readFileSync } from 'fs'
 
+const TREE_ARITY = 5
+
 const userRegistryNames: Record<string, string> = {
   simple: 'SimpleUserRegistry',
   brightid: 'BrightIdUserRegistry',
@@ -17,13 +19,6 @@ export interface BrightIdParams {
   context: string
   verifierAddress: string
   sponsor: string
-}
-
-export interface PoseidonContracts {
-  PoseidonT3Contract: Contract
-  PoseidonT4Contract: Contract
-  PoseidonT5Contract: Contract
-  PoseidonT6Contract: Contract
 }
 
 /**
@@ -66,70 +61,38 @@ export function linkBytecode(
   return linkable.evm.bytecode.object
 }
 
-// custom configuration for MACI parameters.
+// custom configuration for MACI parameters
 export const CIRCUITS: { [name: string]: any } = {
-  test: {
-    batchUstVerifier: 'BatchUpdateStateTreeVerifier',
-    qvtVerifier: 'QuadVoteTallyVerifier',
-    treeDepths: {
-      stateTreeDepth: 4,
-      messageTreeDepth: 4,
-      voteOptionTreeDepth: 2,
-    },
-    batchSizes: {
-      tallyBatchSize: 4,
-      messageBatchSize: 4,
-    },
-  },
-  small: {
-    batchUstVerifier: 'BatchUpdateStateTreeVerifierSmall',
-    qvtVerifier: 'QuadVoteTallyVerifierSmall',
-    treeDepths: {
-      stateTreeDepth: 8,
-      messageTreeDepth: 11,
-      voteOptionTreeDepth: 3,
-    },
-    batchSizes: {
-      tallyBatchSize: 4,
-      messageBatchSize: 4,
-    },
-  },
-  medium: {
-    batchUstVerifier: 'BatchUpdateStateTreeVerifierMedium',
-    qvtVerifier: 'QuadVoteTallyVerifierMedium',
-    treeDepths: {
-      stateTreeDepth: 9,
-      messageTreeDepth: 13,
-      voteOptionTreeDepth: 3,
-    },
-    batchSizes: {
-      tallyBatchSize: 4,
-      messageBatchSize: 4,
-    },
-  },
-  x32: {
-    batchUstVerifier: 'BatchUpdateStateTreeVerifier32',
-    qvtVerifier: 'QuadVoteTallyVerifier32',
-    treeDepths: {
-      stateTreeDepth: 32,
-      messageTreeDepth: 32,
-      voteOptionTreeDepth: 3,
-    },
-    batchSizes: {
-      tallyBatchSize: 8,
-      messageBatchSize: 8,
-    },
-  },
+  // TODO: check if the maci v1 only supports micro based on the following comment:
+  // https://github.com/privacy-scaling-explorations/maci/blob/master/contracts/contracts/MACI.sol#L25
   micro: {
     //https://github.com/privacy-scaling-explorations/maci/wiki/Precompiled-v1.1.1#micro-size
     processMessagesZkey: 'ProcessMessages_10-2-1-2_test.0.zkey',
     tallyVotesZkey: 'TallyVotes_10-1-2_test.0.zkey',
     treeDepths: {
+      // TODO: confirm if the following 4 parameters are the 4 parameters in processMessages.circom
       stateTreeDepth: 10,
       messageTreeDepth: 2,
+      // TODO: confirm if messageBatchTreeDepth is the same as _messageTreeSubDepth in TreeDepths.
+      // TODO: is messageBatchTreeDepth == intStateTreeDepth??
       messageBatchTreeDepth: 1,
       voteOptionTreeDepth: 2,
+      // TODO: confirm if intStateTreeDepth is the 2nd param in tallyVotes.circom
       intStateTreeDepth: 1,
+    },
+    maxValues: {
+      // maxMessages and maxVoteOptions are calculated using treeArity = 5 as seen in the following code:
+      // https://github.com/privacy-scaling-explorations/maci/blob/master/contracts/contracts/Poll.sol#L115
+      // treeArity ** messageTreeDepth
+      maxMessages: TREE_ARITY ** 2,
+      // treeArity ** voteOptionTreeDepth
+      maxVoteOptions: TREE_ARITY ** 2,
+    },
+    batchSizes: {
+      // TODO: confirm the following mapping
+      // https://github.com/privacy-scaling-explorations/maci/blob/master/contracts/contracts/MACI.sol#L259
+      // treeArity ** messageBatchTreeDepth
+      messageBatchSize: TREE_ARITY ** 1,
     },
   },
   //https://github.com/privacy-scaling-explorations/maci/wiki/Precompiled-v1.1.1#prod-size
@@ -142,6 +105,16 @@ export const CIRCUITS: { [name: string]: any } = {
       messageBatchTreeDepth: 3,
       voteOptionTreeDepth: 4,
       intStateTreeDepth: 3,
+    },
+    maxValues: {
+      maxMessages: TREE_ARITY ** 9,
+      maxVoteOptions: TREE_ARITY ** 4,
+    },
+    batchSizes: {
+      // TODO: confirm the following mapping
+      // https://github.com/privacy-scaling-explorations/maci/blob/master/contracts/contracts/MACI.sol#L259
+      // treeArity ** messageBatchTreeDepth
+      messageBatchSize: TREE_ARITY ** 3,
     },
   },
 }
@@ -180,6 +153,20 @@ export async function deployPoseidon(
   )
 
   return Poseidon.deploy()
+}
+
+export async function deployContractWithLinkedLibraries(
+  signer: Signer,
+  contractName: string,
+  libraries: { [name: string]: string },
+  contractArgs: any[] = []
+): Promise<Contract> {
+  const contractFactory = await ethers.getContractFactory(contractName, {
+    signer,
+    libraries,
+  })
+  const contract = await contractFactory.deploy(...contractArgs)
+  return await contract.deployed()
 }
 
 export async function deployContract(
@@ -221,14 +208,7 @@ export async function deployVkRegistry(
 }
 
 export async function deployMaciFactory(account: Signer): Promise<Contract> {
-  const poseidonContracts = await deployPoseidonContracts(account)
-
-  const libraries = {
-    PoseidonT3: poseidonContracts.PoseidonT3Contract.address,
-    PoseidonT4: poseidonContracts.PoseidonT4Contract.address,
-    PoseidonT5: poseidonContracts.PoseidonT5Contract.address,
-    PoseidonT6: poseidonContracts.PoseidonT6Contract.address,
-  }
+  const libraries = await deployPoseidonLibraries(account)
 
   const MACIFactory = await ethers.getContractFactory('MACIFactory', {
     signer: account,
@@ -301,20 +281,21 @@ export function getZkeyFilePath(name: string): string {
  * @param signer The signer for the deployment transaction
  * @returns the deployed poseidon contracts
  */
-export async function deployPoseidonContracts(
+export async function deployPoseidonLibraries(
   signer: Signer
-): Promise<PoseidonContracts> {
+): Promise<{ [name: string]: string }> {
   const PoseidonT3Contract = await deployPoseidon(signer, 'PoseidonT3')
   const PoseidonT4Contract = await deployPoseidon(signer, 'PoseidonT4')
   const PoseidonT5Contract = await deployPoseidon(signer, 'PoseidonT5')
   const PoseidonT6Contract = await deployPoseidon(signer, 'PoseidonT6')
 
-  return {
-    PoseidonT3Contract,
-    PoseidonT4Contract,
-    PoseidonT5Contract,
-    PoseidonT6Contract,
+  const libraries = {
+    PoseidonT3: PoseidonT3Contract.address,
+    PoseidonT4: PoseidonT4Contract.address,
+    PoseidonT5: PoseidonT5Contract.address,
+    PoseidonT6: PoseidonT6Contract.address,
   }
+  return libraries
 }
 
 export { proveOnChain, genProofs }

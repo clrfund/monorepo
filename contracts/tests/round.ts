@@ -14,13 +14,19 @@ import {
   ALPHA_PRECISION,
 } from '../utils/constants'
 import { getEventArg, getGasUsage } from '../utils/contracts'
-import { deployMaciFactory } from '../utils/deployment'
+import {
+  deployPoseidonLibraries,
+  deployMaciFactory,
+  deployContractWithLinkedLibraries,
+  CIRCUITS,
+} from '../utils/deployment'
 import {
   bnSqrt,
   createMessage,
   addTallyResultsBatch,
   getRecipientClaimData,
   getRecipientTallyResultsBatch,
+  MaciParameters,
 } from '../utils/maci'
 import { sha256 } from 'ethers/lib/utils'
 
@@ -109,22 +115,49 @@ describe('Funding Round', () => {
       IRecipientRegistryArtifact.abi
     )
 
-    const FundingRound = await ethers.getContractFactory('FundingRound', {
-      signer: deployer,
-    })
-    fundingRound = await FundingRound.deploy(
-      token.address,
-      userRegistry.address,
-      recipientRegistry.address,
-      coordinator.address
+    const libraries = await deployPoseidonLibraries(deployer)
+    const fundingRound = await deployContractWithLinkedLibraries(
+      deployer,
+      'FundingRound',
+      libraries,
+      [
+        token.address,
+        userRegistry.address,
+        recipientRegistry.address,
+        coordinator.address,
+      ]
     )
-    const circuit = 'prod'
-    const maciFactory = await deployMaciFactory(deployer, circuit)
+    const VkRegistryArtifact = await artifacts.readArtifact('VkRegistry')
+    const vkRegistry = await deployMockContract(
+      deployer,
+      VkRegistryArtifact.abi
+    )
+    const pollFactory = await deployContractWithLinkedLibraries(
+      deployer,
+      'PollFactory',
+      libraries
+    )
+    const maciFactory = await deployMaciFactory(deployer)
+    await vkRegistry.mock.owner.returns(maciFactory.address)
+
+    const params = CIRCUITS['micro']
+    const maciParams = new MaciParameters({ ...params.maxValues })
+    const setMaciParamsTx = await maciFactory.setMaciParameters(
+      ...maciParams.values()
+    )
+
+    await setMaciParamsTx.wait()
+
+    const transferTx = await pollFactory.transferOwnership(maciFactory.address)
+    await transferTx.wait()
+
+    console.log('before deployMaci...')
     const maciDeployed = await maciFactory.deployMaci(
       fundingRound.address,
       fundingRound.address,
-      coordinator.address,
-      coordinatorPubKey.asContractParam()
+      vkRegistry.address,
+      pollFactory.address,
+      token.address
     )
     const maciAddress = await getEventArg(
       maciDeployed,
@@ -132,7 +165,10 @@ describe('Funding Round', () => {
       'MaciDeployed',
       '_maci'
     )
+    console.log('maci', maciAddress)
+
     maci = await ethers.getContractAt('MACI', maciAddress)
+    console.log('maci', maciAddress)
   })
 
   it('initializes funding round correctly', async () => {
