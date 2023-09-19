@@ -8,60 +8,131 @@ import {
   LEAVES_PER_NODE,
 } from '@clrfund/common'
 
+import { VerifyingKey } from 'maci-domainobjs'
+import { CIRCUITS } from './deployment'
+
 export class MaciParameters {
-  stateTreeDepth = 32
-  messageTreeDepth = 32
-  voteOptionTreeDepth = 3
-  tallyBatchSize = 8
-  messageBatchSize = 8
-  batchUstVerifier!: string
-  qvtVerifier!: string
-  signUpDuration = 7 * 86400
-  votingDuration = 7 * 86400
+  stateTreeDepth: number
+  intStateTreeDepth: number
+  messageTreeSubDepth: number
+  messageTreeDepth: number
+  voteOptionTreeDepth: number
+  maxMessages: number
+  maxVoteOptions: number
+  messageBatchSize: number
+  processVk: VerifyingKey
+  tallyVk: VerifyingKey
 
   constructor(parameters: { [name: string]: any } = {}) {
-    this.update(parameters)
+    this.stateTreeDepth = parameters.stateTreeDepth
+    this.intStateTreeDepth = parameters.intStateTreeDepth
+    this.messageTreeSubDepth = parameters.messageTreeSubDepth
+    this.messageTreeDepth = parameters.messageTreeDepth
+    this.voteOptionTreeDepth = parameters.voteOptionTreeDepth
+    this.maxMessages = parameters.maxMessages
+    this.maxVoteOptions = parameters.maxVoteOptions
+    this.messageBatchSize = parameters.messageBatchSize
+    this.processVk = parameters.processVk
+    this.tallyVk = parameters.tallyVk
   }
 
-  update(parameters: { [name: string]: any }) {
-    for (const [name, value] of Object.entries(parameters)) {
-      ;(this as any)[name] = value
-    }
-  }
-
-  values(): any[] {
-    // To be passed to setMaciParameters()
+  asContractParam(): any[] {
     return [
       this.stateTreeDepth,
-      this.messageTreeDepth,
-      this.voteOptionTreeDepth,
-      this.tallyBatchSize,
+      {
+        intStateTreeDepth: this.intStateTreeDepth,
+        messageTreeSubDepth: this.messageTreeSubDepth,
+        messageTreeDepth: this.messageTreeDepth,
+        voteOptionTreeDepth: this.voteOptionTreeDepth,
+      },
+      { maxMessages: this.maxMessages, maxVoteOptions: this.maxVoteOptions },
       this.messageBatchSize,
-      this.batchUstVerifier,
-      this.qvtVerifier,
-      this.signUpDuration,
-      this.votingDuration,
+      this.processVk.asContractParam(),
+      this.tallyVk.asContractParam(),
     ]
   }
 
-  static async read(maciFactory: Contract): Promise<MaciParameters> {
-    const { stateTreeDepth, messageTreeDepth, voteOptionTreeDepth } =
-      await maciFactory.treeDepths()
-    const { tallyBatchSize, messageBatchSize } = await maciFactory.batchSizes()
-    const batchUstVerifier = await maciFactory.batchUstVerifier()
-    const qvtVerifier = await maciFactory.qvtVerifier()
-    const signUpDuration = (await maciFactory.signUpDuration()).toNumber()
-    const votingDuration = (await maciFactory.votingDuration()).toNumber()
+  static fromConfig(config: { [name: string]: any }): MaciParameters {
+    const processVk: VerifyingKey = VerifyingKey.fromObj(config.processVkObj)
+    const tallyVk: VerifyingKey = VerifyingKey.fromObj(config.tallyVkObj)
+
     return new MaciParameters({
+      stateTreeDepth: config.stateTreeDepth,
+      intStateTreeDepth: config.intStateTreeDepth,
+      messageTreeSubDepth: config.messageTreeSubDepth,
+      messageTreeDepth: config.messageTreeDepth,
+      voteOptionTreeDepth: config.voteOptionTreeDepth,
+      maxMessages: config.maxMessages,
+      maxVoteOptions: config.maxVoteOptions,
+      messageBatchSize: config.messageBatchSize,
+      processVk,
+      tallyVk,
+    })
+  }
+
+  static async fromContract(maciFactory: Contract): Promise<MaciParameters> {
+    const stateTreeDepth = await maciFactory.stateTreeDepth()
+    const {
+      intStateTreeDepth,
+      messageTreeSubDepth,
+      messageTreeDepth,
+      voteOptionTreeDepth,
+    } = await maciFactory.treeDepths()
+    const { maxMessages, maxVoteOptions } = await maciFactory.maxValues()
+    const messageBatchSize = await maciFactory.messageBatchSize()
+    const vkRegistry = await maciFactory.vkRegistry()
+
+    const processVk = await vkRegistry.getProcessVk(
       stateTreeDepth,
       messageTreeDepth,
       voteOptionTreeDepth,
-      tallyBatchSize,
+      messageBatchSize
+    )
+
+    const tallyVk = await vkRegistry.getTallyVk(
+      stateTreeDepth,
+      intStateTreeDepth,
+      voteOptionTreeDepth
+    )
+
+    return new MaciParameters({
+      stateTreeDepth,
+      intStateTreeDepth,
+      messageTreeSubDepth,
+      messageTreeDepth,
+      voteOptionTreeDepth,
+      maxMessages,
+      maxVoteOptions,
       messageBatchSize,
-      batchUstVerifier,
-      qvtVerifier,
-      signUpDuration,
-      votingDuration,
+      processVk: VerifyingKey.fromContract(processVk),
+      tallyVk: VerifyingKey.fromContract(tallyVk),
+    })
+  }
+
+  static mock(circuit: string): MaciParameters {
+    const processVk = VerifyingKey.fromObj({
+      vk_alpha_1: [1, 2],
+      vk_beta_2: [
+        [1, 2],
+        [1, 2],
+      ],
+      vk_gamma_2: [
+        [1, 2],
+        [1, 2],
+      ],
+      vk_delta_2: [
+        [1, 2],
+        [1, 2],
+      ],
+      IC: [[1, 2]],
+    })
+    const params = CIRCUITS[circuit]
+    return new MaciParameters({
+      ...params.maxValues,
+      ...params.treeDepths,
+      ...params.batchSizes,
+      processVk,
+      tallyVk: processVk.copy(),
     })
   }
 }
@@ -121,6 +192,9 @@ export function getRecipientTallyResultsBatch(
     tallyData.map((item) => item[1]),
     tallyData.map((item) => item[2]),
     tallyData.map((item) => item[3]),
+    // TODO: fix this after getting the result of tally
+    tallyData.map(() => 0),
+    tallyData.map(() => 0),
     resultSalt,
   ]
 }
