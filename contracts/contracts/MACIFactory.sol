@@ -12,21 +12,17 @@ import {SnarkCommon} from 'maci-contracts/contracts/crypto/SnarkCommon.sol';
 import {Ownable} from '@openzeppelin/contracts/access/Ownable.sol';
 import {Params} from 'maci-contracts/contracts/Params.sol';
 import {PollFactoryCreator} from './PollFactoryCreator.sol';
-import {VkRegistryCreator} from './VkRegistryCreator.sol';
+import {MessageAqFactoryCreator} from './MessageAqFactoryCreator.sol';
 import {IPubKey} from 'maci-contracts/contracts/DomainObjs.sol';
 
 contract MACIFactory is Ownable, Params, SnarkCommon, IPubKey {
-  // States
-  bool public initialized = false;
+  // Constants
+  uint8 private constant VOTE_OPTION_TREE_BASE = 5;
+
+  // State
+  VkRegistry public vkRegistry;
   uint8 public stateTreeDepth;
-
-  // treeDepths
   TreeDepths public treeDepths;
-
-  VerifyingKey public processVk;
-  VerifyingKey public tallyVk;
-
-  // max values
   MaxValues public maxValues;
   uint256 public messageBatchSize;
 
@@ -36,85 +32,68 @@ contract MACIFactory is Ownable, Params, SnarkCommon, IPubKey {
 
   // errors
   error NotInitialized();
+  error CannotDecreaseVoteOptionDepth();
+  error ProcessVkNotSet();
+  error TallyVkNotSet();
+  error InvalidVkRegistry();
 
-  function init(
-    uint8 _stateTreeDepth,
-    uint8 _intStateTreeDepth,
-    uint8 _messageTreeSubDepth,
-    uint8 _messageTreeDepth,
-    uint8 _voteOptionTreeDepth,
-    uint256 _maxMessages,
-    uint256 _maxVoteOptions,
-    uint256 _messageBatchSize,
-    VerifyingKey calldata _processVk,
-    VerifyingKey calldata _tallyVk
-  )
-  external
-  {
-    _setMaciParameters(
-      _stateTreeDepth,
-      _intStateTreeDepth,
-      _messageTreeSubDepth,
-      _messageTreeDepth,
-      _voteOptionTreeDepth,
-      _maxMessages,
-      _maxVoteOptions,
-      _messageBatchSize,
-      _processVk,
-      _tallyVk
-    );
-    initialized = true;
+  constructor(VkRegistry _vkRegistry) {
+    _setVkRegistry(_vkRegistry);
+  }
+
+  function _setVkRegistry(VkRegistry _vkRegistry) internal {
+    if (address(_vkRegistry) == address(0)) {
+      revert InvalidVkRegistry();
+    }
+
+    vkRegistry = _vkRegistry;
+  }
+
+  function setVkRegistry(VkRegistry _vkRegistry) public onlyOwner {
+    _setVkRegistry(_vkRegistry);
   }
 
   function setMaciParameters(
     uint8 _stateTreeDepth,
-    uint8 _intStateTreeDepth,
-    uint8 _messageTreeSubDepth,
-    uint8 _messageTreeDepth,
-    uint8 _voteOptionTreeDepth,
-    uint256 _maxMessages,
-    uint256 _maxVoteOptions,
+    TreeDepths calldata _treeDepths,
+    MaxValues calldata _maxValues,
     uint256 _messageBatchSize,
     VerifyingKey calldata _processVk,
     VerifyingKey calldata _tallyVk
   )
-    external
-  {
-    _setMaciParameters(
-      _stateTreeDepth,
-      _intStateTreeDepth,
-      _messageTreeSubDepth,
-      _messageTreeDepth,
-      _voteOptionTreeDepth,
-      _maxMessages,
-      _maxVoteOptions,
-      _messageBatchSize,
-      _processVk,
-      _tallyVk
-    );
-  }
-
-  function _setMaciParameters(
-    uint8 _stateTreeDepth,
-    uint8 _intStateTreeDepth,
-    uint8 _messageTreeSubDepth,
-    uint8 _messageTreeDepth,
-    uint8 _voteOptionTreeDepth,
-    uint256 _maxMessages,
-    uint256 _maxVoteOptions,
-    uint256 _messageBatchSize,
-    VerifyingKey calldata _processVk,
-    VerifyingKey calldata _tallyVk
-  )
-    internal
+    public
     onlyOwner
   {
+    if (_treeDepths.voteOptionTreeDepth < treeDepths.voteOptionTreeDepth) {
+      revert CannotDecreaseVoteOptionDepth();
+    }
+
+    if (!vkRegistry.hasProcessVk(
+        _stateTreeDepth,
+        _treeDepths.messageTreeDepth,
+        _treeDepths.voteOptionTreeDepth,
+        _messageBatchSize) ||
+      !vkRegistry.hasTallyVk(
+        _stateTreeDepth,
+        _treeDepths.intStateTreeDepth,
+        _treeDepths.voteOptionTreeDepth
+      )
+    ) {
+      vkRegistry.setVerifyingKeys(
+        _stateTreeDepth,
+        _treeDepths.intStateTreeDepth,
+        _treeDepths.messageTreeDepth,
+        _treeDepths.voteOptionTreeDepth,
+        _messageBatchSize,
+        _processVk,
+        _tallyVk
+      );
+    }
+
     stateTreeDepth = _stateTreeDepth;
-    treeDepths = TreeDepths(_intStateTreeDepth, _messageTreeSubDepth, _messageTreeDepth, _voteOptionTreeDepth);
-    maxValues = MaxValues(_maxMessages, _maxVoteOptions);
+    maxValues = _maxValues;
+    treeDepths = _treeDepths;
     messageBatchSize = _messageBatchSize;
-    processVk = _processVk;
-    tallyVk = _tallyVk;
 
     emit MaciParametersChanged();
   }
@@ -133,8 +112,21 @@ contract MACIFactory is Ownable, Params, SnarkCommon, IPubKey {
     onlyOwner
     returns (MACI _maci)
   {
-    if (!initialized ) {
-      revert NotInitialized();
+    if (!vkRegistry.hasProcessVk(
+      stateTreeDepth,
+      treeDepths.messageTreeDepth,
+      treeDepths.voteOptionTreeDepth,
+      messageBatchSize)
+    ) {
+      revert ProcessVkNotSet();
+    }
+
+    if (!vkRegistry.hasTallyVk(
+      stateTreeDepth,
+      treeDepths.intStateTreeDepth,
+      treeDepths.voteOptionTreeDepth)
+    ) {
+      revert TallyVkNotSet();
     }
 
     PollFactory pollFactory = PollFactoryCreator.create();
@@ -143,23 +135,12 @@ contract MACIFactory is Ownable, Params, SnarkCommon, IPubKey {
       signUpGatekeeper,
       initialVoiceCreditProxy
     );
-
     pollFactory.transferOwnership(address(_maci));
 
-    VkRegistry vkRegistry = VkRegistryCreator.create();
-    vkRegistry.setVerifyingKeys(
-        stateTreeDepth,
-        treeDepths.intStateTreeDepth,
-        treeDepths.messageTreeDepth,
-        treeDepths.voteOptionTreeDepth,
-        messageBatchSize,
-        processVk,
-        tallyVk
-    );
+    MessageAqFactory messageAqFactory = MessageAqFactoryCreator.create();
+    messageAqFactory.transferOwnership(address(pollFactory));
 
-    MessageAqFactory messageAqFactory = pollFactory.messageAqFactory();
     _maci.init(vkRegistry, messageAqFactory, TopupCredit(topupCredit));
-
     _maci.deployPoll(duration, maxValues, treeDepths, coordinatorPubKey);
 
     emit MaciDeployed(address(_maci));
