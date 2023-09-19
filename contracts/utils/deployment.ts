@@ -74,8 +74,9 @@ export const CIRCUITS: { [name: string]: any } = {
       stateTreeDepth: 10,
       messageTreeDepth: 2,
       // TODO: confirm if messageBatchTreeDepth is the same as _messageTreeSubDepth in TreeDepths.
+      // see https://github.com/clrfund/maci-v1/blob/b5ea1ed4a10c14dc133f8d61e886120cda240003/cli/ts/deployPoll.ts#L153
       // TODO: is messageBatchTreeDepth == intStateTreeDepth??
-      messageBatchTreeDepth: 1,
+      messageTreeSubDepth: 1,
       voteOptionTreeDepth: 2,
       // TODO: confirm if intStateTreeDepth is the 2nd param in tallyVotes.circom
       intStateTreeDepth: 1,
@@ -102,7 +103,7 @@ export const CIRCUITS: { [name: string]: any } = {
     treeDepths: {
       stateTreeDepth: 7,
       messageTreeDepth: 9,
-      messageBatchTreeDepth: 3,
+      messageTreeSubDepth: 3,
       voteOptionTreeDepth: 4,
       intStateTreeDepth: 3,
     },
@@ -207,16 +208,36 @@ export async function deployVkRegistry(
   return vkRegistry
 }
 
-export async function deployMaciFactory(account: Signer): Promise<Contract> {
-  const libraries = await deployPoseidonLibraries(account)
+export async function deployMaciFactory(
+  account: Signer,
+  poseidonContracts: { [name: string]: string }
+): Promise<Contract> {
+  const pollFactoryCreator = await deployContractWithLinkedLibraries(
+    account,
+    'PollFactoryCreator',
+    { ...poseidonContracts }
+  )
+  const messageAqFactoryCreator = await deployContractWithLinkedLibraries(
+    account,
+    'MessageAqFactoryCreator',
+    { ...poseidonContracts }
+  )
 
+  const vkRegistry = await deployContract(account, 'VkRegistry')
   const MACIFactory = await ethers.getContractFactory('MACIFactory', {
     signer: account,
-    libraries,
+    libraries: {
+      ...poseidonContracts,
+      PollFactoryCreator: pollFactoryCreator.address,
+      MessageAqFactoryCreator: messageAqFactoryCreator.address,
+    },
   })
 
-  const maciFactory = await MACIFactory.deploy()
+  const maciFactory = await MACIFactory.deploy(vkRegistry.address)
   await maciFactory.deployTransaction.wait()
+
+  const transferTx = await vkRegistry.transferOwnership(maciFactory.address)
+  await transferTx.wait()
 
   return maciFactory
 }
