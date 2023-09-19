@@ -17,7 +17,38 @@ import './recipientRegistry/IRecipientRegistry.sol';
 
 contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, DomainObjs {
   using SafeERC20 for ERC20;
-  error VOTING_PERIOD_NOT_PASSED();
+
+  // Errors
+  error OnlyMaciCanRegisterVoters();
+  error NotCoordinator();
+  error PollNotSet();
+  error PollProcessorAndTallyerNotSet();
+  error InvalidPollId();
+  error InvalidPollProcessorAndTallyer();
+  error MaciAlreadySet();
+  error MaciNotSet();
+  error ContributionAmountIsZero();
+  error ContributionAmountTooLarge();
+  error AlreadyContributed();
+  error UserNotVerified();
+  error UserHasNotContributed();
+  error UserAlreadyRegistered();
+  error NoVoiceCredits();
+  error NothingToWithdraw();
+  error RoundNotCancelled();
+  error RoundCancelled();
+  error RoundAlreadyFinalized();
+  error RoundNotFinalized();
+  error VotesNotTallied();
+  error EmptyTallyHash();
+  error InvalidBudget();
+  error NoProjectHasMoreThanOneVote();
+  error VoteResultsAlreadyVerified();
+  error IncorrectTallyResult();
+  error IncorrectSpentVoiceCredits();
+  error VotingIsNotOver();
+  error FundsAlreadyClaimed();
+  error TallyHashNotPublished();
 
   // Constants
   uint256 private constant MAX_VOICE_CREDITS = 10 ** 9;  // MACI allows 2 ** 32 voice credits max
@@ -81,7 +112,9 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   event TallyerSet(address indexed tallyer);
 
   modifier onlyCoordinator() {
-    require(msg.sender == coordinator, 'FundingRound: Sender is not the coordinator');
+    if(msg.sender != coordinator) {
+      revert NotCoordinator();
+    }
     _;
   }
 
@@ -111,7 +144,9 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
    * @dev Check if the voting period is over.
    */
   function isVotingOver() internal view returns (bool) {
-    require(address(poll) != address(0), 'FundingRound: Poll not set');
+    if (address(poll) == address(0)) {
+      revert PollNotSet();
+    }
     (uint256 deployTime, uint256 duration) = poll.getDeployTimeAndDuration();
     uint256 secondsPassed = block.timestamp - deployTime;
     return (secondsPassed >= duration);
@@ -121,14 +156,16 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
    * @dev Have the votes been tallied
    */
   function isTallied() internal view returns (bool) {
-    require(address(tallyer) != address(0), 'FundingRound: Poll tallyer not set');
+    if (address(tallyer) == address(0)) {
+      revert PollProcessorAndTallyerNotSet();
+    }
 
     (uint256 numSignUps, ) = poll.numSignUpsAndMessages();
     (, uint256 tallyBatchSize, ) = poll.batchSizes();
     uint256 tallyBatchNum = tallyer.tallyBatchNum();
     uint256 totalTallied = tallyBatchNum * tallyBatchSize;
 
-    return totalTallied > numSignUps;
+    return totalTallied >= numSignUps;
   }
 
   /**
@@ -140,7 +177,9 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
     onlyOwner
   {
     poll = maci.getPoll(_pollId);
-    require(address(poll) != address(0), 'FundingRound: Poll not found');
+    if (address(poll) == address(0)) {
+      revert InvalidPollId();
+    }
 
     pollId = _pollId;
     emit PollSet(pollId, address(poll));
@@ -154,7 +193,9 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
     external
     onlyCoordinator
   {
-    require(address(_tallyer) != address(0), 'FundingRound: PollProcessorAndTallyer cannot be zero');
+    if (address(_tallyer) == address(0)) {
+      revert InvalidPollProcessorAndTallyer();
+    }
 
     tallyer = _tallyer;
 
@@ -170,7 +211,9 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
     external
     onlyOwner
   {
-    require(address(maci) == address(0), 'FundingRound: Already linked to MACI instance');
+    if (address(maci) != address(0)) {
+      revert MaciAlreadySet();
+    }
 
     maci = _maci;
   }
@@ -186,13 +229,16 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   )
     external
   {
-    require(address(maci) != address(0), 'FundingRound: MACI not deployed');
-    require(!isFinalized, 'FundingRound: Round finalized');
-    require(amount > 0, 'FundingRound: Contribution amount must be greater than zero');
-    require(amount <= MAX_VOICE_CREDITS * voiceCreditFactor, 'FundingRound: Contribution amount is too large');
+    if (address(maci) == address(0)) revert MaciNotSet();
+    if (isFinalized) revert RoundAlreadyFinalized();
+    if (amount == 0) revert ContributionAmountIsZero();
+    if (amount > MAX_VOICE_CREDITS * voiceCreditFactor) revert ContributionAmountTooLarge();
+    if (contributors[msg.sender].voiceCredits != 0) {
+      revert AlreadyContributed();
+    }
+
     uint256 voiceCredits = amount / voiceCreditFactor;
-    uint256 currentVoiceCredits = contributors[msg.sender].voiceCredits;
-    contributors[msg.sender] = ContributorStatus(voiceCredits + currentVoiceCredits);
+    contributors[msg.sender] = ContributorStatus(voiceCredits, false);
     contributorCount += 1;
     bytes memory signUpGatekeeperData = abi.encode(msg.sender, voiceCredits);
     bytes memory initialVoiceCreditProxyData = abi.encode(msg.sender);
@@ -218,12 +264,25 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
     override
     public
   {
-    require(msg.sender == address(maci), 'FundingRound: Only MACI contract can register voters');
+    if (msg.sender != address(maci)) {
+      revert OnlyMaciCanRegisterVoters();
+    }
+
     address user = abi.decode(_data, (address));
     bool verified = userRegistry.isVerifiedUser(user);
-    require(verified, 'FundingRound: User has not been verified');
-    require(contributors[user].voiceCredits > 0, 'FundingRound: User has not contributed');
-    require(!contributors[user].isRegistered, 'FundingRound: User already registered');
+
+    if (!verified) {
+      revert UserNotVerified();
+    }
+
+    if (contributors[user].voiceCredits <= 0) {
+      revert UserHasNotContributed();
+    }
+
+    if (contributors[user].isRegistered) {
+      revert UserAlreadyRegistered();
+    }
+
     contributors[user].isRegistered = true;
   }
 
@@ -243,7 +302,11 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   {
     address user = abi.decode(_data, (address));
     uint256 initialVoiceCredits = contributors[user].voiceCredits;
-    require(initialVoiceCredits > 0, 'FundingRound: User does not have any voice credits');
+
+    if (initialVoiceCredits <= 0) {
+      revert NoVoiceCredits();
+    }
+
     return initialVoiceCredits;
   }
 
@@ -256,7 +319,9 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   )
     external
   {
-    require(address(poll) != address(0), 'FundingRound: Poll not set');
+    if (address(poll) == address(0)) {
+      revert PollNotSet();
+    }
 
     uint256 batchSize = _messages.length;
     for (uint8 i = 0; i < batchSize; i++) {
@@ -272,7 +337,9 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
     public
     returns (bool[] memory result)
   {
-    require(isCancelled, 'FundingRound: Round not cancelled');
+    if (!isCancelled) {
+      revert RoundNotCancelled();
+    }
 
     result = new bool[](_contributors.length);
     // Reconstruction of exact contribution amount from VCs may not be possible due to a loss of precision
@@ -300,7 +367,9 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
     msgSender[0] = msg.sender;
 
     bool[] memory results = withdrawContributions(msgSender);
-    require(results[0], 'FundingRound: Nothing to withdraw');
+    if (!results[0]) {
+      revert NothingToWithdraw();
+    }
   }
 
   /**
@@ -311,8 +380,12 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
     external
     onlyCoordinator
   {
-    require(!isFinalized, 'FundingRound: Round finalized');
-    require(bytes(_tallyHash).length != 0, 'FundingRound: Tally hash is empty string');
+    if (isFinalized) {
+      revert RoundAlreadyFinalized();
+    }
+    if (bytes(_tallyHash).length == 0) {
+      revert EmptyTallyHash();
+    }
 
     tallyHash = _tallyHash;
     emit TallyPublished(_tallyHash);
@@ -336,10 +409,16 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   {
     // make sure budget = contributions + matching pool
     uint256 contributions = _totalSpent * voiceCreditFactor;
-    require(_budget >= contributions, 'FundingRound: Invalid budget');
 
-    // guard against division by zero when fewer than 1 contributor for each project
-    require(_totalVotesSquares > _totalSpent, "FundingRound: Total quadratic votes must be greater than total spent voice credits");
+    if (_budget < contributions) {
+      revert InvalidBudget();
+    }
+
+    // guard against division by zero.
+    // This happens when no project receives more than one vote
+    if (_totalVotesSquares <= _totalSpent) {
+      revert NoProjectHasMoreThanOneVote();
+    }
 
     return  (_budget - contributions) * ALPHA_PRECISION /
             (voiceCreditFactor * (_totalVotesSquares - _totalSpent));
@@ -360,11 +439,22 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
     external
     onlyOwner
   {
-    require(!isFinalized, 'FundingRound: Already finalized');
-    require(address(maci) != address(0), 'FundingRound: MACI not deployed');
-    require(isVotingOver(), 'FundingRound: Voting has not been finished');
-    require(isTallied(), 'FundingRound: Votes has not been tallied');
-    
+    if (isFinalized) {
+      revert RoundAlreadyFinalized();
+    }
+    if (address(maci) == address(0)) {
+      revert MaciNotSet();
+    }
+    if (!isVotingOver()) {
+      revert VotingIsNotOver();
+    }
+    if (!isTallied()) {
+      revert VotesNotTallied();
+    }
+    if (bytes(tallyHash).length == 0) {
+      revert TallyHashNotPublished();
+    }
+
 
     // make sure we have received all the tally results
    /* (,,, uint8 voteOptionTreeDepth) = poll.treeDepths();
@@ -378,7 +468,9 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
 */
 
     bool verified = poll.verifySpentVoiceCredits(_totalSpent, _totalSpentSalt);
-    require(verified, 'FundingRound: Incorrect total amount of spent voice credits');
+    if (!verified) {
+      revert IncorrectSpentVoiceCredits();
+    }
 
     totalSpent = _totalSpent;
     // Total amount of spent voice credits is the size of the pool of direct rewards.
@@ -399,7 +491,9 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
     external
     onlyOwner
   {
-    require(!isFinalized, 'FundingRound: Already finalized');
+    if (isFinalized) {
+      revert RoundAlreadyFinalized();
+    }
     isFinalized = true;
     isCancelled = true;
   }
@@ -437,9 +531,17 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   )
     external
   {
-    require(isFinalized, 'FundingRound: Round not finalized');
-    require(!isCancelled, 'FundingRound: Round has been cancelled');
-    require(!recipients[_voteOptionIndex].fundsClaimed, 'FundingRound: Funds already claimed');
+    if (!isFinalized) {
+      revert RoundNotFinalized();
+    }
+
+    if (isCancelled) {
+      revert RoundCancelled();
+    }
+
+    if (recipients[_voteOptionIndex].fundsClaimed) {
+      revert FundsAlreadyClaimed();
+    }
     recipients[_voteOptionIndex].fundsClaimed = true;
 
     {
@@ -451,7 +553,9 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
         _spentSalt
       );
 
-      require(verified, 'FundingRound: Incorrect amount of spent voice credits');
+      if (!verified) {
+        revert IncorrectSpentVoiceCredits();
+      }
     }
 
     (uint256 startTime, uint256 duration) = poll.getDeployTimeAndDuration();
@@ -489,7 +593,9 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
     private
   {
     RecipientStatus storage recipient = recipients[_voteOptionIndex];
-    require(!recipient.tallyVerified, 'FundingRound: Vote results already verified');
+    if (recipient.tallyVerified) {
+      revert VoteResultsAlreadyVerified();
+    }
 
     bool resultVerified = poll.verifyTallyResult(
       _voteOptionIndex,
@@ -499,7 +605,10 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
       _perVOSpentVoiceCreditsHash,
       _tallyCommitment
     );
-    require(resultVerified, 'FundingRound: Incorrect tally result');
+
+    if (!resultVerified) {
+      revert IncorrectTallyResult();
+    }
 
     recipient.tallyVerified = true;
     recipient.tallyResult = _tallyResult;
@@ -527,8 +636,12 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
     external
     onlyCoordinator
   {
-    require(isTallied(), 'FundingRound: Votes have not been tallied');
-    require(!isFinalized, 'FundingRound: Already finalized');
+    if (!isTallied()) {
+      revert VotesNotTallied();
+    }
+    if (isFinalized) {
+      revert RoundAlreadyFinalized();
+    }
 
     for (uint256 i = 0; i < _voteOptionIndices.length; i++) {
       _addTallyResult(
