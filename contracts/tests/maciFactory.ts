@@ -6,7 +6,7 @@ import { deployMockContract } from '@ethereum-waffle/mock-contract'
 import { Keypair } from '@clrfund/common'
 
 import { getEventArg, getGasUsage } from '../utils/contracts'
-import { deployMaciFactory } from '../utils/deployment'
+import { deployMaciFactory, deployPoseidonLibraries } from '../utils/deployment'
 import { MaciParameters } from '../utils/maci'
 
 use(solidity)
@@ -15,17 +15,23 @@ describe('MACI factory', () => {
   const provider = waffle.provider
   const [, deployer, coordinator] = provider.getWallets()
 
+  const duration = 100
   let maciFactory: Contract
   let signUpGatekeeper: Contract
   let initialVoiceCreditProxy: Contract
+  let topupContract: Contract
   let maciParameters: MaciParameters
+  let poseidonContracts: { [name: string]: string }
   const coordinatorPubKey = new Keypair().pubKey.asContractParam()
 
   beforeEach(async () => {
-    const circuit = 'prod'
-    maciFactory = await deployMaciFactory(deployer, circuit)
+    if (!poseidonContracts) {
+      poseidonContracts = await deployPoseidonLibraries(deployer)
+    }
+    maciFactory = await deployMaciFactory(deployer, poseidonContracts)
     expect(await getGasUsage(maciFactory.deployTransaction)).lessThan(5600000)
-    maciParameters = await MaciParameters.read(maciFactory)
+
+    maciParameters = MaciParameters.mock('micro')
 
     const SignUpGatekeeperArtifact =
       await artifacts.readArtifact('SignUpGatekeeper')
@@ -40,89 +46,94 @@ describe('MACI factory', () => {
       deployer,
       InitialVoiceCreditProxyArtifact.abi
     )
+    const Token = await artifacts.readArtifact('AnyOldERC20Token')
+    topupContract = await deployMockContract(deployer, Token.abi)
   })
 
   it('sets default MACI parameters', async () => {
-    const { maxUsers, maxMessages, maxVoteOptions } =
-      await maciFactory.maxValues()
-    expect(maxUsers).to.equal(4294967295)
-    expect(maxMessages).to.equal(4294967295)
-    expect(maxVoteOptions).to.equal(124)
-    expect(await maciFactory.signUpDuration()).to.equal(604800)
-    expect(await maciFactory.votingDuration()).to.equal(604800)
+    const { maxMessages, maxVoteOptions } = await maciFactory.maxValues()
+    expect(maxMessages).to.equal(0)
+    expect(maxVoteOptions).to.equal(0)
   })
 
   it('sets MACI parameters', async () => {
-    maciParameters.update({
-      stateTreeDepth: 32,
-      messageTreeDepth: 32,
-      voteOptionTreeDepth: 3,
-      signUpDuration: 86400,
-      votingDuration: 86400,
-    })
     await expect(
-      maciFactory.setMaciParameters(...maciParameters.values())
+      maciFactory.setMaciParameters(...maciParameters.asContractParam())
     ).to.emit(maciFactory, 'MaciParametersChanged')
 
-    const { maxUsers, maxMessages, maxVoteOptions } =
-      await maciFactory.maxValues()
-    expect(maxUsers).to.equal(2 ** maciParameters.stateTreeDepth - 1)
-    expect(maxMessages).to.equal(2 ** maciParameters.messageTreeDepth - 1)
-    expect(maxVoteOptions).to.equal(5 ** maciParameters.voteOptionTreeDepth - 1)
-    expect(await maciFactory.signUpDuration()).to.equal(
-      maciParameters.signUpDuration
-    )
-    expect(await maciFactory.votingDuration()).to.equal(
-      maciParameters.votingDuration
-    )
+    const { messageTreeDepth } = await maciFactory.treeDepths()
+    const { maxMessages, maxVoteOptions } = await maciFactory.maxValues()
+    expect(maxMessages).to.equal(maciParameters.maxMessages)
+    expect(maxVoteOptions).to.equal(maciParameters.maxVoteOptions)
+    expect(messageTreeDepth).to.equal(maciParameters.messageTreeDepth)
   })
 
   it('does not allow to decrease the vote option tree depth', async () => {
+    await expect(
+      maciFactory.setMaciParameters(...maciParameters.asContractParam())
+    ).to.emit(maciFactory, 'MaciParametersChanged')
+
     maciParameters.voteOptionTreeDepth = 1
     await expect(
-      maciFactory.setMaciParameters(...maciParameters.values())
-    ).to.be.revertedWith(
-      'MACIFactory: Vote option tree depth can not be decreased'
-    )
+      maciFactory.setMaciParameters(...maciParameters.asContractParam())
+    ).to.be.revertedWith('CannotDecreaseVoteOptionDepth')
   })
 
   it('allows only owner to set MACI parameters', async () => {
     const coordinatorMaciFactory = maciFactory.connect(coordinator)
     await expect(
-      coordinatorMaciFactory.setMaciParameters(...maciParameters.values())
+      coordinatorMaciFactory.setMaciParameters(
+        ...maciParameters.asContractParam()
+      )
     ).to.be.revertedWith('Ownable: caller is not the owner')
   })
 
   it('deploys MACI', async () => {
+    const setParamTx = await maciFactory.setMaciParameters(
+      ...maciParameters.asContractParam()
+    )
+    await setParamTx.wait()
     const maciDeployed = maciFactory.deployMaci(
       signUpGatekeeper.address,
       initialVoiceCreditProxy.address,
-      coordinator.address,
+      topupContract.address,
+      duration,
       coordinatorPubKey
     )
     await expect(maciDeployed).to.emit(maciFactory, 'MaciDeployed')
 
     const deployTx = await maciDeployed
-    expect(await getGasUsage(deployTx)).lessThan(9020000)
+    // TODO: reduce the gas usage
+    expect(await getGasUsage(deployTx)).lessThan(15080973)
   })
 
   it('allows only owner to deploy MACI', async () => {
+    const setParamTx = await maciFactory.setMaciParameters(
+      ...maciParameters.asContractParam()
+    )
+    await setParamTx.wait()
     const coordinatorMaciFactory = maciFactory.connect(coordinator)
     await expect(
       coordinatorMaciFactory.deployMaci(
         signUpGatekeeper.address,
         initialVoiceCreditProxy.address,
-        coordinator.address,
+        topupContract.address,
+        duration,
         coordinatorPubKey
       )
     ).to.be.revertedWith('Ownable: caller is not the owner')
   })
 
   it('links with PoseidonT3 correctly', async () => {
+    const setParamTx = await maciFactory.setMaciParameters(
+      ...maciParameters.asContractParam()
+    )
+    await setParamTx.wait()
     const deployTx = await maciFactory.deployMaci(
       signUpGatekeeper.address,
       initialVoiceCreditProxy.address,
       coordinator.address,
+      duration,
       coordinatorPubKey
     )
 
@@ -140,10 +151,15 @@ describe('MACI factory', () => {
   })
 
   it('links with PoseidonT6 correctly', async () => {
+    const setParamTx = await maciFactory.setMaciParameters(
+      ...maciParameters.asContractParam()
+    )
+    await setParamTx.wait()
     const deployTx = await maciFactory.deployMaci(
       signUpGatekeeper.address,
       initialVoiceCreditProxy.address,
-      coordinator.address,
+      topupContract.address,
+      duration,
       coordinatorPubKey
     )
 
