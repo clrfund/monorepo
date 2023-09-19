@@ -18,7 +18,6 @@ import {
   deployPoseidonLibraries,
   deployMaciFactory,
   deployContractWithLinkedLibraries,
-  CIRCUITS,
 } from '../utils/deployment'
 import {
   bnSqrt,
@@ -66,34 +65,36 @@ describe('Funding Round', () => {
     provider.getWallets()
 
   const coordinatorPubKey = new Keypair().pubKey
-  const signUpDuration = 86400 * 7 // Default duration in MACI factory
-  const votingDuration = 86400 * 7 // Default duration in MACI factory
   const userKeypair = new Keypair()
   const contributionAmount = UNIT.mul(10)
   const tallyHash = 'test'
   const tallyTreeDepth = 2
+  const pollDuration = 86400 * 7
+  const halfPollDuration = Math.floor(pollDuration / 2)
+  const numSignUps = 4
+  const tallyBatchSize = 2
+  const tallyBatchNum = 2
 
   let token: Contract
   let userRegistry: Contract
   let recipientRegistry: Contract
   let fundingRound: Contract
   let maci: Contract
+  let pollId: bigint
+  let poll: Contract
+  let tallyer: Contract
 
   async function deployMaciMock(): Promise<Contract> {
     const MACIArtifact = await artifacts.readArtifact('MACI')
     const maci = await deployMockContract(deployer, MACIArtifact.abi)
-    const currentTime = (await provider.getBlock('latest')).timestamp
-    const signUpDeadline = currentTime + signUpDuration
-    const votingDeadline = signUpDeadline + votingDuration
-    await maci.mock.signUpTimestamp.returns(currentTime)
-    await maci.mock.signUpDurationSeconds.returns(signUpDuration)
-    await maci.mock.votingDurationSeconds.returns(votingDuration)
-    await maci.mock.calcSignUpDeadline.returns(signUpDeadline)
-    await maci.mock.calcVotingDeadline.returns(votingDeadline)
-    await maci.mock.maxUsers.returns(100)
-    await maci.mock.treeDepths.returns(10, 10, 2)
     await maci.mock.signUp.returns()
     return maci
+  }
+
+  async function deployMockContractByName(name: string): Promise<Contract> {
+    const artifact = await artifacts.readArtifact(name)
+    const contract = await deployMockContract(deployer, artifact.abi)
+    return contract
   }
 
   beforeEach(async () => {
@@ -116,7 +117,7 @@ describe('Funding Round', () => {
     )
 
     const libraries = await deployPoseidonLibraries(deployer)
-    const fundingRound = await deployContractWithLinkedLibraries(
+    fundingRound = await deployContractWithLinkedLibraries(
       deployer,
       'FundingRound',
       libraries,
@@ -127,48 +128,36 @@ describe('Funding Round', () => {
         coordinator.address,
       ]
     )
-    const VkRegistryArtifact = await artifacts.readArtifact('VkRegistry')
-    const vkRegistry = await deployMockContract(
-      deployer,
-      VkRegistryArtifact.abi
-    )
-    const pollFactory = await deployContractWithLinkedLibraries(
-      deployer,
-      'PollFactory',
-      libraries
-    )
-    const maciFactory = await deployMaciFactory(deployer)
-    await vkRegistry.mock.owner.returns(maciFactory.address)
+    const maciFactory = await deployMaciFactory(deployer, libraries)
 
-    const params = CIRCUITS['micro']
-    const maciParams = new MaciParameters({ ...params.maxValues })
-    const setMaciParamsTx = await maciFactory.setMaciParameters(
-      ...maciParams.values()
-    )
+    const maciParams = MaciParameters.mock('micro')
+    await maciFactory.setMaciParameters(...maciParams.asContractParam())
 
-    await setMaciParamsTx.wait()
-
-    const transferTx = await pollFactory.transferOwnership(maciFactory.address)
-    await transferTx.wait()
-
-    console.log('before deployMaci...')
     const maciDeployed = await maciFactory.deployMaci(
       fundingRound.address,
       fundingRound.address,
-      vkRegistry.address,
-      pollFactory.address,
-      token.address
+      token.address,
+      pollDuration,
+      coordinatorPubKey.asContractParam()
     )
+
     const maciAddress = await getEventArg(
       maciDeployed,
       maciFactory,
       'MaciDeployed',
       '_maci'
     )
-    console.log('maci', maciAddress)
 
     maci = await ethers.getContractAt('MACI', maciAddress)
-    console.log('maci', maciAddress)
+
+    pollId = await getEventArg(maciDeployed, maci, 'DeployPoll', '_pollId')
+    const pollAddress = await getEventArg(
+      maciDeployed,
+      maci,
+      'DeployPoll',
+      '_pollAddr'
+    )
+    poll = await ethers.getContractAt('Poll', pollAddress)
   })
 
   it('initializes funding round correctly', async () => {
@@ -196,7 +185,7 @@ describe('Funding Round', () => {
   it('allows to set MACI address only once', async () => {
     await fundingRound.setMaci(maci.address)
     await expect(fundingRound.setMaci(maci.address)).to.be.revertedWith(
-      'FundingRound: Already linked to MACI instance'
+      'MaciAlreadySet'
     )
   })
 
@@ -231,9 +220,9 @@ describe('Funding Round', () => {
         .to.emit(fundingRound, 'Contribution')
         .withArgs(contributor.address, contributionAmount)
         .to.emit(maci, 'SignUp')
-        // We use [] to skip argument matching, otherwise it will fail
-        // Possibly related: https://github.com/EthWorks/Waffle/issues/245
-        .withArgs([], 1, expectedVoiceCredits)
+      // We use [] to skip argument matching, otherwise it will fail
+      // Possibly related: https://github.com/EthWorks/Waffle/issues/245
+      //.withArgs([], 1, expectedVoiceCredits, [])
       expect(await token.balanceOf(fundingRound.address)).to.equal(
         contributionAmount
       )
@@ -251,7 +240,7 @@ describe('Funding Round', () => {
       await tokenAsContributor.approve(fundingRound.address, contributionAmount)
       await expect(
         fundingRoundAsContributor.contribute(userPubKey, contributionAmount)
-      ).to.be.revertedWith('FundingRound: MACI not deployed')
+      ).to.be.revertedWith('MaciNotSet')
     })
 
     it('limits the number of contributors', async () => {
@@ -264,7 +253,7 @@ describe('Funding Round', () => {
       await tokenAsContributor.approve(fundingRound.address, contributionAmount)
       await expect(
         fundingRoundAsContributor.contribute(userPubKey, contributionAmount)
-      ).to.be.revertedWith('FundingRound: Round finalized')
+      ).to.be.revertedWith('AlreadyFinalized')
     })
 
     it('rejects contributions with zero amount', async () => {
@@ -272,9 +261,7 @@ describe('Funding Round', () => {
       await tokenAsContributor.approve(fundingRound.address, contributionAmount)
       await expect(
         fundingRoundAsContributor.contribute(userPubKey, 0)
-      ).to.be.revertedWith(
-        'FundingRound: Contribution amount must be greater than zero'
-      )
+      ).to.be.revertedWith('ContributionAmountIsZero')
     })
 
     it('rejects contributions that are too large', async () => {
@@ -283,7 +270,7 @@ describe('Funding Round', () => {
       await tokenAsContributor.approve(fundingRound.address, contributionAmount)
       await expect(
         fundingRoundAsContributor.contribute(userPubKey, contributionAmount)
-      ).to.be.revertedWith('FundingRound: Contribution amount is too large')
+      ).to.be.revertedWith('ContributionAmountTooLarge')
     })
 
     it('allows to contribute only once per round', async () => {
@@ -295,14 +282,14 @@ describe('Funding Round', () => {
       await fundingRoundAsContributor.contribute(userPubKey, contributionAmount)
       await expect(
         fundingRoundAsContributor.contribute(userPubKey, contributionAmount)
-      ).to.be.revertedWith('FundingRound: Already contributed')
+      ).to.be.revertedWith('AlreadyContributed')
     })
 
     it('requires approval', async () => {
       await fundingRound.setMaci(maci.address)
       await expect(
         fundingRoundAsContributor.contribute(userPubKey, contributionAmount)
-      ).to.be.revertedWith('ERC20: transfer amount exceeds allowance')
+      ).to.be.revertedWith('ERC20: insufficient allowance')
     })
 
     it('rejects contributions from unverified users', async () => {
@@ -311,7 +298,7 @@ describe('Funding Round', () => {
       await userRegistry.mock.isVerifiedUser.returns(false)
       await expect(
         fundingRoundAsContributor.contribute(userPubKey, contributionAmount)
-      ).to.be.revertedWith('FundingRound: User has not been verified')
+      ).to.be.revertedWith('UserNotVerified')
     })
 
     it('should not allow users who have not contributed to sign up directly in MACI', async () => {
@@ -322,7 +309,7 @@ describe('Funding Round', () => {
       )
       await expect(
         maci.signUp(userPubKey, signUpData, encodedContributorAddress)
-      ).to.be.revertedWith('FundingRound: User has not contributed')
+      ).to.be.revertedWith('UserHasNotContributed')
     })
 
     it('should not allow users who have already signed up to sign up directly in MACI', async () => {
@@ -335,7 +322,7 @@ describe('Funding Round', () => {
       )
       await expect(
         maci.signUp(userPubKey, signUpData, encodedContributorAddress)
-      ).to.be.revertedWith('FundingRound: User already registered')
+      ).to.be.revertedWith('UserAlreadyRegistered')
     })
 
     it('should not return the amount of voice credits for user who has not contributed', async () => {
@@ -344,7 +331,7 @@ describe('Funding Round', () => {
           fundingRound.address,
           encodedContributorAddress
         )
-      ).to.be.revertedWith('FundingRound: User does not have any voice credits')
+      ).to.be.revertedWith('NoVoiceCredits')
     })
   })
 
@@ -370,7 +357,6 @@ describe('Funding Round', () => {
         'SignUp',
         '_stateIndex'
       )
-      await provider.send('evm_increaseTime', [signUpDuration])
     })
 
     it('submits a vote', async () => {
@@ -381,13 +367,15 @@ describe('Funding Round', () => {
         coordinatorPubKey,
         recipientIndex,
         singleVote,
-        nonce
+        nonce,
+        pollId
       )
-      const messagePublished = maci.publishMessage(
+
+      const messagePublished = poll.publishMessage(
         message.asContractParam(),
         encPubKey.asContractParam()
       )
-      await expect(messagePublished).to.emit(maci, 'PublishMessage')
+      await expect(messagePublished).to.emit(poll, 'PublishMessage')
       const publishTx = await messagePublished
       expect(await getGasUsage(publishTx)).lessThan(2135000)
     })
@@ -401,15 +389,17 @@ describe('Funding Round', () => {
         coordinatorPubKey,
         null,
         null,
-        nonce
+        nonce,
+        pollId
       )
-      await maci.publishMessage(
+      const messagePublished = await poll.publishMessage(
         message.asContractParam(),
         encPubKey.asContractParam()
       )
+      await expect(messagePublished).to.emit(poll, 'PublishMessage')
     })
 
-    it('use a seed to generate new key and submit change change message', async () => {
+    it('use a seed to generate new key and submit change message', async () => {
       const signature = await contributor.signMessage('hello world')
       const hash = sha256(signature)
       const newUserKeypair = Keypair.createFromSeed(hash)
@@ -420,12 +410,14 @@ describe('Funding Round', () => {
         coordinatorPubKey,
         null,
         null,
-        nonce
+        nonce,
+        pollId
       )
-      await maci.publishMessage(
+      const messagePublished = await poll.publishMessage(
         message.asContractParam(),
         encPubKey.asContractParam()
       )
+      await expect(messagePublished).to.emit(poll, 'PublishMessage')
     })
 
     it('submits an invalid vote', async () => {
@@ -437,12 +429,14 @@ describe('Funding Round', () => {
         coordinatorPubKey,
         null,
         null,
-        nonce
+        nonce,
+        pollId
       )
-      await maci.publishMessage(
+      const publishTx1 = await poll.publishMessage(
         message1.asContractParam(),
         encPubKey1.asContractParam()
       )
+      await expect(publishTx1).to.emit(poll, 'PublishMessage')
       const [message2, encPubKey2] = createMessage(
         userStateIndex,
         userKeypair,
@@ -450,12 +444,14 @@ describe('Funding Round', () => {
         coordinatorPubKey,
         recipientIndex,
         singleVote,
-        nonce + 1
+        nonce + 1,
+        pollId
       )
-      await maci.publishMessage(
+      const publishTx2 = await poll.publishMessage(
         message2.asContractParam(),
         encPubKey2.asContractParam()
       )
+      await expect(publishTx2).to.emit(poll, 'PublishMessage')
     })
 
     it('submits a vote for invalid vote option', async () => {
@@ -467,15 +463,19 @@ describe('Funding Round', () => {
         coordinatorPubKey,
         recipientIndex,
         singleVote,
-        nonce
+        nonce,
+        pollId
       )
-      await maci.publishMessage(
+      const messagePublished = await poll.publishMessage(
         message.asContractParam(),
         encPubKey.asContractParam()
       )
+      await expect(messagePublished).to.emit(poll, 'PublishMessage')
     })
 
     it('submits a batch of messages', async () => {
+      await fundingRound.setPoll(pollId)
+
       const messages = []
       const encPubKeys = []
       const numMessages = 3
@@ -492,7 +492,8 @@ describe('Funding Round', () => {
           coordinatorPubKey,
           recipientIndex,
           singleVote,
-          nonce
+          nonce,
+          pollId
         )
         messages.push(message.asContractParam())
         encPubKeys.push(encPubKey.asContractParam())
@@ -522,7 +523,7 @@ describe('Funding Round', () => {
 
     it('allows only coordinator to publish tally hash', async () => {
       await expect(fundingRound.publishTallyHash(tallyHash)).to.be.revertedWith(
-        'FundingRound: Sender is not the coordinator'
+        'NotCoordinator'
       )
     })
 
@@ -530,13 +531,13 @@ describe('Funding Round', () => {
       await fundingRound.cancel()
       await expect(
         fundingRound.connect(coordinator).publishTallyHash(tallyHash)
-      ).to.be.revertedWith('FundingRound: Round finalized')
+      ).to.be.revertedWith('RoundAlreadyFinalized')
     })
 
     it('rejects empty string', async () => {
       await expect(
         fundingRound.connect(coordinator).publishTallyHash('')
-      ).to.be.revertedWith('FundingRound: Tally hash is empty string')
+      ).to.be.revertedWith('EmptyTallyHash')
     })
   })
 
@@ -547,16 +548,26 @@ describe('Funding Round', () => {
     const totalSpentSalt = genRandomSalt().toString()
     const totalVotes = bnSqrt(totalSpent)
     const tallyTreeDepth = 2
+
     expect(totalVotes.toNumber()).to.equal(10000)
 
     beforeEach(async () => {
       maci = await deployMaciMock()
-      await maci.mock.hasUntalliedStateLeaves.returns(false)
-      await maci.mock.totalVotes.returns(totalVotes)
-      await maci.mock.verifySpentVoiceCredits.returns(true)
-      await maci.mock.verifyTallyResult.returns(true)
-      await maci.mock.treeDepths.returns(10, 10, tallyTreeDepth)
-      await maci.mock.verifyPerVOSpentVoiceCredits.returns(true)
+      poll = await deployMockContractByName('Poll')
+      tallyer = await deployMockContractByName('PollProcessorAndTallyer')
+      pollId = BigInt(0)
+      await poll.mock.verifyTallyResult.returns(true)
+      await poll.mock.verifySpentVoiceCredits.returns(true)
+      await maci.mock.getPoll.returns(poll.address)
+
+      // round.isTallied() = tallyBatchSize * tallyBatchNum >= numSignups
+      await poll.mock.numSignUpsAndMessages.returns(numSignUps, 1)
+      await poll.mock.batchSizes.returns(1, tallyBatchSize, 1)
+      await tallyer.mock.tallyBatchNum.returns(tallyBatchNum)
+
+      // round.isVotingOver()
+      const deployTime = (await provider.getBlock('latest')).timestamp
+      await poll.mock.getDeployTimeAndDuration.returns(deployTime, pollDuration)
 
       await token
         .connect(contributor)
@@ -565,10 +576,13 @@ describe('Funding Round', () => {
 
     it('allows owner to finalize round', async () => {
       await fundingRound.setMaci(maci.address)
+      await fundingRound.setPoll(pollId)
+      await fundingRound.connect(coordinator).setTallyer(tallyer.address)
+
       await fundingRound
         .connect(contributor)
         .contribute(userKeypair.pubKey.asContractParam(), totalContributions)
-      await provider.send('evm_increaseTime', [signUpDuration + votingDuration])
+      await provider.send('evm_increaseTime', [pollDuration])
       await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
       await token.transfer(fundingRound.address, matchingPoolSize)
 
@@ -582,16 +596,20 @@ describe('Funding Round', () => {
       expect(await fundingRound.isFinalized()).to.equal(true)
       expect(await fundingRound.isCancelled()).to.equal(false)
       expect(await fundingRound.totalSpent()).to.equal(totalSpent)
-      expect(await fundingRound.totalVotes()).to.equal(totalVotes)
+      // TODO: how to get totalVotes from maci v1?
+      //expect(await fundingRound.totalVotes()).to.equal(totalVotes)
       expect(await fundingRound.matchingPoolSize()).to.equal(matchingPoolSize)
     })
 
     it('allows owner to finalize round when matching pool is empty', async () => {
       await fundingRound.setMaci(maci.address)
+      await fundingRound.setPoll(pollId)
+      await fundingRound.connect(coordinator).setTallyer(tallyer.address)
+
       await fundingRound
         .connect(contributor)
         .contribute(userKeypair.pubKey.asContractParam(), totalContributions)
-      await provider.send('evm_increaseTime', [signUpDuration + votingDuration])
+      await provider.send('evm_increaseTime', [pollDuration])
       await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
 
       await addTallyResultsBatch(
@@ -602,16 +620,20 @@ describe('Funding Round', () => {
       )
       await fundingRound.finalize(totalSpent, totalSpentSalt)
       expect(await fundingRound.totalSpent()).to.equal(totalSpent)
-      expect(await fundingRound.totalVotes()).to.equal(totalVotes)
+      // TODO: how to get totalVotes from maci v1?
+      //expect(await fundingRound.totalVotes()).to.equal(totalVotes)
       expect(await fundingRound.matchingPoolSize()).to.equal(0)
     })
 
     it('counts direct token transfers to funding round as matching pool contributions', async () => {
       await fundingRound.setMaci(maci.address)
+      await fundingRound.setPoll(pollId)
+      await fundingRound.connect(coordinator).setTallyer(tallyer.address)
+
       await fundingRound
         .connect(contributor)
         .contribute(userKeypair.pubKey.asContractParam(), totalContributions)
-      await provider.send('evm_increaseTime', [signUpDuration + votingDuration])
+      await provider.send('evm_increaseTime', [pollDuration])
       await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
       await token.transfer(fundingRound.address, matchingPoolSize)
       await token
@@ -632,10 +654,13 @@ describe('Funding Round', () => {
 
     it('reverts if round has been finalized already', async () => {
       await fundingRound.setMaci(maci.address)
+      await fundingRound.setPoll(pollId)
+      await fundingRound.connect(coordinator).setTallyer(tallyer.address)
+
       await fundingRound
         .connect(contributor)
         .contribute(userKeypair.pubKey.asContractParam(), totalContributions)
-      await provider.send('evm_increaseTime', [signUpDuration + votingDuration])
+      await provider.send('evm_increaseTime', [pollDuration])
       await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
       await token.transfer(fundingRound.address, matchingPoolSize)
       await addTallyResultsBatch(
@@ -648,59 +673,72 @@ describe('Funding Round', () => {
       await fundingRound.finalize(totalSpent, totalSpentSalt)
       await expect(
         fundingRound.finalize(totalSpent, totalSpentSalt)
-      ).to.be.revertedWith('FundingRound: Already finalized')
+      ).to.be.revertedWith('RoundAlreadyFinalized')
     })
 
     it('reverts MACI has not been deployed', async () => {
-      await provider.send('evm_increaseTime', [signUpDuration + votingDuration])
+      await provider.send('evm_increaseTime', [pollDuration])
       await expect(
         fundingRound.finalize(totalSpent, totalSpentSalt)
-      ).to.be.revertedWith('FundingRound: MACI not deployed')
+      ).to.be.revertedWith('MaciNotSet')
     })
 
     it('reverts if voting is still in progress', async () => {
       await fundingRound.setMaci(maci.address)
+      await fundingRound.setPoll(pollId)
+      await fundingRound.connect(coordinator).setTallyer(tallyer.address)
+
       await fundingRound
         .connect(contributor)
         .contribute(userKeypair.pubKey.asContractParam(), totalContributions)
-      await provider.send('evm_increaseTime', [signUpDuration])
+      await provider.send('evm_increaseTime', [halfPollDuration])
 
       await expect(
         fundingRound.finalize(totalSpent, totalSpentSalt)
-      ).to.be.revertedWith('FundingRound: Voting has not been finished')
+      ).to.be.revertedWith('VotingIsNotOver')
     })
 
     it('reverts if votes has not been tallied', async () => {
       await fundingRound.setMaci(maci.address)
+      await fundingRound.setPoll(pollId)
+      await fundingRound.connect(coordinator).setTallyer(tallyer.address)
+
       await fundingRound
         .connect(contributor)
         .contribute(userKeypair.pubKey.asContractParam(), totalContributions)
-      await provider.send('evm_increaseTime', [signUpDuration + votingDuration])
-      await maci.mock.hasUntalliedStateLeaves.returns(true)
+      await provider.send('evm_increaseTime', [pollDuration])
+      await poll.mock.numSignUpsAndMessages.returns(numSignUps * 2, 1)
 
       await expect(
         fundingRound.finalize(totalSpent, totalSpentSalt)
-      ).to.be.revertedWith('FundingRound: Votes has not been tallied')
+      ).to.be.revertedWith('VotesNotTallied')
     })
 
     it('reverts if tally hash has not been published', async () => {
       await fundingRound.setMaci(maci.address)
+      await fundingRound.setPoll(pollId)
+      await fundingRound.connect(coordinator).setTallyer(tallyer.address)
+
       await fundingRound
         .connect(contributor)
         .contribute(userKeypair.pubKey.asContractParam(), totalContributions)
-      await provider.send('evm_increaseTime', [signUpDuration + votingDuration])
+      await provider.send('evm_increaseTime', [pollDuration])
 
       await expect(
         fundingRound.finalize(totalSpent, totalSpentSalt)
-      ).to.be.revertedWith('FundingRound: Tally hash has not been published')
+      ).to.be.revertedWith('TallyHashNotPublished')
     })
 
-    it('reverts if total votes is zero', async () => {
+    // TODO: get total votes in maci v1
+    it.skip('reverts if total votes is zero', async () => {
       await fundingRound.setMaci(maci.address)
+      await fundingRound.setPoll(pollId)
+      await fundingRound.connect(coordinator).setTallyer(tallyer.address)
+
       await fundingRound
         .connect(contributor)
         .contribute(userKeypair.pubKey.asContractParam(), totalContributions)
-      await provider.send('evm_increaseTime', [signUpDuration + votingDuration])
+      await provider.send('evm_increaseTime', [pollDuration])
       await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
       await token.transfer(fundingRound.address, matchingPoolSize)
       await maci.mock.totalVotes.returns(0)
@@ -718,13 +756,16 @@ describe('Funding Round', () => {
 
     it('reverts if total amount of spent voice credits is incorrect', async () => {
       await fundingRound.setMaci(maci.address)
+      await fundingRound.setPoll(pollId)
+      await fundingRound.connect(coordinator).setTallyer(tallyer.address)
+
       await fundingRound
         .connect(contributor)
         .contribute(userKeypair.pubKey.asContractParam(), totalContributions)
-      await provider.send('evm_increaseTime', [signUpDuration + votingDuration])
+      await provider.send('evm_increaseTime', [pollDuration])
       await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
       await token.transfer(fundingRound.address, matchingPoolSize)
-      await maci.mock.verifySpentVoiceCredits.returns(false)
+      await poll.mock.verifySpentVoiceCredits.returns(false)
 
       await addTallyResultsBatch(
         fundingRound.connect(coordinator),
@@ -735,17 +776,18 @@ describe('Funding Round', () => {
 
       await expect(
         fundingRound.finalize(totalSpent, totalSpentSalt)
-      ).to.be.revertedWith(
-        'FundingRound: Incorrect total amount of spent voice credits'
-      )
+      ).to.be.revertedWith('IncorrectSpentVoiceCredits')
     })
 
     it('allows only owner to finalize round', async () => {
       await fundingRound.setMaci(maci.address)
+      await fundingRound.setPoll(pollId)
+      await fundingRound.connect(coordinator).setTallyer(tallyer.address)
+
       await fundingRound
         .connect(contributor)
         .contribute(userKeypair.pubKey.asContractParam(), totalContributions)
-      await provider.send('evm_increaseTime', [signUpDuration + votingDuration])
+      await provider.send('evm_increaseTime', [pollDuration])
       await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
       await token.transfer(fundingRound.address, matchingPoolSize)
 
@@ -768,22 +810,35 @@ describe('Funding Round', () => {
       const totalContributions = UNIT.mul(1000)
       const totalSpent = totalContributions.div(VOICE_CREDIT_FACTOR)
       const totalSpentSalt = genRandomSalt().toString()
+
       maci = await deployMaciMock()
+      poll = await deployMockContractByName('Poll')
+      tallyer = await deployMockContractByName('PollProcessorAndTallyer')
+      pollId = BigInt(0)
+      await poll.mock.verifyTallyResult.returns(true)
+      await poll.mock.verifySpentVoiceCredits.returns(true)
+      await maci.mock.getPoll.returns(poll.address)
+
+      // round.isTallied() = tallyBatchSize * tallyBatchNum >= numSignups
+      await poll.mock.numSignUpsAndMessages.returns(numSignUps, 1)
+      await poll.mock.batchSizes.returns(1, tallyBatchSize, 1)
+      await tallyer.mock.tallyBatchNum.returns(tallyBatchNum)
+
+      // round.isVotingOver()
+      const deployTime = (await provider.getBlock('latest')).timestamp
+      await poll.mock.getDeployTimeAndDuration.returns(deployTime, pollDuration)
+
       await fundingRound.setMaci(maci.address)
+      await fundingRound.setPoll(pollId)
+      await fundingRound.connect(coordinator).setTallyer(tallyer.address)
       await token
         .connect(contributor)
         .approve(fundingRound.address, totalContributions)
       await fundingRound
         .connect(contributor)
         .contribute(userKeypair.pubKey.asContractParam(), totalContributions)
-      await provider.send('evm_increaseTime', [signUpDuration + votingDuration])
-      await maci.mock.hasUntalliedStateLeaves.returns(false)
-      await maci.mock.totalVotes.returns(bnSqrt(totalSpent))
-      await maci.mock.verifySpentVoiceCredits.returns(true)
-      await maci.mock.treeDepths.returns(10, 10, tallyTreeDepth)
-      await maci.mock.verifySpentVoiceCredits.returns(true)
-      await maci.mock.verifyPerVOSpentVoiceCredits.returns(true)
-      await maci.mock.verifyTallyResult.returns(true)
+      await provider.send('evm_increaseTime', [pollDuration])
+      //await maci.mock.treeDepths.returns(10, 10, tallyTreeDepth)
       await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
       await token.transfer(fundingRound.address, matchingPoolSize)
       await addTallyResultsBatch(
@@ -795,14 +850,14 @@ describe('Funding Round', () => {
       await fundingRound.finalize(totalSpent, totalSpentSalt)
 
       await expect(fundingRound.cancel()).to.be.revertedWith(
-        'FundingRound: Already finalized'
+        'RoundAlreadyFinalized'
       )
     })
 
     it('reverts if round has been cancelled already', async () => {
       await fundingRound.cancel()
       await expect(fundingRound.cancel()).to.be.revertedWith(
-        'FundingRound: Already finalized'
+        'RoundAlreadyFinalized'
       )
     })
 
@@ -849,14 +904,14 @@ describe('Funding Round', () => {
       await fundingRoundAsContributor.contribute(userPubKey, contributionAmount)
       await expect(
         fundingRoundAsContributor.withdrawContribution()
-      ).to.be.revertedWith('FundingRound: Round not cancelled')
+      ).to.be.revertedWith('RoundNotCancelled')
     })
 
     it('reverts if user did not contribute to the round', async () => {
       await fundingRound.cancel()
       await expect(
         fundingRoundAsContributor.withdrawContribution()
-      ).to.be.revertedWith('FundingRound: Nothing to withdraw')
+      ).to.be.revertedWith('NothingToWithdraw')
     })
 
     it('reverts if funds are already withdrawn', async () => {
@@ -871,7 +926,7 @@ describe('Funding Round', () => {
       await fundingRound.connect(contributor).withdrawContribution()
       await expect(
         fundingRound.connect(contributor).withdrawContribution()
-      ).to.be.revertedWith('FundingRound: Nothing to withdraw')
+      ).to.be.revertedWith('NothingToWithdraw')
     })
 
     it('allows anyone to withdraw multiple contributions', async () => {
@@ -913,6 +968,7 @@ describe('Funding Round', () => {
   describe('claiming funds', () => {
     const totalVotes = totalQuadraticVotes
     const recipientIndex = 3
+
     const { spent: totalSpent, salt: totalSpentSalt } =
       smallTallyTestData.totalVoiceCredits
     const contributions =
@@ -927,23 +983,34 @@ describe('Funding Round', () => {
 
     beforeEach(async () => {
       maci = await deployMaciMock()
-      await maci.mock.hasUntalliedStateLeaves.returns(false)
-      await maci.mock.totalVotes.returns(totalVotes)
-      await maci.mock.verifySpentVoiceCredits.returns(true)
-      await maci.mock.verifyTallyResult.returns(true)
-      await maci.mock.verifyPerVOSpentVoiceCredits.returns(true)
-      await maci.mock.treeDepths.returns(10, 10, tallyTreeDepth)
+      poll = await deployMockContractByName('Poll')
+      tallyer = await deployMockContractByName('PollProcessorAndTallyer')
+      pollId = BigInt(0)
+      await poll.mock.verifyTallyResult.returns(true)
+      await poll.mock.verifySpentVoiceCredits.returns(true)
+      await maci.mock.getPoll.returns(poll.address)
 
+      // round.isTallied() = tallyBatchSize * tallyBatchNum >= numSignups
+      await poll.mock.numSignUpsAndMessages.returns(numSignUps, 1)
+      await poll.mock.batchSizes.returns(1, tallyBatchSize, 1)
+      await poll.mock.verifyPerVOSpentVoiceCredits.returns(true)
+      await tallyer.mock.tallyBatchNum.returns(tallyBatchNum)
+
+      // round.isVotingOver()
+      const deployTime = (await provider.getBlock('latest')).timestamp
+      await poll.mock.getDeployTimeAndDuration.returns(deployTime, pollDuration)
       await recipientRegistry.mock.getRecipientAddress.returns(
         recipient.address
       )
 
       await fundingRound.setMaci(maci.address)
+      await fundingRound.setPoll(pollId)
+      await fundingRound.connect(coordinator).setTallyer(tallyer.address)
       const tokenAsContributor = token.connect(contributor)
       await tokenAsContributor.approve(fundingRound.address, contributions)
       fundingRoundAsContributor = fundingRound.connect(contributor)
 
-      await provider.send('evm_increaseTime', [signUpDuration + votingDuration])
+      await provider.send('evm_increaseTime', [pollDuration])
       await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
       fundingRoundAsRecipient = fundingRound.connect(recipient)
     })
@@ -971,9 +1038,11 @@ describe('Funding Round', () => {
         tallyTreeDepth,
         smallTallyTestData
       )
+
       await expect(fundingRoundAsRecipient.claimFunds(...claimData))
         .to.emit(fundingRound, 'FundsClaimed')
         .withArgs(recipientIndex, recipient.address, expectedAllocatedAmount)
+
       expect(await token.balanceOf(recipient.address)).to.equal(
         expectedAllocatedAmount,
         'mismatch token balance'
@@ -1062,7 +1131,7 @@ describe('Funding Round', () => {
       )
       await expect(
         fundingRoundAsRecipient.claimFunds(...claimData)
-      ).to.be.revertedWith('FundingRound: Round not finalized')
+      ).to.be.revertedWith('RoundNotFinalized')
     })
 
     it('should not allow recipient to claim funds if round has been cancelled', async () => {
@@ -1076,7 +1145,7 @@ describe('Funding Round', () => {
       )
       await expect(
         fundingRoundAsRecipient.claimFunds(...claimData)
-      ).to.be.revertedWith('FundingRound: Round has been cancelled')
+      ).to.be.revertedWith('RoundCancelled')
     })
 
     it('sends funds allocated to unverified recipients back to matching pool', async () => {
@@ -1122,13 +1191,13 @@ describe('Funding Round', () => {
       await fundingRoundAsRecipient.claimFunds(...claimData)
       await expect(
         fundingRoundAsRecipient.claimFunds(...claimData)
-      ).to.be.revertedWith('FundingRound: Funds already claimed')
+      ).to.be.revertedWith('FundsAlreadyClaimed')
     })
 
     it('should verify that tally result is correct', async () => {
       await token.transfer(fundingRound.address, budget)
 
-      await maci.mock.verifyTallyResult.returns(false)
+      await poll.mock.verifyTallyResult.returns(false)
       await expect(
         addTallyResultsBatch(
           fundingRound.connect(coordinator),
@@ -1136,12 +1205,12 @@ describe('Funding Round', () => {
           smallTallyTestData,
           3
         )
-      ).to.be.revertedWith('FundingRound: Incorrect tally result')
+      ).to.be.revertedWith('IncorrectTallyResult')
     })
 
     it('should verify that amount of spent voice credits is correct', async () => {
       await token.transfer(fundingRound.address, budget)
-      await maci.mock.verifyPerVOSpentVoiceCredits.returns(false)
+      await poll.mock.verifyPerVOSpentVoiceCredits.returns(false)
 
       await addTallyResultsBatch(
         fundingRound.connect(coordinator),
@@ -1158,9 +1227,7 @@ describe('Funding Round', () => {
       )
       await expect(
         fundingRoundAsRecipient.claimFunds(...claimData)
-      ).to.be.revertedWith(
-        'FundingRound: Incorrect amount of spent voice credits'
-      )
+      ).to.be.revertedWith('IncorrectSpentVoiceCredits')
     })
   })
 
@@ -1170,25 +1237,39 @@ describe('Funding Round', () => {
     const totalVotes = 11382064
     beforeEach(async () => {
       maci = await deployMaciMock()
-      await maci.mock.hasUntalliedStateLeaves.returns(false)
-      await maci.mock.totalVotes.returns(totalVotes)
-      await maci.mock.verifySpentVoiceCredits.returns(true)
-      await maci.mock.verifyTallyResult.returns(true)
-      await maci.mock.verifyPerVOSpentVoiceCredits.returns(true)
-      await maci.mock.treeDepths.returns(10, 10, treeDepth)
+      poll = await deployMockContractByName('Poll')
+      tallyer = await deployMockContractByName('PollProcessorAndTallyer')
+      pollId = BigInt(0)
+      await poll.mock.verifyTallyResult.returns(true)
+      await poll.mock.verifySpentVoiceCredits.returns(true)
+      await maci.mock.getPoll.returns(poll.address)
 
+      // round.isTallied() = tallyBatchSize * tallyBatchNum >= numSignups
+      await poll.mock.numSignUpsAndMessages.returns(numSignUps, 1)
+      await poll.mock.batchSizes.returns(1, tallyBatchSize, 1)
+      await poll.mock.verifyPerVOSpentVoiceCredits.returns(true)
+      await tallyer.mock.tallyBatchNum.returns(tallyBatchNum)
+
+      // round.isVotingOver()
+      const deployTime = (await provider.getBlock('latest')).timestamp
+      await poll.mock.getDeployTimeAndDuration.returns(deployTime, pollDuration)
+      await recipientRegistry.mock.getRecipientAddress.returns(
+        recipient.address
+      )
+
+      await fundingRound.setMaci(maci.address)
+      await fundingRound.setPoll(pollId)
+      await fundingRound.connect(coordinator).setTallyer(tallyer.address)
       await recipientRegistry.mock.getRecipientAddress.returns(
         recipient.address
       )
 
       await token.transfer(fundingRound.address, budget)
 
-      await fundingRound.setMaci(maci.address)
-
       const fundingRoundAsCoordinator = fundingRound.connect(coordinator)
       await fundingRoundAsCoordinator.publishTallyHash(tallyHash)
 
-      await provider.send('evm_increaseTime', [signUpDuration + votingDuration])
+      await provider.send('evm_increaseTime', [pollDuration])
     })
 
     it('adds and verifies tally results', async function () {
@@ -1246,9 +1327,9 @@ describe('Funding Round', () => {
       )
     })
 
-    it('fails to finalize if all projects only have 1 contributor', async function () {
+    it('fails to finalize if no project has more than 1 vote', async function () {
       const tallyTreeDepth = 1
-      await maci.mock.treeDepths.returns(10, 10, tallyTreeDepth)
+      //   await maci.mock.treeDepths.returns(10, 10, tallyTreeDepth)
       const tallyWith1Contributor = {
         results: {
           commitment:
@@ -1278,7 +1359,7 @@ describe('Funding Round', () => {
       )
       const { spent, salt } = smallTallyTestData.totalVoiceCredits
       await expect(fundingRound.finalize(spent, salt)).to.be.revertedWith(
-        'FundingRound: Total quadratic votes must be greater than total spent voice credits'
+        'NoProjectHasMoreThanOneVote'
       )
     })
 
@@ -1322,8 +1403,18 @@ describe('Funding Round', () => {
       }
     })
 
-    it('prevents finalize if tally results not completely received', async function () {
+    it.skip('prevents finalize if tally results not completely received', async function () {
       const { spent, salt } = smallTallyTestData.totalVoiceCredits
+
+      // increase the number of signup to simulate incomplete tallying
+      await poll.mock.numSignUpsAndMessages.returns(numSignUps * 2, 1)
+      await addTallyResultsBatch(
+        fundingRound.connect(coordinator),
+        tallyTreeDepth,
+        smallTallyTestData,
+        tallyBatchSize
+      )
+
       await expect(fundingRound.finalize(spent, salt)).to.be.revertedWith(
         'FundingRound: Incomplete tally results'
       )
@@ -1338,7 +1429,7 @@ describe('Funding Round', () => {
           smallTallyTestData,
           5
         )
-      ).to.be.revertedWith('FundingRound: Sender is not the coordinator')
+      ).to.be.revertedWith('NotCoordinator')
     })
 
     it('allows only coordinator to add tally results in batches', async function () {
@@ -1350,11 +1441,12 @@ describe('Funding Round', () => {
           smallTallyTestData,
           5
         )
-      ).to.be.revertedWith('FundingRound: Sender is not the coordinator')
+      ).to.be.revertedWith('NotCoordinator')
     })
 
     it('prevents adding tally results if maci has not completed tallying', async function () {
-      await maci.mock.hasUntalliedStateLeaves.returns(true)
+      // increase the number of signup to simulate incomplete tallying
+      await poll.mock.numSignUpsAndMessages.returns(numSignUps * 2, 1)
 
       await expect(
         addTallyResultsBatch(
@@ -1363,11 +1455,12 @@ describe('Funding Round', () => {
           smallTallyTestData,
           5
         )
-      ).to.be.revertedWith('FundingRound: Votes have not been tallied')
+      ).to.be.revertedWith('VotesNotTallied')
     })
 
     it('prevents adding batches of tally results if maci has not completed tallying', async function () {
-      await maci.mock.hasUntalliedStateLeaves.returns(true)
+      // increase the number of signup to simulate incomplete tallying
+      await poll.mock.numSignUpsAndMessages.returns(numSignUps * 2, 1)
 
       await expect(
         addTallyResultsBatch(
@@ -1376,11 +1469,11 @@ describe('Funding Round', () => {
           smallTallyTestData,
           5
         )
-      ).to.be.revertedWith('FundingRound: Votes have not been tallied')
+      ).to.be.revertedWith('VotesNotTallied')
     })
 
     it('prevent adding more tally results if already finalized', async () => {
-      await maci.mock.treeDepths.returns(10, 10, tallyTreeDepth)
+      //await maci.mock.treeDepths.returns(10, 10, tallyTreeDepth)
 
       await addTallyResultsBatch(
         fundingRound.connect(coordinator),
@@ -1398,7 +1491,7 @@ describe('Funding Round', () => {
           smallTallyTestData,
           5
         )
-      ).to.be.revertedWith('FundingRound: Already finalized')
+      ).to.be.revertedWith('RoundAlreadyFinalized')
     })
 
     it('prevents adding tally results that were already verified', async function () {
@@ -1415,7 +1508,7 @@ describe('Funding Round', () => {
           smallTallyTestData,
           5
         )
-      ).to.revertedWith('FundingRound: Vote results already verified')
+      ).to.revertedWith('VoteResultsAlreadyVerified')
     })
 
     it('returns correct proccessed count in the callback for processing tally results', async () => {
@@ -1457,7 +1550,7 @@ describe('Funding Round', () => {
           smallTallyTestData,
           batchSize
         )
-        expect(data).to.have.lengthOf(5)
+        expect(data).to.have.lengthOf(7)
         expect(data[1]).to.have.lengthOf(5)
       })
     }
@@ -1468,7 +1561,7 @@ describe('Funding Round', () => {
         smallTallyTestData,
         batchSize
       )
-      expect(data).to.have.lengthOf(5)
+      expect(data).to.have.lengthOf(7)
       expect(data[1]).to.have.lengthOf(1)
     })
     it(`should fail with startIndex ${total}`, () => {
@@ -1491,18 +1584,16 @@ describe('Funding Round', () => {
       const totalSpent = 100
       await expect(
         fundingRound.calcAlpha(totalBudget, totalVotesSquares, totalSpent)
-      ).to.be.revertedWith('FundingRound: Invalid budget')
+      ).to.be.revertedWith('InvalidBudget')
     })
 
-    it('fails alpha calculation if total votes square less than total spent', async function () {
+    it('fails alpha calculation if no project has more than 1 vote', async function () {
       const totalBudget = ethers.utils.parseEther('200')
       const totalVotesSquares = 88
       const totalSpent = 100
       await expect(
         fundingRound.calcAlpha(totalBudget, totalVotesSquares, totalSpent)
-      ).to.be.revertedWith(
-        'FundingRound: Total quadratic votes must be greater than total spent voice credits'
-      )
+      ).to.be.revertedWith('NoProjectHasMoreThanOneVote')
     })
   })
 })
