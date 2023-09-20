@@ -580,6 +580,9 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
     * @param _voteOptionIndex Vote option index.
     * @param _tallyResult The results of vote tally for the recipients.
     * @param _tallyResultProof Proofs of correctness of the vote tally results.
+    * @param _spentVoiceCreditsHash hashLeftRight(number of spent voice credits, spent salt)
+    * @param _perVOSpentVoiceCreditsHash hashLeftRight(merkle root of the no spent voice credits per vote option, perVOSpentVoiceCredits salt)
+    * @param _tallyCommitment newTallyCommitment field in the tally.json
     */
   function _addTallyResult(
     uint8 _voteOptionTreeDepth,
@@ -623,8 +626,8 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
     * @param _voteOptionIndices Vote option index.
     * @param _tallyResults The results of vote tally for the recipients.
     * @param _tallyResultProofs Proofs of correctness of the vote tally results.
-    * @param _spentVoiceCreditsHash hashLeftRight(number of spent voice credits, spent salt)
-    * @param _perVOSpentVoiceCreditsHash hashLeftRight(merkle root of the no spent voice credits per vote option, perVOSpentVoiceCredits salt)
+    * @param _spentVoiceCreditsHashes hashLeftRight(number of spent voice credits, spent salt)
+    * @param _perVOSpentVoiceCreditsHashes hashLeftRight(merkle root of the no spent voice credits per vote option, perVOSpentVoiceCredits salt)
     * @param _tallyCommitment newTallyCommitment field in the tally.json
    */
   function addTallyResultsBatch(
@@ -633,7 +636,7 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
     uint256[] calldata _tallyResults,
     uint256[][][] calldata _tallyResultProofs,
     uint256[] calldata _spentVoiceCreditsHashes,
-    uint256[] calldata _perVOSpentVoiceCreditsHash,
+    uint256[] calldata _perVOSpentVoiceCreditsHashes,
     uint256 _tallyCommitment
   )
     external
@@ -653,7 +656,7 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
         _tallyResults[i],
         _tallyResultProofs[i],
         _spentVoiceCreditsHashes[i],
-        _perVOSpentVoiceCreditsHash[i],
+        _perVOSpentVoiceCreditsHashes[i],
         _tallyCommitment
       );
     }
