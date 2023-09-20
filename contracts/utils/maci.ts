@@ -8,8 +8,32 @@ import {
   LEAVES_PER_NODE,
 } from '@clrfund/common'
 
+import { genTallyResultCommitment } from 'maci-core'
+import { extractVk, hash2 } from 'maci-circuits'
 import { VerifyingKey } from 'maci-domainobjs'
 import { CIRCUITS } from './deployment'
+import path from 'path'
+
+export interface ZkFiles {
+  processZkFile: string
+  processWitness: string
+  tallyZkFile: string
+  tallyWitness: string
+}
+/**
+ * Get the zkey file path
+ * @param name zkey file name
+ * @returns zkey file path
+ */
+export function getCircuitFiles(circuit: string, directory: string): ZkFiles {
+  const params = CIRCUITS[circuit]
+  return {
+    processZkFile: path.join(directory, params.processMessagesZkey),
+    processWitness: path.join(directory, params.processWitness),
+    tallyZkFile: path.join(directory, params.tallyVotesZkey),
+    tallyWitness: path.join(directory, params.tallyWitness),
+  }
+}
 
 export class MaciParameters {
   stateTreeDepth: number
@@ -52,9 +76,12 @@ export class MaciParameters {
     ]
   }
 
-  static fromConfig(config: { [name: string]: any }): MaciParameters {
-    const processVk: VerifyingKey = VerifyingKey.fromObj(config.processVkObj)
-    const tallyVk: VerifyingKey = VerifyingKey.fromObj(config.tallyVkObj)
+  static fromConfig(circuit: string): MaciParameters {
+    const config = CIRCUITS[circuit]
+    const pmZkeyFile = getZkeyFilePath(config.processMessagesZkey)
+    const tvZkeyFile = getZkeyFilePath(config.tallyVotesZkey)
+    const processVk: VerifyingKey = VerifyingKey.fromObj(extractVk(pmZkeyFile))
+    const tallyVk: VerifyingKey = VerifyingKey.fromObj(extractVk(tvZkeyFile))
 
     return new MaciParameters({
       stateTreeDepth: config.stateTreeDepth,
@@ -144,7 +171,6 @@ export function getRecipientTallyResult(
 ): any[] {
   // Create proof for tally result
   const result = tally.results.tally[recipientIndex]
-  const resultSalt = tally.results.salt
   const resultTree = new IncrementalQuinTree(
     recipientTreeDepth,
     BigInt(0),
@@ -155,13 +181,23 @@ export function getRecipientTallyResult(
     resultTree.insert(leaf)
   }
   const resultProof = resultTree.genMerklePath(recipientIndex)
+  const spentVoiceCreditsHash = hash2([
+    BigInt(tally.totalSpentVoiceCredits.spent),
+    BigInt(tally.totalSpentVoiceCredits.salt),
+  ])
+  const perVOSpentVoiceCreditsHash = genTallyResultCommitment(
+    tally.perVOSpentVoiceCredits.tally.map((x) => BigInt(x)),
+    tally.perVOSpentVoiceCredits.salt,
+    recipientTreeDepth
+  )
 
   return [
     recipientTreeDepth,
     recipientIndex,
     result,
     resultProof.pathElements.map((x) => x.map((y) => y.toString())),
-    resultSalt,
+    spentVoiceCreditsHash,
+    perVOSpentVoiceCreditsHash,
   ]
 }
 
@@ -185,17 +221,15 @@ export function getRecipientTallyResultsBatch(
     tallyData.push(getRecipientTallyResult(i, recipientTreeDepth, tally))
   }
 
-  // the salt is the same for all tally results
-  const resultSalt = tallyData[0][4]
   return [
     recipientTreeDepth,
     tallyData.map((item) => item[1]),
     tallyData.map((item) => item[2]),
     tallyData.map((item) => item[3]),
     // TODO: fix this after getting the result of tally
-    tallyData.map(() => 0),
-    tallyData.map(() => 0),
-    resultSalt,
+    tallyData.map((item) => item[4]),
+    tallyData.map((item) => item[5]),
+    tally.newTallyCommitment,
   ]
 }
 
