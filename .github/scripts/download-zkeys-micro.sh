@@ -15,7 +15,7 @@ do
   curl $url -o $p
   extension="${filename##*.}"
   if [ "$extension" == "gz" ]
-  do
+  then
     tar -xvf $p
   fi
 done
