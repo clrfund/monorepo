@@ -10,23 +10,38 @@ import { getEventArg } from '../utils/contracts'
 import {
   deployVkRegistry,
   deployMaciFactory,
-  CIRCUITS,
-  getZkeyFilePath,
+  deployPollProcessorAndTallyer,
   genProofs,
   proveOnChain,
+  deployPoseidonLibraries,
 } from '../utils/deployment'
 import { getIpfsHash } from '../utils/ipfs'
 import {
   MaciParameters,
   addTallyResultsBatch,
   getRecipientClaimData,
+  getCircuitFiles,
 } from '../utils/maci'
+import { readFileSync } from 'fs'
 
 use(solidity)
 
 const ZERO = BigNumber.from(0)
 
 const roundDuration = 7 * 86400
+
+// MACI zkFiles
+const circuit = process.env.CIRCUIT_TYPE || 'micro'
+const params = MaciParameters.fromConfig(circuit)
+const circuitDirectory = process.env.CIRCUIT_DIRECTORY || '~/params'
+const { processZkFile, tallyZkFile, processWitness, tallyWitness } =
+  getCircuitFiles(circuitDirectory, circuit)
+let maciTransactionHash: string
+
+const timeMs = new Date().getTime()
+const tallyFile = `tally.json`
+const maciStateFile = `macistate_${timeMs}`
+const outputDir = '.'
 
 describe('End-to-end Tests', function () {
   this.timeout(60 * 60 * 1000)
@@ -50,8 +65,6 @@ describe('End-to-end Tests', function () {
   let fundingRound: Contract
   let maci: Contract
   let pollId: bigint
-
-  let maciParameters: MaciParameters
   let coordinatorKeypair: Keypair
 
   beforeEach(async () => {
@@ -73,21 +86,10 @@ describe('End-to-end Tests', function () {
     })
 
     // Deploy funding round factory
-    const circuit = process.env.CIRCUIT_TYPE || 'micro'
-    const params = CIRCUITS[circuit]
-
-    const processMessagesZkey = getZkeyFilePath(params.processMessagesZkey)
-    const tallyVotesZkey = getZkeyFilePath(params.tallyVotesZkey)
-
-    const maciFactory = await deployMaciFactory(deployer)
+    const poseidonLibraries = await deployPoseidonLibraries(deployer)
+    const maciFactory = await deployMaciFactory(deployer, poseidonLibraries)
     const setMaciTx = await maciFactory.setMaciParameters(
-      params.treeDepths.stateTreeDepth,
-      params.treeDepths.messageBatchTreeDepth,
-      params.treeDepths.messageTreeDepth,
-      params.treeDepths.voteOptionTreeDepth,
-      params.treeDepths.intStateTreeDepth,
-      processMessagesZkey,
-      tallyVotesZkey
+      ...params.asContractParam()
     )
     await setMaciTx.wait()
 
@@ -176,8 +178,8 @@ describe('End-to-end Tests', function () {
 
     const vkReigstry = await deployVkRegistry(
       deployer,
-      processMessagesZkey,
-      tallyVotesZkey,
+      processZkFile,
+      tallyZkFile,
       maciFactory.address,
       circuit
     )
@@ -187,6 +189,7 @@ describe('End-to-end Tests', function () {
       roundDuration,
       vkReigstry.address
     )
+    maciTransactionHash = newRoundTx.hash
     const fundingRoundAddress = await fundingRoundFactory.getCurrentRound()
     fundingRound = await ethers.getContractAt(
       'FundingRound',
@@ -249,32 +252,44 @@ describe('End-to-end Tests', function () {
     return contributions
   }
 
-  function makeMaciFilename(): string {
-    return `macistate_${utils.hexlify(utils.randomBytes(10))}`
-  }
   async function finalizeRound(): Promise<any> {
     const providerUrl = (provider as any)._hardhatNetwork.config.url
 
     // Process messages and tally votes
-    const results = await genProofs({
+    const genProofResult = await genProofs({
       contract: maci.address,
       eth_provider: providerUrl,
+      'poll-id': pollId.toString(),
+      'tally-file': tallyFile,
+      rapidsnark: '',
+      'process-witnessgen': processWitness,
+      'tally-witnessgen': tallyWitness,
+      'process-zkey': processZkFile,
+      'tally-zkey': tallyZkFile,
+      'transaction-hash': maciTransactionHash,
+      output: outputDir,
       privkey: coordinatorKeypair.privKey.serialize(),
-      macistate: makeMaciFilename(),
+      macistate: maciStateFile,
     })
-    if (!results) {
+    if (genProofResult !== 0) {
       throw new Error('generation of proofs failed')
     }
-    const { proofs, tally } = results
+
+    // deploy pollProcessorAndTallyer
+    const ppt = await deployPollProcessorAndTallyer(coordinator, fundingRound)
 
     // Submit proofs to MACI contract
     await proveOnChain({
       contract: maci.address,
+      poll_id: pollId,
+      ppt: ppt.address,
       eth_privkey: coordinator.privateKey,
       eth_provider: providerUrl,
       privkey: coordinatorKeypair.privKey.serialize(),
-      proof_file: proofs,
+      proof_dir: outputDir,
     })
+
+    const tally = JSON.parse(readFileSync(tallyFile).toString())
     const tallyHash = await getIpfsHash(tally)
     await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
 
@@ -290,8 +305,8 @@ describe('End-to-end Tests', function () {
 
     // Finalize round
     await fundingRoundFactory.transferMatchingFunds(
-      tally.totalVoiceCredits.spent,
-      tally.totalVoiceCredits.salt
+      tally.totalSpentVoiceCredits.spent,
+      tally.totalSpentVoiceCredits.salt
     )
 
     // Claim funds
@@ -370,8 +385,7 @@ describe('End-to-end Tests', function () {
       )
     }
 
-    await provider.send('evm_increaseTime', [maciParameters.signUpDuration])
-    await provider.send('evm_increaseTime', [maciParameters.votingDuration])
+    await provider.send('evm_increaseTime', [roundDuration])
     const { tally, claims } = await finalizeRound()
     expect(tally.totalVoiceCredits.spent).to.equal('160000')
     expect(claims[1]).to.equal(UNIT.mul(58).div(10))
@@ -413,8 +427,7 @@ describe('End-to-end Tests', function () {
       )
     }
 
-    await provider.send('evm_increaseTime', [maciParameters.signUpDuration])
-    await provider.send('evm_increaseTime', [maciParameters.votingDuration])
+    await provider.send('evm_increaseTime', [roundDuration])
     const { tally, claims } = await finalizeRound()
     expect(tally.totalVoiceCredits.spent).to.equal('79524')
     expect(claims[1].toString()).to.equal('5799999999999999999')
@@ -471,8 +484,7 @@ describe('End-to-end Tests', function () {
         [encPubKey.asContractParam()]
       )
 
-    await provider.send('evm_increaseTime', [maciParameters.signUpDuration])
-    await provider.send('evm_increaseTime', [maciParameters.votingDuration])
+    await provider.send('evm_increaseTime', [roundDuration])
     const { tally, claims } = await finalizeRound()
     expect(tally.totalVoiceCredits.spent).to.equal('120000')
     expect(tally.results.tally[1]).to.equal('200')
@@ -534,8 +546,7 @@ describe('End-to-end Tests', function () {
         [encPubKey.asContractParam()]
       )
 
-    await provider.send('evm_increaseTime', [maciParameters.signUpDuration])
-    await provider.send('evm_increaseTime', [maciParameters.votingDuration])
+    await provider.send('evm_increaseTime', [roundDuration])
     const { tally, claims } = await finalizeRound()
     expect(tally.totalVoiceCredits.spent).to.equal('80000')
     expect(tally.results.tally[1]).to.equal('0')
@@ -605,8 +616,7 @@ describe('End-to-end Tests', function () {
         [encPubKey.asContractParam()]
       )
 
-    await provider.send('evm_increaseTime', [maciParameters.signUpDuration])
-    await provider.send('evm_increaseTime', [maciParameters.votingDuration])
+    await provider.send('evm_increaseTime', [roundDuration])
     const { tally, claims } = await finalizeRound()
     expect(tally.totalVoiceCredits.spent).to.equal('120000')
     expect(tally.results.tally[1]).to.equal('200')
@@ -658,8 +668,7 @@ describe('End-to-end Tests', function () {
       encPubKeyBatch1.reverse().map((key) => key.asContractParam())
     )
 
-    // Wait for signup period to end to override votes
-    await provider.send('evm_increaseTime', [maciParameters.signUpDuration])
+    // override votes
     const messageBatch2: Message[] = []
     const encPubKeyBatch2: PubKey[] = []
     // Change key
@@ -725,7 +734,7 @@ describe('End-to-end Tests', function () {
         [encPubKey.asContractParam()]
       )
 
-    await provider.send('evm_increaseTime', [maciParameters.votingDuration])
+    await provider.send('evm_increaseTime', [roundDuration])
     const { tally, claims } = await finalizeRound()
     expect(tally.totalVoiceCredits.spent).to.equal('80000')
     expect(claims[1]).to.equal(BigNumber.from(0))
