@@ -8,7 +8,7 @@ on:
 
 env:
   NODE_VERSION: 16.x
-  CIRCUIT_TYPE: prod
+  CIRCUIT_TYPE: micro
 
 jobs:
   e2e-test:
@@ -27,21 +27,40 @@ jobs:
     - name: Install g++ library dependencies
       run: |
         sudo apt update
-        sudo apt-get install build-essential libgmp-dev libsodium-dev nlohmann-json3-dev nasm g++ curl
+        sudo apt-get install cmake build-essential libgmp-dev libsodium-dev nlohmann-json3-dev nasm g++ curl
     - name: Install rust toolchain
       uses: actions-rs/toolchain@v1
       with:
         toolchain: stable
-    - name: Install zkutil
+    - name: Checkout circom
+      uses: actions/checkout@v3
+      with:
+        repository: iden3/circom
+        path: circom
+    - name: Build circom
       run: |
-        cargo install zkutil --version 0.3.2
+        cd circom
+        cargo build --release
+        cargo install --path circom
+    - name: Checkout snarkrapid
+      uses: actions/checkout@v3
+      with:
+        repository: iden3/rapidsnark
+        path: rapidsnark
+    - name: Build rapidsnark
+      run: |
+        npm install
+        git submodule init
+        git submodule update
+        npx task createFieldSources
+        npx task buildProver
     - name: Checkout Clrfund
       uses: actions/checkout@v3
       with:
         path: monorepo
     - name: Download batch micro zk circuit params
       run: |
-        $GITHUB_WORKSPACE/monorepo/.github/scripts/download-zkeys-micro.sh
+        $GITHUB_WORKSPACE/monorepo/.github/scripts/download-zkeys-${CIRCUIT_TYPE}.sh
     - name: Build Clrfund
       run: |
         cd monorepo
@@ -52,9 +71,9 @@ jobs:
         yarn start:node &
     - name: Run tests
       run: |
-        export CIRCUIT_TYPE=micro
-        export CIRCUIT_DIRECTORY==$GITHUB_WORKSPAC + '/params'
-        echo $NODE_CONFIG
+        export CIRCUIT_DIRECTORY=$GITHUB_WORKSPACE + '/params'
+        export RAPIDSNARK_DIRECTORY=$GITHUB_WORKSPACE + '/rapidsnark/build'
+        npm install 
         cd monorepo
         yarn test:e2e
 

@@ -2,7 +2,7 @@
 import { ethers, waffle } from 'hardhat'
 import { use, expect } from 'chai'
 import { solidity } from 'ethereum-waffle'
-import { BigNumber, Contract, Signer, Wallet, utils } from 'ethers'
+import { BigNumber, Contract, Signer, Wallet } from 'ethers'
 import { Keypair, createMessage, Message, PubKey } from '@clrfund/common'
 
 import { UNIT } from '../utils/constants'
@@ -34,6 +34,9 @@ const roundDuration = 7 * 86400
 const circuit = process.env.CIRCUIT_TYPE || 'micro'
 const params = MaciParameters.fromConfig(circuit)
 const circuitDirectory = process.env.CIRCUIT_DIRECTORY || '~/params'
+const rapidSnarkDirectory =
+  process.env.RAPIDSNARK_DIRECTORY || '~/rapidsnark/build'
+const rapidSnarkExe = path.join(rapidSnarkDirectory, 'prover')
 const { processZkFile, tallyZkFile, processWitness, tallyWitness } =
   getCircuitFiles(circuitDirectory, circuit)
 let maciTransactionHash: string
@@ -261,7 +264,7 @@ describe('End-to-end Tests', function () {
       eth_provider: providerUrl,
       'poll-id': pollId.toString(),
       'tally-file': tallyFile,
-      rapidsnark: '',
+      rapidsnark: rapidSnarkExe,
       'process-witnessgen': processWitness,
       'tally-witnessgen': tallyWitness,
       'process-zkey': processZkFile,
