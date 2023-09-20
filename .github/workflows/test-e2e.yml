@@ -39,7 +39,7 @@ jobs:
       uses: actions/checkout@v3
       with:
         path: monorepo
-    - name: Download batch 64 zk circuit params
+    - name: Download batch micro zk circuit params
       run: |
         $GITHUB_WORKSPACE/monorepo/.github/scripts/download-zkeys-micro.sh
     - name: Build Clrfund
@@ -53,7 +53,7 @@ jobs:
     - name: Run tests
       run: |
         export CIRCUIT_TYPE=micro
-        export NODE_CONFIG=$(node -e "const snarkParamsPath=process.env.GITHUB_WORKSPACE + '/params'; console.log(JSON.stringify({ snarkParamsPath }));")
+        export CIRCUIT_DIRECTORY==$GITHUB_WORKSPAC + '/params'
         echo $NODE_CONFIG
         cd monorepo
         yarn test:e2e
