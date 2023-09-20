@@ -9,14 +9,15 @@ import '@openzeppelin/contracts/utils/structs/EnumerableSet.sol';
 import {SignUpGatekeeper} from "maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol";
 import {InitialVoiceCreditProxy} from "maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol";
 import {PollFactory} from 'maci-contracts/contracts/Poll.sol';
+import {Params} from 'maci-contracts/contracts/Params.sol';
 
+import './MACIFactory.sol';
 import './userRegistry/IUserRegistry.sol';
 import './recipientRegistry/IRecipientRegistry.sol';
-import './MACIFactory.sol';
-import './FundingRound.sol';
+import {FundingRound} from './FundingRound.sol';
 import './OwnableUpgradeable.sol';
 
-contract ClrFund is OwnableUpgradeable, IPubKey, SnarkCommon {
+contract ClrFund is OwnableUpgradeable, IPubKey, SnarkCommon, Params {
   using EnumerableSet for EnumerableSet.AddressSet;
   using SafeERC20 for ERC20;
 
@@ -87,6 +88,17 @@ contract ClrFund is OwnableUpgradeable, IPubKey, SnarkCommon {
   }
 
   /**
+   * @dev Set the Verifying Keys Registry
+   * @param _vkRegistry Address of the registry
+   */
+  function setVkRegistry(VkRegistry _vkRegistry)
+    external
+    onlyOwner
+  {
+    maciFactory.setVkRegistry(_vkRegistry);
+  }
+
+  /**
     * @dev Add matching funds source.
     * @param _source Address of a funding source.
     */
@@ -116,6 +128,20 @@ contract ClrFund is OwnableUpgradeable, IPubKey, SnarkCommon {
     emit FundingSourceRemoved(_source);
   }
 
+  function setMaciParameters(
+    uint8 stateTreeDepth,
+    TreeDepths calldata treeDepths,
+    MaxValues calldata maxValues,
+    uint256 messageBatchSize,
+    VerifyingKey calldata processVk,
+    VerifyingKey calldata tallyVk
+  )
+  external
+  onlyCoordinator
+  {
+    maciFactory.setMaciParameters(stateTreeDepth, treeDepths, maxValues, messageBatchSize, processVk, tallyVk);
+  }
+
   function getCurrentRound()
     public
     view
@@ -127,40 +153,13 @@ contract ClrFund is OwnableUpgradeable, IPubKey, SnarkCommon {
     return rounds[rounds.length - 1];
   }
 
-  function setMaciParameters(
-    uint8 stateTreeDepth,
-    uint8 intStateTreeDepth,
-    uint8 messageTreeSubDepth,
-    uint8 messageTreeDepth,
-    uint8 voteOptionTreeDepth,
-    uint256 maxMessages,
-    uint256 maxVoteOptions,
-    uint256 messageBatchSize,
-    VerifyingKey calldata processVk,
-    VerifyingKey calldata tallyVk
-  )
-    external
-    onlyCoordinator
-  {
-    maciFactory.setMaciParameters(
-      stateTreeDepth,
-      intStateTreeDepth,
-      messageTreeSubDepth,
-      messageTreeDepth,
-      voteOptionTreeDepth,
-      maxMessages,
-      maxVoteOptions,
-      messageBatchSize,
-      processVk,
-      tallyVk
-    );
-  }
-
    /**
     * @dev Deploy new funding round.
     * @param duration The poll duration in seconds
     */
-  function deployNewRound(uint256 duration)
+  function deployNewRound(
+    uint256 duration
+  )
     external
     onlyOwner
     requireToken
@@ -196,6 +195,10 @@ contract ClrFund is OwnableUpgradeable, IPubKey, SnarkCommon {
     );
 
     newRound.setMaci(maci);
+
+    // since we just created a new MACI, the first poll id starts from 0
+    newRound.setPoll(0);
+
     emit RoundStarted(address(newRound));
   }
 
@@ -323,7 +326,7 @@ contract ClrFund is OwnableUpgradeable, IPubKey, SnarkCommon {
     _;
   }
 
-  function requireCurrentRound(FundingRound currentRound) private {
+  function requireCurrentRound(FundingRound currentRound) private pure {
     if (address(currentRound) == address(0)) {
       revert NoCurrentRound();
     }

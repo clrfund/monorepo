@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers'
-import { genRandomSalt, IncrementalQuinTree, hash5 } from 'maci-crypto'
+import { genRandomSalt, IncrementalQuinTree, hash5, hash2 } from 'maci-crypto'
 import { PubKey, PCommand, Message } from 'maci-domainobjs'
 import { Keypair } from './keypair'
 import { utils } from 'ethers'
@@ -94,7 +94,7 @@ export function getRecipientClaimData(
   return [
     recipientIndex,
     spent,
-    spentProof.pathElements.map((x) => x.map((y) => y.toString())),
+    spentProof.pathElements.map(x => x.map(y => y.toString())),
     spentSalt,
   ]
 }
@@ -115,5 +115,6 @@ export {
   PCommand as Command,
   IncrementalQuinTree,
   hash5,
+  hash2,
   LEAVES_PER_NODE,
 }

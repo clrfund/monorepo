@@ -5,11 +5,12 @@ import {
   getRecipientClaimData,
   IncrementalQuinTree,
   hash5,
+  hash2,
   LEAVES_PER_NODE,
 } from '@clrfund/common'
 
 import { genTallyResultCommitment } from 'maci-core'
-import { extractVk, hash2 } from 'maci-circuits'
+import { extractVk } from 'maci-circuits'
 import { VerifyingKey } from 'maci-domainobjs'
 import { CIRCUITS } from './deployment'
 import path from 'path'
@@ -186,7 +187,7 @@ export function getRecipientTallyResult(
     BigInt(tally.totalSpentVoiceCredits.salt),
   ])
   const perVOSpentVoiceCreditsHash = genTallyResultCommitment(
-    tally.perVOSpentVoiceCredits.tally.map((x) => BigInt(x)),
+    tally.perVOSpentVoiceCredits.tally.map(x => BigInt(x)),
     tally.perVOSpentVoiceCredits.salt,
     recipientTreeDepth
   )
@@ -195,7 +196,7 @@ export function getRecipientTallyResult(
     recipientTreeDepth,
     recipientIndex,
     result,
-    resultProof.pathElements.map((x) => x.map((y) => y.toString())),
+    resultProof.pathElements.map(x => x.map(y => y.toString())),
     spentVoiceCreditsHash,
     perVOSpentVoiceCreditsHash,
   ]
@@ -223,12 +224,12 @@ export function getRecipientTallyResultsBatch(
 
   return [
     recipientTreeDepth,
-    tallyData.map((item) => item[1]),
-    tallyData.map((item) => item[2]),
-    tallyData.map((item) => item[3]),
+    tallyData.map(item => item[1]),
+    tallyData.map(item => item[2]),
+    tallyData.map(item => item[3]),
     // TODO: fix this after getting the result of tally
-    tallyData.map((item) => item[4]),
-    tallyData.map((item) => item[5]),
+    tallyData.map(item => item[4]),
+    tallyData.map(item => item[5]),
     tally.newTallyCommitment,
   ]
 }

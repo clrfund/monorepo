@@ -65,7 +65,7 @@ contract ClrFundDeployer is CloneFactory, ClrFundParams {
     function deployClrFund(MACIFactory _maciFactory) public returns (address) {
 
         clrfund = ClrFund(createClone(template));
-
+        clrfund.init(_maciFactory);
         emit NewInstance(address(clrfund));
 
         return address(clrfund);

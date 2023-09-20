@@ -7480,6 +7480,11 @@ circomlib@^2.0.0, circomlib@^2.0.5:
   resolved "https://registry.yarnpkg.com/circomlib/-/circomlib-2.0.5.tgz#183c703e53ed7d011811842dbeeeb9819f4cc1d6"
   integrity sha512-O7NQ8OS+J4eshBuoy36z/TwQU0YHw8W3zxZcs4hVwpEll3e4hDm3mgkIPqItN8FDeLEKZFK3YeT/+k8TiLF3/A==
 
+"circomlib@git+https://github.com/weijiekoh/circomlib.git#ac85e82c1914d47789e2032fb11ceb2cfdd38a2b":
+  version "1.0.0"
+  uid ac85e82c1914d47789e2032fb11ceb2cfdd38a2b
+  resolved "git+https://github.com/weijiekoh/circomlib.git#ac85e82c1914d47789e2032fb11ceb2cfdd38a2b"
+
 "circomlib@git://github.com/weijiekoh/circomlib.git#24ed08eee0bb613b8c0135d66c1013bd9f78d50a":
   version "0.5.2"
   resolved "git://github.com/weijiekoh/circomlib.git#24ed08eee0bb613b8c0135d66c1013bd9f78d50a"
@@ -7492,7 +7497,6 @@ circomlib@^2.0.0, circomlib@^2.0.5:
 
 "circomlib@github:weijiekoh/circomlib#ac85e82c1914d47789e2032fb11ceb2cfdd38a2b":
   version "1.0.0"
-  uid ac85e82c1914d47789e2032fb11ceb2cfdd38a2b
   resolved "https://codeload.github.com/weijiekoh/circomlib/tar.gz/ac85e82c1914d47789e2032fb11ceb2cfdd38a2b"
 
 "circomlib@https://github.com/weijiekoh/circomlib#ac85e82c1914d47789e2032fb11ceb2cfdd38a2b":
@@ -14764,13 +14768,13 @@ maci-circuits@1.1.1:
     snarkjs "^0.5.0"
     tmp "^0.2.1"
 
-maci-circuits@^1.1.1:
+maci-circuits@1.1.2, maci-circuits@^1.1.1:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/maci-circuits/-/maci-circuits-1.1.2.tgz#56aebc6e8f121dad5c5b3de32a5edd7c920fa5d3"
   integrity sha512-a1sHBaF7A0bhHY4akJNN6NpX5sVGO8Ae1v3/IrEXyBZKWIvSnKY0rKzwmA3jC3F4OJrht025XUZmNd0gGcQm9g==
   dependencies:
     argparse "^2.0.1"
-    circomlib "https://github.com/weijiekoh/circomlib#ac85e82c1914d47789e2032fb11ceb2cfdd38a2b"
+    circomlib "git+https://github.com/weijiekoh/circomlib.git#ac85e82c1914d47789e2032fb11ceb2cfdd38a2b"
     shelljs "^0.8.3"
     snarkjs "^0.5.0"
     tmp "^0.2.1"
@@ -14852,7 +14856,7 @@ maci-core@1.1.1:
     maci-domainobjs "^1.1.1"
     module-alias "^2.2.2"
 
-maci-core@^1.1.1:
+maci-core@^1.1.1, maci-core@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/maci-core/-/maci-core-1.1.2.tgz#97dbc70a20fe6fad548d62d3d65ca53d61743435"
   integrity sha512-o2VmIESe0jt3Mai2eiz2UKUeuHKC9aZqwvsfaaVj0GkySmzq6cYDvos/qaF0nw4nsoD+ElbW41v7hu+NfrxLwQ==
