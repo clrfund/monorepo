@@ -33,7 +33,9 @@ use(solidity)
 
 // ethStaker test vectors for Quadratic Funding with alpha
 import smallTallyTestData from './data/testTallySmall.json'
-const totalSpent = BigNumber.from(smallTallyTestData.totalVoiceCredits.spent)
+const totalSpent = BigNumber.from(
+  smallTallyTestData.totalSpentVoiceCredits.spent
+)
 const budget = BigNumber.from(totalSpent).mul(VOICE_CREDIT_FACTOR).mul(2)
 const totalQuadraticVotes = smallTallyTestData.results.tally.reduce(
   (total, tally) => {
@@ -564,6 +566,7 @@ describe('Funding Round', () => {
       await poll.mock.numSignUpsAndMessages.returns(numSignUps, 1)
       await poll.mock.batchSizes.returns(1, tallyBatchSize, 1)
       await tallyer.mock.tallyBatchNum.returns(tallyBatchNum)
+      await tallyer.mock.processingComplete.returns(true)
 
       // round.isVotingOver()
       const deployTime = (await provider.getBlock('latest')).timestamp
@@ -584,6 +587,7 @@ describe('Funding Round', () => {
         .contribute(userKeypair.pubKey.asContractParam(), totalContributions)
       await provider.send('evm_increaseTime', [pollDuration])
       await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
+      expect(await fundingRound.tallyHash()).to.equal(tallyHash)
       await token.transfer(fundingRound.address, matchingPoolSize)
 
       await addTallyResultsBatch(
@@ -823,6 +827,7 @@ describe('Funding Round', () => {
       await poll.mock.numSignUpsAndMessages.returns(numSignUps, 1)
       await poll.mock.batchSizes.returns(1, tallyBatchSize, 1)
       await tallyer.mock.tallyBatchNum.returns(tallyBatchNum)
+      await tallyer.mock.processingComplete.returns(true)
 
       // round.isVotingOver()
       const deployTime = (await provider.getBlock('latest')).timestamp
@@ -970,13 +975,13 @@ describe('Funding Round', () => {
     const recipientIndex = 3
 
     const { spent: totalSpent, salt: totalSpentSalt } =
-      smallTallyTestData.totalVoiceCredits
+      smallTallyTestData.totalSpentVoiceCredits
     const contributions =
-      smallTallyTestData.totalVoiceCreditsPerVoteOption.tally[recipientIndex]
+      smallTallyTestData.perVOSpentVoiceCredits.tally[recipientIndex]
 
     const expectedAllocatedAmount = calcAllocationAmount(
       smallTallyTestData.results.tally[recipientIndex],
-      smallTallyTestData.totalVoiceCreditsPerVoteOption.tally[recipientIndex]
+      smallTallyTestData.perVOSpentVoiceCredits.tally[recipientIndex]
     ).toString()
     let fundingRoundAsRecipient: Contract
     let fundingRoundAsContributor: Contract
@@ -995,6 +1000,7 @@ describe('Funding Round', () => {
       await poll.mock.batchSizes.returns(1, tallyBatchSize, 1)
       await poll.mock.verifyPerVOSpentVoiceCredits.returns(true)
       await tallyer.mock.tallyBatchNum.returns(tallyBatchNum)
+      await tallyer.mock.processingComplete.returns(true)
 
       // round.isVotingOver()
       const deployTime = (await provider.getBlock('latest')).timestamp
@@ -1025,11 +1031,11 @@ describe('Funding Round', () => {
       )
       await fundingRound.finalize(totalSpent, totalSpentSalt)
 
-      const { results, totalVoiceCreditsPerVoteOption } = smallTallyTestData
+      const { results, perVOSpentVoiceCredits } = smallTallyTestData
       expect(
         await fundingRound.getAllocatedAmount(
           results.tally[recipientIndex],
-          totalVoiceCreditsPerVoteOption.tally[recipientIndex]
+          perVOSpentVoiceCredits.tally[recipientIndex]
         )
       ).to.equal(expectedAllocatedAmount, 'mismatch allocated amount')
 
@@ -1249,6 +1255,7 @@ describe('Funding Round', () => {
       await poll.mock.batchSizes.returns(1, tallyBatchSize, 1)
       await poll.mock.verifyPerVOSpentVoiceCredits.returns(true)
       await tallyer.mock.tallyBatchNum.returns(tallyBatchNum)
+      await tallyer.mock.processingComplete.returns(true)
 
       // round.isVotingOver()
       const deployTime = (await provider.getBlock('latest')).timestamp
@@ -1301,7 +1308,7 @@ describe('Funding Round', () => {
       )
 
       const totalVotes = await fundingRound.totalVotesSquares()
-      const { spent: totalSpent } = smallTallyTestData.totalVoiceCredits
+      const { spent: totalSpent } = smallTallyTestData.totalSpentVoiceCredits
       const calculatedAlpha = await fundingRound.calcAlpha(
         budget,
         totalVotes,
@@ -1317,7 +1324,7 @@ describe('Funding Round', () => {
         smallTallyTestData,
         3
       )
-      const { spent, salt } = smallTallyTestData.totalVoiceCredits
+      const { spent, salt } = smallTallyTestData.totalSpentVoiceCredits
       await fundingRound.finalize(spent, salt)
 
       const alpha = await fundingRound.alpha()
@@ -1331,22 +1338,25 @@ describe('Funding Round', () => {
       const tallyTreeDepth = 1
       //   await maci.mock.treeDepths.returns(10, 10, tallyTreeDepth)
       const tallyWith1Contributor = {
+        newTallyCommitment:
+          '0x26e6ae35c82006eff6408b713d477307b2da16c7a1ff15fb46c0762ee308e88a',
         results: {
           commitment:
             '0x2f44c97ce649078012fd686eaf996fc6b8d817e11ab574f0d0a0d750ee1ec101',
           tally: [0, 200, 200, 0, 0],
           salt: '0xa1f71f9e48a5f2ec55020051a190f079ca43d66457879972554c3c2e8a07ea0',
         },
-        totalVoiceCredits: {
+        totalSpentVoiceCredits: {
           spent: '80000',
           commitment:
             '0x18b52cbe2a91777772d10c80d1b883cdc98e0f19475bcd907c693fddd6c675b8',
           salt: '0x2013aa4e350542684f78adbf3e716c3bcf96e12c64b8e8ef3d962e3568132778',
         },
-        totalVoiceCreditsPerVoteOption: {
+        perVOSpentVoiceCredits: {
           commitment:
             '0x26e6ae35c82006eff6408b713d477307b2da16c7a1ff15fb46c0762ee308e88a',
           tally: ['0', '40000', '40000', '0', '0'],
+          salt: '0x2013aa4e350542684f78adbf3e716c3bcf96e12c64b8e8ef3d962e3568132778',
         },
         salt: '0x63c80f2b0319790c19b3b17ecd7b00fc1dc7398198601d0dfb30253306ecb34',
       }
@@ -1357,7 +1367,7 @@ describe('Funding Round', () => {
         tallyWith1Contributor,
         batchSize
       )
-      const { spent, salt } = smallTallyTestData.totalVoiceCredits
+      const { spent, salt } = smallTallyTestData.totalSpentVoiceCredits
       await expect(fundingRound.finalize(spent, salt)).to.be.revertedWith(
         'NoProjectHasMoreThanOneVote'
       )
@@ -1370,12 +1380,11 @@ describe('Funding Round', () => {
         smallTallyTestData,
         20
       )
-      const { spent, salt } = smallTallyTestData.totalVoiceCredits
+      const { spent, salt } = smallTallyTestData.totalSpentVoiceCredits
       await fundingRound.finalize(spent, salt)
 
       const { tally } = smallTallyTestData.results
-      const { tally: spents } =
-        smallTallyTestData.totalVoiceCreditsPerVoteOption
+      const { tally: spents } = smallTallyTestData.perVOSpentVoiceCredits
 
       for (let i = 0; i < tally.length; i++) {
         const tallyResult = tally[i]
@@ -1404,7 +1413,7 @@ describe('Funding Round', () => {
     })
 
     it.skip('prevents finalize if tally results not completely received', async function () {
-      const { spent, salt } = smallTallyTestData.totalVoiceCredits
+      const { spent, salt } = smallTallyTestData.totalSpentVoiceCredits
 
       // increase the number of signup to simulate incomplete tallying
       await poll.mock.numSignUpsAndMessages.returns(numSignUps * 2, 1)
@@ -1482,7 +1491,7 @@ describe('Funding Round', () => {
         5
       )
 
-      const { spent, salt } = smallTallyTestData.totalVoiceCredits
+      const { spent, salt } = smallTallyTestData.totalSpentVoiceCredits
       await fundingRound.finalize(spent, salt)
       await expect(
         addTallyResultsBatch(

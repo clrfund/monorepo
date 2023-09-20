@@ -160,6 +160,11 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
       revert PollProcessorAndTallyerNotSet();
     }
 
+    bool processingComplete = tallyer.processingComplete();
+    if (!processingComplete) {
+      return false;
+    }
+
     (uint256 numSignUps, ) = poll.numSignUpsAndMessages();
     (, uint256 tallyBatchSize, ) = poll.batchSizes();
     uint256 tallyBatchNum = tallyer.tallyBatchNum();

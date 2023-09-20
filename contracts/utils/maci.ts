@@ -186,9 +186,10 @@ export function getRecipientTallyResult(
     BigInt(tally.totalSpentVoiceCredits.spent),
     BigInt(tally.totalSpentVoiceCredits.salt),
   ])
+
   const perVOSpentVoiceCreditsHash = genTallyResultCommitment(
     tally.perVOSpentVoiceCredits.tally.map((x) => BigInt(x)),
-    tally.perVOSpentVoiceCredits.salt,
+    BigInt(tally.perVOSpentVoiceCredits.salt),
     recipientTreeDepth
   )
 

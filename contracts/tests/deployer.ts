@@ -480,7 +480,7 @@ describe('Clr fund deployer', () => {
       await setRoundTallyer(factory, coordinator)
       await expect(
         factory.transferMatchingFunds(totalSpent, totalSpentSalt)
-      ).to.be.revertedWith('FundingRound: Votes has not been tallied')
+      ).to.be.revertedWith('VotesNotTallied')
     })
 
     it('allows owner to finalize round even without matching funds', async () => {
@@ -489,7 +489,7 @@ describe('Clr fund deployer', () => {
       await setRoundTallyer(factory, coordinator)
       await expect(
         factory.transferMatchingFunds(totalSpent, totalSpentSalt)
-      ).to.be.revertedWith('FundingRound: Votes has not been tallied')
+      ).to.be.revertedWith('VotesNotTallied')
     })
 
     it('pulls funds from funding source', async () => {
@@ -501,7 +501,7 @@ describe('Clr fund deployer', () => {
       await setRoundTallyer(factory, coordinator)
       await expect(
         factory.transferMatchingFunds(totalSpent, totalSpentSalt)
-      ).to.be.revertedWith('FundingRound: Votes has not been tallied')
+      ).to.be.revertedWith('VotesNotTallied')
     })
 
     it('pulls funds from funding source if allowance is greater than balance', async () => {
@@ -514,7 +514,7 @@ describe('Clr fund deployer', () => {
       await setRoundTallyer(factory, coordinator)
       await expect(
         factory.transferMatchingFunds(totalSpent, totalSpentSalt)
-      ).to.be.revertedWith('FundingRound: Votes has not been tallied')
+      ).to.be.revertedWith('VotesNotTallied')
     })
 
     it('allows only owner to finalize round', async () => {

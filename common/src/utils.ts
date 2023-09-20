@@ -78,15 +78,15 @@ export function getRecipientClaimData(
   tally: Tally
 ): any[] {
   // Create proof for total amount of spent voice credits
-  const spent = tally.totalVoiceCreditsPerVoteOption.tally[recipientIndex]
-  const spentSalt = tally.totalVoiceCreditsPerVoteOption.salt
+  const spent = tally.perVOSpentVoiceCredits.tally[recipientIndex]
+  const spentSalt = tally.perVOSpentVoiceCredits.salt
   const spentTree = new IncrementalQuinTree(
     recipientTreeDepth,
     BigInt(0),
     LEAVES_PER_NODE,
     hash5
   )
-  for (const leaf of tally.totalVoiceCreditsPerVoteOption.tally) {
+  for (const leaf of tally.perVOSpentVoiceCredits.tally) {
     spentTree.insert(BigInt(leaf))
   }
   const spentProof: MerkleProof = spentTree.genMerklePath(recipientIndex)
