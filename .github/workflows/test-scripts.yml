@@ -39,6 +39,8 @@ jobs:
     - name: Build CLR
       run: |
         cd monorepo
+        # use https to avoid error: unable to connect to github.com
+        git config --global url."https://".insteadOf git://
         yarn && yarn build
     - name: Start hardhat network
       run: |

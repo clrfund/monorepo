@@ -42,7 +42,7 @@ jobs:
         cd circom
         cargo build --release
         cargo install --path circom
-    - name: Checkout snarkrapid
+    - name: Checkout rapidsnark
       uses: actions/checkout@v3
       with:
         repository: iden3/rapidsnark
@@ -59,12 +59,14 @@ jobs:
       uses: actions/checkout@v3
       with:
         path: monorepo
-    - name: Download batch micro zk circuit params
+    - name: Download micro zk circuit params
       run: |
         $GITHUB_WORKSPACE/monorepo/.github/scripts/download-zkeys-${CIRCUIT_TYPE}.sh
     - name: Build Clrfund
       run: |
         cd monorepo
+        # use https to avoid error: unable to connect to github.com
+        git config --global url."https://".insteadOf git://
         yarn && yarn build
     - name: Start hardhat network
       run: |
@@ -74,7 +76,6 @@ jobs:
       run: |
         export CIRCUIT_DIRECTORY=$GITHUB_WORKSPACE + '/params'
         export RAPIDSNARK_DIRECTORY=$GITHUB_WORKSPACE + '/rapidsnark/build'
-        npm install 
         cd monorepo
         yarn test:e2e
 

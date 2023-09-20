@@ -50,6 +50,8 @@ jobs:
         $GITHUB_WORKSPACE/.github/scripts/download-batch64-params.sh
     - name: Build
       run: |
+        # use https to avoid error: unable to connect to github.com
+        git config --global url."https://".insteadOf git://
         yarn && yarn build
     - name: Run finalize scripts
       run: |
