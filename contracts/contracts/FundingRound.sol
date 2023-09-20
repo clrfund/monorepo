@@ -623,7 +623,10 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
     * @param _voteOptionIndices Vote option index.
     * @param _tallyResults The results of vote tally for the recipients.
     * @param _tallyResultProofs Proofs of correctness of the vote tally results.
-    */
+    * @param _spentVoiceCreditsHash hashLeftRight(number of spent voice credits, spent salt)
+    * @param _perVOSpentVoiceCreditsHash hashLeftRight(merkle root of the no spent voice credits per vote option, perVOSpentVoiceCredits salt)
+    * @param _tallyCommitment newTallyCommitment field in the tally.json
+   */
   function addTallyResultsBatch(
     uint8 _voteOptionTreeDepth,
     uint256[] calldata _voteOptionIndices,
