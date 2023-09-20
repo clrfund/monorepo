@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-PKGS="ProcessMessages_10-2-1-2_test.0.zkey TallyVotes_10-1-2_test.0.zkey"
+PKGS="zkeys_10-2-1-2_glibc-211.tar.gz ProcessMessages_10-2-1-2_test.0.zkey TallyVotes_10-1-2_test.0.zkey"
 
 mkdir -p params
 cd params
@@ -13,5 +13,10 @@ do
   url="$BASE_URL/$p"
   echo "downloading $url"
   curl $url -o $p
+  extension="${filename##*.}"
+  if [ "$extension" == "gz" ]
+  do
+    tar -xvf $p
+  fi
 done
 
