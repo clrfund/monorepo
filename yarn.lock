@@ -7482,7 +7482,6 @@ circomlib@^2.0.0, circomlib@^2.0.5:
 
 "circomlib@git+https://github.com/weijiekoh/circomlib.git#ac85e82c1914d47789e2032fb11ceb2cfdd38a2b":
   version "1.0.0"
-  uid ac85e82c1914d47789e2032fb11ceb2cfdd38a2b
   resolved "git+https://github.com/weijiekoh/circomlib.git#ac85e82c1914d47789e2032fb11ceb2cfdd38a2b"
 
 "circomlib@git://github.com/weijiekoh/circomlib.git#24ed08eee0bb613b8c0135d66c1013bd9f78d50a":
@@ -7498,10 +7497,6 @@ circomlib@^2.0.0, circomlib@^2.0.5:
 "circomlib@github:weijiekoh/circomlib#ac85e82c1914d47789e2032fb11ceb2cfdd38a2b":
   version "1.0.0"
   resolved "https://codeload.github.com/weijiekoh/circomlib/tar.gz/ac85e82c1914d47789e2032fb11ceb2cfdd38a2b"
-
-"circomlib@https://github.com/weijiekoh/circomlib#ac85e82c1914d47789e2032fb11ceb2cfdd38a2b":
-  version "1.0.0"
-  resolved "https://github.com/weijiekoh/circomlib#ac85e82c1914d47789e2032fb11ceb2cfdd38a2b"
 
 "circomlib@https://github.com/weijiekoh/circomlib.git#24ed08eee0bb613b8c0135d66c1013bd9f78d50a":
   version "0.5.2"
@@ -14774,7 +14769,7 @@ maci-circuits@1.1.2, maci-circuits@^1.1.1:
   integrity sha512-a1sHBaF7A0bhHY4akJNN6NpX5sVGO8Ae1v3/IrEXyBZKWIvSnKY0rKzwmA3jC3F4OJrht025XUZmNd0gGcQm9g==
   dependencies:
     argparse "^2.0.1"
-    circomlib "git+https://github.com/weijiekoh/circomlib.git#ac85e82c1914d47789e2032fb11ceb2cfdd38a2b"
+    circomlib "https://github.com/weijiekoh/circomlib#ac85e82c1914d47789e2032fb11ceb2cfdd38a2b"
     shelljs "^0.8.3"
     snarkjs "^0.5.0"
     tmp "^0.2.1"
