@@ -49,6 +49,7 @@ jobs:
         path: rapidsnark
     - name: Build rapidsnark
       run: |
+        cd rapidsnark
         npm install
         git submodule init
         git submodule update
