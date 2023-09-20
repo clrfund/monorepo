@@ -180,6 +180,27 @@ export async function deployContract(
   return await contract.deployed()
 }
 
+/**
+ * Deploy and set the PollProcessorAndTallyer in the funding round
+ * @param coordinator The coordinator who can set the set the tallyer in the funding round
+ * @param fundingRound The funding round contract
+ * @returns
+ */
+export async function deployPollProcessorAndTallyer(
+  coordinator: Signer,
+  fundingRound: Contract
+): Promise<Contract> {
+  const verifier = await deployContract(coordinator, 'Verifier')
+  const ppt = await deployContract(coordinator, 'PollProcessorAndTallyer', [
+    verifier.address,
+  ])
+  const setPptTx = await fundingRound
+    .connect(coordinator)
+    .setTallyer(ppt.address)
+  await setPptTx.wait()
+  return ppt
+}
+
 export async function deployVkRegistry(
   account: Signer,
   processVkPath: string,
@@ -278,22 +299,6 @@ export async function deployUserRegistry(
 
   await userRegistry.deployTransaction.wait()
   return userRegistry
-}
-
-/**
- * Get the zkey file path
- * @param name zkey file name
- * @returns zkey file path
- */
-export function getZkeyFilePath(name: string): string {
-  const config = JSON.parse(process.env.NODE_CONFIG || '')
-  if (!config?.snarkParamsPath) {
-    throw new Error(
-      'Please set the env. variable NODE_CONFIG={"snarkParamsPath": "path-to-zkey-file"}'
-    )
-  }
-
-  return path.join(config.snarkParamsPath, name)
 }
 
 /**
