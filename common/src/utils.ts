@@ -94,7 +94,7 @@ export function getRecipientClaimData(
   return [
     recipientIndex,
     spent,
-    spentProof.pathElements.map(x => x.map(y => y.toString())),
+    spentProof.pathElements.map((x) => x.map((y) => y.toString())),
     spentSalt,
   ]
 }
