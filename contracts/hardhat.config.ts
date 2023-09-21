@@ -157,9 +157,7 @@ subtask(TASK_COMPILE_SOLIDITY_GET_SOURCE_PATHS, async (_, __, runSuper) => {
   const paths = await runSuper()
 
   return paths.filter((filePath: string) => {
-    return !(
-      filePath.includes('snarkVerifiers') || filePath.includes('ClrFund.sol')
-    )
+    return !filePath.includes('snarkVerifiers')
   })
 })
 
