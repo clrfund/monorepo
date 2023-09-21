@@ -1,5 +1,5 @@
 import { abi as ERC20 } from '../../../contracts/build/contracts/@openzeppelin/contracts/token/ERC20/ERC20.sol/ERC20.json'
-import { abi as FundingRoundFactory } from '../../../contracts/build/contracts/contracts/Clrfund.sol/Clrfund.json'
+import { abi as FundingRoundFactory } from '../../../contracts/build/contracts/contracts/ClrFund.sol/ClrFund.json'
 import { abi as FundingRound } from '../../../contracts/build/contracts/contracts/FundingRound.sol/FundingRound.json'
 import { abi as MACIFactory } from '../../../contracts/build/contracts/contracts/MACIFactory.sol/MACIFactory.json'
 import { abi as MACI } from '../../../contracts/build/contracts/maci-contracts/contracts/MACI.sol/MACI.json'
