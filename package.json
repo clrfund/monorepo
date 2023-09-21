@@ -12,6 +12,8 @@
     ],
     "nohoist": [
       "**/@nomiclabs/**",
+      "**/maci-circuits/**",
+      "**/maci-circuits",
       "**/maci-cli/**",
       "**/maci-cli",
       "**/maci-contracts/**",
