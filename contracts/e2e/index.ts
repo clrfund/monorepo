@@ -23,6 +23,7 @@ import {
   getCircuitFiles,
 } from '../utils/maci'
 import { readFileSync } from 'fs'
+import path from 'path'
 
 use(solidity)
 
@@ -32,8 +33,8 @@ const roundDuration = 7 * 86400
 
 // MACI zkFiles
 const circuit = process.env.CIRCUIT_TYPE || 'micro'
-const params = MaciParameters.fromConfig(circuit)
 const circuitDirectory = process.env.CIRCUIT_DIRECTORY || '~/params'
+const params = MaciParameters.fromConfig(circuit, circuitDirectory)
 const rapidSnarkDirectory =
   process.env.RAPIDSNARK_DIRECTORY || '~/rapidsnark/build'
 const rapidSnarkExe = path.join(rapidSnarkDirectory, 'prover')

@@ -77,12 +77,13 @@ export class MaciParameters {
     ]
   }
 
-  static fromConfig(circuit: string): MaciParameters {
+  static fromConfig(circuit: string, directory: string): MaciParameters {
     const config = CIRCUITS[circuit]
-    const pmZkeyFile = getZkeyFilePath(config.processMessagesZkey)
-    const tvZkeyFile = getZkeyFilePath(config.tallyVotesZkey)
-    const processVk: VerifyingKey = VerifyingKey.fromObj(extractVk(pmZkeyFile))
-    const tallyVk: VerifyingKey = VerifyingKey.fromObj(extractVk(tvZkeyFile))
+    const { processZkFile, tallyZkFile } = getCircuitFiles(circuit, directory)
+    const processVk: VerifyingKey = VerifyingKey.fromObj(
+      extractVk(processZkFile)
+    )
+    const tallyVk: VerifyingKey = VerifyingKey.fromObj(extractVk(tallyZkFile))
 
     return new MaciParameters({
       stateTreeDepth: config.stateTreeDepth,

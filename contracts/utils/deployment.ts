@@ -69,6 +69,8 @@ export const CIRCUITS: { [name: string]: any } = {
     //https://github.com/privacy-scaling-explorations/maci/wiki/Precompiled-v1.1.1#micro-size
     processMessagesZkey: 'ProcessMessages_10-2-1-2_test.0.zkey',
     tallyVotesZkey: 'TallyVotes_10-1-2_test.0.zkey',
+    processWitness: 'ProcessMessages_10-2-1-2_test',
+    tallyWitness: 'TallyVotes_10-1-2_test',
     treeDepths: {
       // TODO: confirm if the following 4 parameters are the 4 parameters in processMessages.circom
       stateTreeDepth: 10,
@@ -100,6 +102,8 @@ export const CIRCUITS: { [name: string]: any } = {
   prod: {
     processMessagesZkey: 'ProcessMessages_7-9-3-4_test.0.zkey',
     tallyVotesZkey: 'TallyVotes_7-3-4_test.0.zkey',
+    processWitness: 'ProcessMessages_7-9-3-4_test',
+    tallyWitness: 'TallyVotes_7-3-4_test',
     treeDepths: {
       stateTreeDepth: 7,
       messageTreeDepth: 9,
