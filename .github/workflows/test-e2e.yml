@@ -64,9 +64,9 @@ jobs:
         $GITHUB_WORKSPACE/monorepo/.github/scripts/download-zkeys-${CIRCUIT_TYPE}.sh
     - name: Build Clrfund
       run: |
-        cd monorepo
         # use https to avoid error: unable to connect to github.com
         git config --global url."https://".insteadOf git://
+        cd monorepo
         yarn && yarn build
     - name: Start hardhat network
       run: |
