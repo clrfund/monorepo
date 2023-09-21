@@ -74,8 +74,8 @@ jobs:
         yarn start:node &
     - name: Run tests
       run: |
-        export CIRCUIT_DIRECTORY=$GITHUB_WORKSPACE + '/params'
-        export RAPIDSNARK_DIRECTORY=$GITHUB_WORKSPACE + '/rapidsnark/build'
+        export CIRCUIT_DIRECTORY="$GITHUB_WORKSPACE/params"
+        export RAPIDSNARK_DIRECTORY="$GITHUB_WORKSPACE/rapidsnark/build"
         cd monorepo
         yarn test:e2e
 
