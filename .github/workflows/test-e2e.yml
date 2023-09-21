@@ -67,6 +67,7 @@ jobs:
         # use https to avoid error: unable to connect to github.com
         git config --global url."https://".insteadOf git://
         cd monorepo
+        ls contracts/build/contracts/contracts/Clrfund.sol/Clrfund.json
         yarn && yarn build
     - name: Start hardhat network
       run: |
