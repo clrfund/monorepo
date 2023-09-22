@@ -13,7 +13,7 @@ do
   url="$BASE_URL/$p"
   echo "downloading $url"
   curl $url -o $p
-  extension="${filename##*.}"
+  extension="${p##*.}"
   if [ "$extension" == "gz" ]
   then
     tar -xvf $p
