@@ -191,6 +191,7 @@ contract ClrFund is OwnableUpgradeable, IPubKey, SnarkCommon, Params {
       InitialVoiceCreditProxy(newRound),
       address(nativeToken),
       duration,
+      coordinator,
       coordinatorPubKey
     );
 

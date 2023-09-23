@@ -2,9 +2,16 @@ import { ethers, config } from 'hardhat'
 import { Signer, Contract, utils } from 'ethers'
 import { link } from 'ethereum-waffle'
 import path from 'path'
-import { setVerifyingKeys, genProofs, proveOnChain } from '@clrfund/maci-cli'
+import {
+  setVerifyingKeys,
+  mergeMessages,
+  mergeSignups,
+  genProofs,
+  proveOnChain,
+} from '@clrfund/maci-cli'
 
 import { readFileSync } from 'fs'
+import { MaciParameters } from './maci.ts'
 
 const TREE_ARITY = 5
 
@@ -207,25 +214,21 @@ export async function deployPollProcessorAndTallyer(
 
 export async function deployVkRegistry(
   account: Signer,
-  processVkPath: string,
-  tallyVkPath: string,
   owner: string,
-  circuit = 'micro'
+  params: MaciParameters
 ): Promise<Contract> {
   const vkRegistry = await deployContract(account, 'VkRegistry')
 
-  const params = CIRCUITS[circuit]
-
-  await setVerifyingKeys({
-    vk_registry: vkRegistry.address,
-    state_tree_depth: params.treeDepths.stateTreeDepth,
-    int_state_tree_depth: params.treeDepths.intStateTreeDepth,
-    msg_tree_depth: params.treeDepths.messageTreeDepth,
-    vote_option_tree_depth: params.treeDepths.voteOptionTreeDepth,
-    msg_batch_depth: params.treeDepths.messageBatchTreeDepth,
-    process_messages_zkey: processVkPath,
-    tally_votes_zkey: tallyVkPath,
-  })
+  const setKeyTx = await vkRegistry.setVerifyingKeys(
+    params.stateTreeDepth,
+    params.intStateTreeDepth,
+    params.messageTreeDepth,
+    params.voteOptionTreeDepth,
+    params.messageBatchSize,
+    params.processVk.asContractParam(),
+    params.tallyVk.asContractParam()
+  )
+  await setKeyTx.wait()
 
   const ownerTx = await vkRegistry.transferOwnership(owner)
   await ownerTx.wait()
@@ -328,4 +331,4 @@ export async function deployPoseidonLibraries(
   return libraries
 }
 
-export { proveOnChain, genProofs }
+export { mergeMessages, mergeSignups, proveOnChain, genProofs }

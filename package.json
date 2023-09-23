@@ -12,6 +12,8 @@
     ],
     "nohoist": [
       "**/@nomiclabs/**",
+      "**/snarkjs/**",
+      "**/snarkjs",
       "**/maci-circuits/**",
       "**/maci-circuits",
       "**/maci-cli/**",

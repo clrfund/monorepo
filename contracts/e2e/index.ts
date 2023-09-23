@@ -11,9 +11,12 @@ import {
   deployVkRegistry,
   deployMaciFactory,
   deployPollProcessorAndTallyer,
+  mergeMessages,
+  mergeSignups,
   genProofs,
   proveOnChain,
   deployPoseidonLibraries,
+  deployContractWithLinkedLibraries,
 } from '../utils/deployment'
 import { getIpfsHash } from '../utils/ipfs'
 import {
@@ -28,24 +31,31 @@ import path from 'path'
 use(solidity)
 
 const ZERO = BigNumber.from(0)
+const DEFAULT_SR_QUEUE_OPS = 4
 
 const roundDuration = 7 * 86400
 
 // MACI zkFiles
 const circuit = process.env.CIRCUIT_TYPE || 'micro'
-const circuitDirectory = process.env.CIRCUIT_DIRECTORY || '~/params'
+const circuitDirectory = process.env.CIRCUIT_DIRECTORY || '../../params'
 const params = MaciParameters.fromConfig(circuit, circuitDirectory)
 const rapidSnarkDirectory =
-  process.env.RAPIDSNARK_DIRECTORY || '~/rapidsnark/build'
+  process.env.RAPIDSNARK_DIRECTORY || '../../rapidsnark/build'
 const rapidSnarkExe = path.join(rapidSnarkDirectory, 'prover')
 const { processZkFile, tallyZkFile, processWitness, tallyWitness } =
-  getCircuitFiles(circuitDirectory, circuit)
+  getCircuitFiles(circuit, circuitDirectory)
 let maciTransactionHash: string
 
 const timeMs = new Date().getTime()
 const tallyFile = `tally.json`
 const maciStateFile = `macistate_${timeMs}`
 const outputDir = '.'
+
+const currentBlockTimestamp = async (provider: any): Promise<number> => {
+  const blockNum = await provider.getBlockNumber()
+  const block = await provider.getBlock(blockNum)
+  return Number(block.timestamp)
+}
 
 describe('End-to-end Tests', function () {
   this.timeout(60 * 60 * 1000)
@@ -73,6 +83,7 @@ describe('End-to-end Tests', function () {
 
   beforeEach(async () => {
     ;[
+      coordinator,
       deployer,
       poolContributor1,
       poolContributor2,
@@ -82,26 +93,22 @@ describe('End-to-end Tests', function () {
       ...contributors
     ] = await ethers.getSigners()
 
-    // Workaround for https://github.com/nomiclabs/buidler/issues/759
-    coordinator = Wallet.createRandom().connect(provider)
-    await deployer.sendTransaction({
-      to: coordinator.address,
-      value: UNIT.mul(10),
-    })
-
     // Deploy funding round factory
     const poseidonLibraries = await deployPoseidonLibraries(deployer)
     const maciFactory = await deployMaciFactory(deployer, poseidonLibraries)
     const setMaciTx = await maciFactory.setMaciParameters(
       ...params.asContractParam()
     )
+    console.log('after setting maci', setMaciTx.hash)
     await setMaciTx.wait()
 
-    const FundingRoundFactory = await ethers.getContractFactory(
-      'FundingRoundFactory',
-      deployer
+    const fundingRoundFactory = await deployContractWithLinkedLibraries(
+      deployer,
+      'ClrFund',
+      poseidonLibraries
     )
-    fundingRoundFactory = await FundingRoundFactory.deploy(maciFactory.address)
+    const initClrfundTx = await fundingRoundFactory.init(maciFactory.address)
+    await initClrfundTx.wait()
     const transferTx = await maciFactory.transferOwnership(
       fundingRoundFactory.address
     )
@@ -180,19 +187,10 @@ describe('End-to-end Tests', function () {
       })
     )
 
-    const vkReigstry = await deployVkRegistry(
-      deployer,
-      processZkFile,
-      tallyZkFile,
-      maciFactory.address,
-      circuit
-    )
+    await deployVkRegistry(deployer, maciFactory.address, params)
 
     // Deploy new funding round and MACI
-    const newRoundTx = await fundingRoundFactory.deployNewRound(
-      roundDuration,
-      vkReigstry.address
-    )
+    const newRoundTx = await fundingRoundFactory.deployNewRound(roundDuration)
     maciTransactionHash = newRoundTx.hash
     const fundingRoundAddress = await fundingRoundFactory.getCurrentRound()
     fundingRound = await ethers.getContractAt(
@@ -202,12 +200,7 @@ describe('End-to-end Tests', function () {
     const maciAddress = await fundingRound.maci()
     maci = await ethers.getContractAt('MACI', maciAddress)
 
-    pollId = BigInt(
-      await getEventArg(newRoundTx, maciAddress, 'DeployPoll', '_pollId')
-    )
-
-    const setPollTx = await fundingRound.setPoll(pollId)
-    await setPollTx.wait()
+    pollId = BigInt(await fundingRound.pollId())
   })
 
   async function makeContributions(amounts: BigNumber[]) {
@@ -260,21 +253,40 @@ describe('End-to-end Tests', function () {
     const providerUrl = (provider as any)._hardhatNetwork.config.url
 
     // Process messages and tally votes
-    const genProofResult = await genProofs({
+    const mergeMessageResult = await mergeMessages({
+      contract: maci.address,
+      poll_id: pollId.toString(),
+      num_queue_ops: DEFAULT_SR_QUEUE_OPS,
+    })
+    if (mergeMessageResult !== 0) {
+      throw new Error('Merge signups failed')
+    }
+
+    const mergeSignupsResult = await mergeSignups({
+      contract: maci.address,
+      poll_id: pollId.toString(),
+      num_queue_ops: DEFAULT_SR_QUEUE_OPS,
+    })
+    if (mergeSignupsResult !== 0) {
+      throw new Error('Merge signups failed')
+    }
+
+    const genProofArgs = {
       contract: maci.address,
       eth_provider: providerUrl,
-      'poll-id': pollId.toString(),
-      'tally-file': tallyFile,
+      poll_id: pollId.toString(),
+      tally_file: tallyFile,
       rapidsnark: rapidSnarkExe,
-      'process-witnessgen': processWitness,
-      'tally-witnessgen': tallyWitness,
-      'process-zkey': processZkFile,
-      'tally-zkey': tallyZkFile,
-      'transaction-hash': maciTransactionHash,
+      process_witnessgen: processWitness,
+      tally_witnessgen: tallyWitness,
+      process_zkey: processZkFile,
+      tally_zkey: tallyZkFile,
+      transaction_hash: maciTransactionHash,
       output: outputDir,
       privkey: coordinatorKeypair.privKey.serialize(),
       macistate: maciStateFile,
-    })
+    }
+    const genProofResult = await genProofs(genProofArgs)
     if (genProofResult !== 0) {
       throw new Error('generation of proofs failed')
     }
@@ -285,7 +297,7 @@ describe('End-to-end Tests', function () {
     // Submit proofs to MACI contract
     await proveOnChain({
       contract: maci.address,
-      poll_id: pollId,
+      poll_id: pollId.toString(),
       ppt: ppt.address,
       eth_privkey: coordinator.privateKey,
       eth_provider: providerUrl,
@@ -389,7 +401,9 @@ describe('End-to-end Tests', function () {
       )
     }
 
-    await provider.send('evm_increaseTime', [roundDuration])
+    const currentTime = await currentBlockTimestamp(provider)
+    await provider.send('evm_increaseTime', [roundDuration + currentTime])
+    await network.provider.send('evm_mine')
     const { tally, claims } = await finalizeRound()
     expect(tally.totalVoiceCredits.spent).to.equal('160000')
     expect(claims[1]).to.equal(UNIT.mul(58).div(10))

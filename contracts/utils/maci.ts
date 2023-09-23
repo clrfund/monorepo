@@ -1,4 +1,4 @@
-import { Contract, BigNumber, ContractReceipt } from 'ethers'
+import { Contract, BigNumber, ContractReceipt, utils } from 'ethers'
 import {
   bnSqrt,
   createMessage,
@@ -10,8 +10,8 @@ import {
 } from '@clrfund/common'
 
 import { genTallyResultCommitment } from 'maci-core'
-import { extractVk } from 'maci-circuits'
 import { VerifyingKey } from 'maci-domainobjs'
+import { extractVk } from 'maci-circuits'
 import { CIRCUITS } from './deployment'
 import path from 'path'
 
@@ -78,7 +78,7 @@ export class MaciParameters {
   }
 
   static fromConfig(circuit: string, directory: string): MaciParameters {
-    const config = CIRCUITS[circuit]
+    const params = CIRCUITS[circuit]
     const { processZkFile, tallyZkFile } = getCircuitFiles(circuit, directory)
     const processVk: VerifyingKey = VerifyingKey.fromObj(
       extractVk(processZkFile)
@@ -86,14 +86,9 @@ export class MaciParameters {
     const tallyVk: VerifyingKey = VerifyingKey.fromObj(extractVk(tallyZkFile))
 
     return new MaciParameters({
-      stateTreeDepth: config.stateTreeDepth,
-      intStateTreeDepth: config.intStateTreeDepth,
-      messageTreeSubDepth: config.messageTreeSubDepth,
-      messageTreeDepth: config.messageTreeDepth,
-      voteOptionTreeDepth: config.voteOptionTreeDepth,
-      maxMessages: config.maxMessages,
-      maxVoteOptions: config.maxVoteOptions,
-      messageBatchSize: config.messageBatchSize,
+      ...params.maxValues,
+      ...params.treeDepths,
+      ...params.batchSizes,
       processVk,
       tallyVk,
     })

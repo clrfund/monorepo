@@ -3,7 +3,7 @@
 pragma solidity ^0.8.10;
 
 import {MACI} from 'maci-contracts/contracts/MACI.sol';
-import {PollFactory, MessageAqFactory} from 'maci-contracts/contracts/Poll.sol';
+import {Poll, PollFactory, MessageAqFactory} from 'maci-contracts/contracts/Poll.sol';
 import {SignUpGatekeeper} from 'maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol';
 import {InitialVoiceCreditProxy} from 'maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
 import {TopupCredit} from 'maci-contracts/contracts/TopupCredit.sol';
@@ -106,6 +106,7 @@ contract MACIFactory is Ownable, Params, SnarkCommon, IPubKey {
     InitialVoiceCreditProxy initialVoiceCreditProxy,
     address topupCredit,
     uint256 duration,
+    address coordinator,
     PubKey calldata coordinatorPubKey
   )
     external
@@ -142,6 +143,10 @@ contract MACIFactory is Ownable, Params, SnarkCommon, IPubKey {
 
     _maci.init(vkRegistry, messageAqFactory, TopupCredit(topupCredit));
     _maci.deployPoll(duration, maxValues, treeDepths, coordinatorPubKey);
+
+    // this is a brand new maci, get poll 0
+    Poll poll = _maci.getPoll(0);
+    poll.transferOwnership(coordinator);
 
     emit MaciDeployed(address(_maci));
   }
