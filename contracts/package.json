@@ -3,7 +3,7 @@
   "version": "4.3.0",
   "license": "GPL-3.0",
   "scripts": {
-    "postinstall": "ln -sf ./node_modules/snarkjs ./node_modules/maci-circuits/node_modules && ln -sf ./node_modules/snarkjs node_modules/@clrfund/maci-cli/node_modules/maci-circuits/node_modules",
+    "postinstall": "cd node_modules/maci-circuits/node_modules && ln -sf ../../snarkjs && cd ../../@clrfund/maci-cli/node_modules/maci-circuits/node_modules && ln -sf ../../../../../snarkjs",
     "hardhat": "hardhat",
     "build": "hardhat compile",
     "node": "hardhat node --port 18545 --hostname 0.0.0.0",

@@ -140,6 +140,7 @@ describe('Funding Round', () => {
       fundingRound.address,
       token.address,
       pollDuration,
+      coordinator.address,
       coordinatorPubKey.asContractParam()
     )
 

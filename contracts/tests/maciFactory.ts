@@ -98,13 +98,14 @@ describe('MACI factory', () => {
       initialVoiceCreditProxy.address,
       topupContract.address,
       duration,
+      coordinator.address,
       coordinatorPubKey
     )
     await expect(maciDeployed).to.emit(maciFactory, 'MaciDeployed')
 
     const deployTx = await maciDeployed
     // TODO: reduce the gas usage
-    expect(await getGasUsage(deployTx)).lessThan(15080973)
+    expect(await getGasUsage(deployTx)).lessThan(15086973)
   })
 
   it('allows only owner to deploy MACI', async () => {
@@ -119,6 +120,7 @@ describe('MACI factory', () => {
         initialVoiceCreditProxy.address,
         topupContract.address,
         duration,
+        coordinator.address,
         coordinatorPubKey
       )
     ).to.be.revertedWith('Ownable: caller is not the owner')
@@ -132,8 +134,9 @@ describe('MACI factory', () => {
     const deployTx = await maciFactory.deployMaci(
       signUpGatekeeper.address,
       initialVoiceCreditProxy.address,
-      coordinator.address,
+      topupContract.address,
       duration,
+      coordinator.address,
       coordinatorPubKey
     )
 
@@ -160,6 +163,7 @@ describe('MACI factory', () => {
       initialVoiceCreditProxy.address,
       topupContract.address,
       duration,
+      coordinator.address,
       coordinatorPubKey
     )
 
