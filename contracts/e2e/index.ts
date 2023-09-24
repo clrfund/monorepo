@@ -311,7 +311,7 @@ describe('End-to-end Tests', function () {
 
     // add tally results to funding round
     const batchSize = Number(process.env.TALLY_BATCH_SIZE) || 20
-    const recipientTreeDepth = (await maci.treeDepths()).voteOptionTreeDepth
+    const recipientTreeDepth = params.voteOptionTreeDepth
     await addTallyResultsBatch(
       fundingRound.connect(coordinator),
       recipientTreeDepth,
