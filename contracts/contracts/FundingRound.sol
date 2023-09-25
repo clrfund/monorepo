@@ -640,8 +640,8 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
     uint256[] calldata _voteOptionIndices,
     uint256[] calldata _tallyResults,
     uint256[][][] calldata _tallyResultProofs,
-    uint256[] calldata _spentVoiceCreditsHashes,
-    uint256[] calldata _perVOSpentVoiceCreditsHashes,
+    uint256 _spentVoiceCreditsHashes,
+    uint256 _perVOSpentVoiceCreditsHashes,
     uint256 _tallyCommitment
   )
     external
@@ -660,8 +660,8 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
         _voteOptionIndices[i],
         _tallyResults[i],
         _tallyResultProofs[i],
-        _spentVoiceCreditsHashes[i],
-        _perVOSpentVoiceCreditsHashes[i],
+        _spentVoiceCreditsHashes,
+        _perVOSpentVoiceCreditsHashes,
         _tallyCommitment
       );
     }

@@ -1560,7 +1560,7 @@ describe('Funding Round', () => {
           smallTallyTestData,
           batchSize
         )
-        expect(data).to.have.lengthOf(7)
+        expect(data).to.have.lengthOf(3)
         expect(data[1]).to.have.lengthOf(5)
       })
     }
@@ -1571,7 +1571,7 @@ describe('Funding Round', () => {
         smallTallyTestData,
         batchSize
       )
-      expect(data).to.have.lengthOf(7)
+      expect(data).to.have.lengthOf(3)
       expect(data[1]).to.have.lengthOf(1)
     })
     it(`should fail with startIndex ${total}`, () => {

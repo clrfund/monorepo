@@ -166,7 +166,7 @@ export function getRecipientTallyResult(
   recipientIndex: number,
   recipientTreeDepth: number,
   tally: any
-): any[] {
+): { recipientIndex: number; result: string; proof: any[] } {
   // Create proof for tally result
   const result = tally.results.tally[recipientIndex]
   const resultTree = new IncrementalQuinTree(
@@ -179,12 +179,11 @@ export function getRecipientTallyResult(
     resultTree.insert(leaf)
   }
   const resultProof = resultTree.genMerklePath(recipientIndex)
-  return [
-    recipientTreeDepth,
+  return {
     recipientIndex,
     result,
-    resultProof.pathElements.map((x) => x.map((y) => y.toString())),
-  ]
+    proof: resultProof.pathElements.map((x) => x.map((y) => y.toString())),
+  }
 }
 
 export function getRecipientTallyResultsBatch(
@@ -208,10 +207,9 @@ export function getRecipientTallyResultsBatch(
   }
 
   return [
-    recipientTreeDepth,
-    tallyData.map((item) => item[1]),
-    tallyData.map((item) => item[2]),
-    tallyData.map((item) => item[3]),
+    tallyData.map((item) => item.recipientIndex),
+    tallyData.map((item) => item.result),
+    tallyData.map((item) => item.proof),
   ]
 }
 
@@ -242,11 +240,13 @@ export async function addTallyResultsBatch(
     BigInt(tallyData.results.salt),
     recipientTreeDepth
   )
-  const newTallyCommitment = hash3(
+
+  const newTallyCommitment = hash3([
     newResultCommitment,
     spentVoiceCreditsHash,
-    perVOSpentVoiceCreditsHash
-  )
+    perVOSpentVoiceCreditsHash,
+  ])
+
   if ('0x' + newTallyCommitment.toString(16) === tallyData.newTallyCommitment) {
     console.log('OK')
   } else {
@@ -262,10 +262,11 @@ export async function addTallyResultsBatch(
     )
 
     const tx = await fundingRound.addTallyResultsBatch(
+      recipientTreeDepth,
       ...data,
-      '0x' + BigInt(spentVoiceCreditsHash).toString(16),
-      '0x' + BigInt(perVOSpentVoiceCreditsHash).toString(16),
-      tally.newTallyCommitment
+      BigInt(spentVoiceCreditsHash).toString(),
+      BigInt(perVOSpentVoiceCreditsHash).toString(),
+      tallyData.newTallyCommitment
     )
     const receipt = await tx.wait()
     if (callback) {
