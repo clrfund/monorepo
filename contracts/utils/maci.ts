@@ -5,7 +5,7 @@ import {
   getRecipientClaimData,
   IncrementalQuinTree,
   hash5,
-  hash2,
+  hashLeftRight,
   LEAVES_PER_NODE,
 } from '@clrfund/common'
 
@@ -178,10 +178,10 @@ export function getRecipientTallyResult(
     resultTree.insert(leaf)
   }
   const resultProof = resultTree.genMerklePath(recipientIndex)
-  const spentVoiceCreditsHash = hash2([
+  const spentVoiceCreditsHash = hashLeftRight(
     BigInt(tally.totalSpentVoiceCredits.spent),
-    BigInt(tally.totalSpentVoiceCredits.salt),
-  ])
+    BigInt(tally.totalSpentVoiceCredits.salt)
+  )
 
   const perVOSpentVoiceCreditsHash = genTallyResultCommitment(
     tally.perVOSpentVoiceCredits.tally.map((x) => BigInt(x)),
@@ -224,7 +224,6 @@ export function getRecipientTallyResultsBatch(
     tallyData.map((item) => item[1]),
     tallyData.map((item) => item[2]),
     tallyData.map((item) => item[3]),
-    // TODO: fix this after getting the result of tally
     tallyData.map((item) => item[4]),
     tallyData.map((item) => item[5]),
     tally.newTallyCommitment,

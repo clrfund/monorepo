@@ -1,5 +1,11 @@
 import { BigNumber } from 'ethers'
-import { genRandomSalt, IncrementalQuinTree, hash5, hash2 } from 'maci-crypto'
+import {
+  genRandomSalt,
+  IncrementalQuinTree,
+  hashLeftRight,
+  hash5,
+  hash2,
+} from 'maci-crypto'
 import { PubKey, PCommand, Message } from 'maci-domainobjs'
 import { Keypair } from './keypair'
 import { utils } from 'ethers'
@@ -116,5 +122,6 @@ export {
   IncrementalQuinTree,
   hash5,
   hash2,
+  hashLeftRight,
   LEAVES_PER_NODE,
 }
