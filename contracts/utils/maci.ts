@@ -227,19 +227,19 @@ export async function addTallyResultsBatch(
   const { tally } = tallyData.results
 
   const spentVoiceCreditsHash = hashLeftRight(
-    BigInt(tally.totalSpentVoiceCredits.spent),
-    BigInt(tally.totalSpentVoiceCredits.salt)
+    BigInt(tallyData.totalSpentVoiceCredits.spent),
+    BigInt(tallyData.totalSpentVoiceCredits.salt)
   )
 
   const perVOSpentVoiceCreditsHash = genTallyResultCommitment(
-    tally.perVOSpentVoiceCredits.tally.map((x) => BigInt(x)),
-    BigInt(tally.perVOSpentVoiceCredits.salt),
+    tallyData.perVOSpentVoiceCredits.tally.map((x) => BigInt(x)),
+    BigInt(tallyData.perVOSpentVoiceCredits.salt),
     recipientTreeDepth
   )
 
   const newResultCommitment = genTallyResultCommitment(
-    tally.results.tally.map((x) => BigInt(x)),
-    BigInt(tally.results.salt),
+    tally.map((x) => BigInt(x)),
+    BigInt(tallyData.results.salt),
     recipientTreeDepth
   )
   const newTallyCommitment = hash3(
@@ -247,7 +247,7 @@ export async function addTallyResultsBatch(
     spentVoiceCreditsHash,
     perVOSpentVoiceCreditsHash
   )
-  if ('0x' + newTallyCommitment.toString(16) === tally.newTallyCommitment) {
+  if ('0x' + newTallyCommitment.toString(16) === tallyData.newTallyCommitment) {
     console.log('OK')
   } else {
     console.error('Error: the newTallyCommitment is invalid.')
