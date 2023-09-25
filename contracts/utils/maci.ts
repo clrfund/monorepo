@@ -1,10 +1,11 @@
-import { Contract, BigNumber, ContractReceipt, utils } from 'ethers'
+import { Contract, BigNumber, ContractReceipt } from 'ethers'
 import {
   bnSqrt,
   createMessage,
   getRecipientClaimData,
   IncrementalQuinTree,
   hash5,
+  hash3,
   hashLeftRight,
   LEAVES_PER_NODE,
 } from '@clrfund/common'
@@ -187,6 +188,26 @@ export function getRecipientTallyResult(
     tally.perVOSpentVoiceCredits.tally.map((x) => BigInt(x)),
     BigInt(tally.perVOSpentVoiceCredits.salt),
     recipientTreeDepth
+  )
+  console.log('spentVoiceCreditsHash', spentVoiceCreditsHash.toString())
+  console.log(
+    'perVOSpentVoiceCreditsHash',
+    perVOSpentVoiceCreditsHash.toString()
+  )
+  const newResultsCommitment = genTallyResultCommitment(
+    tally.results.tally.map((x) => BigInt(x)),
+    BigInt(tally.results.salt),
+    recipientTreeDepth
+  )
+  const newTallyCommitment = hash3([
+    newResultsCommitment,
+    spentVoiceCreditsHash,
+    perVOSpentVoiceCreditsHash,
+  ])
+  console.log('calculated newTallyCommitment', newTallyCommitment.toString())
+  console.log(
+    'tally file newTallyCommitment',
+    tally.newTallyCommitment.toString()
   )
 
   return [
