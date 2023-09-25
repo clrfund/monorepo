@@ -205,11 +205,12 @@ export function getRecipientTallyResult(
     perVOSpentVoiceCreditsHash,
   ])
   console.log('calculated newTallyCommitment', newTallyCommitment.toString())
-  console.log(
-    'tally file newTallyCommitment',
-    tally.newTallyCommitment.toString()
-  )
-
+  console.log('tally file newTallyCommitment', tally.newTallyCommitment)
+  if (newTallyCommitment.toString() === newTallyCommitment) {
+    console.log('same newTallyCommitment')
+  } else {
+    console.log('different newTallyCommitment')
+  }
   return [
     recipientTreeDepth,
     recipientIndex,
