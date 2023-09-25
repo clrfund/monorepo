@@ -3,7 +3,6 @@ import { Signer, Contract, utils } from 'ethers'
 import { link } from 'ethereum-waffle'
 import path from 'path'
 import {
-  setVerifyingKeys,
   mergeMessages,
   mergeSignups,
   genProofs,
