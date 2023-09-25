@@ -179,45 +179,11 @@ export function getRecipientTallyResult(
     resultTree.insert(leaf)
   }
   const resultProof = resultTree.genMerklePath(recipientIndex)
-  const spentVoiceCreditsHash = hashLeftRight(
-    BigInt(tally.totalSpentVoiceCredits.spent),
-    BigInt(tally.totalSpentVoiceCredits.salt)
-  )
-
-  const perVOSpentVoiceCreditsHash = genTallyResultCommitment(
-    tally.perVOSpentVoiceCredits.tally.map((x) => BigInt(x)),
-    BigInt(tally.perVOSpentVoiceCredits.salt),
-    recipientTreeDepth
-  )
-  console.log('spentVoiceCreditsHash', spentVoiceCreditsHash.toString())
-  console.log(
-    'perVOSpentVoiceCreditsHash',
-    perVOSpentVoiceCreditsHash.toString()
-  )
-  const newResultsCommitment = genTallyResultCommitment(
-    tally.results.tally.map((x) => BigInt(x)),
-    BigInt(tally.results.salt),
-    recipientTreeDepth
-  )
-  const newTallyCommitment = hash3([
-    newResultsCommitment,
-    spentVoiceCreditsHash,
-    perVOSpentVoiceCreditsHash,
-  ])
-  console.log('calculated newTallyCommitment', newTallyCommitment.toString())
-  console.log('tally file newTallyCommitment', tally.newTallyCommitment)
-  if (newTallyCommitment.toString() === newTallyCommitment) {
-    console.log('same newTallyCommitment')
-  } else {
-    console.log('different newTallyCommitment')
-  }
   return [
     recipientTreeDepth,
     recipientIndex,
     result,
     resultProof.pathElements.map((x) => x.map((y) => y.toString())),
-    spentVoiceCreditsHash,
-    perVOSpentVoiceCreditsHash,
   ]
 }
 
@@ -246,9 +212,6 @@ export function getRecipientTallyResultsBatch(
     tallyData.map((item) => item[1]),
     tallyData.map((item) => item[2]),
     tallyData.map((item) => item[3]),
-    tallyData.map((item) => item[4]),
-    tallyData.map((item) => item[5]),
-    tally.newTallyCommitment,
   ]
 }
 
@@ -262,6 +225,34 @@ export async function addTallyResultsBatch(
 ): Promise<BigNumber> {
   let totalGasUsed = BigNumber.from(0)
   const { tally } = tallyData.results
+
+  const spentVoiceCreditsHash = hashLeftRight(
+    BigInt(tally.totalSpentVoiceCredits.spent),
+    BigInt(tally.totalSpentVoiceCredits.salt)
+  )
+
+  const perVOSpentVoiceCreditsHash = genTallyResultCommitment(
+    tally.perVOSpentVoiceCredits.tally.map((x) => BigInt(x)),
+    BigInt(tally.perVOSpentVoiceCredits.salt),
+    recipientTreeDepth
+  )
+
+  const newResultCommitment = genTallyResultCommitment(
+    tally.results.tally.map((x) => BigInt(x)),
+    BigInt(tally.results.salt),
+    recipientTreeDepth
+  )
+  const newTallyCommitment = hash3(
+    newResultCommitment,
+    spentVoiceCreditsHash,
+    perVOSpentVoiceCreditsHash
+  )
+  if ('0x' + newTallyCommitment.toString(16) === tally.newTallyCommitment) {
+    console.log('OK')
+  } else {
+    console.error('Error: the newTallyCommitment is invalid.')
+  }
+
   for (let i = startIndex; i < tally.length; i = i + batchSize) {
     const data = getRecipientTallyResultsBatch(
       i,
@@ -270,7 +261,12 @@ export async function addTallyResultsBatch(
       batchSize
     )
 
-    const tx = await fundingRound.addTallyResultsBatch(...data)
+    const tx = await fundingRound.addTallyResultsBatch(
+      ...data,
+      '0x' + BigInt(spentVoiceCreditsHash).toString(16),
+      '0x' + BigInt(perVOSpentVoiceCreditsHash).toString(16),
+      tally.newTallyCommitment
+    )
     const receipt = await tx.wait()
     if (callback) {
       // the 2nd element in the data array has the array of
