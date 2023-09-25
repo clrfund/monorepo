@@ -4,6 +4,7 @@ import {
   IncrementalQuinTree,
   hashLeftRight,
   hash5,
+  hash3,
   hash2,
 } from 'maci-crypto'
 import { PubKey, PCommand, Message } from 'maci-domainobjs'
@@ -122,6 +123,7 @@ export {
   IncrementalQuinTree,
   hash5,
   hash2,
+  hash3,
   hashLeftRight,
   LEAVES_PER_NODE,
 }
