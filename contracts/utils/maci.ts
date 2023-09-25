@@ -250,7 +250,11 @@ export async function addTallyResultsBatch(
   if ('0x' + newTallyCommitment.toString(16) === tallyData.newTallyCommitment) {
     console.log('OK')
   } else {
-    console.error('Error: the newTallyCommitment is invalid.')
+    console.error(
+      'Error: the newTallyCommitment is invalid.',
+      '0x' + newTallyCommitment.toString(16),
+      tallyData.newTallyCommitment
+    )
   }
 
   for (let i = startIndex; i < tally.length; i = i + batchSize) {
@@ -264,6 +268,7 @@ export async function addTallyResultsBatch(
     const tx = await fundingRound.addTallyResultsBatch(
       recipientTreeDepth,
       ...data,
+      BigInt(tallyData.results.salt).toString(),
       BigInt(spentVoiceCreditsHash).toString(),
       BigInt(perVOSpentVoiceCreditsHash).toString(),
       tallyData.newTallyCommitment

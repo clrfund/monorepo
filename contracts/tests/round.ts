@@ -1340,7 +1340,7 @@ describe('Funding Round', () => {
       //   await maci.mock.treeDepths.returns(10, 10, tallyTreeDepth)
       const tallyWith1Contributor = {
         newTallyCommitment:
-          '0x26e6ae35c82006eff6408b713d477307b2da16c7a1ff15fb46c0762ee308e88a',
+          '0x2a7a1fe8c2773fdba262033741655070ba52fea7c1333049ec87c2c248e600bb',
         results: {
           commitment:
             '0x2f44c97ce649078012fd686eaf996fc6b8d817e11ab574f0d0a0d750ee1ec101',

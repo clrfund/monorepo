@@ -105,7 +105,7 @@ describe('MACI factory', () => {
 
     const deployTx = await maciDeployed
     // TODO: reduce the gas usage
-    expect(await getGasUsage(deployTx)).lessThan(15086973)
+    expect(await getGasUsage(deployTx)).lessThan(15094000)
   })
 
   it('allows only owner to deploy MACI', async () => {
