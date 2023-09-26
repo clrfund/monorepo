@@ -102,7 +102,7 @@ describe('End-to-end Tests', function () {
     console.log('after setting maci', setMaciTx.hash)
     await setMaciTx.wait()
 
-    const fundingRoundFactory = await deployContractWithLinkedLibraries(
+    fundingRoundFactory = await deployContractWithLinkedLibraries(
       deployer,
       'ClrFund',
       poseidonLibraries
