@@ -99,7 +99,6 @@ describe('End-to-end Tests', function () {
     const setMaciTx = await maciFactory.setMaciParameters(
       ...params.asContractParam()
     )
-    console.log('after setting maci', setMaciTx.hash)
     await setMaciTx.wait()
 
     fundingRoundFactory = await deployContractWithLinkedLibraries(
@@ -259,7 +258,7 @@ describe('End-to-end Tests', function () {
       num_queue_ops: DEFAULT_SR_QUEUE_OPS,
     })
     if (mergeMessageResult !== 0) {
-      throw new Error('Merge signups failed')
+      throw new Error('Merge message failed')
     }
 
     const mergeSignupsResult = await mergeSignups({

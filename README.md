@@ -62,14 +62,7 @@ In a future version, we plan to address this by routing ETH and token contributi
 
 ## Development
 
-### Install Node v12 with nvm
-
-```sh
-nvm install 12
-nvm use 12
-```
-
-If using the M1 chip in Apple products, you need to use Node v16.
+### Install Node v16 with nvm
 
 ```sh
 nvm install 16
