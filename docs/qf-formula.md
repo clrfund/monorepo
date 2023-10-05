@@ -43,26 +43,38 @@ The problem occurs when even the most aggressive funding scheme (i.e. fully quad
 
 In order to consume the entire budget, the equation requires alpha to fall out of the valid range for weights ( the closed interval [0, 1] ).
 
-When alpha is greater than 1, negative intermediate values occur in the  allocated amount equation, which causes overflow, which in v0.8.0 and above of Solidity cause a revert (while in prior version, overflow was simple ignored). 
+When alpha is greater than 1, negative intermediate values occur in the  allocated amount equation, which causes overflow, which in v0.8.0 and above of Solidity cause a revert (while in prior version, overflow was simply ignored).
 
 Below is the test case that demonstrates alpha = 6.25.
 
 $P_{1} = [ 0.4, 0.4 ]$
+
 $P_{2} = [ 0.4, 0.4 ]$
+
 $M = 10$
+
 $C = 0.4 * 4 = 1.6$
+
 $B = M + C = 11.6$
 
 Where this indicates 2 projects ($P_{1}$ and $P_{2}$), each with 2 contributions each of 0.4. M is the matching pool, C is the total contributions, B is the total budget.
 
 $B = 2 * (\alpha (\sqrt{C} + \sqrt{C})^2 + (1-\alpha)(C + C) )$
+
 $B = 2 * (\alpha (2\sqrt{C})^2 + (1-\alpha)(2C) )$
+
 $B = 2 * (\alpha 4C + 2C -\alpha2C)$
+
 $B = 2 * (\alpha 2C + 2C)$
+
 $B = \alpha 4C + 4C$
+
 $\alpha = \frac{B - 4C}{4C}$
+
 $\alpha = \frac{11.6 - 1.6}{1.6}$
+
 $\alpha = \frac{10}{1.6}$
+
 $\alpha = 6.25$
 
 
