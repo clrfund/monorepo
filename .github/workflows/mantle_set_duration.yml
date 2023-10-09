@@ -15,10 +15,6 @@ on:
         description: 'Clrfund factory address'
         required: true
         default: '0x006f39E6a6D15323334Be1db34C73088550BB20a'
-      branch_name:
-        description: 'Clrfund branch name'
-        required: true
-        default: 'cohort/EthSingapore'
       network:
         description: 'Network'
         required: true
@@ -44,4 +40,4 @@ jobs:
     - name: Run the set duration script
       run: |
         cd contracts
-        yarn hardhat set-duration --factory "${{ github.event.inputs.factory }}" --signup "${{ github.event.inputs.signup }}" --voting "${{ github.event.inputs.voting }}" --network "${{ github.event.inputs.network }}"
+        yarn hardhat set-durations --factory "${{ github.event.inputs.factory }}" --signup "${{ github.event.inputs.voting_period }}" --voting "${{ github.event.inputs.reallocation_period }}" --network "${{ github.event.inputs.network }}"
