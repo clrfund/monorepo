@@ -25,7 +25,7 @@ env:
   WALLET_PRIVATE_KEY: ${{ secrets.MANTLE_TESTNET_COORDINATOR_WALLET_PRIVATE_KEY }}
 
 jobs:
-  cancel-round:
+  set-durations:
     runs-on: ubuntu-22.04
     steps:
     - name: Use Node.js ${{ env.NODE_VERSION }}
