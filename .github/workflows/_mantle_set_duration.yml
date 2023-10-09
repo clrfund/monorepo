@@ -1,0 +1,51 @@
+name: Set the next round duration
+
+on:
+  workflow_dispatch
+    inputs:
+      voting_period:
+        description: 'Voting period in minutes'
+        required: true
+        default: '120'
+      reallocation_period:
+        description: 'Reallocation period in minutes'
+        required: true
+        default: '1'
+      branch_name:
+        description: 'Clrfund branch name'
+        required: true
+        default: 'cohort/EthSingapore'
+      subgraph_url:
+        description: 'Clrfund subgraph url'
+        required: true
+        default: 'https://graph.testnet.mantle.xyz/subgraphs/name/clrfund-ethsingapore-test'
+      network:
+        description: 'Network'
+        required: true
+        default: 'mantle-testnet'
+
+env:
+  NODE_VERSION: 16.x
+  WALLET_PRIVATE_KEY: ${{ secrets.MANTLE_TESTNET_COORDINATOR_WALLET_PRIVATE_KEY }}
+
+jobs:
+  cancel-round:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Use Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    - name: Checkout source code
+      uses: actions/checkout@v3
+    - name: Build CLR
+      run: |
+        yarn && yarn build
+    - name: Run the set duration script
+      run: |
+        cd contracts
+        export SUBGRPAH_URL="${{ github.event.inputs.subgraph_name }}"
+        echo $SUBGRAPH_URL
+        export FACTORY=$(curl -X POST -d '{"query":"{fundingRoundFactories {id}}"}' $SUBGRPAH_URL)
+        export FACTORY_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.FACTORY).data.fundingRoundFactories[0].id)')
+        yarn hardhat set-duration --factory ${FACTORY_ADDRESS} --signup "${{ github.event.inputs.signup }}" --voting "${{ github.event.inputs.voting }}" --network "${{ github.event.inputs.network }}"
