@@ -1,4 +1,4 @@
-name: Mantle testnet - set the next round duration
+name: Mantle testnet - Set voting duration
 
 on:
   workflow_dispatch:
