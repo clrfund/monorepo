@@ -1,4 +1,4 @@
-name: Create new round
+name: Create new round on the Mantle testnet
 
 on:
   workflow_dispatch
@@ -7,10 +7,10 @@ on:
         description: 'Clrfund branch name'
         required: true
         default: 'cohort/EthSingapore'
-      subgraph_url:
-        description: 'Clrfund subgraph url'
+      factory:
+        description: 'Clrfund factory address'
         required: true
-        default: 'https://graph.testnet.mantle.xyz/subgraphs/name/clrfund-ethsingapore-test'
+        default: '0x006f39E6a6D15323334Be1db34C73088550BB20a'
       network:
         description: 'Network'
         required: true
@@ -36,8 +36,5 @@ jobs:
     - name: Run create new round script
       run: |
         cd contracts
-        export SUBGRPAH_URL="${{ github.event.inputs.subgraph_name }}"
-        echo $SUBGRAPH_URL
-        export FACTORY=$(curl -X POST -d '{"query":"{fundingRoundFactories {id}}"}' $SUBGRPAH_URL)
-        export FACTORY_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.FACTORY).data.fundingRoundFactories[0].id)')
+        export FACTORY_ADDRESS="${{ github.event.inputs.factory }}"
         yarn hardhat run scripts/newRound.ts --network "${{ github.event.inputs.network }}"

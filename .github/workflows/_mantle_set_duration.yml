@@ -1,4 +1,4 @@
-name: Set the next round duration
+name: Set the next round duration on the Mantle testnet
 
 on:
   workflow_dispatch
@@ -11,14 +11,14 @@ on:
         description: 'Reallocation period in minutes'
         required: true
         default: '1'
+      factory:
+        description: 'Clrfund factory address'
+        required: true
+        default: '0x006f39E6a6D15323334Be1db34C73088550BB20a'
       branch_name:
         description: 'Clrfund branch name'
         required: true
         default: 'cohort/EthSingapore'
-      subgraph_url:
-        description: 'Clrfund subgraph url'
-        required: true
-        default: 'https://graph.testnet.mantle.xyz/subgraphs/name/clrfund-ethsingapore-test'
       network:
         description: 'Network'
         required: true
@@ -44,8 +44,4 @@ jobs:
     - name: Run the set duration script
       run: |
         cd contracts
-        export SUBGRPAH_URL="${{ github.event.inputs.subgraph_name }}"
-        echo $SUBGRAPH_URL
-        export FACTORY=$(curl -X POST -d '{"query":"{fundingRoundFactories {id}}"}' $SUBGRPAH_URL)
-        export FACTORY_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.FACTORY).data.fundingRoundFactories[0].id)')
-        yarn hardhat set-duration --factory ${FACTORY_ADDRESS} --signup "${{ github.event.inputs.signup }}" --voting "${{ github.event.inputs.voting }}" --network "${{ github.event.inputs.network }}"
+        yarn hardhat set-duration --factory "${{ github.event.inputs.factory }}" --signup "${{ github.event.inputs.signup }}" --voting "${{ github.event.inputs.voting }}" --network "${{ github.event.inputs.network }}"

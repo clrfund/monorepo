@@ -1,4 +1,4 @@
-name: Finalize a test round
+name: Finalize a test round on the Mantle testnet
 
 on:
   workflow_dispatch:
@@ -65,9 +65,6 @@ jobs:
         export FACTORY_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.fundingRoundFactories[0].id)')
         export ROUND_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.fundingRoundFactories[0].currentRound.id)')
         export MACI_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.fundingRoundFactories[0].currentRound.maci)')
-        #export TX_URL="${ETHERSCAN_URL}/api?module=account&action=txlistinternal&address=${MACI_ADDRESS}&startblock=0&page=10&offset=1&sort=asc&apikey=${ETHERSCAN_API_KEY}"
-        #export TXLIST=$(curl $TX_URL)
-        #export MACI_START_BLOCK=$(node -e 'console.log(JSON.parse(process.env.TXLIST).result[0].blockNumber)')
         export MACI_START_BLOCK="${{ github.event.inputs.maci_start_block }}"
         echo "MACI_START_BLOCK:" $MACI_START_BLOCK
         # tally and finalize
