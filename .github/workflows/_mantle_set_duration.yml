@@ -1,7 +1,7 @@
-name: Set the next round duration on the Mantle testnet
+name: 0 - Mantle network - set the next round duration
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
     inputs:
       voting_period:
         description: 'Voting period in minutes'
