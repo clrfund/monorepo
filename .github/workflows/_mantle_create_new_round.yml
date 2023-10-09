@@ -1,7 +1,7 @@
 name: Create new round on the Mantle testnet
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
     inputs:
       branch_name:
         description: 'Clrfund branch name'
