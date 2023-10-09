@@ -1,4 +1,4 @@
-name: 0 - Mantle network - set the next round duration
+name: Mantle testnet - set the next round duration
 
 on:
   workflow_dispatch:

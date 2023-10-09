@@ -1,4 +1,4 @@
-name: Cancel current round on the Mantle testnet
+name: Mantle network - Cancel current round
 
 on:
   workflow_dispatch:

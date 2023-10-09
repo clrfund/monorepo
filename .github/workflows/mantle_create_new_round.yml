@@ -1,4 +1,4 @@
-name: Create new round on the Mantle testnet
+name: Mantle testnet - Create new round
 
 on:
   workflow_dispatch:
