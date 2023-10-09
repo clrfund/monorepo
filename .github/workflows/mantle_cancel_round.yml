@@ -1,0 +1,40 @@
+name: Mantle network - Cancel current round
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch_name:
+        description: 'Clrfund branch name'
+        required: true
+        default: 'cohort/EthSingapore'
+      factory:
+        description: 'Clrfund factory address'
+        required: true
+        default: '0x006f39E6a6D15323334Be1db34C73088550BB20a'
+      network:
+        description: 'Network'
+        required: true
+        default: 'mantle-testnet'
+
+
+env:
+  NODE_VERSION: 16.x
+  WALLET_PRIVATE_KEY: ${{ secrets.MANTLE_TESTNET_COORDINATOR_WALLET_PRIVATE_KEY }}
+
+jobs:
+  cancel-round:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Use Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    - name: Checkout source code
+      uses: actions/checkout@v3
+    - name: Build CLR
+      run: |
+        yarn && yarn build
+    - name: Run the cancel round script
+      run: |
+        cd contracts
+        yarn hardhat cancel-round --factory "${{ github.event.inputs.factory }}" --network "${{ github.event.inputs.network }}"
