@@ -263,3 +263,8 @@ yarn hardhat export-round --output-dir ../vue-app/src/rounds --network <network>
 
 ## Troubleshooting
 If you encountered `core dumped` while running the genProofs script as seen in this [issue](https://github.com/clrfund/monorepo/issues/383), make sure the files are not corrupted due to disk space issue, e.g. check file sizes, checksum, and missing files.
+
+Also, lack of memory can also cause `core dump`, try to work around it by setting `max-old-space-size` before rrunning the tally script.
+```
+export NODE_OPTIONS=--max-old-space-size=4096
+```
