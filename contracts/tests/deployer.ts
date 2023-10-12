@@ -442,6 +442,8 @@ describe('Clr fund deployer', () => {
     const contributionAmount = UNIT.mul(10)
     const totalSpent = UNIT.mul(100)
     const totalSpentSalt = genRandomSalt().toString()
+    const resultsCommitment = genRandomSalt().toString()
+    const perVOVoiceCreditCommitment = genRandomSalt().toString()
 
     beforeEach(async () => {
       await factory.setUserRegistry(userRegistry.address)
@@ -479,7 +481,12 @@ describe('Clr fund deployer', () => {
       await provider.send('evm_increaseTime', [roundDuration])
       await setRoundTallyer(factory, coordinator)
       await expect(
-        factory.transferMatchingFunds(totalSpent, totalSpentSalt)
+        factory.transferMatchingFunds(
+          totalSpent,
+          totalSpentSalt,
+          resultsCommitment,
+          perVOVoiceCreditCommitment
+        )
       ).to.be.revertedWith('VotesNotTallied')
     })
 
@@ -488,7 +495,12 @@ describe('Clr fund deployer', () => {
       await provider.send('evm_increaseTime', [roundDuration])
       await setRoundTallyer(factory, coordinator)
       await expect(
-        factory.transferMatchingFunds(totalSpent, totalSpentSalt)
+        factory.transferMatchingFunds(
+          totalSpent,
+          totalSpentSalt,
+          resultsCommitment,
+          perVOVoiceCreditCommitment
+        )
       ).to.be.revertedWith('VotesNotTallied')
     })
 
@@ -500,7 +512,12 @@ describe('Clr fund deployer', () => {
       await provider.send('evm_increaseTime', [roundDuration])
       await setRoundTallyer(factory, coordinator)
       await expect(
-        factory.transferMatchingFunds(totalSpent, totalSpentSalt)
+        factory.transferMatchingFunds(
+          totalSpent,
+          totalSpentSalt,
+          resultsCommitment,
+          perVOVoiceCreditCommitment
+        )
       ).to.be.revertedWith('VotesNotTallied')
     })
 
@@ -513,7 +530,12 @@ describe('Clr fund deployer', () => {
       await provider.send('evm_increaseTime', [roundDuration])
       await setRoundTallyer(factory, coordinator)
       await expect(
-        factory.transferMatchingFunds(totalSpent, totalSpentSalt)
+        factory.transferMatchingFunds(
+          totalSpent,
+          totalSpentSalt,
+          resultsCommitment,
+          perVOVoiceCreditCommitment
+        )
       ).to.be.revertedWith('VotesNotTallied')
     })
 
@@ -524,13 +546,23 @@ describe('Clr fund deployer', () => {
       await expect(
         factory
           .connect(contributor)
-          .transferMatchingFunds(totalSpent, totalSpentSalt)
+          .transferMatchingFunds(
+            totalSpent,
+            totalSpentSalt,
+            resultsCommitment,
+            perVOVoiceCreditCommitment
+          )
       ).to.be.revertedWith('Ownable: caller is not the owner')
     })
 
     it('reverts if round has not been deployed', async () => {
       await expect(
-        factory.transferMatchingFunds(totalSpent, totalSpentSalt)
+        factory.transferMatchingFunds(
+          totalSpent,
+          totalSpentSalt,
+          resultsCommitment,
+          perVOVoiceCreditCommitment
+        )
       ).to.be.revertedWith('NoCurrentRound')
     })
   })

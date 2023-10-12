@@ -98,11 +98,29 @@ export function getRecipientClaimData(
   }
   const spentProof: MerkleProof = spentTree.genMerklePath(recipientIndex)
 
+  /* 
+  TODO fix this... maci-core explode the size of this package in the
+  vue-app build.  check why tree shaking not working..
+  const resultsCommitment = genTallyResultCommitment(
+    tally.results.tally.map((x) => BigInt(x)),
+    tally.results.salt,
+    recipientTreeDepth
+  )
+  */
+
+  const resultsCommitment = genRandomSalt().toString()
+  const spentVoiceCreditsCommitment = hash2([
+    BigInt(tally.totalSpentVoiceCredits.spent),
+    BigInt(tally.totalSpentVoiceCredits.salt),
+  ])
+
   return [
     recipientIndex,
     spent,
     spentProof.pathElements.map((x) => x.map((y) => y.toString())),
     spentSalt,
+    resultsCommitment,
+    spentVoiceCreditsCommitment,
   ]
 }
 
