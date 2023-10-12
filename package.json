@@ -14,6 +14,8 @@
       "**/@nomiclabs/**",
       "**/snarkjs/**",
       "**/snarkjs",
+      "**/maci-core/**",
+      "**/maci-core",
       "**/maci-circuits/**",
       "**/maci-circuits",
       "**/maci-cli/**",

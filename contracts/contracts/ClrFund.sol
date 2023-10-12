@@ -229,7 +229,9 @@ contract ClrFund is OwnableUpgradeable, IPubKey, SnarkCommon, Params {
     */
   function transferMatchingFunds(
     uint256 _totalSpent,
-    uint256 _totalSpentSalt
+    uint256 _totalSpentSalt,
+    uint256 _newResultCommitment,
+    uint256 _perVOSpentVoiceCreditsHash
   )
     external
     onlyOwner
@@ -253,7 +255,7 @@ contract ClrFund is OwnableUpgradeable, IPubKey, SnarkCommon, Params {
         roundToken.safeTransferFrom(fundingSource, address(currentRound), contribution);
       }
     }
-    currentRound.finalize(_totalSpent, _totalSpentSalt);
+    currentRound.finalize(_totalSpent, _totalSpentSalt, _newResultCommitment, _perVOSpentVoiceCreditsHash);
     emit RoundFinalized(address(currentRound));
   }
 

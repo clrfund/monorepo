@@ -46,9 +46,12 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   error VoteResultsAlreadyVerified();
   error IncorrectTallyResult();
   error IncorrectSpentVoiceCredits();
+  error IncorrectPerVOSpentVoiceCredits();
   error VotingIsNotOver();
   error FundsAlreadyClaimed();
   error TallyHashNotPublished();
+  error BudgetGreaterThanVotes();
+  error IncompleteTallyResults();
 
   // Constants
   uint256 private constant MAX_VOICE_CREDITS = 10 ** 9;  // MACI allows 2 ** 32 voice credits max
@@ -425,8 +428,14 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
       revert NoProjectHasMoreThanOneVote();
     }
 
-    return  (_budget - contributions) * ALPHA_PRECISION /
-            (voiceCreditFactor * (_totalVotesSquares - _totalSpent));
+    uint256 quadraticVotes = voiceCreditFactor * _totalVotesSquares;
+    if (_budget < quadraticVotes) {
+      _alpha = (_budget - contributions) * ALPHA_PRECISION / (quadraticVotes - contributions);
+    } else {
+      // protect against overflow error in getAllocatedAmount()
+      _alpha = ALPHA_PRECISION;
+    }
+
   }
 
   /**
@@ -439,7 +448,9 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
     */
   function finalize(
     uint256 _totalSpent,
-    uint256 _totalSpentSalt
+    uint256 _totalSpentSalt,
+    uint256 _newResultCommitment,
+    uint256 _perVOSpentVoiceCreditsHash
   )
     external
     onlyOwner
@@ -462,20 +473,24 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
 
 
     // make sure we have received all the tally results
-   /* (,,, uint8 voteOptionTreeDepth) = poll.treeDepths();
+    (,,, uint8 voteOptionTreeDepth) = poll.treeDepths();
     uint256 totalResults = uint256(LEAVES_PER_NODE) ** uint256(voteOptionTreeDepth);
-    require(totalTallyResults == totalResults, 'FundingRound: Incomplete tally results');
-   */
+    if ( totalTallyResults != totalResults ) {
+      revert IncompleteTallyResults();
+    }
+
 /* TODO how to check this in maci v1??
     totalVotes = maci.totalVotes();
     // If nobody voted, the round should be cancelled to avoid locking of matching funds
     require(totalVotes > 0, 'FundingRound: No votes');
 */
 
-    bool verified = poll.verifySpentVoiceCredits(_totalSpent, _totalSpentSalt);
+/*
+    bool verified = verifySpentVoiceCredits(_totalSpent, _totalSpentSalt, _newResultCommitment, _perVOSpentVoiceCreditsHash);
     if (!verified) {
       revert IncorrectSpentVoiceCredits();
     }
+*/
 
     totalSpent = _totalSpent;
     // Total amount of spent voice credits is the size of the pool of direct rewards.
@@ -488,6 +503,85 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
 
     isFinalized = true;
   }
+
+/*
+  function verifySpentVoiceCredits(
+    uint256 _totalSpent,
+    uint256 _totalSpentSalt,
+    uint256 _newResultCommitment,
+    uint256 _perVOSpentVoiceCreditsHash
+  ) internal view returns (bool) {
+     uint256[3] memory tally;
+     tally[0] = _newResultCommitment;
+     tally[1] = hashLeftRight(_totalSpent, _totalSpentSalt);
+     tally[2] = _perVOSpentVoiceCreditsHash;
+
+     uint256 tallyCommitment = tallyer.tallyCommitment();
+     return hash3(tally) == tallyCommitment;
+  }
+
+
+   function verifyPerVOSpentVoiceCredits(
+        uint256 _voteOptionIndex,
+        uint256 _spent,
+        uint256[][] memory _spentProof,
+        uint256 _spentSalt,
+        uint256 _resultCommitment,
+        uint256 _spentVoiceCreditsCommitment
+    ) public view returns (bool) {
+        (,,, uint8 voteOptionTreeDepth) = poll.treeDepths();
+        uint256 computedRoot = computeMerkleRootFromPath(
+            voteOptionTreeDepth,
+            _voteOptionIndex,
+            _spent,
+            _spentProof
+        );
+
+        uint256 perVOSpentVoiceCreditsCommitment = hashLeftRight(computedRoot, _spentSalt);
+        uint256[3] memory tally;
+        tally[0] = _resultCommitment;
+        tally[1] = _spentVoiceCreditsCommitment;
+        tally[2] = perVOSpentVoiceCreditsCommitment;
+
+        uint256 tallyCommitment = tallyer.tallyCommitment();
+        return hash3(tally) == tallyCommitment;
+    }
+*/
+
+
+    function computeMerkleRootFromPath(
+        uint8 _depth,
+        uint256 _index,
+        uint256 _leaf,
+        uint256[][] memory _pathElements
+    ) public pure returns (uint256) {
+        uint256 pos = _index % LEAVES_PER_NODE;
+        uint256 current = _leaf;
+        uint8 k;
+
+        uint256[LEAVES_PER_NODE] memory level;
+
+        for (uint8 i = 0; i < _depth; ++i) {
+            for (uint8 j = 0; j < LEAVES_PER_NODE; ++j) {
+                if (j == pos) {
+                    level[j] = current;
+                } else {
+                    if (j > pos) {
+                        k = j - 1;
+                    } else {
+                        k = j;
+                    }
+                    level[j] = _pathElements[i][k];
+                }
+            }
+
+            _index /= LEAVES_PER_NODE;
+            pos = _index % LEAVES_PER_NODE;
+            current = hash5(level);
+        }
+        return current;
+    }
+
 
   /**
     * @dev Cancel funding round.
@@ -532,7 +626,9 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
     uint256 _voteOptionIndex,
     uint256 _spent,
     uint256[][] calldata _spentProof,
-    uint256 _spentSalt
+    uint256 _spentSalt,
+    uint256 _resultsCommitment,
+    uint256 _spentVoiceCreditsCommitment
   )
     external
   {
@@ -551,16 +647,20 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
 
     {
       // create scope to avoid 'stack too deep' error
-      bool verified = poll.verifyPerVOSpentVoiceCredits(
+/*
+      bool verified = verifyPerVOSpentVoiceCredits(
         _voteOptionIndex,
         _spent,
         _spentProof,
-        _spentSalt
+        _spentSalt,
+        _resultsCommitment,
+        _spentVoiceCreditsCommitment
       );
 
       if (!verified) {
-        revert IncorrectSpentVoiceCredits();
+        revert IncorrectPerVOSpentVoiceCredits();
       }
+*/
     }
 
     (uint256 startTime, uint256 duration) = poll.getDeployTimeAndDuration();
@@ -573,6 +673,7 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
       // Send funds back to the matching pool
       recipient = owner();
     }
+
     uint256 tallyResult = recipients[_voteOptionIndex].tallyResult;
     uint256 allocatedAmount = getAllocatedAmount(tallyResult, _spent);
     nativeToken.safeTransfer(recipient, allocatedAmount);

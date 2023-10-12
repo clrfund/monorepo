@@ -3,7 +3,16 @@ import { ethers, waffle } from 'hardhat'
 import { use, expect } from 'chai'
 import { solidity } from 'ethereum-waffle'
 import { BigNumber, Contract, Signer, Wallet } from 'ethers'
-import { Keypair, createMessage, Message, PubKey } from '@clrfund/common'
+import {
+  Keypair,
+  createMessage,
+  Message,
+  PubKey,
+  hashLeftRight,
+  hash2,
+  hash3,
+} from '@clrfund/common'
+import { genTallyResultCommitment } from 'maci-core'
 
 import { UNIT } from '../utils/constants'
 import { getEventArg } from '../utils/contracts'
@@ -20,19 +29,19 @@ import {
 } from '../utils/deployment'
 import { getIpfsHash } from '../utils/ipfs'
 import {
+  bnSqrt,
   MaciParameters,
   addTallyResultsBatch,
   getRecipientClaimData,
   getCircuitFiles,
 } from '../utils/maci'
-import { readFileSync } from 'fs'
+import { unlink, readdir, readFileSync, existsSync, mkdirSync } from 'fs'
 import path from 'path'
 
 use(solidity)
 
 const ZERO = BigNumber.from(0)
 const DEFAULT_SR_QUEUE_OPS = 4
-
 const roundDuration = 7 * 86400
 
 // MACI zkFiles
@@ -45,16 +54,68 @@ const rapidSnarkExe = path.join(rapidSnarkDirectory, 'prover')
 const { processZkFile, tallyZkFile, processWitness, tallyWitness } =
   getCircuitFiles(circuit, circuitDirectory)
 let maciTransactionHash: string
+let alpha: bigint
+let voiceCreditFactor: bigint
+const ALPHA_PRECISION = BigNumber.from(10).pow(18)
 
 const timeMs = new Date().getTime()
-const tallyFile = `tally.json`
-const maciStateFile = `macistate_${timeMs}`
-const outputDir = '.'
+const outputDir = path.join('.', 'tally_output', `${timeMs}`)
+if (!existsSync(outputDir)) {
+  mkdirSync(outputDir, { recursive: true })
+}
+const tallyFile = path.join(outputDir, `tally.json`)
+const sbSaltFile = path.join(outputDir, `tally_0.json`)
+const maciStateFile = path.join(outputDir, `macistate_${timeMs}`)
 
 const currentBlockTimestamp = async (provider: any): Promise<number> => {
   const blockNum = await provider.getBlockNumber()
   const block = await provider.getBlock(blockNum)
   return Number(block.timestamp)
+}
+
+function sumVoiceCredits(voiceCredits: BigNumber[]): string {
+  const total = voiceCredits.reduce(
+    (sum, credits) => sum.add(credits),
+    BigNumber.from(0)
+  )
+  return total.toString()
+}
+
+/*
+ * tally up votes received by each recipient
+ * recipientsVotes[i][j] is the jth vote received by recipient i
+ * returns the tally result for each recipient
+ */
+function tallyVotes(recipientsVotes: BigNumber[][]): string[] {
+  const result = recipientsVotes.map((votes) => {
+    return votes.reduce(
+      (sum, voiceCredits) => sum.add(bnSqrt(voiceCredits)),
+      BigNumber.from(0)
+    )
+  })
+  return result
+}
+
+/*
+ * Calculate the funds that each recipient can claim
+ * votes[i][j] is the jth vote received by recipient i
+ * returns the tally result for each recipient
+ */
+async function calculateClaims(
+  fundingRound: Contract,
+  votes: BigNumber[][]
+): BigNumber[] {
+  const alpha = await fundingRound.alpha()
+  const factor = await fundingRound.voiceCreditFactor()
+  const tallyResult = tallyVotes(votes)
+  return tallyResult.map((quadraticVotes, i) => {
+    const spent = sumVoiceCredits(votes[i])
+    const quadratic = quadraticVotes.mul(quadraticVotes).mul(factor).mul(alpha)
+    const linear = BigNumber.from(spent)
+      .mul(factor)
+      .mul(ALPHA_PRECISION.sub(alpha))
+    return quadratic.add(linear).div(ALPHA_PRECISION)
+  })
 }
 
 describe('End-to-end Tests', function () {
@@ -99,7 +160,6 @@ describe('End-to-end Tests', function () {
     const setMaciTx = await maciFactory.setMaciParameters(
       ...params.asContractParam()
     )
-    console.log('after setting maci', setMaciTx.hash)
     await setMaciTx.wait()
 
     fundingRoundFactory = await deployContractWithLinkedLibraries(
@@ -203,6 +263,26 @@ describe('End-to-end Tests', function () {
     pollId = BigInt(await fundingRound.pollId())
   })
 
+  afterEach(() => {
+    // clean up tally and proof files after each test
+    // so that next test has a clean directory to start with
+    readdir(outputDir, (err, files) => {
+      if (err) throw err
+
+      for (const file of files) {
+        unlink(path.join(outputDir, file), (err) => {
+          if (err) throw err
+        })
+      }
+    })
+  })
+
+  async function timeTravel(duration: number) {
+    const currentTime = await currentBlockTimestamp(provider)
+    await provider.send('evm_increaseTime', [duration + currentTime])
+    await network.provider.send('evm_mine')
+  }
+
   async function makeContributions(amounts: BigNumber[]) {
     const contributions: { [key: string]: any }[] = []
     for (let index = 0; index < contributors.length; index++) {
@@ -253,13 +333,14 @@ describe('End-to-end Tests', function () {
     const providerUrl = (provider as any)._hardhatNetwork.config.url
 
     // Process messages and tally votes
-    const mergeMessageResult = await mergeMessages({
+    const mergeMessagesResult = await mergeMessages({
       contract: maci.address,
       poll_id: pollId.toString(),
       num_queue_ops: DEFAULT_SR_QUEUE_OPS,
     })
-    if (mergeMessageResult !== 0) {
-      throw new Error('Merge signups failed')
+
+    if (mergeMessagesResult !== 0) {
+      throw new Error('Merge messages failed')
     }
 
     const mergeSignupsResult = await mergeSignups({
@@ -267,6 +348,7 @@ describe('End-to-end Tests', function () {
       poll_id: pollId.toString(),
       num_queue_ops: DEFAULT_SR_QUEUE_OPS,
     })
+
     if (mergeSignupsResult !== 0) {
       throw new Error('Merge signups failed')
     }
@@ -286,6 +368,7 @@ describe('End-to-end Tests', function () {
       privkey: coordinatorKeypair.privKey.serialize(),
       macistate: maciStateFile,
     }
+
     const genProofResult = await genProofs(genProofArgs)
     if (genProofResult !== 0) {
       throw new Error('generation of proofs failed')
@@ -306,6 +389,7 @@ describe('End-to-end Tests', function () {
     })
 
     const tally = JSON.parse(readFileSync(tallyFile).toString())
+    const saltFile = JSON.parse(readFileSync(sbSaltFile).toString())
     const tallyHash = await getIpfsHash(tally)
     await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
 
@@ -319,10 +403,29 @@ describe('End-to-end Tests', function () {
       batchSize
     )
 
+    const newResultCommitment = genTallyResultCommitment(
+      tally.results.tally.map((x) => BigInt(x)),
+      tally.results.salt,
+      recipientTreeDepth
+    )
+
+    const newSpentVoiceCreditsCommitment = hash2([
+      BigInt(tally.totalSpentVoiceCredits.spent),
+      BigInt(tally.totalSpentVoiceCredits.salt),
+    ])
+
+    const perVOSpentVoiceCreditsCommitment = genTallyResultCommitment(
+      tally.perVOSpentVoiceCredits.tally.map((x) => BigInt(x)),
+      tally.perVOSpentVoiceCredits.salt,
+      recipientTreeDepth
+    )
+
     // Finalize round
     await fundingRoundFactory.transferMatchingFunds(
       tally.totalSpentVoiceCredits.spent,
-      tally.totalSpentVoiceCredits.salt
+      tally.totalSpentVoiceCredits.salt,
+      newResultCommitment.toString(),
+      perVOSpentVoiceCreditsCommitment.toString()
     )
 
     // Claim funds
@@ -335,9 +438,14 @@ describe('End-to-end Tests', function () {
         recipientTreeDepth,
         tally
       )
+      const tallyResultOnChain = await fundingRound.recipients(recipientIndex)
       const claimTx = await fundingRound
         .connect(recipient)
-        .claimFunds(...claimData)
+        .claimFunds(
+          ...claimData,
+          newResultCommitment.toString(),
+          newSpentVoiceCreditsCommitment.toString()
+        )
       const claimedAmount = await getEventArg(
         claimTx,
         fundingRound,
@@ -351,8 +459,8 @@ describe('End-to-end Tests', function () {
 
   it('should allocate funds correctly when users change keys', async () => {
     const contributions = await makeContributions([
-      UNIT.mul(8).div(10),
-      UNIT.mul(8).div(10),
+      UNIT.mul(50).div(10),
+      UNIT.mul(50).div(10),
     ])
     // Submit messages
     for (const contribution of contributions) {
@@ -401,19 +509,26 @@ describe('End-to-end Tests', function () {
       )
     }
 
-    const currentTime = await currentBlockTimestamp(provider)
-    await provider.send('evm_increaseTime', [roundDuration + currentTime])
-    await network.provider.send('evm_mine')
+    await timeTravel(roundDuration)
     const { tally, claims } = await finalizeRound()
-    expect(tally.totalVoiceCredits.spent).to.equal('160000')
-    expect(claims[1]).to.equal(UNIT.mul(58).div(10))
-    expect(claims[2]).to.equal(UNIT.mul(58).div(10))
+    const expectedTotalVoiceCredits = sumVoiceCredits(
+      contributions.map((x) => x.voiceCredits)
+    )
+    expect(tally.totalSpentVoiceCredits.spent).to.equal(
+      expectedTotalVoiceCredits
+    )
+    const expectedClaims = await calculateClaims(
+      fundingRound,
+      new Array(2).fill(contributions.map((x) => x.voiceCredits.div(2)))
+    )
+    expect(claims[1]).to.equal(expectedClaims[0])
+    expect(claims[2]).to.equal(expectedClaims[1])
   })
 
   it('should allocate funds correctly if not all voice credits are spent', async () => {
     const contributions = await makeContributions([
-      UNIT.mul(8).div(10),
-      UNIT.mul(8).div(10),
+      UNIT.mul(36).div(10),
+      UNIT.mul(36).div(10),
     ])
 
     // 2 contirbutors, divide their contributions into 4 parts, only contribute 2 parts to 2 projects
@@ -445,21 +560,31 @@ describe('End-to-end Tests', function () {
       )
     }
 
-    await provider.send('evm_increaseTime', [roundDuration])
+    await timeTravel(roundDuration)
     const { tally, claims } = await finalizeRound()
-    expect(tally.totalVoiceCredits.spent).to.equal('79524')
-    expect(claims[1].toString()).to.equal('5799999999999999999')
-    expect(claims[2].toString()).to.equal('5799999999999999999')
+    const expectedTotalVoiceCredits = sumVoiceCredits(
+      contributions.map((x) => x.voiceCredits.div(2))
+    )
+    expect(tally.totalSpentVoiceCredits.spent).to.equal(
+      expectedTotalVoiceCredits
+    )
+
+    const expectedClaims = await calculateClaims(
+      fundingRound,
+      new Array(2).fill(contributions.map((x) => x.voiceCredits.div(4)))
+    )
+    expect(claims[1]).to.equal(expectedClaims[0])
+    expect(claims[2]).to.equal(expectedClaims[1])
   })
 
   it('should overwrite votes 1', async () => {
     const [contribution, contribution2] = await makeContributions([
-      UNIT.mul(8).div(10),
-      UNIT.mul(4).div(10),
+      UNIT.mul(5),
+      UNIT.mul(90),
     ])
     const contributor = contribution.signer
     const votes = [
-      [1, contribution.voiceCredits.div(8)],
+      [1, contribution.voiceCredits.div(6)],
       [2, contribution.voiceCredits.div(2)],
       [1, contribution.voiceCredits.div(2)],
     ]
@@ -502,19 +627,36 @@ describe('End-to-end Tests', function () {
         [encPubKey.asContractParam()]
       )
 
-    await provider.send('evm_increaseTime', [roundDuration])
+    await timeTravel(roundDuration)
     const { tally, claims } = await finalizeRound()
-    expect(tally.totalVoiceCredits.spent).to.equal('120000')
-    expect(tally.results.tally[1]).to.equal('200')
-    expect(tally.results.tally[2]).to.equal('400')
-    expect(claims[1].toString()).to.equal('400000000000000000')
-    expect(claims[2].toString()).to.equal('10800000000000000000')
+    const expectedTotalVoiceCredits = sumVoiceCredits([
+      contribution.voiceCredits,
+      contribution2.voiceCredits,
+    ])
+    expect(tally.totalSpentVoiceCredits.spent).to.equal(
+      expectedTotalVoiceCredits
+    )
+
+    const voiceCredits1 = contribution.voiceCredits.div(2)
+    const submittedVoiceCredits = [
+      [voiceCredits1],
+      [voiceCredits1, contribution2.voiceCredits],
+    ]
+    const expectedTally = tallyVotes(submittedVoiceCredits)
+    expect(tally.results.tally[1]).to.equal(expectedTally[0])
+    expect(tally.results.tally[2]).to.equal(expectedTally[1])
+    const expectedClaims = await calculateClaims(
+      fundingRound,
+      submittedVoiceCredits
+    )
+    expect(claims[1]).to.equal(expectedClaims[0])
+    expect(claims[2]).to.equal(expectedClaims[1])
   })
 
   it('should overwrite votes 2', async () => {
     const [contribution, contribution2] = await makeContributions([
-      UNIT.mul(4).div(10),
-      UNIT.mul(4).div(10),
+      UNIT.mul(90),
+      UNIT.mul(40),
     ])
     const contributor = contribution.signer
     const votes = [
@@ -564,19 +706,34 @@ describe('End-to-end Tests', function () {
         [encPubKey.asContractParam()]
       )
 
-    await provider.send('evm_increaseTime', [roundDuration])
+    await timeTravel(roundDuration)
     const { tally, claims } = await finalizeRound()
-    expect(tally.totalVoiceCredits.spent).to.equal('80000')
+    const expectedTotalVoiceCredits = sumVoiceCredits([
+      contribution.voiceCredits,
+      contribution2.voiceCredits,
+    ])
+    expect(tally.totalSpentVoiceCredits.spent).to.equal(
+      expectedTotalVoiceCredits
+    )
+
+    const submittedVoiceCredits = [
+      [contribution.voiceCredits, contribution2.voiceCredits],
+    ]
+    const expectedTally = tallyVotes(submittedVoiceCredits)
     expect(tally.results.tally[1]).to.equal('0')
-    expect(tally.results.tally[2]).to.equal('400')
+    expect(tally.results.tally[2]).to.equal(expectedTally[0])
+    const expectedClaims = await calculateClaims(
+      fundingRound,
+      submittedVoiceCredits
+    )
     expect(claims[1]).to.equal(ZERO)
-    expect(claims[2]).to.equal(UNIT.mul(108).div(10))
+    expect(claims[2]).to.equal(expectedClaims[0])
   })
 
   it('should overwrite previous batch of votes', async () => {
     const [contribution, contribution2] = await makeContributions([
-      UNIT.mul(8).div(10),
-      UNIT.mul(4).div(10),
+      UNIT.mul(5),
+      UNIT.mul(40),
     ])
     const contributor = contribution.signer
     const votes = [
@@ -634,20 +791,39 @@ describe('End-to-end Tests', function () {
         [encPubKey.asContractParam()]
       )
 
-    await provider.send('evm_increaseTime', [roundDuration])
+    await timeTravel(roundDuration)
     const { tally, claims } = await finalizeRound()
-    expect(tally.totalVoiceCredits.spent).to.equal('120000')
-    expect(tally.results.tally[1]).to.equal('200')
-    expect(tally.results.tally[2]).to.equal('400')
+    const expectedTotalVoiceCredits = sumVoiceCredits([
+      contribution.voiceCredits,
+      contribution2.voiceCredits,
+    ])
+    expect(tally.totalSpentVoiceCredits.spent).to.equal(
+      expectedTotalVoiceCredits
+    )
+
+    const voiceCredits1 = contribution.voiceCredits.div(2)
+    const submittedVoiceCredits = [
+      [voiceCredits1],
+      [voiceCredits1, contribution2.voiceCredits],
+    ]
+    const expectedTally = tallyVotes(submittedVoiceCredits)
+
+    expect(tally.results.tally[1]).to.equal(expectedTally[0])
+    expect(tally.results.tally[2]).to.equal(expectedTally[1])
     expect(tally.results.tally[3]).to.equal('0')
-    expect(claims[1]).to.equal(UNIT.mul(4).div(10))
-    expect(claims[2]).to.equal(UNIT.mul(108).div(10))
+
+    const expectedClaims = await calculateClaims(
+      fundingRound,
+      submittedVoiceCredits
+    )
+    expect(claims[1]).to.equal(expectedClaims[0])
+    expect(claims[2]).to.equal(expectedClaims[1])
   })
 
   it('should invalidate votes in case of bribe', async () => {
     const [contribution, contribution2] = await makeContributions([
-      UNIT.mul(4).div(10),
-      UNIT.mul(4).div(10),
+      UNIT.mul(90),
+      UNIT.mul(40),
     ])
     const contributor = contribution.signer
     let message
@@ -752,10 +928,20 @@ describe('End-to-end Tests', function () {
         [encPubKey.asContractParam()]
       )
 
-    await provider.send('evm_increaseTime', [roundDuration])
+    await timeTravel(roundDuration)
     const { tally, claims } = await finalizeRound()
-    expect(tally.totalVoiceCredits.spent).to.equal('80000')
+    const expectedTotalVoiceCredits = sumVoiceCredits([
+      contribution.voiceCredits,
+      contribution2.voiceCredits,
+    ])
+    expect(tally.totalSpentVoiceCredits.spent).to.equal(
+      expectedTotalVoiceCredits
+    )
     expect(claims[1]).to.equal(BigNumber.from(0))
-    expect(claims[2]).to.equal(UNIT.mul(108).div(10))
+
+    const expectedClaims = await calculateClaims(fundingRound, [
+      [contribution.voiceCredits, contribution2.voiceCredits],
+    ])
+    expect(claims[2]).to.equal(expectedClaims[0])
   })
 })
