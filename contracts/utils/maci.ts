@@ -236,7 +236,7 @@ export async function addTallyResultsBatch(
   )
 
   const newResultCommitment = genTallyResultCommitment(
-    tally.map((x) => BigInt(x)),
+    tally.map((x: string) => BigInt(x)),
     BigInt(tallyData.results.salt),
     recipientTreeDepth
   )
