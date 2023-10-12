@@ -247,9 +247,7 @@ export async function addTallyResultsBatch(
     perVOSpentVoiceCreditsHash,
   ])
 
-  if ('0x' + newTallyCommitment.toString(16) === tallyData.newTallyCommitment) {
-    console.log('OK')
-  } else {
+  if ('0x' + newTallyCommitment.toString(16) !== tallyData.newTallyCommitment) {
     console.error(
       'Error: the newTallyCommitment is invalid.',
       '0x' + newTallyCommitment.toString(16),
