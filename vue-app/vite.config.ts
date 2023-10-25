@@ -1,10 +1,9 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import path from 'path'
+import * as path from 'path'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
-import inject from '@rollup/plugin-inject'
 import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
 
 // https://vitejs.dev/config/
@@ -40,9 +39,8 @@ export default defineConfig({
     alias: { '@': path.resolve(__dirname, 'src') },
   },
   optimizeDeps: {
-    include: ['@clrfund/common'],
     esbuildOptions: {
-      target: 'esnext', // to enable nable Big integer literals
+      target: 'esnext', // to enable Big integer literals
     },
   },
   build: {
