@@ -98,17 +98,12 @@ export function getRecipientClaimData(
   }
   const spentProof: MerkleProof = spentTree.genMerklePath(recipientIndex)
 
-  /* 
-  TODO fix this... maci-core explode the size of this package in the
-  vue-app build.  check why tree shaking not working..
   const resultsCommitment = genTallyResultCommitment(
     tally.results.tally.map((x) => BigInt(x)),
-    tally.results.salt,
+    BigInt(tally.results.salt),
     recipientTreeDepth
   )
-  */
 
-  const resultsCommitment = genRandomSalt().toString()
   const spentVoiceCreditsCommitment = hash2([
     BigInt(tally.totalSpentVoiceCredits.spent),
     BigInt(tally.totalSpentVoiceCredits.salt),
@@ -133,6 +128,29 @@ export function getPubKeyId(pubKey: PubKey): string {
   const pubKeyPair = pubKey.asContractParam()
   const id = utils.id(pubKeyPair.x + '.' + pubKeyPair.y)
   return id
+}
+
+/*
+ * This function was copied from MACI to work around tree shaking not working
+ * https://github.com/privacy-scaling-explorations/maci/blob/master/core/ts/MaciState.ts#L1581
+ *
+ * A helper function which hashes a list of results with a salt and returns the
+ * hash.
+ *
+ * @param results A list of vote weights
+ * @parm salt A random salt
+ * @return The hash of the results and the salt, with the salt last
+ */
+export function genTallyResultCommitment(
+  results: bigint[],
+  salt: bigint,
+  depth: number
+): bigint {
+  const tree = new IncrementalQuinTree(depth, BigInt(0), 5, hash5)
+  for (const result of results) {
+    tree.insert(result)
+  }
+  return hashLeftRight(tree.root, salt).valueOf()
 }
 
 export {

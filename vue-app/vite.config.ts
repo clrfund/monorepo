@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
-import nodeStdlibBrowser from 'node-stdlib-browser'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import inject from '@rollup/plugin-inject'
@@ -28,15 +28,21 @@ export default defineConfig({
       // https://stackoverflow.com/questions/75315371/vue-i18n-not-substituting-tokens-in-production-build
       runtimeOnly: false,
     }),
+    nodePolyfills({
+      globals: {
+        Buffer: true, // can also be 'build', 'dev', or false
+        global: true,
+        process: true,
+      },
+    }),
   ],
   resolve: {
-    alias: { '@': path.resolve(__dirname, 'src'), ...nodeStdlibBrowser },
+    alias: { '@': path.resolve(__dirname, 'src') },
   },
   optimizeDeps: {
     include: ['@clrfund/common'],
     esbuildOptions: {
       target: 'esnext', // to enable nable Big integer literals
-      inject: [require.resolve('node-stdlib-browser/helpers/esbuild/shim')],
     },
   },
   build: {
@@ -52,13 +58,6 @@ export default defineConfig({
           qrcode: ['qrcode'],
         },
       },
-      plugins: [
-        inject({
-          global: [require.resolve('node-stdlib-browser/helpers/esbuild/shim'), 'global'],
-          process: [require.resolve('node-stdlib-browser/helpers/esbuild/shim'), 'process'],
-          Buffer: [require.resolve('node-stdlib-browser/helpers/esbuild/shim'), 'Buffer'],
-        }),
-      ],
     },
   },
 })
