@@ -412,11 +412,6 @@ describe('End-to-end Tests', function () {
       recipientTreeDepth
     )
 
-    const newSpentVoiceCreditsCommitment = hash2([
-      BigInt(tally.totalSpentVoiceCredits.spent),
-      BigInt(tally.totalSpentVoiceCredits.salt),
-    ])
-
     const perVOSpentVoiceCreditsCommitment = genTallyResultCommitment(
       tally.perVOSpentVoiceCredits.tally.map((x) => BigInt(x)),
       tally.perVOSpentVoiceCredits.salt,
@@ -443,11 +438,7 @@ describe('End-to-end Tests', function () {
       )
       const claimTx = await fundingRound
         .connect(recipient)
-        .claimFunds(
-          ...claimData,
-          newResultCommitment.toString(),
-          newSpentVoiceCreditsCommitment.toString()
-        )
+        .claimFunds(...claimData)
       const claimedAmount = await getEventArg(
         claimTx,
         fundingRound,
