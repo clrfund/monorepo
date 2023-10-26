@@ -3,7 +3,6 @@
   "version": "4.3.0",
   "license": "GPL-3.0",
   "scripts": {
-    "postinstallx": "ln -sf ../../snarkjs ./node_modules/maci-circuits/node_modules/snarkjs && ln -sf ../../../../../../snarkjs ./@clrfund/maci-cli/node_modules/maci-circuits/node_modules/snarkjs",
     "hardhat": "hardhat",
     "build": "hardhat compile",
     "node": "hardhat node --port 18545 --hostname 0.0.0.0",
@@ -29,9 +28,9 @@
     "solidity-rlp": "2.0.8"
   },
   "devDependencies": {
-    "@clrfund/maci-circuits": "1.1.4",
+    "@clrfund/maci-circuits": "1.1.5",
     "@clrfund/common": "^0.0.1",
-    "@clrfund/maci-cli": "1.1.4",
+    "@clrfund/maci-cli": "1.1.5",
     "@ethereum-waffle/mock-contract": "^3.4.4",
     "@kleros/gtcr-encoder": "^1.4.0",
     "@nomiclabs/hardhat-ethers": "^2.2.1",

@@ -604,10 +604,10 @@
     "@chainsafe/persistent-merkle-tree" "^0.4.2"
     case "^1.6.3"
 
-"@clrfund/maci-circuits@1.1.4":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@clrfund/maci-circuits/-/maci-circuits-1.1.4.tgz#70e0e662faeacd91affcb4697365eff762079acb"
-  integrity sha512-hV+HNRJG0rtzzI/6P+UyG7gsPzDsW3GO/GsbgTtPbRNTOB/DSF/isQGCOMLKVPr1XIySMXiDK1pdERiyLlUMTg==
+"@clrfund/maci-circuits@1.1.5":
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/@clrfund/maci-circuits/-/maci-circuits-1.1.5.tgz#0ff8e1dc209327594c8cecbae4c1f9cf7679fdfa"
+  integrity sha512-SUGRtU0+NeCVvb5pArES3g04n4GTzeg5XxioxHj5lB+YWceWO3dPoiQBryrW6pQQBylC0BzwtGNhQb4yyupAHQ==
   dependencies:
     argparse "^2.0.1"
     circomlib "https://github.com/weijiekoh/circomlib#ac85e82c1914d47789e2032fb11ceb2cfdd38a2b"
@@ -615,12 +615,12 @@
     snarkjs "^0.5.0"
     tmp "^0.2.1"
 
-"@clrfund/maci-cli@1.1.4":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@clrfund/maci-cli/-/maci-cli-1.1.4.tgz#efd8756dc51bd9e128cc4b1afbba43c1eb02f4dd"
-  integrity sha512-oPs1rx1jeKygalv0e4ZB5vG4lLvu43Afqad/2YhBJ1O9kg/47S+sKWOj+VAk1Bzbd7JENwVP3tw24yjTgnFvLA==
+"@clrfund/maci-cli@1.1.5":
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/@clrfund/maci-cli/-/maci-cli-1.1.5.tgz#e6939f2e9dbd7d2a8fa7e50527c9c7ba3f90f5dd"
+  integrity sha512-tgh/qHwz6KFToKfwubdvVjn6P7jeS6Z2Sy9tdk4jizGdJ5x0r9Do84x8uJN5ithkb3ND6KbgI+tUMqnz/PYhvA==
   dependencies:
-    "@clrfund/maci-circuits" "1.1.4"
+    "@clrfund/maci-circuits" "1.1.5"
     "@nomiclabs/hardhat-ethers" "^2.0.2"
     argparse "^1.0.10"
     circom_runtime "^0.1.22"
