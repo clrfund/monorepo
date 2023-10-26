@@ -604,11 +604,23 @@
     "@chainsafe/persistent-merkle-tree" "^0.4.2"
     case "^1.6.3"
 
-"@clrfund/maci-cli@^1.1.3":
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/@clrfund/maci-cli/-/maci-cli-1.1.3.tgz#1ac174ade46b2126e94b6a8aa3a96e96af7ed97f"
-  integrity sha512-6Wbwx1sKhLMk/svvKOTXHFTvo1dak1y5J5pME619owolULl55G2Eb9ZHWGrxLbw9AAUZl+hbdUriiRomOLyhzA==
+"@clrfund/maci-circuits@1.1.4":
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/@clrfund/maci-circuits/-/maci-circuits-1.1.4.tgz#70e0e662faeacd91affcb4697365eff762079acb"
+  integrity sha512-hV+HNRJG0rtzzI/6P+UyG7gsPzDsW3GO/GsbgTtPbRNTOB/DSF/isQGCOMLKVPr1XIySMXiDK1pdERiyLlUMTg==
   dependencies:
+    argparse "^2.0.1"
+    circomlib "https://github.com/weijiekoh/circomlib#ac85e82c1914d47789e2032fb11ceb2cfdd38a2b"
+    shelljs "^0.8.3"
+    snarkjs "^0.5.0"
+    tmp "^0.2.1"
+
+"@clrfund/maci-cli@1.1.4":
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/@clrfund/maci-cli/-/maci-cli-1.1.4.tgz#efd8756dc51bd9e128cc4b1afbba43c1eb02f4dd"
+  integrity sha512-oPs1rx1jeKygalv0e4ZB5vG4lLvu43Afqad/2YhBJ1O9kg/47S+sKWOj+VAk1Bzbd7JENwVP3tw24yjTgnFvLA==
+  dependencies:
+    "@clrfund/maci-circuits" "1.1.4"
     "@nomiclabs/hardhat-ethers" "^2.0.2"
     argparse "^1.0.10"
     circom_runtime "^0.1.22"
@@ -617,7 +629,6 @@
     ffiasm "0.1.3"
     hardhat "^2.0.11"
     js-yaml "4.0.0"
-    maci-circuits "1.1.1"
     maci-common "1.1.1"
     maci-contracts "1.1.1"
     maci-core "1.1.1"
@@ -7481,9 +7492,9 @@ circomlib@^2.0.0, circomlib@^2.0.5:
     ffjavascript "0.1.0"
     web3-utils "^1.3.0"
 
-"circomlib@github:weijiekoh/circomlib#ac85e82c1914d47789e2032fb11ceb2cfdd38a2b":
+"circomlib@https://github.com/weijiekoh/circomlib#ac85e82c1914d47789e2032fb11ceb2cfdd38a2b":
   version "1.0.0"
-  resolved "https://codeload.github.com/weijiekoh/circomlib/tar.gz/ac85e82c1914d47789e2032fb11ceb2cfdd38a2b"
+  resolved "https://github.com/weijiekoh/circomlib#ac85e82c1914d47789e2032fb11ceb2cfdd38a2b"
 
 "circomlib@https://github.com/weijiekoh/circomlib.git#24ed08eee0bb613b8c0135d66c1013bd9f78d50a":
   version "0.5.2"
@@ -14610,17 +14621,6 @@ luxon@^3.1.1, luxon@^3.2.1:
   version "3.4.2"
   resolved "https://registry.yarnpkg.com/luxon/-/luxon-3.4.2.tgz#f5bcab779f3d6a943ee7c8621c2b416bc10abd24"
   integrity sha512-uBoAVCVcajsrqy3pv7eo5jEUz1oeLmCcnMv8n4AJpT5hbpN9lUssAXibNElpbLce3Mhm9dyBzwYLs9zctM/0tA==
-
-maci-circuits@1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/maci-circuits/-/maci-circuits-1.1.1.tgz#640d2cf9950013ca192e83f39cb4bbc5dbf59ea4"
-  integrity sha512-t5Vk8Z45joTot/Yc63rBT0LGNIaENzGHQiZXsFYSFv92waAEpHlDyP5KzE6m2x73i9I8IFx6HNHxm11Ppc8umA==
-  dependencies:
-    argparse "^2.0.1"
-    circomlib "github:weijiekoh/circomlib#ac85e82c1914d47789e2032fb11ceb2cfdd38a2b"
-    shelljs "^0.8.3"
-    snarkjs "^0.5.0"
-    tmp "^0.2.1"
 
 maci-common@1.1.1:
   version "1.1.1"

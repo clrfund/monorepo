@@ -12,7 +12,7 @@ import {
   hash2,
   hash3,
 } from '@clrfund/common'
-import { genTallyResultCommitment } from 'maci-core'
+import { genTallyResultCommitment } from '@clrfund/common'
 
 import { UNIT } from '../utils/constants'
 import { getEventArg } from '../utils/contracts'

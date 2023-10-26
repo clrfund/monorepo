@@ -29,10 +29,9 @@
     "solidity-rlp": "2.0.8"
   },
   "devDependencies": {
-    "maci-circuits": "1.1.1",
-    "maci-core": "1.1.1",
+    "@clrfund/maci-circuits": "1.1.4",
     "@clrfund/common": "^0.0.1",
-    "@clrfund/maci-cli": "^1.1.3",
+    "@clrfund/maci-cli": "1.1.4",
     "@ethereum-waffle/mock-contract": "^3.4.4",
     "@kleros/gtcr-encoder": "^1.4.0",
     "@nomiclabs/hardhat-ethers": "^2.2.1",

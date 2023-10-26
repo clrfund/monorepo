@@ -10,7 +10,7 @@ import {
 } from '@clrfund/maci-cli'
 
 import { readFileSync } from 'fs'
-import { MaciParameters } from './maci.ts'
+import { MaciParameters } from './maci'
 
 const TREE_ARITY = 5
 

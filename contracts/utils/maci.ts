@@ -10,9 +10,9 @@ import {
   LEAVES_PER_NODE,
 } from '@clrfund/common'
 
-import { genTallyResultCommitment } from 'maci-core'
+import { genTallyResultCommitment } from '@clrfund/common'
 import { VerifyingKey } from 'maci-domainobjs'
-import { extractVk } from 'maci-circuits'
+import { extractVk } from '@clrfund/maci-circuits'
 import { CIRCUITS } from './deployment'
 import path from 'path'
 
@@ -230,7 +230,7 @@ export async function addTallyResultsBatch(
   )
 
   const perVOSpentVoiceCreditsHash = genTallyResultCommitment(
-    tallyData.perVOSpentVoiceCredits.tally.map((x) => BigInt(x)),
+    tallyData.perVOSpentVoiceCredits.tally.map((x: string) => BigInt(x)),
     BigInt(tallyData.perVOSpentVoiceCredits.salt),
     recipientTreeDepth
   )
@@ -267,7 +267,7 @@ export async function addTallyResultsBatch(
       recipientTreeDepth,
       ...data,
       BigInt(tallyData.results.salt).toString(),
-      BigInt(spentVoiceCreditsHash).toString(),
+      spentVoiceCreditsHash.toString(),
       BigInt(perVOSpentVoiceCreditsHash).toString(),
       tallyData.newTallyCommitment
     )
