@@ -50,12 +50,8 @@ const circuitDirectory = process.env.CIRCUIT_DIRECTORY || '../../params'
 const rapidSnarkDirectory =
   process.env.RAPIDSNARK_DIRECTORY || '../../rapidsnark/build'
 const rapidSnarkExe = path.join(rapidSnarkDirectory, 'prover')
-const {
-  processZkFile,
-  tallyZkFile,
-  processWitness,
-  tallyWitness,
-} = getCircuitFiles(circuit, circuitDirectory)
+const { processZkFile, tallyZkFile, processWitness, tallyWitness } =
+  getCircuitFiles(circuit, circuitDirectory)
 let maciTransactionHash: string
 let alpha: bigint
 let voiceCreditFactor: bigint
@@ -90,7 +86,7 @@ function sumVoiceCredits(voiceCredits: BigNumber[]): string {
  * returns the tally result for each recipient
  */
 function tallyVotes(recipientsVotes: BigNumber[][]): BigNumber[] {
-  const result = recipientsVotes.map(votes => {
+  const result = recipientsVotes.map((votes) => {
     return votes.reduce(
       (sum, voiceCredits) => sum.add(bnSqrt(voiceCredits)),
       BigNumber.from(0)
@@ -113,10 +109,7 @@ async function calculateClaims(
   const tallyResult = tallyVotes(votes)
   return tallyResult.map((quadraticVotes, i) => {
     const spent = sumVoiceCredits(votes[i])
-    const quadratic = quadraticVotes
-      .mul(quadraticVotes)
-      .mul(factor)
-      .mul(alpha)
+    const quadratic = quadraticVotes.mul(quadraticVotes).mul(factor).mul(alpha)
     const linear = BigNumber.from(spent)
       .mul(factor)
       .mul(ALPHA_PRECISION.sub(alpha))
@@ -124,7 +117,7 @@ async function calculateClaims(
   })
 }
 
-describe('End-to-end Tests', function() {
+describe('End-to-end Tests', function () {
   this.timeout(60 * 60 * 1000)
   this.bail(true)
 
@@ -281,7 +274,7 @@ describe('End-to-end Tests', function() {
       if (err) throw err
 
       for (const file of files) {
-        unlink(path.join(outputDir, file), err => {
+        unlink(path.join(outputDir, file), (err) => {
           if (err) throw err
         })
       }
@@ -414,7 +407,7 @@ describe('End-to-end Tests', function() {
     )
 
     const newResultCommitment = genTallyResultCommitment(
-      tally.results.tally.map(x => BigInt(x)),
+      tally.results.tally.map((x) => BigInt(x)),
       tally.results.salt,
       recipientTreeDepth
     )
@@ -425,7 +418,7 @@ describe('End-to-end Tests', function() {
     ])
 
     const perVOSpentVoiceCreditsCommitment = genTallyResultCommitment(
-      tally.perVOSpentVoiceCredits.tally.map(x => BigInt(x)),
+      tally.perVOSpentVoiceCredits.tally.map((x) => BigInt(x)),
       tally.perVOSpentVoiceCredits.salt,
       recipientTreeDepth
     )
@@ -513,22 +506,22 @@ describe('End-to-end Tests', function() {
       }
 
       await fundingRound.connect(contributor).submitMessageBatch(
-        messages.reverse().map(msg => msg.asContractParam()),
-        encPubKeys.reverse().map(key => key.asContractParam())
+        messages.reverse().map((msg) => msg.asContractParam()),
+        encPubKeys.reverse().map((key) => key.asContractParam())
       )
     }
 
     await timeTravel(roundDuration)
     const { tally, claims } = await finalizeRound()
     const expectedTotalVoiceCredits = sumVoiceCredits(
-      contributions.map(x => x.voiceCredits)
+      contributions.map((x) => x.voiceCredits)
     )
     expect(tally.totalSpentVoiceCredits.spent).to.equal(
       expectedTotalVoiceCredits
     )
     const expectedClaims = await calculateClaims(
       fundingRound,
-      new Array(2).fill(contributions.map(x => x.voiceCredits.div(2)))
+      new Array(2).fill(contributions.map((x) => x.voiceCredits.div(2)))
     )
     expect(claims[1]).to.equal(expectedClaims[0])
     expect(claims[2]).to.equal(expectedClaims[1])
@@ -564,15 +557,15 @@ describe('End-to-end Tests', function() {
         nonce += 1
       }
       await fundingRound.connect(contributor).submitMessageBatch(
-        messages.reverse().map(msg => msg.asContractParam()),
-        encPubKeys.reverse().map(key => key.asContractParam())
+        messages.reverse().map((msg) => msg.asContractParam()),
+        encPubKeys.reverse().map((key) => key.asContractParam())
       )
     }
 
     await timeTravel(roundDuration)
     const { tally, claims } = await finalizeRound()
     const expectedTotalVoiceCredits = sumVoiceCredits(
-      contributions.map(x => x.voiceCredits.div(2))
+      contributions.map((x) => x.voiceCredits.div(2))
     )
     expect(tally.totalSpentVoiceCredits.spent).to.equal(
       expectedTotalVoiceCredits
@@ -580,7 +573,7 @@ describe('End-to-end Tests', function() {
 
     const expectedClaims = await calculateClaims(
       fundingRound,
-      new Array(2).fill(contributions.map(x => x.voiceCredits.div(4)))
+      new Array(2).fill(contributions.map((x) => x.voiceCredits.div(4)))
     )
     expect(claims[1]).to.equal(expectedClaims[0])
     expect(claims[2]).to.equal(expectedClaims[1])
@@ -616,8 +609,8 @@ describe('End-to-end Tests', function() {
       encPubKeys.push(encPubKey)
     }
     await fundingRound.connect(contributor).submitMessageBatch(
-      messages.reverse().map(msg => msg.asContractParam()),
-      encPubKeys.reverse().map(key => key.asContractParam())
+      messages.reverse().map((msg) => msg.asContractParam()),
+      encPubKeys.reverse().map((key) => key.asContractParam())
     )
     const [message, encPubKey] = createMessage(
       contribution2.stateIndex,
@@ -693,8 +686,8 @@ describe('End-to-end Tests', function() {
       encPubKeys.push(encPubKey)
     }
     await fundingRound.connect(contributor).submitMessageBatch(
-      messages.reverse().map(msg => msg.asContractParam()),
-      encPubKeys.reverse().map(key => key.asContractParam())
+      messages.reverse().map((msg) => msg.asContractParam()),
+      encPubKeys.reverse().map((key) => key.asContractParam())
     )
 
     // contribution 2
@@ -777,8 +770,8 @@ describe('End-to-end Tests', function() {
         encPubKeys.push(encPubKey)
       }
       await fundingRound.connect(contributor).submitMessageBatch(
-        messages.reverse().map(msg => msg.asContractParam()),
-        encPubKeys.reverse().map(key => key.asContractParam())
+        messages.reverse().map((msg) => msg.asContractParam()),
+        encPubKeys.reverse().map((key) => key.asContractParam())
       )
     }
 
@@ -867,8 +860,8 @@ describe('End-to-end Tests', function() {
     messageBatch1.push(message)
     encPubKeyBatch1.push(encPubKey)
     await fundingRound.connect(contributor).submitMessageBatch(
-      messageBatch1.reverse().map(msg => msg.asContractParam()),
-      encPubKeyBatch1.reverse().map(key => key.asContractParam())
+      messageBatch1.reverse().map((msg) => msg.asContractParam()),
+      encPubKeyBatch1.reverse().map((key) => key.asContractParam())
     )
 
     // override votes
@@ -915,8 +908,8 @@ describe('End-to-end Tests', function() {
     messageBatch2.push(message)
     encPubKeyBatch2.push(encPubKey)
     await fundingRound.connect(contributor).submitMessageBatch(
-      messageBatch2.reverse().map(msg => msg.asContractParam()),
-      encPubKeyBatch2.reverse().map(key => key.asContractParam())
+      messageBatch2.reverse().map((msg) => msg.asContractParam()),
+      encPubKeyBatch2.reverse().map((key) => key.asContractParam())
     )
 
     // contribution 2
