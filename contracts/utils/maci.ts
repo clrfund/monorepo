@@ -78,13 +78,18 @@ export class MaciParameters {
     ]
   }
 
-  static fromConfig(circuit: string, directory: string): MaciParameters {
+  static async fromConfig(
+    circuit: string,
+    directory: string
+  ): Promise<MaciParameters> {
     const params = CIRCUITS[circuit]
     const { processZkFile, tallyZkFile } = getCircuitFiles(circuit, directory)
     const processVk: VerifyingKey = VerifyingKey.fromObj(
-      extractVk(processZkFile)
+      await extractVk(processZkFile)
     )
-    const tallyVk: VerifyingKey = VerifyingKey.fromObj(extractVk(tallyZkFile))
+    const tallyVk: VerifyingKey = VerifyingKey.fromObj(
+      await extractVk(tallyZkFile)
+    )
 
     return new MaciParameters({
       ...params.maxValues,
