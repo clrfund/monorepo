@@ -6,7 +6,7 @@ import { keccak256 } from '@ethersproject/solidity'
 import { gtcrEncode } from '@kleros/gtcr-encoder'
 
 import { UNIT, ZERO_ADDRESS } from '../utils/constants'
-import { getTxFee } from '../utils/contracts'
+import { getTxFee, getEventArg } from '../utils/contracts'
 import { deployContract } from '../utils/deployment'
 
 use(solidity)
@@ -16,6 +16,17 @@ const MAX_RECIPIENTS = 15
 
 async function getCurrentTime(): Promise<number> {
   return (await provider.getBlock('latest')).timestamp
+}
+
+function getRecipientId(
+  registryAddress: string,
+  address: string,
+  metadata: string
+): string {
+  return keccak256(
+    ['address', 'address', 'string'],
+    [registryAddress, address, metadata]
+  )
 }
 
 describe('Simple Recipient Registry', () => {
@@ -69,10 +80,6 @@ describe('Simple Recipient Registry', () => {
     let metadata: string
     let recipientId: string
 
-    function getRecipientId(address: string, metadata: string): string {
-      return keccak256(['address', 'string'], [address, metadata])
-    }
-
     beforeEach(async () => {
       await registry.connect(controller).setMaxRecipients(MAX_RECIPIENTS)
       recipientAddress = recipient.address
@@ -81,7 +88,7 @@ describe('Simple Recipient Registry', () => {
         description: 'Description',
         imageHash: 'Ipfs imageHash',
       })
-      recipientId = getRecipientId(recipientAddress, metadata)
+      recipientId = getRecipientId(registry.address, recipientAddress, metadata)
     })
 
     it('allows owner to add recipient', async () => {
@@ -110,6 +117,7 @@ describe('Simple Recipient Registry', () => {
       const anotherRecipientAddress =
         '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
       const anotherRecipientId = getRecipientId(
+        registry.address,
         anotherRecipientAddress,
         metadata
       )
@@ -256,9 +264,17 @@ describe('Simple Recipient Registry', () => {
 
       // Replace recipients
       const removedRecipient1 = '0x0000000000000000000000000000000000000001'
-      const removedRecipient1Id = getRecipientId(removedRecipient1, metadata)
+      const removedRecipient1Id = getRecipientId(
+        registry.address,
+        removedRecipient1,
+        metadata
+      )
       const removedRecipient2 = '0x0000000000000000000000000000000000000002'
-      const removedRecipient2Id = getRecipientId(removedRecipient2, metadata)
+      const removedRecipient2Id = getRecipientId(
+        registry.address,
+        removedRecipient2,
+        metadata
+      )
       await registry.removeRecipient(removedRecipient1Id)
       await registry.removeRecipient(removedRecipient2Id)
       const addedRecipient1 = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
@@ -571,10 +587,6 @@ describe('Optimistic recipient registry', () => {
     let metadata: string
     let recipientId: string
 
-    function getRecipientId(address: string, metadata: string): string {
-      return keccak256(['address', 'string'], [address, metadata])
-    }
-
     beforeEach(async () => {
       await registry.connect(controller).setMaxRecipients(MAX_RECIPIENTS)
       recipientAddress = recipient.address
@@ -583,7 +595,7 @@ describe('Optimistic recipient registry', () => {
         description: 'Description',
         imageHash: 'Ipfs imageHash',
       })
-      recipientId = getRecipientId(recipientAddress, metadata)
+      recipientId = getRecipientId(registry.address, recipientAddress, metadata)
     })
 
     it('allows anyone to submit registration request', async () => {
@@ -808,7 +820,11 @@ describe('Optimistic recipient registry', () => {
           imageHash: 'Ipfs imageHash',
         })
         recipientAddress = `0x000000000000000000000000000000000000${recipientName}`
-        recipientId = getRecipientId(recipientAddress, metadata)
+        recipientId = getRecipientId(
+          registry.address,
+          recipientAddress,
+          metadata
+        )
         if (i < MAX_RECIPIENTS) {
           await registry.addRecipient(recipientAddress, metadata, {
             value: baseDeposit,
@@ -952,6 +968,41 @@ describe('Optimistic recipient registry', () => {
           currentTime
         )
       ).to.equal(ZERO_ADDRESS)
+    })
+
+    it('creates different recipient id for different recipient registries', async () => {
+      const txOne = await registry.addRecipient(recipientAddress, metadata, {
+        value: baseDeposit,
+      })
+      const idOne = await getEventArg(
+        txOne,
+        registry,
+        'RequestSubmitted',
+        '_recipientId'
+      )
+
+      const anotherRegistry = await deployContract(
+        deployer,
+        'OptimisticRecipientRegistry',
+        [baseDeposit, challengePeriodDuration, controller.address]
+      )
+      const txTwo = await anotherRegistry.addRecipient(
+        recipientAddress,
+        metadata,
+        {
+          value: baseDeposit,
+        }
+      )
+      const idTwo = await getEventArg(
+        txTwo,
+        anotherRegistry,
+        'RequestSubmitted',
+        '_recipientId'
+      )
+
+      expect(idOne.length).to.be.gt(0)
+      expect(idTwo.length).to.be.gt(0)
+      expect(idOne).to.not.eq(idTwo)
     })
   })
 })
