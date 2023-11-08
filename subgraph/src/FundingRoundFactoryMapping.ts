@@ -17,7 +17,7 @@ import { FundingRound as FundingRoundContract } from '../generated/FundingRoundF
 
 import { OptimisticRecipientRegistry as RecipientRegistryContract } from '../generated/FundingRoundFactory/OptimisticRecipientRegistry'
 import { BrightIdUserRegistry as BrightIdUserRegistryContract } from '../generated/FundingRoundFactory/BrightIdUserRegistry'
-import { loadRecipientRegistry } from './RecipientRegistry'
+import { createRecipientRegistry } from './RecipientRegistry'
 
 import {
   FundingRound as FundingRoundTemplate,
@@ -148,7 +148,10 @@ function createOrUpdateFundingRoundFactory(
   //Check if these registries already exist/are being tracked
   let recipientRegistryAddress = fundingRoundFactoryContract.recipientRegistry()
   let recipientRegistryId = recipientRegistryAddress.toHexString()
-  let recipientRegistry = loadRecipientRegistry(recipientRegistryAddress)
+  let recipientRegistry = RecipientRegistry.load(recipientRegistryId)
+  if (!recipientRegistry) {
+    createRecipientRegistry(fundingRoundFactoryId, recipientRegistryAddress)
+  }
 
   let contributorRegistryAddress = fundingRoundFactoryContract.userRegistry()
   let contributorRegistryId = contributorRegistryAddress.toHexString()
