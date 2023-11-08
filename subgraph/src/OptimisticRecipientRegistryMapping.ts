@@ -5,7 +5,8 @@ import {
   RequestSubmitted,
 } from '../generated/OptimisticRecipientRegistry/OptimisticRecipientRegistry'
 
-import { Recipient, RecipientRegistry } from '../generated/schema'
+import { Recipient } from '../generated/schema'
+import { loadRecipientRegistry } from './RecipientRegistry'
 
 // It is also possible to access smart contracts from mappings. For
 // example, the contract that has emitted the event can be connected to
@@ -34,7 +35,7 @@ export function handleRequestResolved(event: RequestResolved): void {
   log.info('handleRequestResolved', [])
 
   let recipientRegistryId = event.address.toHexString()
-  let recipientRegistry = RecipientRegistry.load(recipientRegistryId)
+  let recipientRegistry = loadRecipientRegistry(event.address)
   if (!recipientRegistry) {
     log.warning(
       'handleRequestResolved - ignore unknown recipient registry {} hash {}',
@@ -81,8 +82,8 @@ export function handleRequestSubmitted(event: RequestSubmitted): void {
   log.info('handleRequestSubmitted', [])
   let recipientRegistryId = event.address.toHexString()
 
-  let recipientRegistery = RecipientRegistry.load(recipientRegistryId)
-  if (!recipientRegistery) {
+  let recipientRegistry = loadRecipientRegistry(event.address)
+  if (!recipientRegistry) {
     log.warning(
       'handleRequestSubmitted - ignore unknown recipient registry {} hash {}',
       [event.address.toHexString(), event.transaction.hash.toHex()]
