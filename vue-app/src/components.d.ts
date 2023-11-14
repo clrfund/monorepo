@@ -23,7 +23,7 @@ declare module '@vue/runtime-core' {
     ContributionModal: typeof import('./components/ContributionModal.vue')['default']
     CopyButton: typeof import('./components/CopyButton.vue')['default']
     CriteriaModal: typeof import('./components/CriteriaModal.vue')['default']
-    DatePeriod: typeof import('./components/DatePeriod.vue')['default']
+    DateRange: typeof import('./components/DateRange.vue')['default']
     ErrorModal: typeof import('./components/ErrorModal.vue')['default']
     FilterDropdown: typeof import('./components/FilterDropdown.vue')['default']
     FormNavigation: typeof import('./components/FormNavigation.vue')['default']

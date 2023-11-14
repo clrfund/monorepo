@@ -9,7 +9,7 @@
           <div class="header">
             <div>
               <h2>{{ $t('leaderboard.header') }}</h2>
-              <date-period
+              <date-range
                 class="round-period"
                 v-if="round"
                 :start-date="round.startTime"

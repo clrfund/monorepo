@@ -169,7 +169,7 @@
         <div v-if="roundInfo && hasDateElapsed(roundInfo.votingDeadline)" class="round-info-item">
           <div class="round-info-title">{{ $t('roundInfo.round_period') }}</div>
           <div class="round-info-value">
-            <date-period :start-date="roundInfo.startTime" :end-date="roundInfo.votingDeadline" />
+            <date-range :start-date="roundInfo.startTime" :end-date="roundInfo.votingDeadline" />
           </div>
         </div>
         <div class="round-value-info">

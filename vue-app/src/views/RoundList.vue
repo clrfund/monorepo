@@ -11,12 +11,11 @@
         }"
       >
         {{ $t('roundList.link1', { index: round.index }) }}
-        <date-period
+        <date-range
           class="period"
           :start-date="DateTime.fromSeconds(round.startTime)"
           :end-date="DateTime.fromSeconds(round.votingDeadline)"
-        >
-        </date-period>
+        />
       </links>
       <links
         v-else
@@ -27,12 +26,11 @@
         }"
       >
         {{ $t('roundList.link1', { index: round.index }) }}
-        <date-period
+        <date-range
           class="period"
           :start-date="DateTime.fromSeconds(round.startTime)"
           :end-date="DateTime.fromSeconds(round.votingDeadline)"
-        >
-        </date-period>
+        />
       </links>
     </div>
   </div>
@@ -42,7 +40,6 @@
 import { onMounted, ref } from 'vue'
 import { type Round, getRounds } from '@/api/rounds'
 import Links from '@/components/Links.vue'
-import DatePeriod from '@/components/DatePeriod.vue'
 import { DateTime } from 'luxon'
 
 const rounds = ref<Round[]>([])
