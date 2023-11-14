@@ -166,6 +166,12 @@
             </div>
           </div>
         </template>
+        <div v-if="roundInfo && hasDateElapsed(roundInfo.votingDeadline)" class="round-info-item">
+          <div class="round-info-title">{{ $t('roundInfo.round_period') }}</div>
+          <div class="round-info-value">
+            <date-period :start-date="roundInfo.startTime" :end-date="roundInfo.votingDeadline" />
+          </div>
+        </div>
         <div class="round-value-info">
           <div class="round-value-info-item">
             <div class="full-width">
@@ -280,8 +286,9 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
-import type { BigNumber, FixedNumber } from 'ethers'
+import type { BigNumber } from 'ethers'
 import { DateTime } from 'luxon'
+import { hasDateElapsed } from '@/utils/dates'
 import { type RoundInfo, getRoundInfo, getLeaderboardRoundInfo } from '@/api/round'
 import { chain } from '@/api/core'
 import { lsGet, lsSet } from '@/utils/localStorage'

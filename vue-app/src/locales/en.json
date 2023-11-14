@@ -1035,6 +1035,7 @@
     "p1": "Security deposit"
   },
   "roundInfo": {
+    "round_period": "Round Period",
     "link1": "View on {blockExplorer}",
     "div1": "Cancelled",
     "div2": "Open",
