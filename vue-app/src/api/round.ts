@@ -63,7 +63,7 @@ export async function getCurrentRound(): Promise<string | null> {
   return isVoidedRound(fundingRoundAddress) ? null : fundingRoundAddress
 }
 
-function toRoundInfo(data: any, network: string): RoundInfo {
+export function toRoundInfo(data: any, network: string): RoundInfo {
   const nativeTokenDecimals = Number(data.nativeTokenDecimals)
   // leaderboard does not need coordinator key, generate a dummy number
   const keypair = Keypair.createFromSeed(utils.hexlify(utils.randomBytes(32)))
@@ -97,7 +97,9 @@ function toRoundInfo(data: any, network: string): RoundInfo {
     status,
     startTime: DateTime.fromSeconds(data.startTime),
     signUpDeadline: DateTime.fromSeconds(Number(data.startTime) + Number(data.signUpDuration)),
-    votingDeadline: DateTime.fromSeconds(Number(data.startTime) + Number(data.votingDuration)),
+    votingDeadline: DateTime.fromSeconds(
+      Number(data.startTime) + Number(data.signUpDuration) + Number(data.votingDuration),
+    ),
     totalFunds,
     matchingPool,
     contributions,

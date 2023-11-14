@@ -53,6 +53,7 @@ export enum RequestStatus {
   Rejected = 'Rejected',
   Executed = 'Live',
   PendingRemoval = 'Pending removal',
+  RemovalAccepted = 'Removal accepted',
   Removed = 'Removed',
 }
 
@@ -72,6 +73,50 @@ export interface Request {
   recipient: string
   metadata: RecipientMetadata
   requester: string
+}
+
+interface RecipientRequestData {
+  requestType: RequestTypeCode
+  verified: boolean
+  rejected: boolean
+  acceptanceDate: DateTime
+}
+
+/**
+ * Map a recipient submission request to a status
+ * @param request `request type`, `verified`, `rejected` mapped
+ *  by the subgraph, OptimisticRecipientRegistryMapping.ts,
+ *  will be used to map the request status.
+ *
+ *  Action            | request type | verified | rejected
+ * ========================================================
+ *  Add Requested     |  0           | false    | false
+ *  Remove Requested  |  1           | false    | false
+ *  Add Challenged    |  0           | true     | true
+ *  Remove Challenged |  0           | true     | false
+ *  Add Resolved      |  0           | true     | false
+ *  Remove Resolved   |  1           | true     | false
+ *
+ * @returns RequestStatus
+ */
+function mapRequestStatus(request: RecipientRequestData): RequestStatus {
+  let status: RequestStatus
+
+  if (request.rejected) {
+    status = RequestStatus.Rejected
+  } else {
+    if (request.verified) {
+      status = request.requestType === RequestTypeCode.Removal ? RequestStatus.Removed : RequestStatus.Executed
+    } else {
+      if (request.requestType === RequestTypeCode.Removal) {
+        status = hasDateElapsed(request.acceptanceDate) ? RequestStatus.RemovalAccepted : RequestStatus.PendingRemoval
+      } else {
+        status = hasDateElapsed(request.acceptanceDate) ? RequestStatus.Accepted : RequestStatus.Submitted
+      }
+    }
+  }
+
+  return status
 }
 
 export async function getRequests(registryInfo: RegistryInfo, registryAddress: string): Promise<Request[]> {
@@ -118,24 +163,17 @@ export async function getRequests(registryInfo: RegistryInfo, registryAddress: s
     const request: Request = {
       transactionHash: recipient.requestResolvedHash || recipient.requestSubmittedHash,
       type: RequestType[RequestTypeCode[requestType]],
-      status: hasDateElapsed(acceptanceDate) ? RequestStatus.Accepted : RequestStatus.Submitted,
+      status: mapRequestStatus({
+        requestType,
+        rejected: Boolean(recipient.rejected),
+        acceptanceDate,
+        verified: Boolean(recipient.verified),
+      }),
       acceptanceDate,
       recipientId: recipient.id,
       recipient: recipient.recipientAddress,
       metadata,
       requester,
-    }
-
-    if (recipient.rejected) {
-      request.status = RequestStatus.Rejected
-    }
-
-    if (recipient.verified) {
-      request.status = requestType === RequestTypeCode.Removal ? RequestStatus.Removed : RequestStatus.Executed
-    } else {
-      if (requestType === RequestTypeCode.Removal) {
-        request.status = RequestStatus.PendingRemoval
-      }
     }
 
     // In case there are two requests submissions events, we always prioritize

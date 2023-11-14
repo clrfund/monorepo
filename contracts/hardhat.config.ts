@@ -55,6 +55,10 @@ const config: HardhatUserConfig = {
         process.env.JSONRPC_HTTP_URL || 'https://goerli-rollup.arbitrum.io/rpc',
       accounts,
     },
+    'mantle-testnet': {
+      url: process.env.JSONRPC_HTTP_URL || 'https://rpc.testnet.mantle.xyz',
+      accounts,
+    },
     rinkarby: {
       url: process.env.JSONRPC_HTTP_URL || 'https://rinkeby.arbitrum.io/rpc',
       accounts,

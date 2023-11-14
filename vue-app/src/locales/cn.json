@@ -1035,6 +1035,7 @@
     "p1": "安全押金"
   },
   "roundInfo": {
+    "round_period": "筹款日期",
     "link1": "查看 {blockExplorer}",
     "div1": "取消",
     "div2": "开放",

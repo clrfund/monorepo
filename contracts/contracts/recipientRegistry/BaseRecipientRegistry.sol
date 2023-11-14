@@ -146,4 +146,19 @@ abstract contract BaseRecipientRegistry is IRecipientRegistry {
   function getRecipientCount() public view returns(uint256) {
       return slots.length - removed.length;
   }
+
+  /**
+   * @dev Make a unique recipient id for different registries
+   * @param _registry Recipient registry address
+   * @param _recipient Recipient address
+   * @param _metadata Recipient metadata
+   * @return recipient id
+   */
+   function makeRecipientId(address _registry, address _recipient, string calldata _metadata)
+    internal
+    pure
+    returns(bytes32)
+  {
+    return keccak256(abi.encodePacked(_registry, _recipient, _metadata));
+  }
 }

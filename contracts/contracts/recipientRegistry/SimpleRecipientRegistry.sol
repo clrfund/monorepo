@@ -46,7 +46,7 @@ contract SimpleRecipientRegistry is Ownable, BaseRecipientRegistry {
   {
     require(_recipient != address(0), 'RecipientRegistry: Recipient address is zero');
     require(bytes(_metadata).length != 0, 'RecipientRegistry: Metadata info is empty string');
-    bytes32 recipientId = keccak256(abi.encodePacked(_recipient, _metadata));
+    bytes32 recipientId = makeRecipientId(address(this), _recipient, _metadata);
     uint256 recipientIndex = _addRecipient(recipientId, _recipient);
     emit RecipientAdded(recipientId, _recipient, _metadata, recipientIndex, block.timestamp);
   }

@@ -23,6 +23,7 @@ type RoundListEntry = {
   network: string
   address: string
   startTime: number
+  votingDeadline: number
   isFinalized: boolean
 }
 
@@ -378,6 +379,7 @@ task('export-round', 'Export round data for the leaderboard')
         network: network.name,
         address: round.address,
         startTime: round.startTime,
+        votingDeadline: round.endTime,
         isFinalized: round.isFinalized && !round.isCancelled,
       })
     }

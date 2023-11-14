@@ -61,19 +61,6 @@ export async function getRecipientRegistryAddress(roundAddress: string | null): 
   }
 }
 
-export async function getCurrentRecipientRegistryAddress(): Promise<string> {
-  const data = await sdk.GetRecipientRegistryInfo({
-    factoryAddress: factory.address.toLowerCase(),
-  })
-
-  const registryAddress =
-    data.fundingRoundFactory?.currentRound?.recipientRegistry?.id ||
-    data.fundingRoundFactory?.recipientRegistry?.id ||
-    ''
-
-  return registryAddress
-}
-
 export async function getProjects(registryAddress: string, startTime?: number, endTime?: number): Promise<Project[]> {
   if (recipientRegistryType === 'simple') {
     return await SimpleRegistry.getProjects(registryAddress, startTime, endTime)

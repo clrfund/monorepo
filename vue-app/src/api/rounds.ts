@@ -8,6 +8,7 @@ export interface Round {
   network?: string
   hasLeaderboard: boolean
   startTime: number
+  votingDeadline: number
 }
 
 export function isVoidedRound(address: string): boolean {
@@ -29,8 +30,8 @@ export async function getRounds(): Promise<Round[]> {
     return []
   }
 
-  const rounds: Round[] = extraRounds.map(({ address, network, startTime }, index): Round => {
-    return { index, address, network, hasLeaderboard: true, startTime }
+  const rounds: Round[] = extraRounds.map(({ address, network, startTime, votingDeadline }, index): Round => {
+    return { index, address, network, hasLeaderboard: true, startTime, votingDeadline }
   })
 
   const leaderboardRounds = new Set(rounds.map(r => toRoundId({ network: r.network || '', address: r.address })))
@@ -50,6 +51,7 @@ export async function getRounds(): Promise<Round[]> {
         address,
         hasLeaderboard: false,
         startTime: Number(fundingRound.startTime),
+        votingDeadline: Number(fundingRound.votingDeadline),
       })
     }
   }
@@ -62,6 +64,7 @@ export async function getRounds(): Promise<Round[]> {
         address: r.address,
         hasLeaderboard: r.hasLeaderboard,
         startTime: r.startTime,
+        votingDeadline: r.votingDeadline,
         network: r.network,
       }
     })
