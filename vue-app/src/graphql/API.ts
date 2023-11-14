@@ -3252,7 +3252,7 @@ export type GetRoundInfoQuery = { __typename?: 'Query', fundingRound: { __typena
 export type GetRoundsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetRoundsQuery = { __typename?: 'Query', fundingRounds: Array<{ __typename?: 'FundingRound', id: string, isFinalized: boolean | null, isCancelled: boolean | null, startTime: any | null }> };
+export type GetRoundsQuery = { __typename?: 'Query', fundingRounds: Array<{ __typename?: 'FundingRound', id: string, isFinalized: boolean | null, isCancelled: boolean | null, startTime: any | null, votingDeadline: any | null }> };
 
 export type GetTokenInfoQueryVariables = Exact<{
   fundingRoundAddress: Scalars['ID'];
@@ -3473,6 +3473,7 @@ export const GetRoundsDocument = gql`
     isFinalized
     isCancelled
     startTime
+    votingDeadline
   }
 }
     `;

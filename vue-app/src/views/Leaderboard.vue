@@ -9,6 +9,12 @@
           <div class="header">
             <div>
               <h2>{{ $t('leaderboard.header') }}</h2>
+              <date-range
+                class="round-period"
+                v-if="round"
+                :start-date="round.startTime"
+                :end-date="round.votingDeadline"
+              />
             </div>
             <button class="btn-secondary" @click="appStore.toggleLeaderboardView()">
               <div v-if="showSimpleLeaderboard">{{ $t('leaderboard.more') }}</div>
@@ -40,6 +46,7 @@
 import { useAppStore } from '@/stores'
 import { useRouter, useRoute } from 'vue-router'
 import type { RoundInfo } from '@/api/round'
+import { toRoundInfo } from '@/api/round'
 import type { LeaderboardProject } from '@/api/projects'
 import { toLeaderboardProject } from '@/api/projects'
 import { getLeaderboardData } from '@/api/leaderboard'
@@ -81,7 +88,7 @@ onMounted(async () => {
     .map(project => toLeaderboardProject(project))
     .sort((p1: LeaderboardProject, p2: LeaderboardProject) => p2.allocatedAmount.sub(p1.allocatedAmount))
 
-  round.value = { ...data.round, fundingRoundAddress: data.round.address, network }
+  round.value = toRoundInfo(data.round, network)
 
   isLoading.value = false
 })
@@ -113,5 +120,9 @@ onMounted(async () => {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+}
+
+.round-period {
+  font-size: 14px;
 }
 </style>
