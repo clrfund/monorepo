@@ -36,6 +36,7 @@ const i18n = createI18n<[MessageSchema], 'it' | 'zh-CN' | 'es' | 'en'>({
   fallbackLocale: defaultLocale,
   globalInjection: true,
   datetimeFormats: {
+    it: defaultShortDateTimeFormat,
     'zh-CN': defaultShortDateTimeFormat,
     es: defaultShortDateTimeFormat,
     en: defaultShortDateTimeFormat,

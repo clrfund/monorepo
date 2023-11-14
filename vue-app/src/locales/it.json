@@ -1035,6 +1035,7 @@
     "p1": "Deposito di sicurezza"
   },
   "roundInfo": {
+    "round_period": "Periodo di round",
     "link1": "Visualizza su {blockExplorer}",
     "div1": "Annullato",
     "div2": "Aperto",
