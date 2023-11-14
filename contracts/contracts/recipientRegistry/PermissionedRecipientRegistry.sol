@@ -97,7 +97,7 @@ contract PermissionedRecipientRegistry is Ownable, BaseRecipientRegistry {
   {
     require(_recipient != address(0), 'RecipientRegistry: Recipient address is zero');
     require(bytes(_metadata).length != 0, 'RecipientRegistry: Metadata info is empty string');
-    bytes32 recipientId = keccak256(abi.encodePacked(_recipient, _metadata));
+    bytes32 recipientId = makeRecipientId(address(this), _recipient, _metadata);
     require(recipients[recipientId].index == 0, 'RecipientRegistry: Recipient already registered');
     require(requests[recipientId].submissionTime == 0, 'RecipientRegistry: Request already submitted');
     require(msg.value == baseDeposit, 'RecipientRegistry: Incorrect deposit amount');

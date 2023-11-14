@@ -16,6 +16,14 @@ export const languages = [
    */
 ]
 
+const defaultShortDateTimeFormat = {
+  short: {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  },
+}
+
 const supportedLocales = languages.map(entry => entry.locale)
 export function isLocaleSupported(locale) {
   return supportedLocales.includes(locale)
@@ -27,6 +35,11 @@ const i18n = createI18n<[MessageSchema], 'it' | 'zh-CN' | 'es' | 'en'>({
   locale: defaultLocale,
   fallbackLocale: defaultLocale,
   globalInjection: true,
+  datetimeFormats: {
+    'zh-CN': defaultShortDateTimeFormat,
+    es: defaultShortDateTimeFormat,
+    en: defaultShortDateTimeFormat,
+  },
   messages: {
     it,
     'zh-CN': cn,
