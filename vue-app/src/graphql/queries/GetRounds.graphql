@@ -4,5 +4,6 @@ query GetRounds {
     isFinalized
     isCancelled
     startTime
+    votingDeadline
   }
 }
