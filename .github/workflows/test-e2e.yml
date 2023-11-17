@@ -9,6 +9,7 @@ on:
 env:
   NODE_VERSION: 16.x
   CIRCUIT_TYPE: micro
+  ZKEYS_DOWNLOAD_SCRIPT: "download-6-8-2-3.sh"
 
 jobs:
   e2e-test:
@@ -55,7 +56,7 @@ jobs:
         path: monorepo
     - name: Download micro zk circuit params
       run: |
-        $GITHUB_WORKSPACE/monorepo/.github/scripts/download-zkeys-${CIRCUIT_TYPE}.sh
+        $GITHUB_WORKSPACE/monorepo/.github/scripts/${ZKEYS_DOWNLOAD_SCRIPT}
     - name: Build Clrfund
       run: |
         # use https to avoid error: unable to connect to github.com
