@@ -292,7 +292,7 @@ describe('Clr fund deployer', () => {
   })
 
   it('sets MACI parameters', async () => {
-    const newMaciParameters = MaciParameters.mock('prod')
+    const newMaciParameters = MaciParameters.mock('micro')
     const factoryAsCoordinator = factory.connect(coordinator)
     await factory.setCoordinator(coordinator.address, coordinatorPubKey)
 
