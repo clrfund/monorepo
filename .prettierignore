@@ -21,6 +21,7 @@ vetur.config.js
 contracts/state.json
 contracts/tally.json
 contracts/proofs.json
+contracts/proof_output
 
 # local env files
 .env
