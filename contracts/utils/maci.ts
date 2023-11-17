@@ -9,19 +9,25 @@ import {
   hashLeftRight,
   LEAVES_PER_NODE,
 } from '@clrfund/common'
+import * as os from 'os'
 
 import { genTallyResultCommitment } from '@clrfund/common'
 import { VerifyingKey } from 'maci-domainobjs'
 import { extractVk } from '@clrfund/maci-circuits'
-import { CIRCUITS } from './deployment'
+import { CIRCUITS } from './circuits'
 import path from 'path'
 
 export interface ZkFiles {
   processZkFile: string
   processWitness: string
+  processWasm: string
   tallyZkFile: string
   tallyWitness: string
+  tallyWasm: string
 }
+
+export const isOsArm = os.arch().includes('arm')
+
 /**
  * Get the zkey file path
  * @param name zkey file name
@@ -32,8 +38,10 @@ export function getCircuitFiles(circuit: string, directory: string): ZkFiles {
   return {
     processZkFile: path.join(directory, params.processMessagesZkey),
     processWitness: path.join(directory, params.processWitness),
+    processWasm: path.join(directory, params.processWasm),
     tallyZkFile: path.join(directory, params.tallyVotesZkey),
     tallyWitness: path.join(directory, params.tallyWitness),
+    tallyWasm: path.join(directory, params.tallyWasm),
   }
 }
 
@@ -273,8 +281,7 @@ export async function addTallyResultsBatch(
       ...data,
       BigInt(tallyData.results.salt).toString(),
       spentVoiceCreditsHash.toString(),
-      BigInt(perVOSpentVoiceCreditsHash).toString(),
-      tallyData.newTallyCommitment
+      BigInt(perVOSpentVoiceCreditsHash).toString()
     )
     const receipt = await tx.wait()
     if (callback) {
@@ -286,6 +293,102 @@ export async function addTallyResultsBatch(
     totalGasUsed = totalGasUsed.add(receipt.gasUsed)
   }
   return totalGasUsed
+}
+
+/* Input to getGenProofArgs() */
+type getGenProofArgsInput = {
+  maciAddress: string
+  providerUrl: string
+  pollId: string
+  serializedCoordinatorPrivKey: string
+  // the transaction hash of the creation of the MACI contract
+  maciTxHash?: string
+  // the key get zkeys file mapping, see utils/circuits.ts
+  circuitType: string
+  circuitDirectory: string
+  rapidSnarkDirectory: string
+  // where the proof will be produced
+  outputDir: string
+}
+
+type getGenProofArgsResult = {
+  contract: string
+  eth_provider: string
+  poll_id: string
+  tally_file: string
+  rapidsnark?: string
+  process_witnessgen?: string
+  tally_witnessgen?: string
+  process_wasm?: string
+  tally_wasm?: string
+  process_zkey: string
+  tally_zkey: string
+  transaction_hash?: string
+  output: string
+  privkey: string
+  macistate: string
+}
+
+/*
+ * Get the arguments to pass to the genProof function
+ */
+export function getGenProofArgs(
+  args: getGenProofArgsInput
+): getGenProofArgsResult {
+  const {
+    maciAddress,
+    providerUrl,
+    pollId,
+    serializedCoordinatorPrivKey,
+    maciTxHash,
+    circuitType,
+    circuitDirectory,
+    rapidSnarkDirectory,
+    outputDir,
+  } = args
+  const tallyFile = path.join(outputDir, `tally.json`)
+  const maciStateFile = path.join(outputDir, `macistate`)
+  const rapidSnarkExe = path.join(rapidSnarkDirectory, 'prover')
+
+  const {
+    processZkFile,
+    tallyZkFile,
+    processWitness,
+    processWasm,
+    tallyWitness,
+    tallyWasm,
+  } = getCircuitFiles(circuitType, circuitDirectory)
+
+  return isOsArm
+    ? {
+        contract: maciAddress,
+        eth_provider: providerUrl,
+        poll_id: pollId.toString(),
+        tally_file: tallyFile,
+        process_wasm: processWasm,
+        process_zkey: processZkFile,
+        tally_zkey: tallyZkFile,
+        tally_wasm: tallyWasm,
+        transaction_hash: maciTxHash,
+        output: outputDir,
+        privkey: serializedCoordinatorPrivKey,
+        macistate: maciStateFile,
+      }
+    : {
+        contract: maciAddress,
+        eth_provider: providerUrl,
+        poll_id: pollId.toString(),
+        tally_file: tallyFile,
+        rapidsnark: rapidSnarkExe,
+        process_witnessgen: processWitness,
+        tally_witnessgen: tallyWitness,
+        process_zkey: processZkFile,
+        tally_zkey: tallyZkFile,
+        transaction_hash: maciTxHash,
+        output: outputDir,
+        privkey: serializedCoordinatorPrivKey,
+        macistate: maciStateFile,
+      }
 }
 
 export { createMessage, getRecipientClaimData, bnSqrt }

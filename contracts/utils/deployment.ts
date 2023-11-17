@@ -11,8 +11,7 @@ import {
 
 import { readFileSync } from 'fs'
 import { MaciParameters } from './maci'
-
-const TREE_ARITY = 5
+import { CIRCUTIS } from './circuits'
 
 const userRegistryNames: Record<string, string> = {
   simple: 'SimpleUserRegistry',
@@ -65,69 +64,6 @@ export function linkBytecode(
     link(linkable, libraryName, libraryAddress.toLowerCase())
   }
   return linkable.evm.bytecode.object
-}
-
-// custom configuration for MACI parameters
-export const CIRCUITS: { [name: string]: any } = {
-  // TODO: check if the maci v1 only supports micro based on the following comment:
-  // https://github.com/privacy-scaling-explorations/maci/blob/master/contracts/contracts/MACI.sol#L25
-  micro: {
-    //https://github.com/privacy-scaling-explorations/maci/wiki/Precompiled-v1.1.1#micro-size
-    processMessagesZkey: 'ProcessMessages_10-2-1-2_test.0.zkey',
-    tallyVotesZkey: 'TallyVotes_10-1-2_test.0.zkey',
-    processWitness: 'ProcessMessages_10-2-1-2_test',
-    tallyWitness: 'TallyVotes_10-1-2_test',
-    treeDepths: {
-      // TODO: confirm if the following 4 parameters are the 4 parameters in processMessages.circom
-      stateTreeDepth: 10,
-      messageTreeDepth: 2,
-      // TODO: confirm if messageBatchTreeDepth is the same as _messageTreeSubDepth in TreeDepths.
-      // see https://github.com/clrfund/maci-v1/blob/b5ea1ed4a10c14dc133f8d61e886120cda240003/cli/ts/deployPoll.ts#L153
-      // TODO: is messageBatchTreeDepth == intStateTreeDepth??
-      messageTreeSubDepth: 1,
-      voteOptionTreeDepth: 2,
-      // TODO: confirm if intStateTreeDepth is the 2nd param in tallyVotes.circom
-      intStateTreeDepth: 1,
-    },
-    maxValues: {
-      // maxMessages and maxVoteOptions are calculated using treeArity = 5 as seen in the following code:
-      // https://github.com/privacy-scaling-explorations/maci/blob/master/contracts/contracts/Poll.sol#L115
-      // treeArity ** messageTreeDepth
-      maxMessages: TREE_ARITY ** 2,
-      // treeArity ** voteOptionTreeDepth
-      maxVoteOptions: TREE_ARITY ** 2,
-    },
-    batchSizes: {
-      // TODO: confirm the following mapping
-      // https://github.com/privacy-scaling-explorations/maci/blob/master/contracts/contracts/MACI.sol#L259
-      // treeArity ** messageBatchTreeDepth
-      messageBatchSize: TREE_ARITY ** 1,
-    },
-  },
-  //https://github.com/privacy-scaling-explorations/maci/wiki/Precompiled-v1.1.1#prod-size
-  prod: {
-    processMessagesZkey: 'ProcessMessages_7-9-3-4_test.0.zkey',
-    tallyVotesZkey: 'TallyVotes_7-3-4_test.0.zkey',
-    processWitness: 'ProcessMessages_7-9-3-4_test',
-    tallyWitness: 'TallyVotes_7-3-4_test',
-    treeDepths: {
-      stateTreeDepth: 7,
-      messageTreeDepth: 9,
-      messageTreeSubDepth: 3,
-      voteOptionTreeDepth: 4,
-      intStateTreeDepth: 3,
-    },
-    maxValues: {
-      maxMessages: TREE_ARITY ** 9,
-      maxVoteOptions: TREE_ARITY ** 4,
-    },
-    batchSizes: {
-      // TODO: confirm the following mapping
-      // https://github.com/privacy-scaling-explorations/maci/blob/master/contracts/contracts/MACI.sol#L259
-      // treeArity ** messageBatchTreeDepth
-      messageBatchSize: TREE_ARITY ** 3,
-    },
-  },
 }
 
 type PoseidonName = 'PoseidonT3' | 'PoseidonT4' | 'PoseidonT5' | 'PoseidonT6'
@@ -190,27 +126,6 @@ export async function deployContract(
   return await contract.deployed()
 }
 
-/**
- * Deploy and set the PollProcessorAndTallyer in the funding round
- * @param coordinator The coordinator who can set the set the tallyer in the funding round
- * @param fundingRound The funding round contract
- * @returns
- */
-export async function deployPollProcessorAndTallyer(
-  coordinator: Signer,
-  fundingRound: Contract
-): Promise<Contract> {
-  const verifier = await deployContract(coordinator, 'Verifier')
-  const ppt = await deployContract(coordinator, 'PollProcessorAndTallyer', [
-    verifier.address,
-  ])
-  const setPptTx = await fundingRound
-    .connect(coordinator)
-    .setTallyer(ppt.address)
-  await setPptTx.wait()
-  return ppt
-}
-
 export async function deployVkRegistry(
   account: Signer,
   owner: string,
@@ -244,11 +159,6 @@ export async function deployMaciFactory(
     'PollFactoryCreator',
     { ...poseidonContracts }
   )
-  const messageAqFactoryCreator = await deployContractWithLinkedLibraries(
-    account,
-    'MessageAqFactoryCreator',
-    { ...poseidonContracts }
-  )
 
   const vkRegistry = await deployContract(account, 'VkRegistry')
   const MACIFactory = await ethers.getContractFactory('MACIFactory', {
@@ -256,7 +166,6 @@ export async function deployMaciFactory(
     libraries: {
       ...poseidonContracts,
       PollFactoryCreator: pollFactoryCreator.address,
-      MessageAqFactoryCreator: messageAqFactoryCreator.address,
     },
   })
 

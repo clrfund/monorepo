@@ -8,3 +8,4 @@ tally.json
 .env
 .DS_Store
 tasks/addresses.txt
+proof_output

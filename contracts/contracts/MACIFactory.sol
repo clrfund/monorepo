@@ -3,7 +3,7 @@
 pragma solidity ^0.8.10;
 
 import {MACI} from 'maci-contracts/contracts/MACI.sol';
-import {Poll, PollFactory, MessageAqFactory} from 'maci-contracts/contracts/Poll.sol';
+import {Poll, PollFactory} from 'maci-contracts/contracts/Poll.sol';
 import {SignUpGatekeeper} from 'maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol';
 import {InitialVoiceCreditProxy} from 'maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
 import {TopupCredit} from 'maci-contracts/contracts/TopupCredit.sol';
@@ -12,7 +12,6 @@ import {SnarkCommon} from 'maci-contracts/contracts/crypto/SnarkCommon.sol';
 import {Ownable} from '@openzeppelin/contracts/access/Ownable.sol';
 import {Params} from 'maci-contracts/contracts/Params.sol';
 import {PollFactoryCreator} from './PollFactoryCreator.sol';
-import {MessageAqFactoryCreator} from './MessageAqFactoryCreator.sol';
 import {IPubKey} from 'maci-contracts/contracts/DomainObjs.sol';
 
 contract MACIFactory is Ownable, Params, SnarkCommon, IPubKey {
@@ -138,10 +137,7 @@ contract MACIFactory is Ownable, Params, SnarkCommon, IPubKey {
     );
     pollFactory.transferOwnership(address(_maci));
 
-    MessageAqFactory messageAqFactory = MessageAqFactoryCreator.create();
-    messageAqFactory.transferOwnership(address(pollFactory));
-
-    _maci.init(vkRegistry, messageAqFactory, TopupCredit(topupCredit));
+    _maci.init(vkRegistry, TopupCredit(topupCredit));
     _maci.deployPoll(duration, maxValues, treeDepths, coordinatorPubKey);
 
     // this is a brand new maci, get poll 0

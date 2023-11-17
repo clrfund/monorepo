@@ -3,15 +3,7 @@ import { ethers, waffle } from 'hardhat'
 import { use, expect } from 'chai'
 import { solidity } from 'ethereum-waffle'
 import { BigNumber, Contract, Signer, Wallet } from 'ethers'
-import {
-  Keypair,
-  createMessage,
-  Message,
-  PubKey,
-  hashLeftRight,
-  hash2,
-  hash3,
-} from '@clrfund/common'
+import { Keypair, createMessage, Message, PubKey } from '@clrfund/common'
 import { genTallyResultCommitment } from '@clrfund/common'
 
 import { UNIT } from '../utils/constants'
@@ -19,7 +11,7 @@ import { getEventArg } from '../utils/contracts'
 import {
   deployVkRegistry,
   deployMaciFactory,
-  deployPollProcessorAndTallyer,
+  deployContract,
   mergeMessages,
   mergeSignups,
   genProofs,
@@ -33,9 +25,9 @@ import {
   MaciParameters,
   addTallyResultsBatch,
   getRecipientClaimData,
-  getCircuitFiles,
+  getGenProofArgs,
 } from '../utils/maci'
-import { unlink, readdir, readFileSync, existsSync, mkdirSync } from 'fs'
+import { readFileSync, existsSync, mkdirSync } from 'fs'
 import path from 'path'
 
 use(solidity)
@@ -49,22 +41,8 @@ const circuit = process.env.CIRCUIT_TYPE || 'micro'
 const circuitDirectory = process.env.CIRCUIT_DIRECTORY || '../../params'
 const rapidSnarkDirectory =
   process.env.RAPIDSNARK_DIRECTORY || '../../rapidsnark/build'
-const rapidSnarkExe = path.join(rapidSnarkDirectory, 'prover')
-const { processZkFile, tallyZkFile, processWitness, tallyWitness } =
-  getCircuitFiles(circuit, circuitDirectory)
 let maciTransactionHash: string
-let alpha: bigint
-let voiceCreditFactor: bigint
 const ALPHA_PRECISION = BigNumber.from(10).pow(18)
-
-const timeMs = new Date().getTime()
-const outputDir = path.join('.', 'tally_output', `${timeMs}`)
-if (!existsSync(outputDir)) {
-  mkdirSync(outputDir, { recursive: true })
-}
-const tallyFile = path.join(outputDir, `tally.json`)
-const sbSaltFile = path.join(outputDir, `tally_0.json`)
-const maciStateFile = path.join(outputDir, `macistate_${timeMs}`)
 
 const currentBlockTimestamp = async (provider: any): Promise<number> => {
   const blockNum = await provider.getBlockNumber()
@@ -132,6 +110,7 @@ describe('End-to-end Tests', function () {
   let recipient3: Signer
   let contributors: Signer[]
 
+  let poseidonLibraries: { [key: string]: string }
   let userRegistry: Contract
   let recipientRegistry: Contract
   let fundingRoundFactory: Contract
@@ -144,6 +123,7 @@ describe('End-to-end Tests', function () {
 
   before(async () => {
     params = await MaciParameters.fromConfig(circuit, circuitDirectory)
+    poseidonLibraries = await deployPoseidonLibraries(deployer)
   })
 
   beforeEach(async () => {
@@ -159,7 +139,6 @@ describe('End-to-end Tests', function () {
     ] = await ethers.getSigners()
 
     // Deploy funding round factory
-    const poseidonLibraries = await deployPoseidonLibraries(deployer)
     const maciFactory = await deployMaciFactory(deployer, poseidonLibraries)
     const setMaciTx = await maciFactory.setMaciParameters(
       ...params.asContractParam()
@@ -267,20 +246,6 @@ describe('End-to-end Tests', function () {
     pollId = BigInt(await fundingRound.pollId())
   })
 
-  afterEach(() => {
-    // clean up tally and proof files after each test
-    // so that next test has a clean directory to start with
-    readdir(outputDir, (err, files) => {
-      if (err) throw err
-
-      for (const file of files) {
-        unlink(path.join(outputDir, file), (err) => {
-          if (err) throw err
-        })
-      }
-    })
-  })
-
   async function timeTravel(duration: number) {
     const currentTime = await currentBlockTimestamp(provider)
     await provider.send('evm_increaseTime', [duration + currentTime])
@@ -337,74 +302,81 @@ describe('End-to-end Tests', function () {
     const providerUrl = (provider as any)._hardhatNetwork.config.url
 
     // Process messages and tally votes
-    const mergeMessagesResult = await mergeMessages({
+    await mergeMessages({
       contract: maci.address,
       poll_id: pollId.toString(),
       num_queue_ops: DEFAULT_SR_QUEUE_OPS,
     })
 
-    if (mergeMessagesResult !== 0) {
-      throw new Error('Merge messages failed')
-    }
-
-    const mergeSignupsResult = await mergeSignups({
+    await mergeSignups({
       contract: maci.address,
       poll_id: pollId.toString(),
       num_queue_ops: DEFAULT_SR_QUEUE_OPS,
     })
 
-    if (mergeSignupsResult !== 0) {
-      throw new Error('Merge signups failed')
+    const random = Math.floor(Math.random() * 10 ** 8)
+    const outputDir = path.join('.', 'proof_output', `${random}`)
+    if (!existsSync(outputDir)) {
+      mkdirSync(outputDir, { recursive: true })
     }
+    const genProofArgs = getGenProofArgs({
+      maciAddress: maci.address,
+      providerUrl,
+      pollId: pollId.toString(),
+      serializedCoordinatorPrivKey: coordinatorKeypair.privKey.serialize(),
+      maciTxHash: maciTransactionHash,
+      rapidSnarkDirectory,
+      circuitType: circuit,
+      circuitDirectory,
+      outputDir,
+    })
+    await genProofs(genProofArgs)
 
-    const genProofArgs = {
-      contract: maci.address,
-      eth_provider: providerUrl,
-      poll_id: pollId.toString(),
-      tally_file: tallyFile,
-      rapidsnark: rapidSnarkExe,
-      process_witnessgen: processWitness,
-      tally_witnessgen: tallyWitness,
-      process_zkey: processZkFile,
-      tally_zkey: tallyZkFile,
-      transaction_hash: maciTransactionHash,
-      output: outputDir,
-      privkey: coordinatorKeypair.privKey.serialize(),
-      macistate: maciStateFile,
-    }
+    // deploy the tally contract
+    const verifierContract = await deployContract(coordinator, 'Verifier')
+    const tallyContract = await deployContractWithLinkedLibraries(
+      coordinator,
+      'Tally',
+      poseidonLibraries,
+      [verifierContract.address]
+    )
+    await fundingRound.connect(coordinator).setTally(tallyContract.address)
 
-    const genProofResult = await genProofs(genProofArgs)
-    if (genProofResult !== 0) {
-      throw new Error('generation of proofs failed')
-    }
-
-    // deploy pollProcessorAndTallyer
-    const ppt = await deployPollProcessorAndTallyer(coordinator, fundingRound)
+    // deploy the message processing contract
+    const mpContract = await deployContractWithLinkedLibraries(
+      coordinator,
+      'MessageProcessor',
+      poseidonLibraries,
+      [verifierContract.address]
+    )
 
     // Submit proofs to MACI contract
     await proveOnChain({
       contract: maci.address,
       poll_id: pollId.toString(),
-      ppt: ppt.address,
-      eth_privkey: coordinator.privateKey,
-      eth_provider: providerUrl,
-      privkey: coordinatorKeypair.privKey.serialize(),
-      proof_dir: outputDir,
+      mp: mpContract.address,
+      tally: tallyContract.address,
+      subsidy: tallyContract.address, // TODO: make subsidy optional
+      proof_dir: genProofArgs.output,
     })
 
-    const tally = JSON.parse(readFileSync(tallyFile).toString())
+    console.log('finished proveOnChain')
+    const tally = JSON.parse(readFileSync(genProofArgs.tally_file).toString())
     const tallyHash = await getIpfsHash(tally)
     await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
+    console.log('Tally hash', tallyHash)
 
     // add tally results to funding round
-    const batchSize = Number(process.env.TALLY_BATCH_SIZE) || 20
+    const batchSize = Number(process.env.TALLY_BATCH_SIZE) || 8
     const recipientTreeDepth = params.voteOptionTreeDepth
+    console.log('Adding tally result on chain in batches of', batchSize)
     await addTallyResultsBatch(
       fundingRound.connect(coordinator),
       recipientTreeDepth,
       tally,
       batchSize
     )
+    console.log('Finished adding tally results')
 
     const newResultCommitment = genTallyResultCommitment(
       tally.results.tally.map((x) => BigInt(x)),

@@ -29,21 +29,25 @@ async function setMaciParameters(
   return clrfundAsSigner.setMaciParameters(...params.asContractParam())
 }
 
-async function setRoundTallyer(
+async function setRoundTally(
   clrfund: Contract,
   coordinator: Signer
 ): Promise<ContractTransaction> {
+  const libraries = await deployPoseidonLibraries(coordinator)
   const verifier = await deployContract(coordinator, 'MockVerifier')
-  const ppt = await deployContract(coordinator, 'PollProcessorAndTallyer', [
-    verifier.address,
-  ])
+  const tally = await deployContractWithLinkedLibraries(
+    coordinator,
+    'Tally',
+    libraries,
+    [verifier.address]
+  )
   const roundAddress = await clrfund.getCurrentRound()
   const round = await ethers.getContractAt(
     'FundingRound',
     roundAddress,
     coordinator
   )
-  return round.setTallyer(ppt.address)
+  return round.setTally(tally.address)
 }
 
 describe('Clr fund deployer', () => {
@@ -479,7 +483,7 @@ describe('Clr fund deployer', () => {
         .transfer(factory.address, contributionAmount)
       await factory.deployNewRound(roundDuration)
       await provider.send('evm_increaseTime', [roundDuration])
-      await setRoundTallyer(factory, coordinator)
+      await setRoundTally(factory, coordinator)
       await expect(
         factory.transferMatchingFunds(
           totalSpent,
@@ -493,7 +497,7 @@ describe('Clr fund deployer', () => {
     it('allows owner to finalize round even without matching funds', async () => {
       await factory.deployNewRound(roundDuration)
       await provider.send('evm_increaseTime', [roundDuration])
-      await setRoundTallyer(factory, coordinator)
+      await setRoundTally(factory, coordinator)
       await expect(
         factory.transferMatchingFunds(
           totalSpent,
@@ -510,7 +514,7 @@ describe('Clr fund deployer', () => {
       await factory.addFundingSource(deployer.address) // Doesn't have tokens
       await factory.deployNewRound(roundDuration)
       await provider.send('evm_increaseTime', [roundDuration])
-      await setRoundTallyer(factory, coordinator)
+      await setRoundTally(factory, coordinator)
       await expect(
         factory.transferMatchingFunds(
           totalSpent,
@@ -528,7 +532,7 @@ describe('Clr fund deployer', () => {
         .approve(factory.address, contributionAmount.mul(2))
       await factory.deployNewRound(roundDuration)
       await provider.send('evm_increaseTime', [roundDuration])
-      await setRoundTallyer(factory, coordinator)
+      await setRoundTally(factory, coordinator)
       await expect(
         factory.transferMatchingFunds(
           totalSpent,
@@ -542,7 +546,7 @@ describe('Clr fund deployer', () => {
     it('allows only owner to finalize round', async () => {
       await factory.deployNewRound(roundDuration)
       await provider.send('evm_increaseTime', [roundDuration])
-      await setRoundTallyer(factory, coordinator)
+      await setRoundTally(factory, coordinator)
       await expect(
         factory
           .connect(contributor)
