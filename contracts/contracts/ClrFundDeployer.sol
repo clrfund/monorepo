@@ -5,8 +5,8 @@ pragma solidity 0.8.10;
 import './MACIFactory.sol';
 import './ClrFund.sol';
 import {CloneFactory} from './CloneFactory.sol';
-import {SignUpGatekeeper} from "maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol";
-import {InitialVoiceCreditProxy} from "maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol";
+import {SignUpGatekeeper} from "@clrfund/maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol";
+import {InitialVoiceCreditProxy} from "@clrfund/maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol";
 
 contract ClrFundParams {
     struct Templates {

@@ -1,1 +1,1 @@
-declare module 'maci-contracts'
+declare module '@clrfund/maci-contracts'

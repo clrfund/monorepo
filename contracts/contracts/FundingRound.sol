@@ -6,12 +6,12 @@ import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 
-import {DomainObjs} from 'maci-contracts/contracts/DomainObjs.sol';
-import {MACI} from 'maci-contracts/contracts/MACI.sol';
-import {Poll} from 'maci-contracts/contracts/Poll.sol';
-import {Tally} from 'maci-contracts/contracts/Tally.sol';
-import {SignUpGatekeeper} from "maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol";
-import {InitialVoiceCreditProxy} from "maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol";
+import {DomainObjs} from '@clrfund/maci-contracts/contracts/DomainObjs.sol';
+import {MACI} from '@clrfund/maci-contracts/contracts/MACI.sol';
+import {Poll} from '@clrfund/maci-contracts/contracts/Poll.sol';
+import {Tally} from '@clrfund/maci-contracts/contracts/Tally.sol';
+import {SignUpGatekeeper} from "@clrfund/maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol";
+import {InitialVoiceCreditProxy} from "@clrfund/maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol";
 
 import './userRegistry/IUserRegistry.sol';
 import './recipientRegistry/IRecipientRegistry.sol';

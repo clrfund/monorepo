@@ -2,17 +2,17 @@
 
 pragma solidity ^0.8.10;
 
-import {MACI} from 'maci-contracts/contracts/MACI.sol';
-import {Poll, PollFactory} from 'maci-contracts/contracts/Poll.sol';
-import {SignUpGatekeeper} from 'maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol';
-import {InitialVoiceCreditProxy} from 'maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
-import {TopupCredit} from 'maci-contracts/contracts/TopupCredit.sol';
-import {VkRegistry} from 'maci-contracts/contracts/VkRegistry.sol';
-import {SnarkCommon} from 'maci-contracts/contracts/crypto/SnarkCommon.sol';
+import {MACI} from '@clrfund/maci-contracts/contracts/MACI.sol';
+import {Poll, PollFactory} from '@clrfund/maci-contracts/contracts/Poll.sol';
+import {SignUpGatekeeper} from '@clrfund/maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol';
+import {InitialVoiceCreditProxy} from '@clrfund/maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
+import {TopupCredit} from '@clrfund/maci-contracts/contracts/TopupCredit.sol';
+import {VkRegistry} from '@clrfund/maci-contracts/contracts/VkRegistry.sol';
+import {SnarkCommon} from '@clrfund/maci-contracts/contracts/crypto/SnarkCommon.sol';
 import {Ownable} from '@openzeppelin/contracts/access/Ownable.sol';
-import {Params} from 'maci-contracts/contracts/Params.sol';
+import {Params} from '@clrfund/maci-contracts/contracts/Params.sol';
 import {PollFactoryCreator} from './PollFactoryCreator.sol';
-import {IPubKey} from 'maci-contracts/contracts/DomainObjs.sol';
+import {IPubKey} from '@clrfund/maci-contracts/contracts/DomainObjs.sol';
 
 contract MACIFactory is Ownable, Params, SnarkCommon, IPubKey {
   // Constants

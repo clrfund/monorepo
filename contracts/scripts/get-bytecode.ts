@@ -10,8 +10,8 @@ async function main() {
   let result: string
   if (poseidonT3Address && poseidonT6Address) {
     result = linkBytecode(artifact.deployedBytecode, {
-      'maci-contracts/sol/Poseidon.sol:PoseidonT3': poseidonT3Address,
-      'maci-contracts/sol/Poseidon.sol:PoseidonT6': poseidonT6Address,
+      '@clrfund/maci-contracts/sol/Poseidon.sol:PoseidonT3': poseidonT3Address,
+      '@clrfund/maci-contracts/sol/Poseidon.sol:PoseidonT6': poseidonT6Address,
     })
   } else {
     result = artifact.deployedBytecode

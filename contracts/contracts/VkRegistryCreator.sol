@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.10;
 
-import {VkRegistry} from 'maci-contracts/contracts/VkRegistry.sol';
+import {VkRegistry} from '@clrfund/maci-contracts/contracts/VkRegistry.sol';
 
 library VkRegistryCreator {
    function create() public returns (VkRegistry vkRegistry) {

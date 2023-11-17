@@ -22,14 +22,14 @@
     "clean": "rm -rf cache && rm -rf build"
   },
   "dependencies": {
+    "@clrfund/maci-contracts": "^1.1.7",
     "@openzeppelin/contracts": "4.9.0",
     "dotenv": "^8.2.0",
-    "maci-contracts": "npm:@clrfund/maci-contracts@^1.1.7",
     "solidity-rlp": "2.0.8"
   },
   "devDependencies": {
-    "@clrfund/maci-circuits": "^1.1.7",
     "@clrfund/common": "^0.0.1",
+    "@clrfund/maci-circuits": "^1.1.7",
     "@clrfund/maci-cli": "^1.1.7",
     "@ethereum-waffle/mock-contract": "^3.4.4",
     "@kleros/gtcr-encoder": "^1.4.0",

@@ -75,7 +75,7 @@ type PoseidonName = 'PoseidonT3' | 'PoseidonT4' | 'PoseidonT5' | 'PoseidonT6'
  * read the artifact content and pass to the getContractFactory function
  *
  * NOTE: there are 2 copies of the Poseidon artifacts, the one in the build/contracts
- * folder has the actual contract bytecode, the other one in the build/contracts/maci-contracts
+ * folder has the actual contract bytecode, the other one in the build/contracts/@clrfund/maci-contracts
  * only has the library interface. If the wrong bytecode is used to deploy the contract,
  * the hash functions will always return 0.
  *
