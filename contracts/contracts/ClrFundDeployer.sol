@@ -8,30 +8,24 @@ import {CloneFactory} from './CloneFactory.sol';
 import {SignUpGatekeeper} from "@clrfund/maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol";
 import {InitialVoiceCreditProxy} from "@clrfund/maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol";
 
-contract ClrFundParams {
-    struct Templates {
-        address clrfund;
-        address pollFactory;
-    }
-}
+contract ClrFundDeployer is CloneFactory {
 
-contract ClrFundDeployer is CloneFactory, ClrFundParams {
-    
     address public template;
     mapping (address => bool) public clrfunds;
-    uint clrId = 0;
-    ClrFund private clrfund; // funding factory contract
-    
+
     constructor(address _template) {
         template = _template;
     }
     
     event NewInstance(address indexed clrfund);
     event Register(address indexed clrfund, string metadata);
-     
+
+    // errors
+    error ClrFundAlreadyRegistered();
+
     function deployClrFund(MACIFactory _maciFactory) public returns (address) {
 
-        clrfund = ClrFund(createClone(template));
+        ClrFund clrfund = ClrFund(createClone(template));
         clrfund.init(_maciFactory);
         emit NewInstance(address(clrfund));
 
@@ -43,15 +37,11 @@ contract ClrFundDeployer is CloneFactory, ClrFundParams {
         string memory _metadata
       ) public returns (bool) {
 
-      clrfund = ClrFund(_clrFundAddress);
-
-      require(clrfunds[_clrFundAddress] == false, 'ClrFund: metadata already registered');
+      if (clrfunds[_clrFundAddress] == true) revert ClrFundAlreadyRegistered();
 
       clrfunds[_clrFundAddress] = true;
 
-      clrId = clrId + 1;
       emit Register(_clrFundAddress, _metadata);
       return true;
     }
-    
 }

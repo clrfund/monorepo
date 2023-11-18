@@ -9,7 +9,6 @@ import { genTallyResultCommitment } from '@clrfund/common'
 import { UNIT } from '../utils/constants'
 import { getEventArg } from '../utils/contracts'
 import {
-  deployVkRegistry,
   deployMaciFactory,
   deployContract,
   mergeMessages,
@@ -229,8 +228,6 @@ describe('End-to-end Tests', function () {
         imageHash: '',
       })
     )
-
-    await deployVkRegistry(deployer, maciFactory.address, params)
 
     // Deploy new funding round and MACI
     const newRoundTx = await fundingRoundFactory.deployNewRound(roundDuration)

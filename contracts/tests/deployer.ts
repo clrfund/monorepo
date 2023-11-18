@@ -18,16 +18,7 @@ import { MaciParameters } from '../utils/maci'
 use(solidity)
 
 const roundDuration = 10000
-
-async function setMaciParameters(
-  clrfund: Contract,
-  signer: Signer,
-  circuit: string
-): Promise<ContractTransaction> {
-  const clrfundAsSigner = clrfund.connect(signer)
-  const params = MaciParameters.mock(circuit)
-  return clrfundAsSigner.setMaciParameters(...params.asContractParam())
-}
+const circuit = 'micro'
 
 async function setRoundTally(
   clrfund: Contract,
@@ -61,7 +52,6 @@ describe('Clr fund deployer', () => {
   let factory: Contract
   let clrFundDeployer: Contract
   let token: Contract
-  let maciParameters: MaciParameters
   const coordinatorPubKey = new Keypair().pubKey.asContractParam()
   let poseidonContracts: { [name: string]: string }
 
@@ -70,7 +60,8 @@ describe('Clr fund deployer', () => {
       poseidonContracts = await deployPoseidonLibraries(deployer)
     }
     maciFactory = await deployMaciFactory(deployer, poseidonContracts)
-    maciParameters = await MaciParameters.mock('micro')
+    const params = MaciParameters.mock(circuit)
+    await maciFactory.setMaciParameters(...params.asContractParam())
 
     factoryTemplate = await deployContractWithLinkedLibraries(
       deployer,
@@ -103,8 +94,6 @@ describe('Clr fund deployer', () => {
     )
 
     factory = await ethers.getContractAt('ClrFund', instanceAddress, deployer)
-
-    await maciFactory.transferOwnership(instanceAddress)
 
     const SimpleUserRegistry = await ethers.getContractFactory(
       'SimpleUserRegistry',
@@ -157,7 +146,7 @@ describe('Clr fund deployer', () => {
         factory.address,
         '{name:dead,title:beef}'
       )
-    ).to.be.revertedWith('ClrFund: metadata already registered')
+    ).to.be.revertedWith('ClrFundAlreadyRegistered')
   })
 
   it('initializes factory', async () => {
@@ -201,13 +190,12 @@ describe('Clr fund deployer', () => {
   describe('changing recipient registry', () => {
     it('allows owner to set recipient registry', async () => {
       await factory.setCoordinator(coordinator.address, coordinatorPubKey)
-      await setMaciParameters(factory, coordinator, 'micro')
       await factory.setRecipientRegistry(recipientRegistry.address)
       expect(await factory.recipientRegistry()).to.equal(
         recipientRegistry.address
       )
       expect(await recipientRegistry.controller()).to.equal(factory.address)
-      const params = MaciParameters.mock('micro')
+      const params = MaciParameters.mock(circuit)
       expect(await recipientRegistry.maxRecipients()).to.equal(
         5 ** params.voteOptionTreeDepth
       )
@@ -291,35 +279,12 @@ describe('Clr fund deployer', () => {
     expect(await token.balanceOf(factory.address)).to.equal(contributionAmount)
   })
 
-  it('sets MACI parameters', async () => {
-    const newMaciParameters = MaciParameters.mock('micro')
-    const factoryAsCoordinator = factory.connect(coordinator)
-    await factory.setCoordinator(coordinator.address, coordinatorPubKey)
-
-    await expect(
-      factoryAsCoordinator.setMaciParameters(
-        ...newMaciParameters.asContractParam()
-      )
-    ).to.emit(maciFactory, 'MaciParametersChanged')
-    const treeDepths = await maciFactory.treeDepths()
-    expect(treeDepths.voteOptionTreeDepth).to.equal(
-      newMaciParameters.voteOptionTreeDepth
-    )
-  })
-
-  it('allows only coordinator to set MACI parameters', async () => {
-    await expect(
-      factory.setMaciParameters(...maciParameters.asContractParam())
-    ).to.be.revertedWith('NotAuthorized')
-  })
-
   describe('deploying funding round', () => {
     it('deploys funding round', async () => {
       await factory.setUserRegistry(userRegistry.address)
       await factory.setRecipientRegistry(recipientRegistry.address)
       await factory.setToken(token.address)
       await factory.setCoordinator(coordinator.address, coordinatorPubKey)
-      await setMaciParameters(factory, coordinator, 'micro')
       const deployed = factory.deployNewRound(roundDuration)
       await expect(deployed).to.emit(factory, 'RoundStarted')
       const deployTx = await deployed
@@ -362,7 +327,6 @@ describe('Clr fund deployer', () => {
       await factory.setRecipientRegistry(recipientRegistry.address)
       await factory.setToken(token.address)
       await factory.setCoordinator(coordinator.address, coordinatorPubKey)
-      await setMaciParameters(factory, coordinator, 'micro')
 
       await expect(factory.deployNewRound(roundDuration)).to.be.revertedWith(
         'NoUserRegistry'
@@ -373,7 +337,6 @@ describe('Clr fund deployer', () => {
       await factory.setUserRegistry(userRegistry.address)
       await factory.setToken(token.address)
       await factory.setCoordinator(coordinator.address, coordinatorPubKey)
-      await setMaciParameters(factory, coordinator, 'micro')
 
       await expect(factory.deployNewRound(roundDuration)).to.be.revertedWith(
         'NoRecipientRegistry'
@@ -384,7 +347,6 @@ describe('Clr fund deployer', () => {
       await factory.setUserRegistry(userRegistry.address)
       await factory.setRecipientRegistry(recipientRegistry.address)
       await factory.setCoordinator(coordinator.address, coordinatorPubKey)
-      await setMaciParameters(factory, coordinator, 'micro')
 
       await expect(factory.deployNewRound(roundDuration)).to.be.revertedWith(
         'NoToken'
@@ -405,7 +367,6 @@ describe('Clr fund deployer', () => {
       await factory.setRecipientRegistry(recipientRegistry.address)
       await factory.setToken(token.address)
       await factory.setCoordinator(coordinator.address, coordinatorPubKey)
-      await setMaciParameters(factory, coordinator, 'micro')
 
       await factory.deployNewRound(roundDuration)
       await expect(factory.deployNewRound(roundDuration)).to.be.revertedWith(
@@ -418,7 +379,6 @@ describe('Clr fund deployer', () => {
       await factory.setRecipientRegistry(recipientRegistry.address)
       await factory.setToken(token.address)
       await factory.setCoordinator(coordinator.address, coordinatorPubKey)
-      await setMaciParameters(factory, coordinator, 'micro')
 
       await factory.deployNewRound(roundDuration)
       await factory.cancelCurrentRound()
@@ -433,7 +393,6 @@ describe('Clr fund deployer', () => {
       await factory.setRecipientRegistry(recipientRegistry.address)
       await factory.setToken(token.address)
       await factory.setCoordinator(coordinator.address, coordinatorPubKey)
-      await setMaciParameters(factory, coordinator, 'micro')
 
       const factoryAsContributor = factory.connect(contributor)
       await expect(
@@ -454,7 +413,6 @@ describe('Clr fund deployer', () => {
       await factory.setRecipientRegistry(recipientRegistry.address)
       await factory.setToken(token.address)
       await factory.setCoordinator(coordinator.address, coordinatorPubKey)
-      await setMaciParameters(factory, coordinator, 'micro')
     })
 
     it('returns the amount of available matching funding', async () => {
@@ -577,7 +535,6 @@ describe('Clr fund deployer', () => {
       await factory.setRecipientRegistry(recipientRegistry.address)
       await factory.setToken(token.address)
       await factory.setCoordinator(coordinator.address, coordinatorPubKey)
-      await setMaciParameters(factory, coordinator, 'micro')
     })
 
     it('allows owner to cancel round', async () => {
@@ -665,7 +622,6 @@ describe('Clr fund deployer', () => {
     await factory.setRecipientRegistry(recipientRegistry.address)
     await factory.setToken(token.address)
     await factory.setCoordinator(coordinator.address, coordinatorPubKey)
-    await setMaciParameters(factory, coordinator, 'micro')
     await factory.deployNewRound(roundDuration)
     const fundingRoundAddress = await factory.getCurrentRound()
     const fundingRound = await ethers.getContractAt(

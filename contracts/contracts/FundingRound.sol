@@ -625,22 +625,19 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
       revert VoteResultsAlreadyVerified();
     }
 
-    {
-      (,,, uint8 voteOptionTreeDepth) = poll.treeDepths();
-      bool resultVerified = tally.verifyTallyResult(
-        _voteOptionIndex,
-        _tallyResult,
-        _tallyResultProof,
-        _tallyResultSalt,
-        voteOptionTreeDepth,
-        _spentVoiceCreditsHash,
-        _perVOSpentVoiceCreditsHash
-      );
+    (,,, uint8 voteOptionTreeDepth) = poll.treeDepths();
+    bool resultVerified = tally.verifyTallyResult(
+      _voteOptionIndex,
+      _tallyResult,
+      _tallyResultProof,
+      _tallyResultSalt,
+      voteOptionTreeDepth,
+      _spentVoiceCreditsHash,
+      _perVOSpentVoiceCreditsHash
+    );
 
-
-      if (!resultVerified) {
-        revert IncorrectTallyResult();
-      }
+    if (!resultVerified) {
+      revert IncorrectTallyResult();
     }
 
     recipient.tallyVerified = true;

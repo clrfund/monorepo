@@ -108,22 +108,22 @@ describe('MACI factory', () => {
     expect(await getGasUsage(deployTx)).lessThan(15094000)
   })
 
-  it('allows only owner to deploy MACI', async () => {
+  it('allows anyone to deploy MACI', async () => {
     const setParamTx = await maciFactory.setMaciParameters(
       ...maciParameters.asContractParam()
     )
     await setParamTx.wait()
     const coordinatorMaciFactory = maciFactory.connect(coordinator)
-    await expect(
-      coordinatorMaciFactory.deployMaci(
-        signUpGatekeeper.address,
-        initialVoiceCreditProxy.address,
-        topupContract.address,
-        duration,
-        coordinator.address,
-        coordinatorPubKey
-      )
-    ).to.be.revertedWith('Ownable: caller is not the owner')
+
+    const deployTx = await coordinatorMaciFactory.deployMaci(
+      signUpGatekeeper.address,
+      initialVoiceCreditProxy.address,
+      topupContract.address,
+      duration,
+      coordinator.address,
+      coordinatorPubKey
+    )
+    await expect(deployTx).to.emit(maciFactory, 'MaciDeployed')
   })
 
   it('links with PoseidonT3 correctly', async () => {

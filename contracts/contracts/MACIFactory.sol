@@ -109,7 +109,6 @@ contract MACIFactory is Ownable, Params, SnarkCommon, IPubKey {
     PubKey calldata coordinatorPubKey
   )
     external
-    onlyOwner
     returns (MACI _maci)
   {
     if (!vkRegistry.hasProcessVk(

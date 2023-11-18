@@ -88,17 +88,6 @@ contract ClrFund is OwnableUpgradeable, IPubKey, SnarkCommon, Params {
   }
 
   /**
-   * @dev Set the Verifying Keys Registry
-   * @param _vkRegistry Address of the registry
-   */
-  function setVkRegistry(VkRegistry _vkRegistry)
-    external
-    onlyOwner
-  {
-    maciFactory.setVkRegistry(_vkRegistry);
-  }
-
-  /**
     * @dev Add matching funds source.
     * @param _source Address of a funding source.
     */
@@ -128,20 +117,6 @@ contract ClrFund is OwnableUpgradeable, IPubKey, SnarkCommon, Params {
     emit FundingSourceRemoved(_source);
   }
 
-  function setMaciParameters(
-    uint8 stateTreeDepth,
-    TreeDepths calldata treeDepths,
-    MaxValues calldata maxValues,
-    uint256 messageBatchSize,
-    VerifyingKey calldata processVk,
-    VerifyingKey calldata tallyVk
-  )
-  external
-  onlyCoordinator
-  {
-    maciFactory.setMaciParameters(stateTreeDepth, treeDepths, maxValues, messageBatchSize, processVk, tallyVk);
-  }
-
   function getCurrentRound()
     public
     view
@@ -167,9 +142,6 @@ contract ClrFund is OwnableUpgradeable, IPubKey, SnarkCommon, Params {
     requireRecipientRegistry
     requireUserRegistry
   {
-    if (maciFactory.owner() != address(this)) {
-      revert NotOwnerOfMaciFactory();
-    }
     FundingRound currentRound = getCurrentRound();
     if (address(currentRound) != address(0) && !currentRound.isFinalized()) {
       revert NotFinalized();

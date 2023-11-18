@@ -11,7 +11,6 @@ import {
 
 import { readFileSync } from 'fs'
 import { MaciParameters } from './maci'
-import { CIRCUTIS } from './circuits'
 
 const userRegistryNames: Record<string, string> = {
   simple: 'SimpleUserRegistry',
@@ -124,30 +123,6 @@ export async function deployContract(
   const contractFactory = await ethers.getContractFactory(contractName, account)
   const contract = await contractFactory.deploy(...contractArgs)
   return await contract.deployed()
-}
-
-export async function deployVkRegistry(
-  account: Signer,
-  owner: string,
-  params: MaciParameters
-): Promise<Contract> {
-  const vkRegistry = await deployContract(account, 'VkRegistry')
-
-  const setKeyTx = await vkRegistry.setVerifyingKeys(
-    params.stateTreeDepth,
-    params.intStateTreeDepth,
-    params.messageTreeDepth,
-    params.voteOptionTreeDepth,
-    params.messageBatchSize,
-    params.processVk.asContractParam(),
-    params.tallyVk.asContractParam()
-  )
-  await setKeyTx.wait()
-
-  const ownerTx = await vkRegistry.transferOwnership(owner)
-  await ownerTx.wait()
-
-  return vkRegistry
 }
 
 export async function deployMaciFactory(
