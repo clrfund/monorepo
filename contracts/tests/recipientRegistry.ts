@@ -551,11 +551,12 @@ describe('Optimistic recipient registry', () => {
   }
 
   beforeEach(async () => {
-    registry = await deployContract(deployer, 'OptimisticRecipientRegistry', [
-      baseDeposit,
-      challengePeriodDuration,
-      controller.address,
-    ])
+    registry = await deployContract({
+      name: 'OptimisticRecipientRegistry',
+      contractArgs: [baseDeposit, challengePeriodDuration, controller.address],
+      ethers,
+      signer: deployer,
+    })
   })
 
   it('initializes correctly', async () => {
@@ -981,11 +982,16 @@ describe('Optimistic recipient registry', () => {
         '_recipientId'
       )
 
-      const anotherRegistry = await deployContract(
-        deployer,
-        'OptimisticRecipientRegistry',
-        [baseDeposit, challengePeriodDuration, controller.address]
-      )
+      const anotherRegistry = await deployContract({
+        name: 'OptimisticRecipientRegistry',
+        contractArgs: [
+          baseDeposit,
+          challengePeriodDuration,
+          controller.address,
+        ],
+        ethers,
+        signer: deployer,
+      })
       const txTwo = await anotherRegistry.addRecipient(
         recipientAddress,
         metadata,

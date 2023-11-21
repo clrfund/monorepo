@@ -11,7 +11,6 @@ import {VkRegistry} from '@clrfund/maci-contracts/contracts/VkRegistry.sol';
 import {SnarkCommon} from '@clrfund/maci-contracts/contracts/crypto/SnarkCommon.sol';
 import {Ownable} from '@openzeppelin/contracts/access/Ownable.sol';
 import {Params} from '@clrfund/maci-contracts/contracts/Params.sol';
-import {PollFactoryCreator} from './PollFactoryCreator.sol';
 import {IPubKey} from '@clrfund/maci-contracts/contracts/DomainObjs.sol';
 
 contract MACIFactory is Ownable, Params, SnarkCommon, IPubKey {
@@ -20,6 +19,7 @@ contract MACIFactory is Ownable, Params, SnarkCommon, IPubKey {
 
   // State
   VkRegistry public vkRegistry;
+  PollFactory public pollFactory;
   uint8 public stateTreeDepth;
   TreeDepths public treeDepths;
   MaxValues public maxValues;
@@ -31,27 +31,41 @@ contract MACIFactory is Ownable, Params, SnarkCommon, IPubKey {
 
   // errors
   error NotInitialized();
-  error CannotDecreaseVoteOptionDepth();
   error ProcessVkNotSet();
   error TallyVkNotSet();
   error InvalidVkRegistry();
+  error InvalidPollFactory();
 
-  constructor(VkRegistry _vkRegistry) {
-    _setVkRegistry(_vkRegistry);
+  constructor(address _vkRegistry, address _pollFactory) {
+    if (_vkRegistry == address(0)) revert InvalidVkRegistry();
+    if (_pollFactory == address(0)) revert InvalidPollFactory();
+
+    vkRegistry = VkRegistry(_vkRegistry);
+    pollFactory = PollFactory(_pollFactory);
   }
 
-  function _setVkRegistry(VkRegistry _vkRegistry) internal {
-    if (address(_vkRegistry) == address(0)) {
-      revert InvalidVkRegistry();
-    }
+  /**
+   * @dev set vk registry
+   */
+  function setVkRegistry(address _vkRegistry) public onlyOwner {
+    if (_vkRegistry == address(0)) revert InvalidVkRegistry();
 
-    vkRegistry = _vkRegistry;
+    vkRegistry = VkRegistry(_vkRegistry);
   }
 
-  function setVkRegistry(VkRegistry _vkRegistry) public onlyOwner {
-    _setVkRegistry(_vkRegistry);
+  /**
+   * @dev set poll factory in MACI factory
+   * @param _pollFactory poll factory
+   */
+  function setPollFactory(address _pollFactory) public onlyOwner {
+    if (_pollFactory == address(0)) revert InvalidPollFactory();
+
+    pollFactory = PollFactory(_pollFactory);
   }
 
+  /**
+   * @dev set MACI zkeys parameters
+   */
   function setMaciParameters(
     uint8 _stateTreeDepth,
     TreeDepths calldata _treeDepths,
@@ -63,10 +77,6 @@ contract MACIFactory is Ownable, Params, SnarkCommon, IPubKey {
     public
     onlyOwner
   {
-    if (_treeDepths.voteOptionTreeDepth < treeDepths.voteOptionTreeDepth) {
-      revert CannotDecreaseVoteOptionDepth();
-    }
-
     if (!vkRegistry.hasProcessVk(
         _stateTreeDepth,
         _treeDepths.messageTreeDepth,
@@ -128,20 +138,15 @@ contract MACIFactory is Ownable, Params, SnarkCommon, IPubKey {
       revert TallyVkNotSet();
     }
 
-    PollFactory pollFactory = PollFactoryCreator.create();
     _maci = new MACI(
       pollFactory,
       signUpGatekeeper,
       initialVoiceCreditProxy
     );
-    pollFactory.transferOwnership(address(_maci));
 
     _maci.init(vkRegistry, TopupCredit(topupCredit));
-    _maci.deployPoll(duration, maxValues, treeDepths, coordinatorPubKey);
-
-    // this is a brand new maci, get poll 0
-    Poll poll = _maci.getPoll(0);
-    poll.transferOwnership(coordinator);
+    address poll = _maci.deployPoll(duration, maxValues, treeDepths, coordinatorPubKey);
+    Poll(poll).transferOwnership(coordinator);
 
     emit MaciDeployed(address(_maci));
   }

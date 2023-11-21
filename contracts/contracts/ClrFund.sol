@@ -16,6 +16,8 @@ import './userRegistry/IUserRegistry.sol';
 import './recipientRegistry/IRecipientRegistry.sol';
 import {FundingRound} from './FundingRound.sol';
 import './OwnableUpgradeable.sol';
+import {FundingRoundFactory} from './FundingRoundFactory.sol';
+import {TopupToken} from './TopupToken.sol';
 
 contract ClrFund is OwnableUpgradeable, IPubKey, SnarkCommon, Params {
   using EnumerableSet for EnumerableSet.AddressSet;
@@ -33,6 +35,8 @@ contract ClrFund is OwnableUpgradeable, IPubKey, SnarkCommon, Params {
   EnumerableSet.AddressSet private fundingSources;
   FundingRound[] private rounds;
 
+  FundingRoundFactory public roundFactory;
+
   // Events
   event FundingSourceAdded(address _source);
   event FundingSourceRemoved(address _source);
@@ -40,6 +44,10 @@ contract ClrFund is OwnableUpgradeable, IPubKey, SnarkCommon, Params {
   event RoundFinalized(address _round);
   event TokenChanged(address _token);
   event CoordinatorChanged(address _coordinator);
+  event Initialized();
+  event UserRegistrySet();
+  event RecipientRegistrySet();
+  event FundingRoundTemplateChanged();
 
   // errors
   error FundingSourceAlreadyAdded();
@@ -53,14 +61,27 @@ contract ClrFund is OwnableUpgradeable, IPubKey, SnarkCommon, Params {
   error NoRecipientRegistry();
   error NoUserRegistry();
   error NotOwnerOfMaciFactory();
+  error InvalidFundingRoundFactory();
+  error InvalidMaciFactory();
 
+  /**
+  * @dev Initialize clrfund instance with MACI factory and new round templates
+   */
   function init(
-    MACIFactory _maciFactory
+    address _maciFactory,
+    address _roundFactory
   ) 
     external
   {
     __Ownable_init();
-    maciFactory = _maciFactory;
+
+    if (address(_maciFactory) == address(0)) revert InvalidMaciFactory();
+    if (_roundFactory == address(0)) revert InvalidFundingRoundFactory();
+
+    maciFactory = MACIFactory(_maciFactory);
+    roundFactory = FundingRoundFactory(_roundFactory);
+
+    emit Initialized();
   }
 
   /**
@@ -72,6 +93,8 @@ contract ClrFund is OwnableUpgradeable, IPubKey, SnarkCommon, Params {
     onlyOwner
   {
     userRegistry = _userRegistry;
+
+    emit UserRegistrySet();
   }
 
   /**
@@ -85,6 +108,8 @@ contract ClrFund is OwnableUpgradeable, IPubKey, SnarkCommon, Params {
     recipientRegistry = _recipientRegistry;
     (, uint256 maxVoteOptions) = maciFactory.maxValues();
     recipientRegistry.setMaxRecipients(maxVoteOptions);
+
+    emit RecipientRegistrySet();
   }
 
   /**
@@ -150,18 +175,20 @@ contract ClrFund is OwnableUpgradeable, IPubKey, SnarkCommon, Params {
     (, uint256 maxVoteOptions) = maciFactory.maxValues();
     recipientRegistry.setMaxRecipients(maxVoteOptions);
     // Deploy funding round and MACI contracts
-    FundingRound newRound = new FundingRound(
+    FundingRound newRound = roundFactory.deploy(
       nativeToken,
       userRegistry,
       recipientRegistry,
-      coordinator
+      coordinator,
+      address(this)
     );
     rounds.push(newRound);
 
+    TopupToken topupToken = newRound.topupToken();
     MACI maci = maciFactory.deployMaci(
       SignUpGatekeeper(newRound),
       InitialVoiceCreditProxy(newRound),
-      address(nativeToken),
+      address(topupToken),
       duration,
       coordinator,
       coordinatorPubKey

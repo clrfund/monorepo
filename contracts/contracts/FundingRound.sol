@@ -10,6 +10,7 @@ import {DomainObjs} from '@clrfund/maci-contracts/contracts/DomainObjs.sol';
 import {MACI} from '@clrfund/maci-contracts/contracts/MACI.sol';
 import {Poll} from '@clrfund/maci-contracts/contracts/Poll.sol';
 import {Tally} from '@clrfund/maci-contracts/contracts/Tally.sol';
+import {TopupToken} from './TopupToken.sol';
 import {SignUpGatekeeper} from "@clrfund/maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol";
 import {InitialVoiceCreditProxy} from "@clrfund/maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol";
 
@@ -93,6 +94,7 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   address public coordinator;
   MACI public maci;
   ERC20 public nativeToken;
+  TopupToken public topupToken;
   IUserRegistry public userRegistry;
   IRecipientRegistry public recipientRegistry;
   string public tallyHash;
@@ -143,6 +145,7 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
     userRegistry = _userRegistry;
     recipientRegistry = _recipientRegistry;
     coordinator = _coordinator;
+    topupToken = new TopupToken();
   }
 
   /**

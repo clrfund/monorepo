@@ -8,14 +8,25 @@ import {
   hash3,
   hashLeftRight,
   LEAVES_PER_NODE,
+  genTallyResultCommitment,
 } from '@clrfund/common'
 import * as os from 'os'
+import {
+  mergeMessages,
+  mergeSignups,
+  genProofs,
+  proveOnChain,
+} from '@clrfund/maci-cli'
 
-import { genTallyResultCommitment } from '@clrfund/common'
-import { VerifyingKey } from 'maci-domainobjs'
-import { extractVk } from '@clrfund/maci-circuits'
+import { getTalyFilePath } from './misc'
 import { CIRCUITS } from './circuits'
 import path from 'path'
+
+interface TallyResult {
+  recipientIndex: number
+  result: string
+  proof: any[]
+}
 
 export interface ZkFiles {
   processZkFile: string
@@ -28,158 +39,11 @@ export interface ZkFiles {
 
 export const isOsArm = os.arch().includes('arm')
 
-/**
- * Get the zkey file path
- * @param name zkey file name
- * @returns zkey file path
- */
-export function getCircuitFiles(circuit: string, directory: string): ZkFiles {
-  const params = CIRCUITS[circuit]
-  return {
-    processZkFile: path.join(directory, params.processMessagesZkey),
-    processWitness: path.join(directory, params.processWitness),
-    processWasm: path.join(directory, params.processWasm),
-    tallyZkFile: path.join(directory, params.tallyVotesZkey),
-    tallyWitness: path.join(directory, params.tallyWitness),
-    tallyWasm: path.join(directory, params.tallyWasm),
-  }
-}
-
-export class MaciParameters {
-  stateTreeDepth: number
-  intStateTreeDepth: number
-  messageTreeSubDepth: number
-  messageTreeDepth: number
-  voteOptionTreeDepth: number
-  maxMessages: number
-  maxVoteOptions: number
-  messageBatchSize: number
-  processVk: VerifyingKey
-  tallyVk: VerifyingKey
-
-  constructor(parameters: { [name: string]: any } = {}) {
-    this.stateTreeDepth = parameters.stateTreeDepth
-    this.intStateTreeDepth = parameters.intStateTreeDepth
-    this.messageTreeSubDepth = parameters.messageTreeSubDepth
-    this.messageTreeDepth = parameters.messageTreeDepth
-    this.voteOptionTreeDepth = parameters.voteOptionTreeDepth
-    this.maxMessages = parameters.maxMessages
-    this.maxVoteOptions = parameters.maxVoteOptions
-    this.messageBatchSize = parameters.messageBatchSize
-    this.processVk = parameters.processVk
-    this.tallyVk = parameters.tallyVk
-  }
-
-  asContractParam(): any[] {
-    return [
-      this.stateTreeDepth,
-      {
-        intStateTreeDepth: this.intStateTreeDepth,
-        messageTreeSubDepth: this.messageTreeSubDepth,
-        messageTreeDepth: this.messageTreeDepth,
-        voteOptionTreeDepth: this.voteOptionTreeDepth,
-      },
-      { maxMessages: this.maxMessages, maxVoteOptions: this.maxVoteOptions },
-      this.messageBatchSize,
-      this.processVk.asContractParam(),
-      this.tallyVk.asContractParam(),
-    ]
-  }
-
-  static async fromConfig(
-    circuit: string,
-    directory: string
-  ): Promise<MaciParameters> {
-    const params = CIRCUITS[circuit]
-    const { processZkFile, tallyZkFile } = getCircuitFiles(circuit, directory)
-    const processVk: VerifyingKey = VerifyingKey.fromObj(
-      await extractVk(processZkFile)
-    )
-    const tallyVk: VerifyingKey = VerifyingKey.fromObj(
-      await extractVk(tallyZkFile)
-    )
-
-    return new MaciParameters({
-      ...params.maxValues,
-      ...params.treeDepths,
-      ...params.batchSizes,
-      processVk,
-      tallyVk,
-    })
-  }
-
-  static async fromContract(maciFactory: Contract): Promise<MaciParameters> {
-    const stateTreeDepth = await maciFactory.stateTreeDepth()
-    const {
-      intStateTreeDepth,
-      messageTreeSubDepth,
-      messageTreeDepth,
-      voteOptionTreeDepth,
-    } = await maciFactory.treeDepths()
-    const { maxMessages, maxVoteOptions } = await maciFactory.maxValues()
-    const messageBatchSize = await maciFactory.messageBatchSize()
-    const vkRegistry = await maciFactory.vkRegistry()
-
-    const processVk = await vkRegistry.getProcessVk(
-      stateTreeDepth,
-      messageTreeDepth,
-      voteOptionTreeDepth,
-      messageBatchSize
-    )
-
-    const tallyVk = await vkRegistry.getTallyVk(
-      stateTreeDepth,
-      intStateTreeDepth,
-      voteOptionTreeDepth
-    )
-
-    return new MaciParameters({
-      stateTreeDepth,
-      intStateTreeDepth,
-      messageTreeSubDepth,
-      messageTreeDepth,
-      voteOptionTreeDepth,
-      maxMessages,
-      maxVoteOptions,
-      messageBatchSize,
-      processVk: VerifyingKey.fromContract(processVk),
-      tallyVk: VerifyingKey.fromContract(tallyVk),
-    })
-  }
-
-  static mock(circuit: string): MaciParameters {
-    const processVk = VerifyingKey.fromObj({
-      vk_alpha_1: [1, 2],
-      vk_beta_2: [
-        [1, 2],
-        [1, 2],
-      ],
-      vk_gamma_2: [
-        [1, 2],
-        [1, 2],
-      ],
-      vk_delta_2: [
-        [1, 2],
-        [1, 2],
-      ],
-      IC: [[1, 2]],
-    })
-    const params = CIRCUITS[circuit]
-    return new MaciParameters({
-      ...params.maxValues,
-      ...params.treeDepths,
-      ...params.batchSizes,
-      processVk,
-      tallyVk: processVk.copy(),
-    })
-  }
-}
-
 export function getRecipientTallyResult(
   recipientIndex: number,
   recipientTreeDepth: number,
   tally: any
-): { recipientIndex: number; result: string; proof: any[] } {
+): TallyResult {
   // Create proof for tally result
   const result = tally.results.tally[recipientIndex]
   const resultTree = new IncrementalQuinTree(
@@ -210,7 +74,7 @@ export function getRecipientTallyResultsBatch(
     throw new Error('Recipient index out of bound')
   }
 
-  const tallyData = []
+  const tallyData: TallyResult[] = []
   const lastIndex =
     recipientStartIndex + batchSize > tallyCount
       ? tallyCount
@@ -295,18 +159,36 @@ export async function addTallyResultsBatch(
   return totalGasUsed
 }
 
+/**
+ * Get the zkey file path
+ * @param name zkey file name
+ * @returns zkey file path
+ */
+export function getCircuitFiles(circuit: string, directory: string): ZkFiles {
+  const params = CIRCUITS[circuit]
+  return {
+    processZkFile: path.join(directory, params.processMessagesZkey),
+    processWitness: path.join(directory, params.processWitness),
+    processWasm: path.join(directory, params.processWasm),
+    tallyZkFile: path.join(directory, params.tallyVotesZkey),
+    tallyWitness: path.join(directory, params.tallyWitness),
+    tallyWasm: path.join(directory, params.tallyWasm),
+  }
+}
+
 /* Input to getGenProofArgs() */
 type getGenProofArgsInput = {
   maciAddress: string
   providerUrl: string
   pollId: string
-  serializedCoordinatorPrivKey: string
+  // coordinator's MACI serialized secret key
+  coordinatorMacisk: string
   // the transaction hash of the creation of the MACI contract
   maciTxHash?: string
   // the key get zkeys file mapping, see utils/circuits.ts
   circuitType: string
   circuitDirectory: string
-  rapidSnarkDirectory: string
+  rapidSnarkDirectory?: string
   // where the proof will be produced
   outputDir: string
 }
@@ -339,16 +221,16 @@ export function getGenProofArgs(
     maciAddress,
     providerUrl,
     pollId,
-    serializedCoordinatorPrivKey,
+    coordinatorMacisk,
     maciTxHash,
     circuitType,
     circuitDirectory,
     rapidSnarkDirectory,
     outputDir,
   } = args
-  const tallyFile = path.join(outputDir, `tally.json`)
+  const tallyFile = getTalyFilePath(outputDir)
   const maciStateFile = path.join(outputDir, `macistate`)
-  const rapidSnarkExe = path.join(rapidSnarkDirectory, 'prover')
+  const rapidSnarkExe = path.join(rapidSnarkDirectory || '', 'prover')
 
   const {
     processZkFile,
@@ -371,7 +253,7 @@ export function getGenProofArgs(
         tally_wasm: tallyWasm,
         transaction_hash: maciTxHash,
         output: outputDir,
-        privkey: serializedCoordinatorPrivKey,
+        privkey: coordinatorMacisk,
         macistate: maciStateFile,
       }
     : {
@@ -386,9 +268,35 @@ export function getGenProofArgs(
         tally_zkey: tallyZkFile,
         transaction_hash: maciTxHash,
         output: outputDir,
-        privkey: serializedCoordinatorPrivKey,
+        privkey: coordinatorMacisk,
         macistate: maciStateFile,
       }
 }
 
-export { createMessage, getRecipientClaimData, bnSqrt }
+/**
+ * Merge MACI message and signups subtrees
+ * Must merge the subtrees before calling genProofs
+ *
+ * @param maciAddress MACI contract address
+ * @param pollId Poll id
+ * @param numOperations Number of operations to perform for the merge
+ */
+export async function mergeMaciSubtrees(
+  maciAddress: string,
+  pollId: string,
+  numOperations: number
+) {
+  await mergeMessages({
+    contract: maciAddress,
+    poll_id: pollId,
+    num_queue_ops: numOperations,
+  })
+
+  await mergeSignups({
+    contract: maciAddress,
+    poll_id: pollId,
+    num_queue_ops: numOperations,
+  })
+}
+
+export { createMessage, getRecipientClaimData, bnSqrt, proveOnChain, genProofs }

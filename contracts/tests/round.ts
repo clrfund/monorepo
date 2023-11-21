@@ -1,4 +1,4 @@
-import { ethers, waffle, artifacts } from 'hardhat'
+import { ethers, waffle, artifacts, config } from 'hardhat'
 import { use, expect } from 'chai'
 import { solidity } from 'ethereum-waffle'
 import { deployMockContract } from '@ethereum-waffle/mock-contract'
@@ -15,9 +15,9 @@ import {
 } from '../utils/constants'
 import { getEventArg, getGasUsage } from '../utils/contracts'
 import {
+  deployContract,
   deployPoseidonLibraries,
   deployMaciFactory,
-  deployContractWithLinkedLibraries,
 } from '../utils/deployment'
 import {
   bnSqrt,
@@ -25,9 +25,10 @@ import {
   addTallyResultsBatch,
   getRecipientClaimData,
   getRecipientTallyResultsBatch,
-  MaciParameters,
 } from '../utils/maci'
 import { sha256 } from 'ethers/lib/utils'
+import { MaciParameters } from '../utils/maciParameters'
+import { DEFAULT_CIRCUIT } from '../utils/circuits'
 
 use(solidity)
 
@@ -134,21 +135,30 @@ describe('Funding Round', () => {
       IRecipientRegistryArtifact.abi
     )
 
-    const libraries = await deployPoseidonLibraries(deployer)
-    fundingRound = await deployContractWithLinkedLibraries(
-      deployer,
-      'FundingRound',
+    const libraries = await deployPoseidonLibraries({
+      artifactsPath: config.paths.artifacts,
+      ethers,
+      signer: deployer,
+    })
+    fundingRound = await deployContract({
+      name: 'FundingRound',
       libraries,
-      [
+      contractArgs: [
         token.address,
         userRegistry.address,
         recipientRegistry.address,
         coordinator.address,
-      ]
-    )
-    const maciFactory = await deployMaciFactory(deployer, libraries)
+      ],
+      ethers,
+      signer: deployer,
+    })
+    const maciFactory = await deployMaciFactory({
+      ethers,
+      signer: deployer,
+      libraries,
+    })
 
-    const maciParams = MaciParameters.mock('micro')
+    const maciParams = MaciParameters.mock(DEFAULT_CIRCUIT)
     await maciFactory.setMaciParameters(...maciParams.asContractParam())
 
     const maciDeployed = await maciFactory.deployMaci(

@@ -4,6 +4,8 @@
 
 const TREE_ARITY = 5
 
+export const DEFAULT_CIRCUIT = 'micro'
+
 export const CIRCUITS: { [name: string]: any } = {
   micro: {
     processMessagesZkey: 'processmessages_6-8-2-3_final.zkey',

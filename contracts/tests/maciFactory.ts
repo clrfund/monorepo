@@ -1,4 +1,4 @@
-import { waffle, artifacts, ethers } from 'hardhat'
+import { waffle, artifacts, ethers, config } from 'hardhat'
 import { Contract } from 'ethers'
 import { use, expect } from 'chai'
 import { solidity } from 'ethereum-waffle'
@@ -7,7 +7,8 @@ import { Keypair } from '@clrfund/common'
 
 import { getEventArg, getGasUsage } from '../utils/contracts'
 import { deployMaciFactory, deployPoseidonLibraries } from '../utils/deployment'
-import { MaciParameters } from '../utils/maci'
+import { MaciParameters } from '../utils/maciParameters'
+import { DEFAULT_CIRCUIT } from '../utils/circuits'
 
 use(solidity)
 
@@ -26,12 +27,20 @@ describe('MACI factory', () => {
 
   beforeEach(async () => {
     if (!poseidonContracts) {
-      poseidonContracts = await deployPoseidonLibraries(deployer)
+      poseidonContracts = await deployPoseidonLibraries({
+        artifactsPath: config.paths.artifacts,
+        ethers,
+        signer: deployer,
+      })
     }
-    maciFactory = await deployMaciFactory(deployer, poseidonContracts)
+    maciFactory = await deployMaciFactory({
+      ethers,
+      signer: deployer,
+      libraries: poseidonContracts,
+    })
     expect(await getGasUsage(maciFactory.deployTransaction)).lessThan(5600000)
 
-    maciParameters = MaciParameters.mock('micro')
+    maciParameters = MaciParameters.mock(DEFAULT_CIRCUIT)
 
     const SignUpGatekeeperArtifact =
       await artifacts.readArtifact('SignUpGatekeeper')
@@ -66,17 +75,6 @@ describe('MACI factory', () => {
     expect(maxMessages).to.equal(maciParameters.maxMessages)
     expect(maxVoteOptions).to.equal(maciParameters.maxVoteOptions)
     expect(messageTreeDepth).to.equal(maciParameters.messageTreeDepth)
-  })
-
-  it('does not allow to decrease the vote option tree depth', async () => {
-    await expect(
-      maciFactory.setMaciParameters(...maciParameters.asContractParam())
-    ).to.emit(maciFactory, 'MaciParametersChanged')
-
-    maciParameters.voteOptionTreeDepth = 1
-    await expect(
-      maciFactory.setMaciParameters(...maciParameters.asContractParam())
-    ).to.be.revertedWith('CannotDecreaseVoteOptionDepth')
   })
 
   it('allows only owner to set MACI parameters', async () => {

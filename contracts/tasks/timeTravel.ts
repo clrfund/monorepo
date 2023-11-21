@@ -1,9 +1,9 @@
 import { task, types } from 'hardhat/config'
 
-task('evm-increase-time', 'Increase block timestamp by seconds')
+task('time-travel', 'Travel to block timestamp in seconds')
   .addPositionalParam(
     'seconds',
-    'The number of seconds to increase',
+    'The number of seconds to travel to',
     undefined,
     types.int,
     false

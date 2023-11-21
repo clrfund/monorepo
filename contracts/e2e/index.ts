@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { ethers, waffle } from 'hardhat'
+import { ethers, waffle, config } from 'hardhat'
 import { use, expect } from 'chai'
 import { solidity } from 'ethereum-waffle'
 import { BigNumber, Contract, Signer, Wallet } from 'ethers'
@@ -9,23 +9,23 @@ import { genTallyResultCommitment } from '@clrfund/common'
 import { UNIT } from '../utils/constants'
 import { getEventArg } from '../utils/contracts'
 import {
-  deployMaciFactory,
   deployContract,
-  mergeMessages,
-  mergeSignups,
-  genProofs,
-  proveOnChain,
   deployPoseidonLibraries,
-  deployContractWithLinkedLibraries,
+  deployMaciFactory,
+  deployMessageProcesorAndTally,
 } from '../utils/deployment'
 import { getIpfsHash } from '../utils/ipfs'
 import {
   bnSqrt,
-  MaciParameters,
+  genProofs,
+  proveOnChain,
+  mergeMaciSubtrees,
   addTallyResultsBatch,
   getRecipientClaimData,
   getGenProofArgs,
 } from '../utils/maci'
+import { DEFAULT_CIRCUIT } from '../utils/circuits'
+import { MaciParameters } from '../utils/maciParameters'
 import { readFileSync, existsSync, mkdirSync } from 'fs'
 import path from 'path'
 
@@ -36,10 +36,13 @@ const DEFAULT_SR_QUEUE_OPS = 4
 const roundDuration = 7 * 86400
 
 // MACI zkFiles
-const circuit = process.env.CIRCUIT_TYPE || 'micro'
+const circuit = process.env.CIRCUIT_TYPE || DEFAULT_CIRCUIT
 const circuitDirectory = process.env.CIRCUIT_DIRECTORY || '../../params'
 const rapidSnarkDirectory =
   process.env.RAPIDSNARK_DIRECTORY || '../../rapidsnark/build'
+const proofOutputDirectory = process.env.PROOF_OUTPUT_DIR || './proof_output'
+const tallyBatchSize = Number(process.env.TALLY_BATCH_SIZE || 8)
+
 let maciTransactionHash: string
 const ALPHA_PRECISION = BigNumber.from(10).pow(18)
 
@@ -112,7 +115,7 @@ describe('End-to-end Tests', function () {
   let poseidonLibraries: { [key: string]: string }
   let userRegistry: Contract
   let recipientRegistry: Contract
-  let fundingRoundFactory: Contract
+  let clrfund: Contract
   let token: Contract
   let fundingRound: Contract
   let maci: Contract
@@ -122,7 +125,11 @@ describe('End-to-end Tests', function () {
 
   before(async () => {
     params = await MaciParameters.fromConfig(circuit, circuitDirectory)
-    poseidonLibraries = await deployPoseidonLibraries(deployer)
+    poseidonLibraries = await deployPoseidonLibraries({
+      ethers,
+      artifactsPath: config.paths.artifacts,
+      signer: deployer,
+    })
   })
 
   beforeEach(async () => {
@@ -138,22 +145,35 @@ describe('End-to-end Tests', function () {
     ] = await ethers.getSigners()
 
     // Deploy funding round factory
-    const maciFactory = await deployMaciFactory(deployer, poseidonLibraries)
+    const maciFactory = await deployMaciFactory({
+      libraries: poseidonLibraries,
+      signer: deployer,
+      ethers,
+    })
     const setMaciTx = await maciFactory.setMaciParameters(
       ...params.asContractParam()
     )
     await setMaciTx.wait()
 
-    fundingRoundFactory = await deployContractWithLinkedLibraries(
-      deployer,
-      'ClrFund',
-      poseidonLibraries
+    clrfund = await deployContract({
+      name: 'ClrFund',
+      signer: deployer,
+      ethers,
+    })
+
+    const roundFactory = await deployContract({
+      name: 'FundingRoundFactory',
+      libraries: poseidonLibraries,
+      signer: deployer,
+      ethers,
+    })
+
+    const initClrfundTx = await clrfund.init(
+      maciFactory.address,
+      roundFactory.address
     )
-    const initClrfundTx = await fundingRoundFactory.init(maciFactory.address)
     await initClrfundTx.wait()
-    const transferTx = await maciFactory.transferOwnership(
-      fundingRoundFactory.address
-    )
+    const transferTx = await maciFactory.transferOwnership(clrfund.address)
     await transferTx.wait()
 
     const SimpleUserRegistry = await ethers.getContractFactory(
@@ -161,15 +181,13 @@ describe('End-to-end Tests', function () {
       deployer
     )
     userRegistry = await SimpleUserRegistry.deploy()
-    await fundingRoundFactory.setUserRegistry(userRegistry.address)
+    await clrfund.setUserRegistry(userRegistry.address)
     const SimpleRecipientRegistry = await ethers.getContractFactory(
       'SimpleRecipientRegistry',
       deployer
     )
-    recipientRegistry = await SimpleRecipientRegistry.deploy(
-      fundingRoundFactory.address
-    )
-    await fundingRoundFactory.setRecipientRegistry(recipientRegistry.address)
+    recipientRegistry = await SimpleRecipientRegistry.deploy(clrfund.address)
+    await clrfund.setRecipientRegistry(recipientRegistry.address)
 
     // Deploy ERC20 token contract
     const Token = await ethers.getContractFactory('AnyOldERC20Token', deployer)
@@ -182,9 +200,9 @@ describe('End-to-end Tests', function () {
     }
 
     // Configure factory
-    await fundingRoundFactory.setToken(token.address)
+    await clrfund.setToken(token.address)
     coordinatorKeypair = new Keypair()
-    await fundingRoundFactory.setCoordinator(
+    await clrfund.setCoordinator(
       coordinator.address,
       coordinatorKeypair.pubKey.asContractParam()
     )
@@ -193,15 +211,13 @@ describe('End-to-end Tests', function () {
     const poolContributionAmount = UNIT.mul(5)
     await token
       .connect(poolContributor1)
-      .transfer(fundingRoundFactory.address, poolContributionAmount)
+      .transfer(clrfund.address, poolContributionAmount)
 
     // Add additional funding source
-    await fundingRoundFactory.addFundingSource(
-      await poolContributor2.getAddress()
-    )
+    await clrfund.addFundingSource(await poolContributor2.getAddress())
     await token
       .connect(poolContributor2)
-      .approve(fundingRoundFactory.address, poolContributionAmount)
+      .approve(clrfund.address, poolContributionAmount)
 
     // Add recipients
     await recipientRegistry.addRecipient(
@@ -230,9 +246,9 @@ describe('End-to-end Tests', function () {
     )
 
     // Deploy new funding round and MACI
-    const newRoundTx = await fundingRoundFactory.deployNewRound(roundDuration)
+    const newRoundTx = await clrfund.deployNewRound(roundDuration)
     maciTransactionHash = newRoundTx.hash
-    const fundingRoundAddress = await fundingRoundFactory.getCurrentRound()
+    const fundingRoundAddress = await clrfund.getCurrentRound()
     fundingRound = await ethers.getContractAt(
       'FundingRound',
       fundingRoundAddress
@@ -299,20 +315,14 @@ describe('End-to-end Tests', function () {
     const providerUrl = (provider as any)._hardhatNetwork.config.url
 
     // Process messages and tally votes
-    await mergeMessages({
-      contract: maci.address,
-      poll_id: pollId.toString(),
-      num_queue_ops: DEFAULT_SR_QUEUE_OPS,
-    })
-
-    await mergeSignups({
-      contract: maci.address,
-      poll_id: pollId.toString(),
-      num_queue_ops: DEFAULT_SR_QUEUE_OPS,
-    })
+    await mergeMaciSubtrees(
+      maci.address,
+      pollId.toString(),
+      DEFAULT_SR_QUEUE_OPS
+    )
 
     const random = Math.floor(Math.random() * 10 ** 8)
-    const outputDir = path.join('.', 'proof_output', `${random}`)
+    const outputDir = path.join(proofOutputDirectory, `${random}`)
     if (!existsSync(outputDir)) {
       mkdirSync(outputDir, { recursive: true })
     }
@@ -320,7 +330,7 @@ describe('End-to-end Tests', function () {
       maciAddress: maci.address,
       providerUrl,
       pollId: pollId.toString(),
-      serializedCoordinatorPrivKey: coordinatorKeypair.privKey.serialize(),
+      coordinatorMacisk: coordinatorKeypair.privKey.serialize(),
       maciTxHash: maciTransactionHash,
       rapidSnarkDirectory,
       circuitType: circuit,
@@ -329,23 +339,11 @@ describe('End-to-end Tests', function () {
     })
     await genProofs(genProofArgs)
 
-    // deploy the tally contract
-    const verifierContract = await deployContract(coordinator, 'Verifier')
-    const tallyContract = await deployContractWithLinkedLibraries(
-      coordinator,
-      'Tally',
-      poseidonLibraries,
-      [verifierContract.address]
-    )
-    await fundingRound.connect(coordinator).setTally(tallyContract.address)
-
-    // deploy the message processing contract
-    const mpContract = await deployContractWithLinkedLibraries(
-      coordinator,
-      'MessageProcessor',
-      poseidonLibraries,
-      [verifierContract.address]
-    )
+    const { mpContract, tallyContract } = await deployMessageProcesorAndTally({
+      libraries: poseidonLibraries,
+      ethers,
+      signer: coordinator,
+    })
 
     // Submit proofs to MACI contract
     await proveOnChain({
@@ -353,25 +351,25 @@ describe('End-to-end Tests', function () {
       poll_id: pollId.toString(),
       mp: mpContract.address,
       tally: tallyContract.address,
-      subsidy: tallyContract.address, // TODO: make subsidy optional
+      //subsidy: tallyContract.address, // TODO: make subsidy optional
       proof_dir: genProofArgs.output,
     })
-
     console.log('finished proveOnChain')
+
+    await fundingRound.connect(coordinator).setTally(tallyContract.address)
     const tally = JSON.parse(readFileSync(genProofArgs.tally_file).toString())
     const tallyHash = await getIpfsHash(tally)
     await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
     console.log('Tally hash', tallyHash)
 
     // add tally results to funding round
-    const batchSize = Number(process.env.TALLY_BATCH_SIZE) || 8
     const recipientTreeDepth = params.voteOptionTreeDepth
-    console.log('Adding tally result on chain in batches of', batchSize)
+    console.log('Adding tally result on chain in batches of', tallyBatchSize)
     await addTallyResultsBatch(
       fundingRound.connect(coordinator),
       recipientTreeDepth,
       tally,
-      batchSize
+      tallyBatchSize
     )
     console.log('Finished adding tally results')
 
@@ -388,7 +386,7 @@ describe('End-to-end Tests', function () {
     )
 
     // Finalize round
-    await fundingRoundFactory.transferMatchingFunds(
+    await clrfund.transferMatchingFunds(
       tally.totalSpentVoiceCredits.spent,
       tally.totalSpentVoiceCredits.salt,
       newResultCommitment.toString(),

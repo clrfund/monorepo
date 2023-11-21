@@ -29,13 +29,24 @@ jobs:
     - name: Install zkutil
       run: |
         cargo install zkutil --version 0.3.2
+    - name: Checkout rapidsnark source code
+      uses: actions/checkout@v3
+      with:
+        repository: iden3/rapidsnark
+        path: rapidsnark
+    - name: Install rapidsnark
+        npm install
+        git submodule init
+        git submodule update
+        npx task createFieldSources
+        npx task buildProver
     - name: Checkout source code
       uses: actions/checkout@v3
       with:
         path: monorepo
     - name: Download batch 64 params
       run: |
-        $GITHUB_WORKSPACE/monorepo/.github/scripts/download-batch64-params.sh
+        $GITHUB_WORKSPACE/monorepo/.github/scripts/download-6-8-2-3.sh
     - name: Build CLR
       run: |
         cd monorepo
@@ -48,14 +59,6 @@ jobs:
         yarn start:node &
     - name: Run script tests
       run: |
+        export RAPIDSNARK_DIRECTORY=$GITHUB_WORKSPACE/rapidsnark
         cd monorepo/contracts
-        export NODE_CONFIG=$(node -e "const snarkParamsPath=process.env.GITHUB_WORKSPACE + '/params'; console.log(JSON.stringify({ snarkParamsPath }));")
-        echo $NODE_CONFIG
-        yarn deploy:local
-        yarn deployTestRound:local
-        yarn contribute:local
-        yarn vote:local
-        yarn hardhat evm-increase-time 1200 --network localhost
-        yarn tally:local
-        yarn finalize:local
-        yarn claim:local
+        ./sh/runScriptTests.sh
