@@ -36,6 +36,7 @@ jobs:
         path: rapidsnark
     - name: Install rapidsnark
       run: |
+        cd $GITHUB_WORKSPACE/rapidsnark
         npm install
         git submodule init
         git submodule update
