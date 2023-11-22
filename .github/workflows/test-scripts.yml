@@ -63,7 +63,7 @@ jobs:
         yarn start:node &
     - name: Run script tests
       run: |
-        export RAPIDSNARK_DIRECTORY=$GITHUB_WORKSPACE/rapidsnark
+        export RAPIDSNARK_DIRECTORY=$GITHUB_WORKSPACE/rapidsnark/build
         export CIRCUIT_DIRECTORY=$GITHUB_WORKSPACE/params
         cd monorepo/contracts
         ./sh/runScriptTests.sh
