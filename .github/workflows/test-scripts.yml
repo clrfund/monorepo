@@ -62,5 +62,6 @@ jobs:
     - name: Run script tests
       run: |
         export RAPIDSNARK_DIRECTORY=$GITHUB_WORKSPACE/rapidsnark
+        export CIRCUIT_DIRECTORY=$GITHUB_WORKSPACE/params
         cd monorepo/contracts
         ./sh/runScriptTests.sh
