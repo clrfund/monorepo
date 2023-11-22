@@ -17,16 +17,12 @@
  *    --maci-logs <maci-log-files> --maci-state-file <maci-state-file>
  */
 import { ethers, network, config } from 'hardhat'
-import { Contract, Signer } from 'ethers'
+import { Contract } from 'ethers'
 
 import { DEFAULT_SR_QUEUE_OPS } from '../utils/constants'
 import { getIpfsHash } from '../utils/ipfs'
 import { JSONFile } from '../utils/JSONFile'
-import {
-  deployContract,
-  deployPoseidonLibraries,
-  deployMessageProcesorAndTally,
-} from '../utils/deployment'
+import { deployMessageProcesorAndTally } from '../utils/deployment'
 import {
   getGenProofArgs,
   genProofs,
