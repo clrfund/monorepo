@@ -1,6 +1,6 @@
 import { Contract } from 'ethers'
 
-import { VerifyingKey } from 'maci-domainobjs'
+import { VerifyingKey } from '@clrfund/maci-domainobjs'
 import { extractVk } from '@clrfund/maci-circuits'
 import { CIRCUITS } from './circuits'
 import path from 'path'
