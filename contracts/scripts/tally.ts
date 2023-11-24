@@ -65,7 +65,7 @@ function readFromEnvironment(): {
 
   return {
     clrfund: process.env.CLRFUND || '',
-    batchSize: Number(process.env.BATCH_SIZE || '20'),
+    batchSize: Number(process.env.TALLY_BATCH_SIZE || '10'),
     circuit: process.env.CIRCUIT_TYPE || 'micro',
     circuitDirectory: process.env.CIRCUIT_DIRECTORY || '',
     maciTransactionHash: process.env.MACI_TRANSACTION_HASH,
