@@ -33,7 +33,6 @@
     "@nomiclabs/hardhat-ganache": "^2.0.1",
     "@nomiclabs/hardhat-waffle": "^2.0.3",
     "@types/chai": "^4.2.11",
-    "@types/commander": "^2.12.2",
     "@types/mocha": "^7.0.2",
     "@types/node": "^13.9.2",
     "@typescript-eslint/eslint-plugin": "^5.44.0",
