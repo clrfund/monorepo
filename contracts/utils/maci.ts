@@ -47,7 +47,8 @@ export function getRecipientTallyResult(
 ): TallyResult {
   // Create proof for tally result
   const result = tally.results.tally[recipientIndex]
-  if (!result) {
+  if (result == null) {
+    // result is null or undefined
     throw Error(`Missing tally result for index ${recipientIndex}`)
   }
 
@@ -196,7 +197,7 @@ type getGenProofArgsInput = {
   // the key get zkeys file mapping, see utils/circuits.ts
   circuitType: string
   circuitDirectory: string
-  rapidSnarkDirectory?: string
+  rapidSnark?: string
   // where the proof will be produced
   outputDir: string
 }
@@ -234,12 +235,11 @@ export function getGenProofArgs(
     maciTxHash,
     circuitType,
     circuitDirectory,
-    rapidSnarkDirectory,
+    rapidSnark,
     outputDir,
   } = args
   const tallyFile = getTalyFilePath(outputDir)
   const maciStateFile = path.join(outputDir, `macistate`)
-  const rapidSnarkExe = path.join(rapidSnarkDirectory || '', 'prover')
 
   const {
     processZkFile,
@@ -274,7 +274,7 @@ export function getGenProofArgs(
         eth_provider: providerUrl,
         poll_id: pollId.toString(),
         tally_file: tallyFile,
-        rapidsnark: rapidSnarkExe,
+        rapidsnark: rapidSnark,
         process_witnessgen: processWitness,
         tally_witnessgen: tallyWitness,
         process_zkey: processZkFile,
