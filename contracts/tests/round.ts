@@ -4,7 +4,7 @@ import { solidity } from 'ethereum-waffle'
 import { deployMockContract } from '@ethereum-waffle/mock-contract'
 import { Contract, BigNumber, ContractTransaction } from 'ethers'
 import { defaultAbiCoder } from '@ethersproject/abi'
-import { genRandomSalt } from 'maci-crypto'
+import { genRandomSalt } from '@clrfund/maci-crypto'
 import { Keypair } from '@clrfund/common'
 
 import {
