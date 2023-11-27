@@ -39,7 +39,7 @@ export COORDINATOR_MACISK=$(echo "${MACI_KEYPAIR}" | grep -o "macisk.*$")
 
 # create a new instance of ClrFund
 DEPLOYER=$(extract 'deployer')
-yarn ts-node cli/newClrfund.ts \
+yarn ts-node cli/newClrFund.ts \
   --deployer "${DEPLOYER}" \
   --user-registry-type simple \
   --recipient-registry-type simple \
