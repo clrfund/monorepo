@@ -65,7 +65,7 @@ export function getRecipientTallyResult(
     recipientIndex,
     result,
     proof: resultProof.pathElements.map((x: bigint[]) =>
-      x.map(y => y.toString())
+      x.map((y) => y.toString())
     ),
   }
 }
@@ -92,9 +92,9 @@ export function getRecipientTallyResultsBatch(
   }
 
   return [
-    tallyData.map(item => item.recipientIndex),
-    tallyData.map(item => item.result),
-    tallyData.map(item => item.proof),
+    tallyData.map((item) => item.recipientIndex),
+    tallyData.map((item) => item.result),
+    tallyData.map((item) => item.proof),
   ]
 }
 

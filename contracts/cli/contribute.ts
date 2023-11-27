@@ -21,22 +21,8 @@ program
   .parse()
 
 async function main(args: any) {
-  const [
-    ,
-    ,
-    ,
-    ,
-    ,
-    ,
-    ,
-    ,
-    ,
-    ,
-    ,
-    ,
-    contributor1,
-    contributor2,
-  ] = await ethers.getSigners()
+  const [, , , , , , , , , , , , contributor1, contributor2] =
+    await ethers.getSigners()
 
   const stateFile = args[0]
   if (!isPathExist(stateFile)) {
@@ -103,7 +89,7 @@ main(program.args)
   .then(() => {
     process.exit(0)
   })
-  .catch(err => {
+  .catch((err) => {
     console.error(err)
     process.exit(-1)
   })

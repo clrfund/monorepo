@@ -34,22 +34,8 @@ async function main(args: any) {
     throw Error('Env. variable COORDINATOR_MACISK not set')
   }
 
-  const [
-    ,
-    ,
-    ,
-    ,
-    ,
-    ,
-    ,
-    ,
-    ,
-    ,
-    ,
-    ,
-    contributor1,
-    contributor2,
-  ] = await ethers.getSigners()
+  const [, , , , , , , , , , , , contributor1, contributor2] =
+    await ethers.getSigners()
 
   const state = JSONFile.read(stateFile)
   const coordinatorKeyPair = new Keypair(PrivKey.unserialize(coordinatorMacisk))
@@ -115,7 +101,7 @@ main(program.args)
   .then(() => {
     process.exit(0)
   })
-  .catch(err => {
+  .catch((err) => {
     console.error(err)
     process.exit(-1)
   })

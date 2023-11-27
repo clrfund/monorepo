@@ -99,7 +99,7 @@ export function getRecipientClaimData(
   const spentProof: MerkleProof = spentTree.genMerklePath(recipientIndex)
 
   const resultsCommitment = genTallyResultCommitment(
-    tally.results.tally.map(x => BigInt(x)),
+    tally.results.tally.map((x) => BigInt(x)),
     BigInt(tally.results.salt),
     recipientTreeDepth
   )
@@ -112,7 +112,7 @@ export function getRecipientClaimData(
   return [
     recipientIndex,
     spent,
-    spentProof.pathElements.map(x => x.map(y => y.toString())),
+    spentProof.pathElements.map((x) => x.map((y) => y.toString())),
     spentSalt,
     resultsCommitment,
     spentVoiceCreditsCommitment,

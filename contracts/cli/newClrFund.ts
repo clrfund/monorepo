@@ -139,9 +139,8 @@ async function main(args: any) {
     })
     userRegistryAddress = userRegistryContract.address
   }
-  const setUserRegistryTx = await clrfundContract.setUserRegistry(
-    userRegistryAddress
-  )
+  const setUserRegistryTx =
+    await clrfundContract.setUserRegistry(userRegistryAddress)
   await setUserRegistryTx.wait()
   console.log(
     `Set ${args.userRegistryType} user registry: ${userRegistryAddress}`
@@ -177,7 +176,7 @@ main(program.opts())
   .then(() => {
     process.exit(0)
   })
-  .catch(err => {
+  .catch((err) => {
     console.error(err)
     process.exit(-1)
   })

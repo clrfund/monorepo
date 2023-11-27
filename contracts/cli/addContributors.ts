@@ -16,22 +16,8 @@ program
   .parse()
 
 async function main(args: any) {
-  const [
-    signer,
-    ,
-    ,
-    ,
-    ,
-    ,
-    ,
-    ,
-    ,
-    ,
-    ,
-    ,
-    contributor1,
-    contributor2,
-  ] = await ethers.getSigners()
+  const [signer, , , , , , , , , , , , contributor1, contributor2] =
+    await ethers.getSigners()
   console.log('Adding contributors by', signer.address)
 
   const clrfundContract = await ethers.getContractAt('ClrFund', args[0], signer)
@@ -57,7 +43,7 @@ main(program.args)
   .then(() => {
     process.exit(0)
   })
-  .catch(err => {
+  .catch((err) => {
     console.error(err)
     process.exit(-1)
   })
