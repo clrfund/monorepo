@@ -6,8 +6,8 @@ import {
   hash5,
   hash3,
   hash2,
-} from 'maci-crypto'
-import { PubKey, PCommand, Message } from 'maci-domainobjs'
+} from '@clrfund/maci-crypto'
+import { PubKey, PCommand, Message } from '@clrfund/maci-domainobjs'
 import { Keypair } from './keypair'
 import { utils } from 'ethers'
 import { Tally } from './tally'
@@ -99,7 +99,7 @@ export function getRecipientClaimData(
   const spentProof: MerkleProof = spentTree.genMerklePath(recipientIndex)
 
   const resultsCommitment = genTallyResultCommitment(
-    tally.results.tally.map((x) => BigInt(x)),
+    tally.results.tally.map(x => BigInt(x)),
     BigInt(tally.results.salt),
     recipientTreeDepth
   )
@@ -112,7 +112,7 @@ export function getRecipientClaimData(
   return [
     recipientIndex,
     spent,
-    spentProof.pathElements.map((x) => x.map((y) => y.toString())),
+    spentProof.pathElements.map(x => x.map(y => y.toString())),
     spentSalt,
     resultsCommitment,
     spentVoiceCreditsCommitment,
@@ -150,7 +150,7 @@ export function genTallyResultCommitment(
   for (const result of results) {
     tree.insert(result)
   }
-  return hashLeftRight(tree.root, salt).valueOf()
+  return hashLeftRight(tree.root, salt)
 }
 
 export {

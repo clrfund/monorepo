@@ -3,12 +3,11 @@ import path from 'path'
 import dotenv from 'dotenv'
 
 import { TASK_COMPILE_SOLIDITY_GET_SOURCE_PATHS } from 'hardhat/builtin-tasks/task-names'
-import { HardhatUserConfig, subtask, task } from 'hardhat/config'
+import { subtask, task } from 'hardhat/config'
 import '@nomiclabs/hardhat-waffle'
 import '@nomiclabs/hardhat-ganache'
 import 'hardhat-contract-sizer'
 import '@nomiclabs/hardhat-etherscan'
-import './tasks'
 
 dotenv.config()
 
@@ -24,7 +23,7 @@ if (WALLET_PRIVATE_KEY) {
   accounts = [WALLET_PRIVATE_KEY]
 }
 
-const config: HardhatUserConfig = {
+export default {
   networks: {
     hardhat: {
       gas: GAS_LIMIT,
@@ -192,5 +191,3 @@ task(
     }
   }
 )
-
-export default config

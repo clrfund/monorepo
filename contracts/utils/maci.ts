@@ -9,6 +9,7 @@ import {
   hashLeftRight,
   LEAVES_PER_NODE,
   genTallyResultCommitment,
+  Keypair,
 } from '@clrfund/common'
 import * as os from 'os'
 import {
@@ -46,6 +47,10 @@ export function getRecipientTallyResult(
 ): TallyResult {
   // Create proof for tally result
   const result = tally.results.tally[recipientIndex]
+  if (!result) {
+    throw Error(`Missing tally result for index ${recipientIndex}`)
+  }
+
   const resultTree = new IncrementalQuinTree(
     recipientTreeDepth,
     BigInt(0),
@@ -59,7 +64,9 @@ export function getRecipientTallyResult(
   return {
     recipientIndex,
     result,
-    proof: resultProof.pathElements.map((x) => x.map((y) => y.toString())),
+    proof: resultProof.pathElements.map((x: bigint[]) =>
+      x.map(y => y.toString())
+    ),
   }
 }
 
@@ -79,14 +86,15 @@ export function getRecipientTallyResultsBatch(
     recipientStartIndex + batchSize > tallyCount
       ? tallyCount
       : recipientStartIndex + batchSize
+
   for (let i = recipientStartIndex; i < lastIndex; i++) {
     tallyData.push(getRecipientTallyResult(i, recipientTreeDepth, tally))
   }
 
   return [
-    tallyData.map((item) => item.recipientIndex),
-    tallyData.map((item) => item.result),
-    tallyData.map((item) => item.proof),
+    tallyData.map(item => item.recipientIndex),
+    tallyData.map(item => item.result),
+    tallyData.map(item => item.proof),
   ]
 }
 
@@ -209,6 +217,7 @@ type getGenProofArgsResult = {
   output: string
   privkey: string
   macistate: string
+  cleanup: boolean
 }
 
 /*
@@ -241,6 +250,9 @@ export function getGenProofArgs(
     tallyWasm,
   } = getCircuitFiles(circuitType, circuitDirectory)
 
+  // do not cleanup threads after calling genProofs,
+  // the script will exit and end threads at the end
+  const cleanup = false
   return isOsArm
     ? {
         contract: maciAddress,
@@ -255,6 +267,7 @@ export function getGenProofArgs(
         output: outputDir,
         privkey: coordinatorMacisk,
         macistate: maciStateFile,
+        cleanup,
       }
     : {
         contract: maciAddress,
@@ -270,6 +283,7 @@ export function getGenProofArgs(
         output: outputDir,
         privkey: coordinatorMacisk,
         macistate: maciStateFile,
+        cleanup,
       }
 }
 
@@ -297,6 +311,22 @@ export async function mergeMaciSubtrees(
     poll_id: pollId,
     num_queue_ops: numOperations,
   })
+}
+
+/**
+ * Create a random MACI private key
+ *
+ * @returns MACI serialized private key
+ */
+export function newMaciPrivateKey(): string {
+  const keypair = new Keypair()
+  const secretKey = keypair.privKey.serialize()
+  const publicKey = keypair.pubKey.serialize()
+
+  console.log(`SecretKey: ${secretKey}`)
+  console.log(`PublicKey: ${publicKey}`)
+
+  return secretKey
 }
 
 export { createMessage, getRecipientClaimData, bnSqrt, proveOnChain, genProofs }

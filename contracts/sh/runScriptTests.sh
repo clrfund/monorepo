@@ -7,11 +7,12 @@ set -e
 
 # Test settings
 NOW=$(date +%s)
-OUTPUT_DIR="./proof_output/${NOW}"
-CIRCUIT=micro
-NETWORK=localhost
-CIRCUIT_DIRECTORY=${CIRCUIT_DIRECTORY:-"./snark-params"}
-STATE_FILE=${OUTPUT_DIR}/state.json
+export OUTPUT_DIR="./proof_output/${NOW}"
+export CIRCUIT=micro
+export NETWORK=localhost
+export CIRCUIT_DIRECTORY=${CIRCUIT_DIRECTORY:-"./snark-params"}
+export STATE_FILE=${OUTPUT_DIR}/state.json
+export HARDHAT_NETWORK=localhost
 
 # 20 mins
 ROUND_DURATION=1800
@@ -22,70 +23,60 @@ mkdir -p ${OUTPUT_DIR}
 # The pattern "field": "value" must be on 1 line
 # Usage: extract 'clrfund'
 function extract() {
-  val=$(cat "${STATE_FILE}" | grep "${1}" | grep -o "[^:]*$" | grep -o '[^",]*')
+  val=$(cat "${STATE_FILE}" | grep -o "${1}\": *\"[^\"]*" | grep -o "[^\"]*$")
   echo ${val}
 }
 
 # create a ClrFund deployer
-yarn hardhat new-deployer \
+yarn ts-node cli/newDeployer.ts \
   --directory "${CIRCUIT_DIRECTORY}" \
   --state-file "${STATE_FILE}" \
-  --network "${NETWORK}"
-DEPLOYER=$(extract 'deployer')
+  --circuit "${CIRCUIT}"
 
 # create a new maci key for the coordinator
-MACI_KEYPAIR=$(yarn hardhat new-maci-key)
-MACI_SECRET_KEY=$(echo "${MACI_KEYPAIR}" | grep -o "macisk.*$")
+MACI_KEYPAIR=$(yarn ts-node cli/newMaciKey.ts)
+export COORDINATOR_MACISK=$(echo "${MACI_KEYPAIR}" | grep -o "macisk.*$")
 
 # create a new instance of ClrFund
-yarn hardhat new-clrfund --deployer ${DEPLOYER} \
-  --user-type simple \
-  --recipient-type simple \
-  --coordinator-macisk "${MACI_SECRET_KEY}" \
-  --state-file "${STATE_FILE}" \
-  --network "${NETWORK}"
+DEPLOYER=$(extract 'deployer')
+yarn ts-node cli/newClrfund.ts \
+  --deployer "${DEPLOYER}" \
+  --user-registry-type simple \
+  --recipient-registry-type simple \
+  --state-file ${STATE_FILE}
+ 
+# # deploy a new funding round
 CLRFUND=$(extract 'clrfund')
-
-# deploy a new funding round
-yarn hardhat new-round \
-  --clrfund ${CLRFUND} \
-  --state-file "${STATE_FILE}" \
+yarn ts-node cli/newRound.ts \
+  --clrfund "${CLRFUND}" \
   --duration "${ROUND_DURATION}" \
-  --network "${NETWORK}"
-FUNDING_ROUND=$(extract 'fundingRound')
+  --state-file ${STATE_FILE}
 
-yarn hardhat add-contributors --clrfund ${CLRFUND} --network "${NETWORK}"
-yarn hardhat add-recipients --clrfund ${CLRFUND} --network "${NETWORK}"
+yarn ts-node cli/addContributors.ts "${CLRFUND}"
+yarn ts-node cli/addRecipients.ts "${CLRFUND}"
 
-yarn hardhat contribute --state-file "${STATE_FILE}" --network "${NETWORK}"
-yarn hardhat vote \
-  --coordinator-macisk "${MACI_SECRET_KEY}" \
-  --state-file "${STATE_FILE}" \
-  --network "${NETWORK}"
-yarn hardhat time-travel ${ROUND_DURATION} --network "${NETWORK}"
+yarn ts-node cli/contribute.ts ${STATE_FILE}
+yarn ts-node cli/vote.ts ${STATE_FILE}
+
+yarn ts-node cli/timeTravel.ts ${ROUND_DURATION}
 
 # run the tally script
-export CIRCUIT=micro
-export CIRCUIT_DIRECTORY="${CIRCUIT_DIRECTORY}"
-export CLRFUND="${CLRFUND}"
-export STATE_FILE="${STATE_FILE}"
-export TALLY_BATCH_SIZE=10
-export PROOF_OUTPUT_DIR="${PROOF_OUTPUT_DIR}"
-export COORDINATOR_MACISK="${MACI_SECRET_KEY}"
-export MACI_TRANSACTION_HASH=$(extract 'maciTxHash')
-export OUTPUT_DIR="${OUTPUT_DIR}"
-export NODE_OPTIONS=--max-old-space-size=4096
-yarn hardhat run scripts/tally.ts --network "${NETWORK}"
-
-# finalize the round
+MACI_TRANSACTION_HASH=$(extract 'maciTxHash')
+NODE_OPTIONS="--max-old-space-size=4096"
+yarn ts-node cli/tally.ts \
+  --clrfund ${CLRFUND} \
+  --circuit-directory "${CIRCUIT_DIRECTORY}" \
+  --circuit "${CIRCUIT}" \
+  --batch-size 8 \
+  --output-dir "${OUTPUT_DIR}" \
+  --maci-tx-hash "${MACI_TRANSACTION_HASH}" \
+  --state-file ${STATE_FILE}
+ 
+# # finalize the round
 TALLY_FILE=$(extract 'tallyFile')
-yarn hardhat finalize \
-  --clrfund "${CLRFUND}" \
-  --tally-file "${TALLY_FILE}" \
-  --network "${NETWORK}"
-
+yarn ts-node cli/finalize.ts --clrfund "${CLRFUND}" --tally-file ${TALLY_FILE}
+ 
 # claim funds
-yarn hardhat claim \
-  --funding-round ${FUNDING_ROUND} \
-  --network "${NETWORK}"
+FUNDING_ROUND=$(extract 'fundingRound')
+yarn ts-node cli/claim.ts --funding-round "${FUNDING_ROUND}" --tally-file ${TALLY_FILE}
 

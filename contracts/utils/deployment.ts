@@ -1,9 +1,13 @@
-import { Signer, Contract, utils, BigNumber } from 'ethers'
+import { Signer, Contract, utils, BigNumber, ContractTransaction } from 'ethers'
 import { link } from 'ethereum-waffle'
 import path from 'path'
 
 import { readFileSync } from 'fs'
 import { HardhatEthersHelpers } from '@nomiclabs/hardhat-ethers/types'
+import { DEFAULT_CIRCUIT } from './circuits'
+import { isPathExist } from './misc'
+import { MaciParameters } from './maciParameters'
+import { PrivKey, Keypair } from '@clrfund/common'
 
 // Number.MAX_SAFE_INTEGER - 1
 export const challengePeriodSeconds = '9007199254740990'
@@ -112,21 +116,38 @@ export async function deployContract({
  * Deploy a user registry
  * @param userRegistryType  user registry type, e.g. brightid, simple, etc
  * @param ethers Hardhat ethers handle
- * @param brightid Brightid parameters for the BrightID user registry
+ * @param signer The user registry contract deployer
+ * @param brightidContext The BrightId context
+ * @param brightidVerifier The BrightId verifier address
+ * @param brightidSponsor The BrightId sponsor contract address
  * @returns the newly deployed user registry contract
  */
-export async function deployUserRegistry(
-  userRegistryType: string,
-  ethers: HardhatEthersHelpers,
-  brightid?: BrightIdParams
-): Promise<Contract> {
+export async function deployUserRegistry({
+  userRegistryType,
+  ethers,
+  signer,
+  brightidContext,
+  brightidVerifier,
+  brightidSponsor,
+}: {
+  userRegistryType: string
+  ethers: HardhatEthersHelpers
+  signer?: Signer
+  brightidContext?: string
+  brightidVerifier?: string
+  brightidSponsor?: string
+}): Promise<Contract> {
   let userRegistry: Contract
-  const [signer] = await ethers.getSigners()
-
-  const lowercaseType = (userRegistryType || '').toLowerCase()
-  if (lowercaseType === 'brightid') {
-    if (!brightid) {
-      throw new Error('Missing BrightId parameter')
+  const registryType = (userRegistryType || '').toLowerCase()
+  if (registryType === 'brightid') {
+    if (!brightidContext) {
+      throw new Error('Missing BrightId context')
+    }
+    if (!brightidVerifier) {
+      throw new Error('Missing BrightId verifier address')
+    }
+    if (!brightidSponsor) {
+      throw new Error('Missing BrightId sponsor contract address')
     }
 
     const BrightIdUserRegistry = await ethers.getContractFactory(
@@ -135,14 +156,14 @@ export async function deployUserRegistry(
     )
 
     userRegistry = await BrightIdUserRegistry.deploy(
-      utils.formatBytes32String(brightid.context),
-      brightid.verifierAddress,
-      brightid.sponsor
+      utils.formatBytes32String(brightidContext),
+      brightidVerifier,
+      brightidSponsor
     )
   } else {
-    const userRegistryName = userRegistryNames[lowercaseType]
+    const userRegistryName = userRegistryNames[registryType]
     if (!userRegistryName) {
-      throw new Error('unsupported user registry type: ' + lowercaseType)
+      throw new Error('unsupported user registry type: ' + registryType)
     }
 
     const UserRegistry = await ethers.getContractFactory(
@@ -160,7 +181,10 @@ export async function deployUserRegistry(
  * Deploy a recipient registry
  * @param type  recipient registry type, e.g. simple, optimistic, etc
  * @param controller the controller address of the registry
+ * @param deposit the optimistic recipient registry base deposit amount
+ * @param challengePeriod the optimistic recipient registry challenge period
  * @param ethers Hardhat ethers handle
+ * @param signer The deployer account
  * @returns the newly deployed registry contract
  */
 export async function deployRecipientRegistry({
@@ -178,13 +202,13 @@ export async function deployRecipientRegistry({
   ethers: HardhatEthersHelpers
   signer?: Signer
 }): Promise<Contract> {
-  const lowercaseType = (type || '').toLowerCase()
-  const registryName = recipientRegistries[lowercaseType]
+  const registryType = (type || '').toLowerCase()
+  const registryName = recipientRegistries[registryType]
   if (!registryName) {
-    throw new Error('Unsupported recipient registry type: ' + type)
+    throw new Error('Unsupported recipient registry type: ' + registryType)
   }
 
-  if (lowercaseType === 'optimistic') {
+  if (registryType === 'optimistic') {
     if (!deposit) {
       throw new Error('Missing base deposit amount')
     }
@@ -194,7 +218,7 @@ export async function deployRecipientRegistry({
   }
 
   const args =
-    lowercaseType === 'simple'
+    registryType === 'simple'
       ? [controller]
       : [deposit, challengePeriod, controller]
 
@@ -403,4 +427,57 @@ export async function deployMaciFactory({
   await transferTx.wait()
 
   return maciFactory
+}
+
+/**
+ * Set MACI parameters in the MACI factory
+ * @param maciFactory
+ * @param directory
+ * @param circuit
+ */
+export async function setMaciParameters(
+  maciFactory: Contract,
+  directory: string,
+  circuit = DEFAULT_CIRCUIT
+): Promise<ContractTransaction> {
+  if (!isPathExist(directory)) {
+    throw new Error(`Path ${directory} does not exists`)
+  }
+  const maciParameters = await MaciParameters.fromConfig(circuit, directory)
+  const setMaciTx = await maciFactory.setMaciParameters(
+    ...maciParameters.asContractParam()
+  )
+  await setMaciTx.wait()
+
+  return setMaciTx
+}
+
+/**
+ * Set the coordinator address and maci public key in the funding round factory
+ *
+ * @param fundingRoundFactory funding round factory contract
+ * @param coordinatorAddress
+ * @param MaciPrivateKey
+ */
+export async function setCoordinator({
+  clrfundContract,
+  coordinatorAddress,
+  coordinatorMacisk,
+}: {
+  clrfundContract: Contract
+  coordinatorAddress: string
+  coordinatorMacisk?: string
+}): Promise<ContractTransaction> {
+  // Generate or use the passed in coordinator key
+  const privKey = coordinatorMacisk
+    ? PrivKey.unserialize(coordinatorMacisk)
+    : undefined
+
+  const keypair = new Keypair(privKey)
+  const coordinatorPubKey = keypair.pubKey
+  const setCoordinatorTx = await clrfundContract.setCoordinator(
+    coordinatorAddress,
+    coordinatorPubKey.asContractParam()
+  )
+  return setCoordinatorTx
 }

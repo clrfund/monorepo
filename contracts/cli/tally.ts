@@ -1,20 +1,21 @@
 /**
- * Tally votes for the specified funding round. This task can be rerun by
- * passing in additional parameters: --maci-logs, --maci-state-file
+ * Script for tallying votes
+ *
+ * This script can be rerun by passing in additional parameters:
+ * --maci-logs, --maci-state-file
  *
  * Make sure to set the following environment variables in the .env file
  * if not running test using the localhost network
  * 1) COORDINATOR_ETH_PK - coordinator's wallet private key to interact with contracts
- * 2) COORDINATOR_PK - coordinator's MACI private key to decrypt messages
+ * 2) COORDINATOR_MACISK - coordinator's MACI private key to decrypt messages
  *
  * Sample usage:
  *
- *  yarn hardhat tally --round-address <address> --start-block <maci-start-block> --network <network>
+ *  yarn ts-node cli/tally.ts --round-address <address> --start-block <maci-start-block>
  *
  * To rerun:
  *
- *  yarn hardhat tally --round-address <address> --network <network> \
- *    --maci-logs <maci-log-files> --maci-state-file <maci-state-file>
+ *  yarn ts-node cli/tally.ts --round-address <address>
  */
 import { ethers, network, config } from 'hardhat'
 import { Contract } from 'ethers'
@@ -31,56 +32,37 @@ import {
   mergeMaciSubtrees,
 } from '../utils/maci'
 import { getTalyFilePath } from '../utils/misc'
+import { program } from 'commander'
+import { DEFAULT_CIRCUIT } from '../utils/circuits'
 
-/**
- * Read variables from the environment file needed
- * to run the tally script
- *
- * @returns data used to run the tally script
- */
-function readFromEnvironment(): {
-  clrfund: string
-  batchSize: number
-  circuit: string
-  circuitDirectory: string
-  maciTransactionHash?: string
-  rapidSnarkDirectory?: string
-  outputDir: string
-  stateFile?: string
-  coordinatorMacisk: string
-  numQueueOps: number
-} {
-  if (!process.env.CLRFUND) {
-    console.log('process env', process.env)
-    throw Error('Env. variable CLRFUND not set')
-  }
-
-  if (!process.env.CIRCUIT_DIRECTORY) {
-    throw Error('Env. variable CIRCUIT_DIRECTORY not set')
-  }
-
-  if (!process.env.COORDINATOR_MACISK) {
-    throw Error('Env. variable COORDINATOR_MACISK not set')
-  }
-
-  return {
-    clrfund: process.env.CLRFUND || '',
-    batchSize: Number(process.env.TALLY_BATCH_SIZE || '10'),
-    circuit: process.env.CIRCUIT_TYPE || 'micro',
-    circuitDirectory: process.env.CIRCUIT_DIRECTORY || '',
-    maciTransactionHash: process.env.MACI_TRANSACTION_HASH,
-    rapidSnarkDirectory: process.env.RAPIDSNARK_DIRECTORY,
-    outputDir: process.env.OUTPUT_DIR || './output',
-    stateFile: process.env.STATE_FILE,
-    coordinatorMacisk: process.env.COORDINATOR_MACISK || '',
-    numQueueOps: Number(process.env.NUM_QUEUE_OPS || DEFAULT_SR_QUEUE_OPS),
-  }
-}
+program
+  .description('Tally votes')
+  .requiredOption('-c --clrfund <clrfund>', 'ClrFund contract address')
+  .option(
+    '-b --batch-size <batch size>',
+    'The batch size to upload tally result on-chain',
+    '10'
+  )
+  .requiredOption('-c --circuit <type>', 'The circuit type', DEFAULT_CIRCUIT)
+  .requiredOption('-d --circuit-directory <dir>', 'The circuit directory')
+  .option(
+    '-s --state-file <file>',
+    'File to store the ClrFundDeployer address for e2e testing'
+  )
+  .requiredOption('-o --output-dir <dir>', 'The proof output directory')
+  .option('-h --maci-tx-hash <hash>', 'The MACI creation transaction hash')
+  .option('-r --rapid-snark-directory <dir>', 'The rapidsnark directory')
+  .option(
+    '-n --num-queue-ops <num>',
+    'The number of operation for tree merging',
+    DEFAULT_SR_QUEUE_OPS
+  )
+  .parse()
 
 /**
  * Main tally logic
  */
-async function main() {
+async function main(args: any) {
   const {
     clrfund,
     batchSize,
@@ -89,10 +71,9 @@ async function main() {
     circuit,
     circuitDirectory,
     rapidSnarkDirectory,
-    maciTransactionHash,
-    coordinatorMacisk,
+    maciTxHash,
     numQueueOps,
-  } = readFromEnvironment()
+  } = args
 
   const [coordinator] = await ethers.getSigners()
   console.log('Coordinator address: ', coordinator.address)
@@ -125,6 +106,11 @@ async function main() {
 
   let tally
   if (!publishedTallyHash) {
+    const coordinatorMacisk = process.env.COORDINATOR_MACISK
+    if (!coordinatorMacisk) {
+      throw Error('Env. variable COORDINATOR_MACISK not set')
+    }
+
     const pollIdBN = await fundingRoundContract.pollId()
     const pollId = pollIdBN.toString()
     console.log('PollId', pollId)
@@ -138,7 +124,7 @@ async function main() {
       providerUrl,
       pollId,
       coordinatorMacisk,
-      maciTxHash: maciTransactionHash,
+      maciTxHash,
       rapidSnarkDirectory,
       circuitType: circuit,
       circuitDirectory,
@@ -214,7 +200,7 @@ async function main() {
     fundingRoundContract,
     3,
     tally,
-    batchSize,
+    Number(batchSize),
     startIndex.toNumber(),
     (processed: number) => {
       console.log(`Processed ${processed} / ${total}`)
@@ -223,9 +209,9 @@ async function main() {
   console.log('Tally results uploaded. Gas used:', addTallyGas.toString())
 }
 
-main()
+main(program.opts())
   .then(() => process.exit(0))
-  .catch((error) => {
+  .catch(error => {
     console.error(error)
     process.exit(1)
   })
