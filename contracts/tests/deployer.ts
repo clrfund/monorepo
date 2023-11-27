@@ -2,7 +2,7 @@ import { ethers, waffle, config } from 'hardhat'
 import { use, expect } from 'chai'
 import { solidity } from 'ethereum-waffle'
 import { Signer, Contract, ContractTransaction, constants } from 'ethers'
-import { genRandomSalt } from 'maci-crypto'
+import { genRandomSalt } from '@clrfund/maci-crypto'
 import { Keypair } from '@clrfund/common'
 
 import { ZERO_ADDRESS, UNIT } from '../utils/constants'
