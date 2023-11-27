@@ -44,7 +44,11 @@ jobs:
         mkdir build_prover && cd build_prover
         cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../package
         make -j4 && make install
+    - name: Find rapidsnark
+      run: |
+        cd rapidsnark
         pwd
+        echo "$GITHUB_WORKSPACE"
         find . -name "prover"
     - name: Checkout source code
       uses: actions/checkout@v3
@@ -65,7 +69,7 @@ jobs:
         yarn start:node &
     - name: Run script tests
       run: |
-        export RAPIDSNARK_DIRECTORY=$GITHUB_WORKSPACE/rapidsnark/package/bin
+        export RAPID_SNARK=$GITHUB_WORKSPACE/rapidsnark/package/bin/prover
         export CIRCUIT_DIRECTORY=$GITHUB_WORKSPACE/params
         cd monorepo/contracts
         ./sh/runScriptTests.sh

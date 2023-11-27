@@ -13,6 +13,7 @@ export NETWORK=localhost
 export CIRCUIT_DIRECTORY=${CIRCUIT_DIRECTORY:-"./snark-params"}
 export STATE_FILE=${OUTPUT_DIR}/state.json
 export HARDHAT_NETWORK=localhost
+export RAPID_SNARK=${RAPID_SNARK:-~/rapidsnark/package/bin/prover}
 
 # 20 mins
 ROUND_DURATION=1800
@@ -65,10 +66,11 @@ MACI_TRANSACTION_HASH=$(extract 'maciTxHash')
 NODE_OPTIONS="--max-old-space-size=4096"
 yarn ts-node cli/tally.ts \
   --clrfund ${CLRFUND} \
-  --circuit-directory "${CIRCUIT_DIRECTORY}" \
+  --circuit-directory ${CIRCUIT_DIRECTORY} \
   --circuit "${CIRCUIT}" \
+  --rapid-snark ${RAPID_SNARK} \
   --batch-size 8 \
-  --output-dir "${OUTPUT_DIR}" \
+  --output-dir ${OUTPUT_DIR} \
   --maci-tx-hash "${MACI_TRANSACTION_HASH}" \
   --state-file ${STATE_FILE}
  
