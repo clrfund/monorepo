@@ -38,8 +38,7 @@ const roundDuration = 7 * 86400
 // MACI zkFiles
 const circuit = process.env.CIRCUIT_TYPE || DEFAULT_CIRCUIT
 const circuitDirectory = process.env.CIRCUIT_DIRECTORY || '../../params'
-const rapidSnarkDirectory =
-  process.env.RAPID_SNARK || '~/rapidsnark/package/bin/prover'
+const rapidSnark = process.env.RAPID_SNARK || '~/rapidsnark/package/bin/prover'
 const proofOutputDirectory = process.env.PROOF_OUTPUT_DIR || './proof_output'
 const tallyBatchSize = Number(process.env.TALLY_BATCH_SIZE || 8)
 
@@ -332,7 +331,7 @@ describe('End-to-end Tests', function () {
       pollId: pollId.toString(),
       coordinatorMacisk: coordinatorKeypair.privKey.serialize(),
       maciTxHash: maciTransactionHash,
-      rapidSnarkDirectory,
+      rapidSnark,
       circuitType: circuit,
       circuitDirectory,
       outputDir,

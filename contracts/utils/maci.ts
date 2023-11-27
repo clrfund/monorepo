@@ -19,7 +19,7 @@ import {
   proveOnChain,
 } from '@clrfund/maci-cli'
 
-import { getTalyFilePath } from './misc'
+import { getTalyFilePath, isPathExist } from './misc'
 import { CIRCUITS } from './circuits'
 import path from 'path'
 
@@ -238,6 +238,7 @@ export function getGenProofArgs(
     rapidSnark,
     outputDir,
   } = args
+
   const tallyFile = getTalyFilePath(outputDir)
   const maciStateFile = path.join(outputDir, `macistate`)
 
@@ -253,38 +254,48 @@ export function getGenProofArgs(
   // do not cleanup threads after calling genProofs,
   // the script will exit and end threads at the end
   const cleanup = false
-  return isOsArm
-    ? {
-        contract: maciAddress,
-        eth_provider: providerUrl,
-        poll_id: pollId.toString(),
-        tally_file: tallyFile,
-        process_wasm: processWasm,
-        process_zkey: processZkFile,
-        tally_zkey: tallyZkFile,
-        tally_wasm: tallyWasm,
-        transaction_hash: maciTxHash,
-        output: outputDir,
-        privkey: coordinatorMacisk,
-        macistate: maciStateFile,
-        cleanup,
-      }
-    : {
-        contract: maciAddress,
-        eth_provider: providerUrl,
-        poll_id: pollId.toString(),
-        tally_file: tallyFile,
-        rapidsnark: rapidSnark,
-        process_witnessgen: processWitness,
-        tally_witnessgen: tallyWitness,
-        process_zkey: processZkFile,
-        tally_zkey: tallyZkFile,
-        transaction_hash: maciTxHash,
-        output: outputDir,
-        privkey: coordinatorMacisk,
-        macistate: maciStateFile,
-        cleanup,
-      }
+  if (isOsArm) {
+    return {
+      contract: maciAddress,
+      eth_provider: providerUrl,
+      poll_id: pollId.toString(),
+      tally_file: tallyFile,
+      process_wasm: processWasm,
+      process_zkey: processZkFile,
+      tally_zkey: tallyZkFile,
+      tally_wasm: tallyWasm,
+      transaction_hash: maciTxHash,
+      output: outputDir,
+      privkey: coordinatorMacisk,
+      macistate: maciStateFile,
+      cleanup,
+    }
+  } else {
+    if (!rapidSnark) {
+      throw new Error('Please specify the path to the rapidsnark binary')
+    }
+
+    if (!isPathExist(rapidSnark)) {
+      throw new Error(`Path ${rapidSnark} does not exist`)
+    }
+
+    return {
+      contract: maciAddress,
+      eth_provider: providerUrl,
+      poll_id: pollId.toString(),
+      tally_file: tallyFile,
+      rapidsnark: rapidSnark,
+      process_witnessgen: processWitness,
+      tally_witnessgen: tallyWitness,
+      process_zkey: processZkFile,
+      tally_zkey: tallyZkFile,
+      transaction_hash: maciTxHash,
+      output: outputDir,
+      privkey: coordinatorMacisk,
+      macistate: maciStateFile,
+      cleanup,
+    }
+  }
 }
 
 /**
