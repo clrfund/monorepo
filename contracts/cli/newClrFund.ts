@@ -20,6 +20,7 @@
  *
  * If token is not provided, a new ERC20 token will be created
  */
+import { BigNumber } from 'ethers'
 import { ethers, network } from 'hardhat'
 import { getEventArg } from '../utils/contracts'
 import { newMaciPrivateKey } from '../utils/maci'
@@ -31,10 +32,12 @@ import {
   setCoordinator,
 } from '../utils/deployment'
 import { JSONFile } from '../utils/JSONFile'
-import { program } from 'commander'
+import { Option, program } from 'commander'
 import dotenv from 'dotenv'
 import { UNIT } from '../utils/constants'
 dotenv.config()
+
+const DEFAULT_DEPOSIT_AMOUNT = '0.001'
 
 program
   .description('Deploy a new ClrFund instance')
@@ -44,16 +47,43 @@ program
   )
   .option('-c --coordinator <coordinator>', 'The coordinator ETH address')
   .option('-t --token <address>', 'The native token address')
-  .option('-a --initial-token-supply <amount>', 'Initial token amount', '1000')
-  .option('-u --user-registry-type <type>', 'The user registry type')
+  .addOption(
+    new Option(
+      '-a --initial-token-supply <amount>',
+      'Initial token amount for new token'
+    ).default(1000)
+  )
+  .addOption(
+    new Option(
+      '-u --user-registry-type <type>',
+      'The user registry type'
+    ).choices(['simple', 'brightid', 'merkle', 'storage'])
+  )
   .option('-x --brightid-context <context>', 'The brightid context')
-  .option('-v --brightid-verifier <verifier>', 'The brightid verifier address')
+  .addOption(
+    new Option(
+      '-v --brightid-verifier <verifier>',
+      'The brightid verifier address'
+    ).default('0xdbf0b2ee9887fe11934789644096028ed3febe9c')
+  )
   .option(
     '-o --brightid-sponsor <sponsor>',
     'The brightid sponsor contract address'
   )
-  .option('-r --recipient-registry-type <type>', 'The recipient registry type')
-  .option('-b --deposit <deposit>', 'The optimistic recipient registry deposit')
+  .addOption(
+    new Option(
+      '-r --recipient-registry-type <type>',
+      'The recipient registry type'
+    )
+      .choices(['simple', 'optimistic'])
+      .default('optimistic')
+  )
+  .addOption(
+    new Option(
+      '-b --deposit <deposit>',
+      'The optimistic recipient registry deposit'
+    ).default(DEFAULT_DEPOSIT_AMOUNT)
+  )
   .option(
     '-p --challenge-period <period>',
     'The optimistic recipient registry challenge period in seconds',
@@ -149,26 +179,37 @@ async function main(args: any) {
   // set recipient registry
   let recipientRegistryAddress = args.recipientRegistryAddress
   if (!recipientRegistryAddress) {
+    const deposit = parseDeposit(args.deposit)
     const recipientRegistryContract = await deployRecipientRegistry({
       ethers,
       signer,
       type: args.recipientRegistryType,
       challengePeriod: args.challengePeriod,
-      deposit: args.deposit,
+      deposit,
       controller: clrfund,
     })
     recipientRegistryAddress = recipientRegistryContract.address
   }
+
   const setRecipientRegistryTx = await clrfundContract.setRecipientRegistry(
     recipientRegistryAddress
   )
   await setRecipientRegistryTx.wait()
+
   console.log(
     `Set ${args.recipientRegistryType} recipient registry: ${recipientRegistryAddress}`
   )
 
   if (stateFile) {
     JSONFile.update(stateFile, { clrfund })
+  }
+}
+
+function parseDeposit(deposit: string): BigNumber {
+  try {
+    return ethers.utils.parseUnits(deposit)
+  } catch (e) {
+    throw new Error(`Error parsing deposit ${(e as Error).message}`)
   }
 }
 

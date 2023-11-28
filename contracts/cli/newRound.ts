@@ -25,9 +25,18 @@ program
     'Create a new BrightId user registry',
     false
   )
-  .option('-x --context <context>', 'The brightid context')
-  .option('-v --verifier <verifier>', 'The brightid verifier address')
-  .option('-o --sponsor <sponsor>', 'The brightid sponsor contract address')
+  .option(
+    '-x --context <context>',
+    'The brightid context for the new user registry'
+  )
+  .option(
+    '-v --verifier <verifier>',
+    'The brightid verifier address for the new user registry'
+  )
+  .option(
+    '-o --sponsor <sponsor>',
+    'The brightid sponsor contract address for the new user registry'
+  )
   .option(
     '-s --state-file <file>',
     'File to store the ClrFundDeployer address for e2e testing'

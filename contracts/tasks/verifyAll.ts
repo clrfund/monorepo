@@ -102,8 +102,9 @@ async function verifyTally(tally: Contract, run: any): Promise<string> {
 
 async function verifyPoll(pollContract: Contract, run: any): Promise<string> {
   try {
+    const [, duration] = await pollContract.getDeployTimeAndDuration()
     const constructorArguments = await Promise.all([
-      pollContract.duration(),
+      Promise.resolve(duration),
       pollContract.maxValues(),
       pollContract.treeDepths(),
       pollContract.batchSizes(),
