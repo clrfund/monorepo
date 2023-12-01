@@ -85,7 +85,7 @@ async function checkAllocation() {
     currentRound.value.fundingRoundAddress,
     currentRound.value.nativeTokenDecimals,
     tally.value!.results.tally[props.project.index],
-    tally.value!.totalVoiceCreditsPerVoteOption.tally[props.project.index],
+    tally.value!.perVOSpentVoiceCredits.tally[props.project.index],
   )
   claimed.value = await isFundsClaimed(
     currentRound.value.fundingRoundAddress,
