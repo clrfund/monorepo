@@ -417,6 +417,7 @@ export enum ClrFund_OrderBy {
   CurrentRoundMessageTreeDepth = 'currentRound__messageTreeDepth',
   CurrentRoundNativeToken = 'currentRound__nativeToken',
   CurrentRoundPollAddress = 'currentRound__pollAddress',
+  CurrentRoundPollId = 'currentRound__pollId',
   CurrentRoundRecipientCount = 'currentRound__recipientCount',
   CurrentRoundRecipientRegistryAddress = 'currentRound__recipientRegistryAddress',
   CurrentRoundSignUpDeadline = 'currentRound__signUpDeadline',
@@ -592,6 +593,7 @@ export enum Contribution_OrderBy {
   FundingRoundMessageTreeDepth = 'fundingRound__messageTreeDepth',
   FundingRoundNativeToken = 'fundingRound__nativeToken',
   FundingRoundPollAddress = 'fundingRound__pollAddress',
+  FundingRoundPollId = 'fundingRound__pollId',
   FundingRoundRecipientCount = 'fundingRound__recipientCount',
   FundingRoundRecipientRegistryAddress = 'fundingRound__recipientRegistryAddress',
   FundingRoundSignUpDeadline = 'fundingRound__signUpDeadline',
@@ -1139,6 +1141,7 @@ export enum Donation_OrderBy {
   FundingRoundMessageTreeDepth = 'fundingRound__messageTreeDepth',
   FundingRoundNativeToken = 'fundingRound__nativeToken',
   FundingRoundPollAddress = 'fundingRound__pollAddress',
+  FundingRoundPollId = 'fundingRound__pollId',
   FundingRoundRecipientCount = 'fundingRound__recipientCount',
   FundingRoundRecipientRegistryAddress = 'fundingRound__recipientRegistryAddress',
   FundingRoundSignUpDeadline = 'fundingRound__signUpDeadline',
@@ -1178,6 +1181,7 @@ export type FundingRound = {
   nativeToken: Maybe<Scalars['Bytes']>;
   nativeTokenInfo: Maybe<Token>;
   pollAddress: Maybe<Scalars['Bytes']>;
+  pollId: Maybe<Scalars['BigInt']>;
   recipientCount: Scalars['BigInt'];
   recipientRegistry: Maybe<RecipientRegistry>;
   recipientRegistryAddress: Maybe<Scalars['Bytes']>;
@@ -1456,6 +1460,14 @@ export type FundingRound_Filter = {
   pollAddress_not: InputMaybe<Scalars['Bytes']>;
   pollAddress_not_contains: InputMaybe<Scalars['Bytes']>;
   pollAddress_not_in: InputMaybe<Array<Scalars['Bytes']>>;
+  pollId: InputMaybe<Scalars['BigInt']>;
+  pollId_gt: InputMaybe<Scalars['BigInt']>;
+  pollId_gte: InputMaybe<Scalars['BigInt']>;
+  pollId_in: InputMaybe<Array<Scalars['BigInt']>>;
+  pollId_lt: InputMaybe<Scalars['BigInt']>;
+  pollId_lte: InputMaybe<Scalars['BigInt']>;
+  pollId_not: InputMaybe<Scalars['BigInt']>;
+  pollId_not_in: InputMaybe<Array<Scalars['BigInt']>>;
   recipientCount: InputMaybe<Scalars['BigInt']>;
   recipientCount_gt: InputMaybe<Scalars['BigInt']>;
   recipientCount_gte: InputMaybe<Scalars['BigInt']>;
@@ -1638,6 +1650,7 @@ export enum FundingRound_OrderBy {
   NativeTokenInfoSymbol = 'nativeTokenInfo__symbol',
   NativeTokenInfoTokenAddress = 'nativeTokenInfo__tokenAddress',
   PollAddress = 'pollAddress',
+  PollId = 'pollId',
   RecipientCount = 'recipientCount',
   RecipientRegistry = 'recipientRegistry',
   RecipientRegistryAddress = 'recipientRegistryAddress',
@@ -1811,6 +1824,7 @@ export enum Message_OrderBy {
   FundingRoundMessageTreeDepth = 'fundingRound__messageTreeDepth',
   FundingRoundNativeToken = 'fundingRound__nativeToken',
   FundingRoundPollAddress = 'fundingRound__pollAddress',
+  FundingRoundPollId = 'fundingRound__pollId',
   FundingRoundRecipientCount = 'fundingRound__recipientCount',
   FundingRoundRecipientRegistryAddress = 'fundingRound__recipientRegistryAddress',
   FundingRoundSignUpDeadline = 'fundingRound__signUpDeadline',
@@ -1947,6 +1961,7 @@ export enum PublicKey_OrderBy {
   FundingRoundMessageTreeDepth = 'fundingRound__messageTreeDepth',
   FundingRoundNativeToken = 'fundingRound__nativeToken',
   FundingRoundPollAddress = 'fundingRound__pollAddress',
+  FundingRoundPollId = 'fundingRound__pollId',
   FundingRoundRecipientCount = 'fundingRound__recipientCount',
   FundingRoundRecipientRegistryAddress = 'fundingRound__recipientRegistryAddress',
   FundingRoundSignUpDeadline = 'fundingRound__signUpDeadline',
@@ -3185,6 +3200,7 @@ export enum Vote_OrderBy {
   FundingRoundMessageTreeDepth = 'fundingRound__messageTreeDepth',
   FundingRoundNativeToken = 'fundingRound__nativeToken',
   FundingRoundPollAddress = 'fundingRound__pollAddress',
+  FundingRoundPollId = 'fundingRound__pollId',
   FundingRoundRecipientCount = 'fundingRound__recipientCount',
   FundingRoundRecipientRegistryAddress = 'fundingRound__recipientRegistryAddress',
   FundingRoundSignUpDeadline = 'fundingRound__signUpDeadline',
@@ -3345,7 +3361,7 @@ export type GetRoundInfoQueryVariables = Exact<{
 }>;
 
 
-export type GetRoundInfoQuery = { __typename?: 'Query', fundingRound: { __typename?: 'FundingRound', id: string, maci: any | null, pollAddress: any | null, recipientRegistryAddress: any | null, contributorRegistryAddress: any | null, voiceCreditFactor: any | null, isFinalized: boolean | null, isCancelled: boolean | null, contributorCount: any, totalSpent: any | null, matchingPoolSize: any | null, startTime: any | null, signUpDeadline: any | null, votingDeadline: any | null, coordinatorPubKeyX: any | null, coordinatorPubKeyY: any | null, stateTreeDepth: number | null, messageTreeDepth: number | null, voteOptionTreeDepth: number | null, nativeTokenInfo: { __typename?: 'Token', tokenAddress: any | null, symbol: string | null, decimals: any | null } | null } | null };
+export type GetRoundInfoQuery = { __typename?: 'Query', fundingRound: { __typename?: 'FundingRound', id: string, maci: any | null, pollId: any | null, pollAddress: any | null, recipientRegistryAddress: any | null, contributorRegistryAddress: any | null, voiceCreditFactor: any | null, isFinalized: boolean | null, isCancelled: boolean | null, contributorCount: any, totalSpent: any | null, matchingPoolSize: any | null, startTime: any | null, signUpDeadline: any | null, votingDeadline: any | null, coordinatorPubKeyX: any | null, coordinatorPubKeyY: any | null, stateTreeDepth: number | null, messageTreeDepth: number | null, voteOptionTreeDepth: number | null, nativeTokenInfo: { __typename?: 'Token', tokenAddress: any | null, symbol: string | null, decimals: any | null } | null } | null };
 
 export type GetRoundsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3548,6 +3564,7 @@ export const GetRoundInfoDocument = gql`
   fundingRound(id: $fundingRoundAddress) {
     id
     maci
+    pollId
     pollAddress
     nativeTokenInfo {
       tokenAddress

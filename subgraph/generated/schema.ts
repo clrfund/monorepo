@@ -796,6 +796,23 @@ export class FundingRound extends Entity {
     }
   }
 
+  get pollId(): BigInt | null {
+    let value = this.get("pollId");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set pollId(value: BigInt | null) {
+    if (!value) {
+      this.unset("pollId");
+    } else {
+      this.set("pollId", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
   get pollAddress(): Bytes | null {
     let value = this.get("pollAddress");
     if (!value || value.kind == ValueKind.NULL) {

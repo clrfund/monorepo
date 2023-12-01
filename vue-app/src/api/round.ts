@@ -17,6 +17,7 @@ export interface RoundInfo {
   userRegistryAddress: string
   recipientRegistryAddress: string
   maciAddress: string
+  pollId: bigint
   recipientTreeDepth: number
   maxContributors: number
   maxRecipients: number
@@ -148,6 +149,7 @@ export async function getRoundInfo(
   }
 
   const {
+    pollId,
     pollAddress,
     maci: maciAddress,
     recipientRegistryAddress,
@@ -157,9 +159,9 @@ export async function getRoundInfo(
     stateTreeDepth,
     messageTreeDepth,
     voteOptionTreeDepth,
-    startTime,
-    signUpDeadline,
-    votingDeadline,
+    startTime: startTimeInSeconds,
+    signUpDeadline: signUpDeadlineInSeconds,
+    votingDeadline: votingDeadlineInSeconds,
     coordinatorPubKeyX,
     coordinatorPubKeyY,
   } = data.fundingRound
@@ -177,6 +179,9 @@ export async function getRoundInfo(
   const maxContributors = stateTreeDepth ? 2 ** stateTreeDepth - 1 : 0
   const maxMessages = messageTreeDepth ? 2 ** messageTreeDepth - 1 : 0
   const now = DateTime.local()
+  const startTime = DateTime.fromSeconds(Number(startTimeInSeconds || 0))
+  const signUpDeadline = DateTime.fromSeconds(Number(signUpDeadlineInSeconds || 0))
+  const votingDeadline = DateTime.fromSeconds(Number(votingDeadlineInSeconds || 0))
   const contributionsInfo = await getTotalContributed(fundingRoundAddress)
   const contributors = contributionsInfo.count
   let status: string
@@ -214,6 +219,7 @@ export async function getRoundInfo(
     recipientRegistryAddress: utils.getAddress(recipientRegistryAddress),
     userRegistryAddress: utils.getAddress(userRegistryAddress),
     maciAddress: utils.getAddress(maciAddress),
+    pollId: BigInt(pollId || 0),
     recipientTreeDepth: voteOptionTreeDepth || 1,
     maxContributors,
     maxRecipients: voteOptionTreeDepth ? 5 ** voteOptionTreeDepth - 1 : 0,
@@ -224,9 +230,9 @@ export async function getRoundInfo(
     nativeTokenDecimals,
     voiceCreditFactor,
     status,
-    startTime: DateTime.fromSeconds(Number(startTime || 0)),
-    signUpDeadline: DateTime.fromSeconds(Number(signUpDeadline || 0)),
-    votingDeadline: DateTime.fromSeconds(Number(votingDeadline || 0)),
+    startTime,
+    signUpDeadline,
+    votingDeadline,
     totalFunds,
     matchingPool,
     contributions,

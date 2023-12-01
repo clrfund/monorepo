@@ -251,8 +251,12 @@ export function handleRoundStarted(event: RoundStarted): void {
   }
 
   log.info('TRY pollAddress', [])
-  let pollAddressCall = fundingRoundContract.try_poll()
+  let pollIdCall = fundingRoundContract.try_pollId()
+  if (!pollIdCall.reverted) {
+    fundingRound.pollId = pollIdCall.value
+  }
 
+  let pollAddressCall = fundingRoundContract.try_poll()
   if (pollAddressCall.reverted) {
     log.info('TRY pollAddress Failed', [])
   } else {

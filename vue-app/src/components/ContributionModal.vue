@@ -168,7 +168,7 @@ onMounted(() => {
 })
 
 async function sendVotes() {
-  const { coordinatorPubKey } = currentRound.value!
+  const { coordinatorPubKey, pollId } = currentRound.value!
 
   const contributor = appStore.contributor
   const messages: Message[] = []
@@ -183,6 +183,7 @@ async function sendVotes() {
       recipientIndex,
       voiceCredits,
       nonce,
+      pollId,
     )
     messages.push(message)
     encPubKeys.push(encPubKey)

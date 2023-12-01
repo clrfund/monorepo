@@ -2,6 +2,7 @@ query GetRoundInfo($fundingRoundAddress: ID!) {
   fundingRound(id: $fundingRoundAddress) {
     id
     maci
+    pollId
     pollAddress
     nativeTokenInfo {
       tokenAddress
