@@ -371,6 +371,21 @@ export class FundingRound extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toString());
   }
 
+  poll(): Address {
+    let result = super.call("poll", "poll():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_poll(): ethereum.CallResult<Address> {
+    let result = super.tryCall("poll", "poll():(address)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
   totalSpent(): BigInt {
     let result = super.call("totalSpent", "totalSpent():(uint256)", []);
 

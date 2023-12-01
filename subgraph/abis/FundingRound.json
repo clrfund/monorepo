@@ -455,6 +455,19 @@
   },
   {
     "inputs": [],
+    "name": "poll",
+    "outputs": [
+      {
+        "internalType": "contract Poll",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "totalSpent",
     "outputs": [
       {

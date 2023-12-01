@@ -1,7 +1,8 @@
 import { log, ByteArray, crypto, BigInt } from '@graphprotocol/graph-ts'
-import { PublishMessage, SignUp } from '../generated/templates/MACI/MACI'
+import { SignUp } from '../generated/templates/MACI/MACI'
 
-import { FundingRound, Message, PublicKey } from '../generated/schema'
+import { FundingRound, PublicKey } from '../generated/schema'
+import { makePublicKeyId } from './PublicKey'
 
 // It is also possible to access smart contracts from mappings. For
 // example, the contract that has emitted the event can be connected to
@@ -19,71 +20,8 @@ import { FundingRound, Message, PublicKey } from '../generated/schema'
 // - contract.verifications(...)
 // - contract.verifier(...)
 
-function makePubKeyId(x: BigInt, y: BigInt): string {
-  let pubKeyX = x.toString()
-  let pubKeyY = y.toString()
-  let pubKeyXY = ByteArray.fromUTF8(pubKeyX + '.' + pubKeyY)
-  let publicKeyId = crypto.keccak256(pubKeyXY).toHexString()
-  return publicKeyId
-}
-
-export function handlePublishMessage(event: PublishMessage): void {
-  if (!event.transaction.to) {
-    log.error(
-      'Error: handlePublishMessage failed fundingRound not registered',
-      []
-    )
-    return
-  }
-
-  let fundingRoundId = event.transaction.to!.toHex()
-  let fundingRound = FundingRound.load(fundingRoundId)
-  if (fundingRound == null) {
-    log.error(
-      'Error: handlePublishMessage failed fundingRound not registered',
-      []
-    )
-    return
-  }
-
-  let messageID =
-    event.transaction.hash.toHexString() +
-    '-' +
-    event.transactionLogIndex.toString()
-
-  let timestamp = event.block.timestamp.toString()
-  let message = new Message(messageID)
-  message.data = event.params._message.data
-  message.iv = event.params._message.iv
-  message.blockNumber = event.block.number
-  message.transactionIndex = event.transaction.index
-  message.submittedBy = event.transaction.from
-
-  let publicKeyId = makePubKeyId(
-    event.params._encPubKey.x,
-    event.params._encPubKey.y
-  )
-  let publicKey = PublicKey.load(publicKeyId)
-
-  //NOTE: If the public keys aren't being tracked initialize them
-  if (publicKey == null) {
-    let publicKey = new PublicKey(publicKeyId)
-    publicKey.x = event.params._encPubKey.x
-    publicKey.y = event.params._encPubKey.y
-    publicKey.fundingRound = fundingRoundId
-
-    publicKey.save()
-  }
-
-  message.publicKey = publicKeyId
-  message.timestamp = timestamp
-  message.fundingRound = fundingRoundId
-  message.save()
-  log.info('handlePublishMessage', [])
-}
-
 export function handleSignUp(event: SignUp): void {
-  let publicKeyId = makePubKeyId(
+  let publicKeyId = makePublicKeyId(
     event.params._userPubKey.x,
     event.params._userPubKey.y
   )

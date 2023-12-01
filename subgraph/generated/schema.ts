@@ -11,7 +11,7 @@ import {
   BigDecimal
 } from "@graphprotocol/graph-ts";
 
-export class FundingRoundFactory extends Entity {
+export class ClrFund extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -19,20 +19,18 @@ export class FundingRoundFactory extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id != null, "Cannot save FundingRoundFactory entity without an ID");
+    assert(id != null, "Cannot save ClrFund entity without an ID");
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        `Entities of type FundingRoundFactory must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        `Entities of type ClrFund must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("FundingRoundFactory", id.toString(), this);
+      store.set("ClrFund", id.toString(), this);
     }
   }
 
-  static load(id: string): FundingRoundFactory | null {
-    return changetype<FundingRoundFactory | null>(
-      store.get("FundingRoundFactory", id)
-    );
+  static load(id: string): ClrFund | null {
+    return changetype<ClrFund | null>(store.get("ClrFund", id));
   }
 
   get id(): string {
@@ -527,13 +525,13 @@ export class Message extends Entity {
     }
   }
 
-  get iv(): BigInt {
-    let value = this.get("iv");
+  get msgType(): BigInt {
+    let value = this.get("msgType");
     return value!.toBigInt();
   }
 
-  set iv(value: BigInt) {
-    this.set("iv", Value.fromBigInt(value));
+  set msgType(value: BigInt) {
+    this.set("msgType", Value.fromBigInt(value));
   }
 
   get publicKey(): string | null {
@@ -764,8 +762,8 @@ export class FundingRound extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get fundingRoundFactory(): string | null {
-    let value = this.get("fundingRoundFactory");
+  get clrFund(): string | null {
+    let value = this.get("clrFund");
     if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
@@ -773,11 +771,11 @@ export class FundingRound extends Entity {
     }
   }
 
-  set fundingRoundFactory(value: string | null) {
+  set clrFund(value: string | null) {
     if (!value) {
-      this.unset("fundingRoundFactory");
+      this.unset("clrFund");
     } else {
-      this.set("fundingRoundFactory", Value.fromString(<string>value));
+      this.set("clrFund", Value.fromString(<string>value));
     }
   }
 
@@ -795,6 +793,23 @@ export class FundingRound extends Entity {
       this.unset("maci");
     } else {
       this.set("maci", Value.fromBytes(<Bytes>value));
+    }
+  }
+
+  get pollAddress(): Bytes | null {
+    let value = this.get("pollAddress");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set pollAddress(value: Bytes | null) {
+    if (!value) {
+      this.unset("pollAddress");
+    } else {
+      this.set("pollAddress", Value.fromBytes(<Bytes>value));
     }
   }
 
@@ -957,6 +972,67 @@ export class FundingRound extends Entity {
       this.unset("votingDeadline");
     } else {
       this.set("votingDeadline", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
+  get stateTreeDepth(): i32 {
+    let value = this.get("stateTreeDepth");
+    return value!.toI32();
+  }
+
+  set stateTreeDepth(value: i32) {
+    this.set("stateTreeDepth", Value.fromI32(value));
+  }
+
+  get messageTreeDepth(): i32 {
+    let value = this.get("messageTreeDepth");
+    return value!.toI32();
+  }
+
+  set messageTreeDepth(value: i32) {
+    this.set("messageTreeDepth", Value.fromI32(value));
+  }
+
+  get voteOptionTreeDepth(): i32 {
+    let value = this.get("voteOptionTreeDepth");
+    return value!.toI32();
+  }
+
+  set voteOptionTreeDepth(value: i32) {
+    this.set("voteOptionTreeDepth", Value.fromI32(value));
+  }
+
+  get coordinatorPubKeyX(): BigInt | null {
+    let value = this.get("coordinatorPubKeyX");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set coordinatorPubKeyX(value: BigInt | null) {
+    if (!value) {
+      this.unset("coordinatorPubKeyX");
+    } else {
+      this.set("coordinatorPubKeyX", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
+  get coordinatorPubKeyY(): BigInt | null {
+    let value = this.get("coordinatorPubKeyY");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set coordinatorPubKeyY(value: BigInt | null) {
+    if (!value) {
+      this.unset("coordinatorPubKeyY");
+    } else {
+      this.set("coordinatorPubKeyY", Value.fromBigInt(<BigInt>value));
     }
   }
 
@@ -1202,8 +1278,8 @@ export class RecipientRegistry extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get fundingRoundFactory(): string | null {
-    let value = this.get("fundingRoundFactory");
+  get clrFund(): string | null {
+    let value = this.get("clrFund");
     if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
@@ -1211,11 +1287,11 @@ export class RecipientRegistry extends Entity {
     }
   }
 
-  set fundingRoundFactory(value: string | null) {
+  set clrFund(value: string | null) {
     if (!value) {
-      this.unset("fundingRoundFactory");
+      this.unset("clrFund");
     } else {
-      this.set("fundingRoundFactory", Value.fromString(<string>value));
+      this.set("clrFund", Value.fromString(<string>value));
     }
   }
 
@@ -1669,13 +1745,13 @@ export class ContributorRegistry extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get fundingRoundFactory(): string {
-    let value = this.get("fundingRoundFactory");
+  get clrFund(): string {
+    let value = this.get("clrFund");
     return value!.toString();
   }
 
-  set fundingRoundFactory(value: string) {
-    this.set("fundingRoundFactory", Value.fromString(value));
+  set clrFund(value: string) {
+    this.set("clrFund", Value.fromString(value));
   }
 
   get context(): string | null {

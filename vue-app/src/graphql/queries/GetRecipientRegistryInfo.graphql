@@ -1,5 +1,5 @@
-query GetRecipientRegistryInfo($factoryAddress: ID!) {
-  fundingRoundFactory(id: $factoryAddress) {
+query GetRecipientRegistryInfo($clrFundAddress: ID!) {
+  clrFund(id: $clrFundAddress) {
     recipientRegistry {
       id
       owner

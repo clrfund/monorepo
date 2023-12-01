@@ -1,17 +1,17 @@
 import { BigNumber } from 'ethers'
-import { factory } from './core'
+import { clrFundContract } from './core'
 import sdk from '@/graphql/sdk'
 
-export interface Factory {
-  fundingRoundAddress: string
+export interface ClrFund {
   nativeTokenAddress: string
   nativeTokenSymbol: string
   nativeTokenDecimals: number
   userRegistryAddress: string
+  recipientRegistryAddress: string
   matchingPool: BigNumber
 }
 
-export async function getFactoryInfo() {
+export async function getClrFundInfo() {
   let nativeTokenAddress = ''
   let nativeTokenSymbol = ''
   let nativeTokenDecimals = 0
@@ -20,22 +20,22 @@ export async function getFactoryInfo() {
   let recipientRegistryAddress = ''
 
   try {
-    const data = await sdk.GetFactoryInfo({
-      factoryAddress: factory.address.toLowerCase(),
+    const data = await sdk.GetClrFundInfo({
+      clrFundAddress: clrFundContract.address.toLowerCase(),
     })
 
-    const nativeTokenInfo = data.fundingRoundFactory?.nativeTokenInfo
+    const nativeTokenInfo = data.clrFund?.nativeTokenInfo
     if (nativeTokenInfo) {
       nativeTokenAddress = nativeTokenInfo.tokenAddress || ''
       nativeTokenSymbol = nativeTokenInfo.symbol || ''
       nativeTokenDecimals = Number(nativeTokenInfo.decimals) || 0
     }
 
-    userRegistryAddress = data.fundingRoundFactory?.contributorRegistryAddress || ''
-    recipientRegistryAddress = data.fundingRoundFactory?.recipientRegistryAddress || ''
+    userRegistryAddress = data.clrFund?.contributorRegistryAddress || ''
+    recipientRegistryAddress = data.clrFund?.recipientRegistryAddress || ''
   } catch (err) {
     /* eslint-disable-next-line no-console */
-    console.error('Failed GetFactoryInfo', err)
+    console.error('Failed GetClrFundInfo', err)
   }
 
   try {
@@ -46,7 +46,6 @@ export async function getFactoryInfo() {
   }
 
   return {
-    fundingRoundAddress: factory.address,
     nativeTokenAddress,
     nativeTokenSymbol,
     nativeTokenDecimals,
@@ -57,6 +56,6 @@ export async function getFactoryInfo() {
 }
 
 export async function getMatchingFunds(nativeTokenAddress: string): Promise<BigNumber> {
-  const matchingFunds = await factory.getMatchingFunds(nativeTokenAddress)
+  const matchingFunds = await clrFundContract.getMatchingFunds(nativeTokenAddress)
   return matchingFunds
 }

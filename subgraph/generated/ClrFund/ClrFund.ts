@@ -28,6 +28,20 @@ export class CoordinatorChanged__Params {
   }
 }
 
+export class FundingRoundTemplateChanged extends ethereum.Event {
+  get params(): FundingRoundTemplateChanged__Params {
+    return new FundingRoundTemplateChanged__Params(this);
+  }
+}
+
+export class FundingRoundTemplateChanged__Params {
+  _event: FundingRoundTemplateChanged;
+
+  constructor(event: FundingRoundTemplateChanged) {
+    this._event = event;
+  }
+}
+
 export class FundingSourceAdded extends ethereum.Event {
   get params(): FundingSourceAdded__Params {
     return new FundingSourceAdded__Params(this);
@@ -64,6 +78,20 @@ export class FundingSourceRemoved__Params {
   }
 }
 
+export class Initialized extends ethereum.Event {
+  get params(): Initialized__Params {
+    return new Initialized__Params(this);
+  }
+}
+
+export class Initialized__Params {
+  _event: Initialized;
+
+  constructor(event: Initialized) {
+    this._event = event;
+  }
+}
+
 export class OwnershipTransferred extends ethereum.Event {
   get params(): OwnershipTransferred__Params {
     return new OwnershipTransferred__Params(this);
@@ -83,6 +111,20 @@ export class OwnershipTransferred__Params {
 
   get newOwner(): Address {
     return this._event.parameters[1].value.toAddress();
+  }
+}
+
+export class RecipientRegistrySet extends ethereum.Event {
+  get params(): RecipientRegistrySet__Params {
+    return new RecipientRegistrySet__Params(this);
+  }
+}
+
+export class RecipientRegistrySet__Params {
+  _event: RecipientRegistrySet;
+
+  constructor(event: RecipientRegistrySet) {
+    this._event = event;
   }
 }
 
@@ -140,7 +182,21 @@ export class TokenChanged__Params {
   }
 }
 
-export class FundingRoundFactory__coordinatorPubKeyResult {
+export class UserRegistrySet extends ethereum.Event {
+  get params(): UserRegistrySet__Params {
+    return new UserRegistrySet__Params(this);
+  }
+}
+
+export class UserRegistrySet__Params {
+  _event: UserRegistrySet;
+
+  constructor(event: UserRegistrySet) {
+    this._event = event;
+  }
+}
+
+export class ClrFund__coordinatorPubKeyResult {
   value0: BigInt;
   value1: BigInt;
 
@@ -165,9 +221,9 @@ export class FundingRoundFactory__coordinatorPubKeyResult {
   }
 }
 
-export class FundingRoundFactory extends ethereum.SmartContract {
-  static bind(address: Address): FundingRoundFactory {
-    return new FundingRoundFactory("FundingRoundFactory", address);
+export class ClrFund extends ethereum.SmartContract {
+  static bind(address: Address): ClrFund {
+    return new ClrFund("ClrFund", address);
   }
 
   coordinator(): Address {
@@ -185,21 +241,21 @@ export class FundingRoundFactory extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
-  coordinatorPubKey(): FundingRoundFactory__coordinatorPubKeyResult {
+  coordinatorPubKey(): ClrFund__coordinatorPubKeyResult {
     let result = super.call(
       "coordinatorPubKey",
       "coordinatorPubKey():(uint256,uint256)",
       []
     );
 
-    return new FundingRoundFactory__coordinatorPubKeyResult(
+    return new ClrFund__coordinatorPubKeyResult(
       result[0].toBigInt(),
       result[1].toBigInt()
     );
   }
 
   try_coordinatorPubKey(): ethereum.CallResult<
-    FundingRoundFactory__coordinatorPubKeyResult
+    ClrFund__coordinatorPubKeyResult
   > {
     let result = super.tryCall(
       "coordinatorPubKey",
@@ -211,7 +267,7 @@ export class FundingRoundFactory extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      new FundingRoundFactory__coordinatorPubKeyResult(
+      new ClrFund__coordinatorPubKeyResult(
         value[0].toBigInt(),
         value[1].toBigInt()
       )
@@ -332,6 +388,21 @@ export class FundingRoundFactory extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
+  roundFactory(): Address {
+    let result = super.call("roundFactory", "roundFactory():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_roundFactory(): ethereum.CallResult<Address> {
+    let result = super.tryCall("roundFactory", "roundFactory():(address)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
   userRegistry(): Address {
     let result = super.call("userRegistry", "userRegistry():(address)", []);
 
@@ -345,36 +416,6 @@ export class FundingRoundFactory extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-}
-
-export class ConstructorCall extends ethereum.Call {
-  get inputs(): ConstructorCall__Inputs {
-    return new ConstructorCall__Inputs(this);
-  }
-
-  get outputs(): ConstructorCall__Outputs {
-    return new ConstructorCall__Outputs(this);
-  }
-}
-
-export class ConstructorCall__Inputs {
-  _call: ConstructorCall;
-
-  constructor(call: ConstructorCall) {
-    this._call = call;
-  }
-
-  get _maciFactory(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-}
-
-export class ConstructorCall__Outputs {
-  _call: ConstructorCall;
-
-  constructor(call: ConstructorCall) {
-    this._call = call;
   }
 }
 
@@ -476,12 +517,50 @@ export class DeployNewRoundCall__Inputs {
   constructor(call: DeployNewRoundCall) {
     this._call = call;
   }
+
+  get duration(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
 }
 
 export class DeployNewRoundCall__Outputs {
   _call: DeployNewRoundCall;
 
   constructor(call: DeployNewRoundCall) {
+    this._call = call;
+  }
+}
+
+export class InitCall extends ethereum.Call {
+  get inputs(): InitCall__Inputs {
+    return new InitCall__Inputs(this);
+  }
+
+  get outputs(): InitCall__Outputs {
+    return new InitCall__Outputs(this);
+  }
+}
+
+export class InitCall__Inputs {
+  _call: InitCall;
+
+  constructor(call: InitCall) {
+    this._call = call;
+  }
+
+  get _maciFactory(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get _roundFactory(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+}
+
+export class InitCall__Outputs {
+  _call: InitCall;
+
+  constructor(call: InitCall) {
     this._call = call;
   }
 }
@@ -585,68 +664,6 @@ export class SetCoordinatorCall_coordinatorPubKeyStruct extends ethereum.Tuple {
 
   get y(): BigInt {
     return this[1].toBigInt();
-  }
-}
-
-export class SetMaciParametersCall extends ethereum.Call {
-  get inputs(): SetMaciParametersCall__Inputs {
-    return new SetMaciParametersCall__Inputs(this);
-  }
-
-  get outputs(): SetMaciParametersCall__Outputs {
-    return new SetMaciParametersCall__Outputs(this);
-  }
-}
-
-export class SetMaciParametersCall__Inputs {
-  _call: SetMaciParametersCall;
-
-  constructor(call: SetMaciParametersCall) {
-    this._call = call;
-  }
-
-  get _stateTreeDepth(): i32 {
-    return this._call.inputValues[0].value.toI32();
-  }
-
-  get _messageTreeDepth(): i32 {
-    return this._call.inputValues[1].value.toI32();
-  }
-
-  get _voteOptionTreeDepth(): i32 {
-    return this._call.inputValues[2].value.toI32();
-  }
-
-  get _tallyBatchSize(): i32 {
-    return this._call.inputValues[3].value.toI32();
-  }
-
-  get _messageBatchSize(): i32 {
-    return this._call.inputValues[4].value.toI32();
-  }
-
-  get _batchUstVerifier(): Address {
-    return this._call.inputValues[5].value.toAddress();
-  }
-
-  get _qvtVerifier(): Address {
-    return this._call.inputValues[6].value.toAddress();
-  }
-
-  get _signUpDuration(): BigInt {
-    return this._call.inputValues[7].value.toBigInt();
-  }
-
-  get _votingDuration(): BigInt {
-    return this._call.inputValues[8].value.toBigInt();
-  }
-}
-
-export class SetMaciParametersCall__Outputs {
-  _call: SetMaciParametersCall;
-
-  constructor(call: SetMaciParametersCall) {
-    this._call = call;
   }
 }
 
@@ -763,6 +780,14 @@ export class TransferMatchingFundsCall__Inputs {
 
   get _totalSpentSalt(): BigInt {
     return this._call.inputValues[1].value.toBigInt();
+  }
+
+  get _newResultCommitment(): BigInt {
+    return this._call.inputValues[2].value.toBigInt();
+  }
+
+  get _perVOSpentVoiceCreditsHash(): BigInt {
+    return this._call.inputValues[3].value.toBigInt();
   }
 }
 

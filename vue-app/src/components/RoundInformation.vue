@@ -426,7 +426,7 @@ function addMatchingFunds(): void {
         close()
         // Reload matching pool size
         appStore.loadRoundInfo()
-        appStore.loadFactoryInfo()
+        appStore.loadClrFundInfo()
       },
     },
   })

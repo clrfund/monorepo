@@ -1,4 +1,4 @@
-type FundingRoundFactory @entity {
+type ClrFund @entity {
   id: ID!
   owner: Bytes
   coordinator: Bytes
@@ -26,7 +26,7 @@ type FundingRoundFactory @entity {
   maxMessages: BigInt
   maxVoteOptions: BigInt
 
-  fundingRounds: [FundingRound!] @derivedFrom(field: "fundingRoundFactory")
+  fundingRounds: [FundingRound!] @derivedFrom(field: "clrFund")
 
   createdAt: String
   lastUpdatedAt: String
@@ -35,7 +35,7 @@ type FundingRoundFactory @entity {
 type Message @entity {
   id: ID!
   data: [BigInt!]
-  iv: BigInt!
+  msgType: BigInt!
   publicKey: PublicKey
   fundingRound: FundingRound 
   submittedBy: Bytes
@@ -56,8 +56,9 @@ type PublicKey @entity {
 
 type FundingRound @entity {
   id: ID!
-  fundingRoundFactory: FundingRoundFactory
+  clrFund: ClrFund
   maci: Bytes
+  pollAddress: Bytes
   messages: [Message!] @derivedFrom(field: "fundingRound")
   recipientRegistry: RecipientRegistry
   recipientRegistryAddress: Bytes
@@ -69,6 +70,12 @@ type FundingRound @entity {
   signUpDeadline: BigInt
   votingDeadline: BigInt
 
+  stateTreeDepth: Int
+  messageTreeDepth: Int
+  voteOptionTreeDepth: Int
+
+  coordinatorPubKeyX: BigInt
+  coordinatorPubKeyY: BigInt
   coordinator: Bytes
  
   voiceCreditFactor: BigInt
@@ -91,7 +98,7 @@ type FundingRound @entity {
 
 type RecipientRegistry @entity {
   id: ID!
-  fundingRoundFactory: FundingRoundFactory
+  clrFund: ClrFund
   baseDeposit: BigInt
   challengePeriodDuration: BigInt
   controller: Bytes
@@ -127,7 +134,7 @@ type Recipient @entity {
 
 type ContributorRegistry @entity {
   id: ID!
-  fundingRoundFactory: FundingRoundFactory!
+  clrFund: ClrFund!
   context: String
   owner: Bytes
   contributors: [Contributor!] @derivedFrom(field: "contributorRegistry")
@@ -154,7 +161,6 @@ type Contributor @entity {
 
 type Coordinator @entity {
   id: ID!
-  # fundingRoundFactory: FundingRoundFactory!
   contact: String
 
   createdAt: String

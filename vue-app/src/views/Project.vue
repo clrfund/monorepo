@@ -55,7 +55,7 @@ onMounted(async () => {
     return
   }
 
-  //TODO: update to take factory address as a parameter, default to env. variable
+  //TODO: update to take ClrFund address as a parameter, default to env. variable
   const currentRoundAddress = appStore.currentRoundAddress || (await getCurrentRound())
 
   roundAddress.value = (route.params.address as string) || currentRoundAddress || ''

@@ -166,7 +166,7 @@ onMounted(async () => {
   }
 
   appReady.value = true
-  await appStore.loadFactoryInfo()
+  await appStore.loadClrFundInfo()
   await appStore.loadMACIFactoryInfo()
   await appStore.loadRoundInfo()
   await recipientStore.loadRecipientRegistryInfo()
@@ -190,7 +190,7 @@ watch(walletUser, async () => {
         web3Provider: walletUser.value.web3Provider,
       }
       // make sure factory is loaded
-      await appStore.loadFactoryInfo()
+      await appStore.loadClrFundInfo()
       userStore.loginUser(user)
       await userStore.loadUserInfo()
       await userStore.loadBrightID()

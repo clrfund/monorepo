@@ -6,7 +6,7 @@ import { Keypair, PubKey, PrivKey, Message, Command, getPubKeyId } from '@clrfun
 
 import type { RoundInfo } from './round'
 import { FundingRound, ERC20 } from './abi'
-import { factory, provider } from './core'
+import { clrFundContract, provider } from './core'
 import type { Project } from './projects'
 import sdk from '@/graphql/sdk'
 import { Transaction } from '@/utils/transaction'
@@ -88,7 +88,7 @@ export async function getContributionAmount(
 }
 
 export async function getTotalContributed(fundingRoundAddress: string): Promise<{ count: number; amount: BigNumber }> {
-  const nativeTokenAddress = await factory.nativeToken()
+  const nativeTokenAddress = await clrFundContract.nativeToken()
   const nativeToken = new Contract(nativeTokenAddress, ERC20, provider)
   const balance = await nativeToken.balanceOf(fundingRoundAddress)
 

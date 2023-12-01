@@ -72,7 +72,7 @@ import { formatAmount } from '@/utils/amounts'
 import { formatUnits } from '@ethersproject/units'
 
 import { ERC20 } from '@/api/abi'
-import { factory } from '@/api/core'
+import { clrFundContract } from '@/api/core'
 import { VueFinalModal } from 'vue-final-modal'
 import { useAppStore, useUserStore } from '@/stores'
 
@@ -129,16 +129,17 @@ async function contributeMatchingFunds() {
   const token = new Contract(nativeTokenAddress.value, ERC20, userStore.signer)
   const _amount = parseFixed(amount.value, nativeTokenDecimals.value)
 
-  // TODO: update to take factory address as a parameter from the route props, default to env. variable
+  // TODO: update to take ClrFund address as a parameter from the route props, default to env. variable
   const matchingPoolAddress = import.meta.env.VITE_MATCHING_POOL_ADDRESS
     ? import.meta.env.VITE_MATCHING_POOL_ADDRESS
-    : factory.address
+    : clrFundContract.address
 
   try {
     await waitForTransaction(token.transfer(matchingPoolAddress, _amount), hash => (transferTxHash.value = hash))
   } catch (error) {
-    transferTxError.value = error.message
-    if (error.message.indexOf('Nonce too high') >= 0 && import.meta.env.MODE === 'development') {
+    const errorMessage = (error as Error).message
+    transferTxError.value = errorMessage
+    if (errorMessage.indexOf('Nonce too high') >= 0 && import.meta.env.MODE === 'development') {
       transferTxError.value = 'Have you been buidling?? Reset your nonce! 🪄'
     }
     return

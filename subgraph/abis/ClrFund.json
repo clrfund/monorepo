@@ -1,14 +1,68 @@
 [
   {
-    "inputs": [
-      {
-        "internalType": "contract MACIFactory",
-        "name": "_maciFactory",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
+    "inputs": [],
+    "name": "AlreadyFinalized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "FundingSourceAlreadyAdded",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "FundingSourceNotFound",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidFundingRoundFactory",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidMaciFactory",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NoCoordinator",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NoCurrentRound",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NoRecipientRegistry",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NoToken",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NoUserRegistry",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotAuthorized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotFinalized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotOwnerOfMaciFactory",
+    "type": "error"
   },
   {
     "anonymous": false,
@@ -21,6 +75,12 @@
       }
     ],
     "name": "CoordinatorChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [],
+    "name": "FundingRoundTemplateChanged",
     "type": "event"
   },
   {
@@ -51,6 +111,12 @@
   },
   {
     "anonymous": false,
+    "inputs": [],
+    "name": "Initialized",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
     "inputs": [
       {
         "indexed": true,
@@ -66,6 +132,12 @@
       }
     ],
     "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [],
+    "name": "RecipientRegistrySet",
     "type": "event"
   },
   {
@@ -108,8 +180,18 @@
     "type": "event"
   },
   {
+    "anonymous": false,
+    "inputs": [],
+    "name": "UserRegistrySet",
+    "type": "event"
+  },
+  {
     "inputs": [
-      { "internalType": "address", "name": "_source", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_source",
+        "type": "address"
+      }
     ],
     "name": "addFundingSource",
     "outputs": [],
@@ -126,7 +208,13 @@
   {
     "inputs": [],
     "name": "coordinator",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -134,8 +222,16 @@
     "inputs": [],
     "name": "coordinatorPubKey",
     "outputs": [
-      { "internalType": "uint256", "name": "x", "type": "uint256" },
-      { "internalType": "uint256", "name": "y", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "x",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "y",
+        "type": "uint256"
+      }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -148,7 +244,13 @@
     "type": "function"
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "duration",
+        "type": "uint256"
+      }
+    ],
     "name": "deployNewRound",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -169,18 +271,50 @@
   },
   {
     "inputs": [
-      { "internalType": "contract ERC20", "name": "token", "type": "address" }
+      {
+        "internalType": "contract ERC20",
+        "name": "token",
+        "type": "address"
+      }
     ],
     "name": "getMatchingFunds",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_maciFactory",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_roundFactory",
+        "type": "address"
+      }
+    ],
+    "name": "init",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "maciFactory",
     "outputs": [
-      { "internalType": "contract MACIFactory", "name": "", "type": "address" }
+      {
+        "internalType": "contract MACIFactory",
+        "name": "",
+        "type": "address"
+      }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -189,7 +323,11 @@
     "inputs": [],
     "name": "nativeToken",
     "outputs": [
-      { "internalType": "contract ERC20", "name": "", "type": "address" }
+      {
+        "internalType": "contract ERC20",
+        "name": "",
+        "type": "address"
+      }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -197,7 +335,13 @@
   {
     "inputs": [],
     "name": "owner",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -216,7 +360,11 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "_source", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_source",
+        "type": "address"
+      }
     ],
     "name": "removeFundingSource",
     "outputs": [],
@@ -231,56 +379,44 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "roundFactory",
+    "outputs": [
+      {
+        "internalType": "contract FundingRoundFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
-      { "internalType": "address", "name": "_coordinator", "type": "address" },
+      {
+        "internalType": "address",
+        "name": "_coordinator",
+        "type": "address"
+      },
       {
         "components": [
-          { "internalType": "uint256", "name": "x", "type": "uint256" },
-          { "internalType": "uint256", "name": "y", "type": "uint256" }
+          {
+            "internalType": "uint256",
+            "name": "x",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "y",
+            "type": "uint256"
+          }
         ],
-        "internalType": "struct MACISharedObjs.PubKey",
+        "internalType": "struct IPubKey.PubKey",
         "name": "_coordinatorPubKey",
         "type": "tuple"
       }
     ],
     "name": "setCoordinator",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "uint8", "name": "_stateTreeDepth", "type": "uint8" },
-      { "internalType": "uint8", "name": "_messageTreeDepth", "type": "uint8" },
-      {
-        "internalType": "uint8",
-        "name": "_voteOptionTreeDepth",
-        "type": "uint8"
-      },
-      { "internalType": "uint8", "name": "_tallyBatchSize", "type": "uint8" },
-      { "internalType": "uint8", "name": "_messageBatchSize", "type": "uint8" },
-      {
-        "internalType": "contract SnarkVerifier",
-        "name": "_batchUstVerifier",
-        "type": "address"
-      },
-      {
-        "internalType": "contract SnarkVerifier",
-        "name": "_qvtVerifier",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_signUpDuration",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_votingDuration",
-        "type": "uint256"
-      }
-    ],
-    "name": "setMaciParameters",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -300,7 +436,11 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "_token", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_token",
+        "type": "address"
+      }
     ],
     "name": "setToken",
     "outputs": [],
@@ -322,10 +462,24 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "_totalSpent", "type": "uint256" },
+      {
+        "internalType": "uint256",
+        "name": "_totalSpent",
+        "type": "uint256"
+      },
       {
         "internalType": "uint256",
         "name": "_totalSpentSalt",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_newResultCommitment",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_perVOSpentVoiceCreditsHash",
         "type": "uint256"
       }
     ],
@@ -336,7 +490,11 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "newOwner", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
     ],
     "name": "transferOwnership",
     "outputs": [],

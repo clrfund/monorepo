@@ -1,6 +1,6 @@
 import { ethers } from 'ethers'
 
-import { FundingRoundFactory } from './abi'
+import { ClrFund } from './abi'
 import { CHAIN_INFO } from '@/utils/chains'
 
 import historicalRounds from '@/rounds/rounds.json'
@@ -35,13 +35,9 @@ if (!ipfsPinningJwt && !(ipfsApiKey && ipfsSecretApiKey)) {
   )
 }
 
-//TODO: need to be able to pass the factory contract address dynamically, note all places this is used make factory address a parameter that defaults to the env. variable set
+//TODO: need to be able to pass the clrfund contract address dynamically, note all places this is used make clrfund address a parameter that defaults to the env. variable set
 //NOTE: these calls will be replaced by subgraph queries eventually.
-export const factory = new ethers.Contract(
-  import.meta.env.VITE_CLRFUND_FACTORY_ADDRESS as string,
-  FundingRoundFactory,
-  provider,
-)
+export const clrFundContract = new ethers.Contract(import.meta.env.VITE_CLRFUND_ADDRESS as string, ClrFund, provider)
 export const userRegistryType = import.meta.env.VITE_USER_REGISTRY_TYPE
 export enum UserRegistryType {
   BRIGHT_ID = 'brightid',

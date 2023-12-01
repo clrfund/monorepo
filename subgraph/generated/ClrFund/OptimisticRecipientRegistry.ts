@@ -255,6 +255,29 @@ export class OptimisticRecipientRegistry extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
+  getRecipientCount(): BigInt {
+    let result = super.call(
+      "getRecipientCount",
+      "getRecipientCount():(uint256)",
+      []
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_getRecipientCount(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getRecipientCount",
+      "getRecipientCount():(uint256)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
   maxRecipients(): BigInt {
     let result = super.call("maxRecipients", "maxRecipients():(uint256)", []);
 

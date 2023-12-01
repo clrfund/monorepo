@@ -1,5 +1,5 @@
-query GetFactoryInfo($factoryAddress: ID!) {
-  fundingRoundFactory(id: $factoryAddress) {
+query GetClrFundInfo($clrFundAddress: ID!) {
+  clrFund(id: $clrFundAddress) {
     nativeTokenInfo {
       tokenAddress
       symbol

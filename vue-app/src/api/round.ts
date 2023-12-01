@@ -2,8 +2,8 @@ import { BigNumber, Contract, utils } from 'ethers'
 import { DateTime } from 'luxon'
 import { PubKey } from '@clrfund/common'
 
-import { FundingRound, MACI } from './abi'
-import { provider, factory } from './core'
+import { FundingRound, Poll } from './abi'
+import { provider, clrFundContract } from './core'
 import { getTotalContributed } from './contributions'
 import { isVoidedRound } from './rounds'
 import sdk from '@/graphql/sdk'
@@ -53,9 +53,9 @@ export enum RoundStatus {
   Finalized = 'Finalized',
   Cancelled = 'Cancelled',
 }
-//TODO: update to take factory address as a parameter, default to env. variable
+//TODO: update to take ClrFund address as a parameter, default to env. variable
 export async function getCurrentRound(): Promise<string | null> {
-  const fundingRoundAddress = await factory.getCurrentRound()
+  const fundingRoundAddress = await clrFundContract.getCurrentRound()
   if (fundingRoundAddress === '0x0000000000000000000000000000000000000000') {
     return null
   }
@@ -127,7 +127,7 @@ export async function getLeaderboardRoundInfo(fundingRoundAddress: string, netwo
   return round
 }
 
-//TODO: update to take factory address as a parameter, default to env. variable
+//TODO: update to take ClrFund address as a parameter, default to env. variable
 export async function getRoundInfo(
   fundingRoundAddress: string,
   cachedRound?: RoundInfo | null,
@@ -148,44 +148,34 @@ export async function getRoundInfo(
   }
 
   const {
+    pollAddress,
     maci: maciAddress,
     recipientRegistryAddress,
     contributorRegistryAddress: userRegistryAddress,
     isFinalized,
     isCancelled,
+    stateTreeDepth,
+    messageTreeDepth,
+    voteOptionTreeDepth,
+    startTime,
+    signUpDeadline,
+    votingDeadline,
+    coordinatorPubKeyX,
+    coordinatorPubKeyY,
   } = data.fundingRound
 
   const voiceCreditFactor = BigNumber.from(data.fundingRound.voiceCreditFactor)
 
-  const maci = new Contract(maciAddress, MACI, provider)
-  const [
-    maciTreeDepths,
-    signUpTimestamp,
-    signUpDurationSeconds,
-    votingDurationSeconds,
-    coordinatorPubKeyRaw,
-    messages,
-  ] = await Promise.all([
-    maci.treeDepths(),
-    maci.signUpTimestamp(),
-    maci.signUpDurationSeconds(),
-    maci.votingDurationSeconds(),
-    maci.coordinatorPubKey(),
-    maci.numMessages(),
-  ])
-  const startTime = DateTime.fromSeconds(signUpTimestamp.toNumber())
-  const signUpDeadline = DateTime.fromSeconds(signUpTimestamp.add(signUpDurationSeconds).toNumber())
-  const votingDeadline = DateTime.fromSeconds(
-    signUpTimestamp.add(signUpDurationSeconds).add(votingDurationSeconds).toNumber(),
-  )
-  const coordinatorPubKey = new PubKey([BigInt(coordinatorPubKeyRaw.x), BigInt(coordinatorPubKeyRaw.y)])
+  const poll = new Contract(pollAddress, Poll, provider)
+  const [, messages] = await poll.numSignUpsAndMessages()
+  const coordinatorPubKey = new PubKey([BigInt(coordinatorPubKeyX), BigInt(coordinatorPubKeyY)])
 
   const nativeTokenAddress = data.fundingRound.nativeTokenInfo?.tokenAddress || ''
   const nativeTokenSymbol = data.fundingRound.nativeTokenInfo?.symbol || ''
   const nativeTokenDecimals = Number(data.fundingRound.nativeTokenInfo?.decimals || '')
 
-  const maxContributors = 2 ** maciTreeDepths.stateTreeDepth - 1
-  const maxMessages = 2 ** maciTreeDepths.messageTreeDepth - 1
+  const maxContributors = stateTreeDepth ? 2 ** stateTreeDepth - 1 : 0
+  const maxMessages = messageTreeDepth ? 2 ** messageTreeDepth - 1 : 0
   const now = DateTime.local()
   const contributionsInfo = await getTotalContributed(fundingRoundAddress)
   const contributors = contributionsInfo.count
@@ -203,7 +193,7 @@ export async function getRoundInfo(
   } else if (messages >= maxMessages) {
     status = RoundStatus.Tallying
     contributions = contributionsInfo.amount
-    matchingPool = await factory.getMatchingFunds(nativeTokenAddress)
+    matchingPool = await clrFundContract.getMatchingFunds(nativeTokenAddress)
   } else {
     if (now < signUpDeadline && contributors < maxContributors) {
       status = RoundStatus.Contributing
@@ -213,8 +203,8 @@ export async function getRoundInfo(
       status = RoundStatus.Tallying
     }
     contributions = contributionsInfo.amount
-    //TODO: update to take factory address as a parameter, default to env. variable
-    matchingPool = await factory.getMatchingFunds(nativeTokenAddress)
+    //TODO: update to take ClrFund address as a parameter, default to env. variable
+    matchingPool = await clrFundContract.getMatchingFunds(nativeTokenAddress)
   }
 
   const totalFunds = matchingPool.add(contributions)
@@ -224,9 +214,9 @@ export async function getRoundInfo(
     recipientRegistryAddress: utils.getAddress(recipientRegistryAddress),
     userRegistryAddress: utils.getAddress(userRegistryAddress),
     maciAddress: utils.getAddress(maciAddress),
-    recipientTreeDepth: maciTreeDepths.voteOptionTreeDepth,
+    recipientTreeDepth: voteOptionTreeDepth || 1,
     maxContributors,
-    maxRecipients: 5 ** maciTreeDepths.voteOptionTreeDepth - 1,
+    maxRecipients: voteOptionTreeDepth ? 5 ** voteOptionTreeDepth - 1 : 0,
     maxMessages,
     coordinatorPubKey,
     nativeTokenAddress: utils.getAddress(nativeTokenAddress),
@@ -234,9 +224,9 @@ export async function getRoundInfo(
     nativeTokenDecimals,
     voiceCreditFactor,
     status,
-    startTime,
-    signUpDeadline,
-    votingDeadline,
+    startTime: DateTime.fromSeconds(Number(startTime || 0)),
+    signUpDeadline: DateTime.fromSeconds(Number(signUpDeadline || 0)),
+    votingDeadline: DateTime.fromSeconds(Number(votingDeadline || 0)),
     totalFunds,
     matchingPool,
     contributions,

@@ -3,7 +3,7 @@ import { BigNumber, Contract, Signer, type ContractTransaction } from 'ethers'
 import type { Web3Provider } from '@ethersproject/providers'
 
 import { FundingRound, UserRegistry, ERC20 } from './abi'
-import { factory, ipfsGatewayUrl, provider, operator } from './core'
+import { clrFundContract, ipfsGatewayUrl, provider, operator } from './core'
 import type { BrightId } from './bright-id'
 import { SnapshotUserRegistry, MerkleUserRegistry } from './abi'
 import {
@@ -21,7 +21,7 @@ To get logged in, sign this message to prove you have access to this wallet. Thi
 
 You will be asked to sign each time you load the app.
 
-Contract address: ${factory.address.toLowerCase()}.`
+Contract address: ${clrFundContract.address.toLowerCase()}.`
 
 export interface User {
   walletAddress: string

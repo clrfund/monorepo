@@ -1,6 +1,6 @@
 import { Contract } from 'ethers'
 import { MACIFactory as MACIFactoryABI } from './abi'
-import { factory, provider } from './core'
+import { clrFundContract, provider } from './core'
 
 export interface MACIFactory {
   maciFactoryAddress: string
@@ -8,7 +8,7 @@ export interface MACIFactory {
 }
 
 export async function getMACIFactoryInfo(): Promise<MACIFactory> {
-  const maciFactoryAddress = await factory.maciFactory()
+  const maciFactoryAddress = await clrFundContract.maciFactory()
 
   const maciFactory = new Contract(maciFactoryAddress, MACIFactoryABI, provider)
   const treeDepths = await maciFactory.treeDepths()

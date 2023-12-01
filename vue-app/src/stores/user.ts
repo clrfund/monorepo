@@ -66,9 +66,9 @@ export const useUserStore = defineStore('user', {
       let isRegistered: boolean | undefined = undefined
       const walletAddress = this.currentUser.walletAddress
 
-      if (appStore.factory) {
-        nativeTokenAddress = appStore.factory.nativeTokenAddress
-        userRegistryAddress = appStore.factory.userRegistryAddress
+      if (appStore.clrFund) {
+        nativeTokenAddress = appStore.clrFund.nativeTokenAddress
+        userRegistryAddress = appStore.clrFund.userRegistryAddress
       }
 
       if (appStore.currentRound) {

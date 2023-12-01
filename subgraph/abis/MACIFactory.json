@@ -2,53 +2,43 @@
   {
     "inputs": [
       {
-        "internalType": "uint8",
-        "name": "_stateTreeDepth",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint8",
-        "name": "_messageTreeDepth",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint8",
-        "name": "_voteOptionTreeDepth",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint8",
-        "name": "_tallyBatchSize",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint8",
-        "name": "_messageBatchSize",
-        "type": "uint8"
-      },
-      {
-        "internalType": "contract SnarkVerifier",
-        "name": "_batchUstVerifier",
+        "internalType": "address",
+        "name": "_vkRegistry",
         "type": "address"
       },
       {
-        "internalType": "contract SnarkVerifier",
-        "name": "_qvtVerifier",
+        "internalType": "address",
+        "name": "_pollFactory",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_signUpDuration",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_votingDuration",
-        "type": "uint256"
       }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidPollFactory",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidVkRegistry",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotInitialized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ProcessVkNotSet",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "TallyVkNotSet",
+    "type": "error"
   },
   {
     "anonymous": false,
@@ -89,51 +79,30 @@
     "type": "event"
   },
   {
-    "inputs": [],
-    "name": "batchSizes",
-    "outputs": [
-      {
-        "internalType": "uint8",
-        "name": "tallyBatchSize",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint8",
-        "name": "messageBatchSize",
-        "type": "uint8"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "batchUstVerifier",
-    "outputs": [
-      {
-        "internalType": "contract SnarkVerifier",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "contract SignUpGatekeeper",
-        "name": "_signUpGatekeeper",
+        "name": "signUpGatekeeper",
         "type": "address"
       },
       {
         "internalType": "contract InitialVoiceCreditProxy",
-        "name": "_initialVoiceCreditProxy",
+        "name": "initialVoiceCreditProxy",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "_coordinator",
+        "name": "topupCredit",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "duration",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "coordinator",
         "type": "address"
       },
       {
@@ -149,8 +118,8 @@
             "type": "uint256"
           }
         ],
-        "internalType": "struct MACISharedObjs.PubKey",
-        "name": "_coordinatorPubKey",
+        "internalType": "struct IPubKey.PubKey",
+        "name": "coordinatorPubKey",
         "type": "tuple"
       }
     ],
@@ -171,17 +140,25 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "maxUsers",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
         "name": "maxMessages",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
         "name": "maxVoteOptions",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "messageBatchSize",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
         "type": "uint256"
       }
     ],
@@ -203,10 +180,10 @@
   },
   {
     "inputs": [],
-    "name": "qvtVerifier",
+    "name": "pollFactory",
     "outputs": [
       {
-        "internalType": "contract SnarkVerifier",
+        "internalType": "contract PollFactory",
         "name": "",
         "type": "address"
       }
@@ -229,44 +206,237 @@
         "type": "uint8"
       },
       {
-        "internalType": "uint8",
-        "name": "_messageTreeDepth",
-        "type": "uint8"
+        "components": [
+          {
+            "internalType": "uint8",
+            "name": "intStateTreeDepth",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "messageTreeSubDepth",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "messageTreeDepth",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "voteOptionTreeDepth",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct Params.TreeDepths",
+        "name": "_treeDepths",
+        "type": "tuple"
       },
       {
-        "internalType": "uint8",
-        "name": "_voteOptionTreeDepth",
-        "type": "uint8"
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "maxMessages",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxVoteOptions",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct Params.MaxValues",
+        "name": "_maxValues",
+        "type": "tuple"
       },
       {
-        "internalType": "uint8",
-        "name": "_tallyBatchSize",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint8",
+        "internalType": "uint256",
         "name": "_messageBatchSize",
-        "type": "uint8"
-      },
-      {
-        "internalType": "contract SnarkVerifier",
-        "name": "_batchUstVerifier",
-        "type": "address"
-      },
-      {
-        "internalType": "contract SnarkVerifier",
-        "name": "_qvtVerifier",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_signUpDuration",
         "type": "uint256"
       },
       {
-        "internalType": "uint256",
-        "name": "_votingDuration",
-        "type": "uint256"
+        "components": [
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "x",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "y",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct Pairing.G1Point",
+            "name": "alpha1",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256[2]",
+                "name": "x",
+                "type": "uint256[2]"
+              },
+              {
+                "internalType": "uint256[2]",
+                "name": "y",
+                "type": "uint256[2]"
+              }
+            ],
+            "internalType": "struct Pairing.G2Point",
+            "name": "beta2",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256[2]",
+                "name": "x",
+                "type": "uint256[2]"
+              },
+              {
+                "internalType": "uint256[2]",
+                "name": "y",
+                "type": "uint256[2]"
+              }
+            ],
+            "internalType": "struct Pairing.G2Point",
+            "name": "gamma2",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256[2]",
+                "name": "x",
+                "type": "uint256[2]"
+              },
+              {
+                "internalType": "uint256[2]",
+                "name": "y",
+                "type": "uint256[2]"
+              }
+            ],
+            "internalType": "struct Pairing.G2Point",
+            "name": "delta2",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "x",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "y",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct Pairing.G1Point[]",
+            "name": "ic",
+            "type": "tuple[]"
+          }
+        ],
+        "internalType": "struct SnarkCommon.VerifyingKey",
+        "name": "_processVk",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "x",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "y",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct Pairing.G1Point",
+            "name": "alpha1",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256[2]",
+                "name": "x",
+                "type": "uint256[2]"
+              },
+              {
+                "internalType": "uint256[2]",
+                "name": "y",
+                "type": "uint256[2]"
+              }
+            ],
+            "internalType": "struct Pairing.G2Point",
+            "name": "beta2",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256[2]",
+                "name": "x",
+                "type": "uint256[2]"
+              },
+              {
+                "internalType": "uint256[2]",
+                "name": "y",
+                "type": "uint256[2]"
+              }
+            ],
+            "internalType": "struct Pairing.G2Point",
+            "name": "gamma2",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256[2]",
+                "name": "x",
+                "type": "uint256[2]"
+              },
+              {
+                "internalType": "uint256[2]",
+                "name": "y",
+                "type": "uint256[2]"
+              }
+            ],
+            "internalType": "struct Pairing.G2Point",
+            "name": "delta2",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "x",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "y",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct Pairing.G1Point[]",
+            "name": "ic",
+            "type": "tuple[]"
+          }
+        ],
+        "internalType": "struct SnarkCommon.VerifyingKey",
+        "name": "_tallyVk",
+        "type": "tuple"
       }
     ],
     "name": "setMaciParameters",
@@ -275,13 +445,39 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_pollFactory",
+        "type": "address"
+      }
+    ],
+    "name": "setPollFactory",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_vkRegistry",
+        "type": "address"
+      }
+    ],
+    "name": "setVkRegistry",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
-    "name": "signUpDuration",
+    "name": "stateTreeDepth",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "uint8",
         "name": "",
-        "type": "uint256"
+        "type": "uint8"
       }
     ],
     "stateMutability": "view",
@@ -306,7 +502,12 @@
     "outputs": [
       {
         "internalType": "uint8",
-        "name": "stateTreeDepth",
+        "name": "intStateTreeDepth",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint8",
+        "name": "messageTreeSubDepth",
         "type": "uint8"
       },
       {
@@ -325,12 +526,12 @@
   },
   {
     "inputs": [],
-    "name": "votingDuration",
+    "name": "vkRegistry",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "contract VkRegistry",
         "name": "",
-        "type": "uint256"
+        "type": "address"
       }
     ],
     "stateMutability": "view",

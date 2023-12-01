@@ -57,3 +57,13 @@ export class MACI extends DataSourceTemplate {
     DataSourceTemplate.createWithContext("MACI", [address.toHex()], context);
   }
 }
+
+export class Poll extends DataSourceTemplate {
+  static create(address: Address): void {
+    DataSourceTemplate.create("Poll", [address.toHex()]);
+  }
+
+  static createWithContext(address: Address, context: DataSourceContext): void {
+    DataSourceTemplate.createWithContext("Poll", [address.toHex()], context);
+  }
+}

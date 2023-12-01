@@ -13,7 +13,7 @@ import { getCommittedCart } from '@/api/cart'
 import { operator, chain, ThemeMode, recipientRegistryType, recipientJoinDeadlineConfig } from '@/api/core'
 import { type RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
 import { getTally, type Tally } from '@/api/tally'
-import { type Factory, getFactoryInfo } from '@/api/factory'
+import { type ClrFund, getClrFundInfo } from '@/api/clrFund'
 import { getMACIFactoryInfo, type MACIFactory } from '@/api/maci-factory'
 import { isSameAddress } from '@/utils/accounts'
 import { storage } from '@/api/storage'
@@ -39,7 +39,7 @@ export type AppState = {
   showCartPanel: boolean
   tally: Tally | null
   theme: string | null
-  factory: Factory | null
+  clrFund: ClrFund | null
   maciFactory: MACIFactory | null
   showSimpleLeaderboard: boolean
 }
@@ -59,7 +59,7 @@ export const useAppStore = defineStore('app', {
     showCartPanel: false,
     tally: null,
     theme: null,
-    factory: null,
+    clrFund: null,
     maciFactory: null,
     showSimpleLeaderboard: true,
   }),
@@ -153,23 +153,23 @@ export const useAppStore = defineStore('app', {
       return operator
     },
     userRegistryAddress: (state): string | undefined => {
-      const { currentRound, factory } = state
+      const { currentRound, clrFund } = state
 
       if (currentRound) {
         return currentRound.userRegistryAddress
       }
 
-      if (factory) {
-        return factory.userRegistryAddress
+      if (clrFund) {
+        return clrFund.userRegistryAddress
       }
     },
     matchingPool: (state): BigNumber => {
-      const { currentRound, factory } = state
+      const { currentRound, clrFund } = state
 
       let matchingPool = BigNumber.from(0)
 
-      if (factory) {
-        matchingPool = factory.matchingPool
+      if (clrFund) {
+        matchingPool = clrFund.matchingPool
       }
 
       if (currentRound) {
@@ -179,12 +179,12 @@ export const useAppStore = defineStore('app', {
       return matchingPool
     },
     nativeTokenSymbol: (state): string => {
-      const { currentRound, factory } = state
+      const { currentRound, clrFund } = state
 
       let nativeTokenSymbol = ''
 
-      if (factory) {
-        nativeTokenSymbol = factory.nativeTokenSymbol
+      if (clrFund) {
+        nativeTokenSymbol = clrFund.nativeTokenSymbol
       }
 
       if (currentRound) {
@@ -194,12 +194,12 @@ export const useAppStore = defineStore('app', {
       return nativeTokenSymbol
     },
     nativeTokenDecimals: (state): number | undefined => {
-      const { currentRound, factory } = state
+      const { currentRound, clrFund } = state
 
       let nativeTokenDecimals
 
-      if (factory) {
-        nativeTokenDecimals = factory.nativeTokenDecimals
+      if (clrFund) {
+        nativeTokenDecimals = clrFund.nativeTokenDecimals
       }
 
       if (currentRound) {
@@ -209,12 +209,12 @@ export const useAppStore = defineStore('app', {
       return nativeTokenDecimals
     },
     nativeTokenAddress: (state): string => {
-      const { currentRound, factory } = state
+      const { currentRound, clrFund } = state
 
       let nativeTokenAddress = ''
 
-      if (factory) {
-        nativeTokenAddress = factory.nativeTokenAddress
+      if (clrFund) {
+        nativeTokenAddress = clrFund.nativeTokenAddress
       }
 
       if (currentRound) {
@@ -460,9 +460,9 @@ export const useAppStore = defineStore('app', {
         stateIndex,
       }
     },
-    async loadFactoryInfo() {
-      const factory = await getFactoryInfo()
-      this.factory = factory
+    async loadClrFundInfo() {
+      const clrFund = await getClrFundInfo()
+      this.clrFund = clrFund
     },
     async loadMACIFactoryInfo() {
       const factory = await getMACIFactoryInfo()

@@ -41,7 +41,7 @@ export const useRecipientStore = defineStore('recipient', {
     },
     async loadRecipientRegistryInfo() {
       const appStore = useAppStore()
-      //TODO: update call to getRecipientRegistryAddress to take factory address as a parameter
+      //TODO: update call to getRecipientRegistryAddress to take ClrFund address as a parameter
       const recipientRegistryAddress =
         this.recipientRegistryAddress || (await getRecipientRegistryAddress(appStore.currentRoundAddress))
       this.recipientRegistryAddress = recipientRegistryAddress
