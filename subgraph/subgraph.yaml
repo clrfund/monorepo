@@ -21,7 +21,6 @@ dataSources:
         - ContributorRegistry
         - FundingRound
         - Token
-        - Poll
       abis:
         - name: ClrFund
           file: ./abis/ClrFund.json
