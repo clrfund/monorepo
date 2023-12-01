@@ -50,7 +50,7 @@ program
     'File to store the ClrFundDeployer address for e2e testing'
   )
   .requiredOption('-o --output-dir <dir>', 'The proof output directory')
-  .option('-h --maci-tx-hash <hash>', 'The MACI creation transaction hash')
+  .option('-t --maci-tx-hash <hash>', 'The MACI creation transaction hash')
   .option('-r --rapid-snark <path>', 'The rapidsnark prover path')
   .option(
     '-n --num-queue-ops <num>',
