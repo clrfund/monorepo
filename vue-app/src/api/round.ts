@@ -86,6 +86,7 @@ export function toRoundInfo(data: any, network: string): RoundInfo {
     recipientRegistryAddress: utils.getAddress(data.recipientRegistryAddress),
     userRegistryAddress: utils.getAddress(data.userRegistryAddress),
     maciAddress: utils.getAddress(data.maciAddress),
+    pollId: BigInt(data.pollId || 0),
     recipientTreeDepth: 0,
     maxContributors: 0,
     maxRecipients: data.maxRecipients,
