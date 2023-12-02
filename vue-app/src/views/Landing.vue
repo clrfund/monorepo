@@ -78,7 +78,7 @@
               <b>{{ $t('landing.req.chain', { chain: chain.label }) }}</b>
             </p>
           </div>
-          <links v-if="chain.isLayer2" to="/about/layer-2" class="btn-primary">
+          <links v-if="chain.bridge" :to="chain.bridge" class="btn-primary">
             {{ $t('landing.req.chain-cta', { chain: chain.label }) }}
           </links>
         </div>
@@ -112,33 +112,11 @@
           </p>
           <links to="/about/maci">{{ $t('landing.about.link-2') }}</links>
         </div>
-        <div id="about-3">
-          <h2>{{ $t('landing.about.subtitle-3') }}</h2>
-          <p>
-            {{ $t('landing.about.paragraph-3') }}
-          </p>
-          <links to="/about">{{ $t('landing.about.link-3') }}</links>
-        </div>
       </div>
       <div id="footer">
         <h2>{{ $t('landing.footer.title') }}</h2>
         <div class="link-li">
-          <links to="/about">{{ $t('landing.footer.link-1') }}</links>
-        </div>
-        <div class="link-li">
           <links to="/about/how-it-works">{{ $t('landing.footer.link-2') }}</links>
-        </div>
-        <div class="link-li" v-if="chain.isLayer2">
-          <links to="/about/layer-2">{{ $t('landing.footer.link-3', { chain: chain.label }) }}</links>
-        </div>
-        <div class="link-li">
-          <links to="/about/maci">{{ $t('landing.footer.link-4') }}</links>
-        </div>
-        <div class="link-li">
-          <links to="/about/sybil-resistance">{{ $t('landing.footer.link-5') }}</links>
-        </div>
-        <div class="link-li">
-          <links to="https://github.com/clrfund/monorepo/">{{ $t('landing.footer.link-6') }}</links>
         </div>
         <div class="link-li">
           <links to="https://discord.gg/ZnsYPV6dCv">{{ $t('landing.footer.link-7') }}</links>
@@ -151,9 +129,6 @@
         </div>
         <div class="link-li">
           <links to="https://forum.clr.fund/">{{ $t('landing.footer.link-8') }}</links>
-        </div>
-        <div class="link-li">
-          <links to="https://ethereum.org/">{{ $t('landing.footer.link-9') }}</links>
         </div>
       </div>
     </div>

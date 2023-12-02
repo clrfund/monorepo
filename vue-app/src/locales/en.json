@@ -58,23 +58,22 @@
     },
     "funds": {
       "title": "Get funds on {chain}",
-      "paragraph-1-text-1": "You'll need some {currency} on {chain} in order to submit transactions to the clr.fund smart contracts.",
+      "paragraph-1-text-1": "You'll need some {currency} on {chain} in order to submit your contributions.",
       "paragraph-1-text-2": "Follow",
-      "paragraph-1-link-1": "this tutorial",
-      "paragraph-1-text-3": "to bridge your funds to {chain}",
+      "paragraph-1-link-1": "this link",
+      "paragraph-1-text-3": "to bridge your funds to {chain}.",
       "paragraph-2-text-1": "Use the",
       "paragraph-2-link-1": "{chain} bridge",
-      "paragraph-2-text-2": "to transfer some funds.",
-      "paragraph-3-text-1": "Confused on what {chain} is?",
-      "paragraph-3-link-1": "Read our explanation on how clr.fund uses layer 2 on Ethereum."
+      "paragraph-2-text-2": "to transfer some funds."
     },
     "contributing": {
       "title": "Contributing to specific projects",
       "li-1-text-1": "Before contributing to specific projects, you will need to",
+      "li-register": "register with the coordinator",
       "li-1-link-1": "verify that you're a unique human",
       "li-1-text-2": ". This helps clr.fund",
       "li-1-link-2": "resist sybil attacks!",
-      "li-2": "Make sure you have {nativeTokenSymbol} in your BrightID-verified wallet on the {chain} network",
+      "li-2": "Make sure you have {nativeTokenSymbol} in your wallet on the {chain} network",
       "li-3-link": "Browse projects",
       "li-3-text": " and add some to your cart, adjusting your contributions to the amount of {nativeTokenSymbol} you want.",
       "li-4": "When you're ready, open your cart, click contribute, and confirm the transactions to complete your contributions!",
@@ -91,11 +90,6 @@
       "li-2-text-1": " Once you have the desired amount of {nativeTokenSymbol} in your wallet, select \"Add Funds\" on the",
       "li-2-link": "Projects page",
       "li-2-text-2": " and confirm the transactions."
-    },
-    "wow": {
-      "title": "How does clr.fund work",
-      "paragraph": "Looking for a more general overview?",
-      "link": "Check out our \"How It Works\" page"
     }
   },
   "decentralization": {
@@ -133,7 +127,7 @@
   "howItWorks": {
     "heading": {
       "title": "How the round works",
-      "subtitle": "CLR walkthrough",
+      "subtitle": "Overview",
       "paragraph-1": "This is an overview of how everything works behind the scenes so you can learn what to expect throughout the duration of the round.",
       "paragraph-2": " Looking for a guide on how to participate? Check out our guides specifically for contributing and joining as a project.",
       "li-1": "Guide for contributors",
@@ -187,9 +181,9 @@
     },
     "tallying": {
       "title": "Tallying phase",
-      "paragraph-text-1": "At this point, all contributions are final, and can now be counted. The round coordinator triggers",
+      "paragraph-text-1": "At this point, all contributions are final, and can now be counted. The round coordinator triggers the",
       "link": "MACI",
-      "paragraph-text-2": "and the smart contracts to calculate how much of the matching pool each project will get."
+      "paragraph-text-2": " scripts to calculate how much of the matching pool each project will get."
     },
     "finalized": {
       "title": "Finalized phase",
@@ -274,11 +268,11 @@
     "what": {
       "h2": "What is MACI?",
       "p1": "tl;dr: bribers are ngmi (not going to make it)",
-      "p2": " Clr.fund uses MACI, Minimum Anti-Collusion Infrastructure, to help prevent vote manipulation like bribery or collusion. To understand why this is important let's recap quadratic funding..."
+      "p2": "MACI, Minimum Anti-Collusion Infrastructure, helps prevent vote manipulation like bribery or collusion. To understand why this is important let's recap quadratic funding..."
     },
     "quadratic": {
       "h2": "Quadratic funding",
-      "p1": " This is the mechanism clr.fund uses in our funding rounds. When you contribute to a project you're not just sending them money, you're voting for them. At the end, the matching pool funds are distributed to projects based on number of votes at the end of the round.",
+      "p1": " This is the mechanism used in our funding rounds. When you contribute to a project you're not just sending them money, you're voting for them. At the end, the matching pool funds are distributed to projects based on number of votes at the end of the round.",
       "p2_t1": " Read more on",
       "p2_link": "quadratic funding.",
       "p3": "This mechanism is great for democratic funding but poses some risks. It could be cost-effective for a project owner to bribe users to vote for their project as their eventual matching pool amount could be really high. This type of fraud puts the entire concept at risk as it is no longer about which projects offer the most value to the most amount of people."
@@ -295,33 +289,24 @@
     "vulnerability": {
       "h3": "Vulnerability of Public Voting Systems",
       "p1": "In order to manipulate the outcomes for a particular voter, the manipulator needs to know that voter's eventual choices: If Charlie offers to pay me $1,000,000 to vote for Bob, he needs to know that I'll actually vote for Bob before paying me. Otherwise, I can vote for Alice, tell Charlie I voted for Bob to get the $1,000,000, and the bribe has failed.",
-      "p2": "In traditional elections, votes are secret, making it difficult to manipulate voters. But there aren't any secrets on public blockchains like Ethereum! In most existing voting systems on Ethereum, votes are public, which means manipulation is a serious threat."
-    },
-    "why": {
-      "h2": "Why MACI?",
-      "p1": "Ethereum is a core part of clr.fund and other quadratic funding solutions like Gitcoin Grants, because:",
-      "li1": "Ethereum has a great combination of low infrastructure costs and high security (i.e. hard to hack) compared to other electronic voting solutions",
-      "li2": "Ethereum offers seamless interoperability with a large and growing ecosystem of communities and tools that both enhance and benefit from quadratic funding, such as DAOs and identity systems like BrightID",
-      "li3": "clr.fund was built by and for the Ethereum community",
-      "p2": "While moving away from the public-ness of Ethereum isn't an attractive option, building Ethereum-based tools to resist vote manipulation is, which brings us to MACI."
+      "p2": "In traditional elections, votes are secret, making it difficult to manipulate voters. But for voting systems where votes are public, manipulation is a serious threat."
     },
     "helps": {
       "h2_1": "How MACI helps",
       "p1": "Bribery only works if the briber can confirm that the person they're paying actually goes through with the conditions of the bribe. This is where MACI comes in. With MACI, it's impossible to prove how you voted, so bribers will never know if you did what they paid you to do.",
       "h2_2": "MACI — Minimum Anti-Collusion Infrastructure",
-      "p2": "MACI is a set of Ethereum smart contracts and supplementary scripts that effectively transforms public voting systems into private ones, in which 1) participation in a vote and correct vote tabulation are publicly verifiable, but 2) specific voting information is not public, making vote manipulation much more difficult.",
+      "p2": "MACI is a mechanism that effectively transforms public voting systems into private ones, in which 1) participation in a vote and correct vote tabulation are publicly verifiable, but 2) specific voting information is not public, making vote manipulation much more difficult.",
       "how": {
         "h3": "How it works",
-        "p1": "When you contribute to a project on clr.fund you register an identity with the round coordinator. But at any time before the end of the round, you can invalidate your identity by secretly changing the public key associated with your identity before casting the vote. You can then use a different key pair to sign the vote (which renders the vote invalid, but it's impossible to see if the vote is invalid).",
+        "p1": "When you contribute to a project, you register an identity with the round coordinator. But at any time before the end of the round, you can invalidate your identity by secretly changing the public key associated with your identity before casting the vote. You can then use a different key pair to sign the vote (which renders the vote invalid, but it's impossible to see if the vote is invalid).",
         "p2": "MACI does all this using zero-knowledge proofs. These mathematically prove the authenticity of votes without providing any of the details. So bribers can’t tell what actions the people they bribed took.",
         "p3_t1": "From",
         "p3_link": "MACI's introduction documentation:",
-        "p4": "Whitelisted voters named Alice, Bob, and Charlie register to vote by sending their public key to a smart contract. Additionally, there is a central coordinator Dave, whose public key is known to all.",
-        "p5": "When Alice casts her vote, she signs her vote with her private key, encrypts her signature with Dave's public key, and submits the result to the smart contract.",
-        "p6": "Each voter may change her keypair at any time. To do this, she creates and signs a key-change command, encrypts it, and sends it to the smart contract. This makes it impossible for a briber to ever be sure that their bribe has any effect on the bribee's vote.",
+        "p4": "Whitelisted voters named Alice, Bob, and Charlie register their identities with their public keys. Additionally, there is a central coordinator Dave, whose public key is known to all.",
+        "p5": "When Alice casts her vote, she signs her vote with her private key, encrypts her signature with Dave's public key, and register the result publicly.",
+        "p6": "Each voter may change her keypair at any time. To do this, she creates and signs a key-change command, encrypts it, and register the result. This makes it impossible for a briber to ever be sure that their bribe has any effect on the bribee's vote.",
         "p7": "If Bob, for instance, bribes Alice to vote a certain way, she can simply use the first public key she had registered ⁠— which is now void ⁠— to cast a vote. Since said vote is encrypted, as was the key-changing message which Alice had previously sent to Dave, Bob has no way to tell if Alice had indeed voted the way he wanted her to.",
-        "p8": "Even if Alice reveals the cleartext of her vote to Bob, she just needs to not show him the updated key command that she previously used to invalidate that key. In short, as long as she had submitted a single encrypted command before her vote, there is no way to tell if said vote is valid or not.",
-        "link": "Read more on the technical details of MACI here."
+        "p8": "Even if Alice reveals the cleartext of her vote to Bob, she just needs to not show him the updated key command that she previously used to invalidate that key. In short, as long as she had submitted a single encrypted command before her vote, there is no way to tell if said vote is valid or not."
       }
     },
     "constraints": {
@@ -430,11 +415,11 @@
     },
     "register": {
       "h2": "Register your project",
-      "p1": "In order to participate in a funding round as a project, you'll need to submit an application to join the recipient registry (via an on-chain transaction).",
+      "p1": "In order to participate in a funding round as a project, you'll need to submit an application to join the recipient registry.",
       "p2_t1": "MACI, our anti-bribery tech, currently limits the amount of projects allowed per round.",
       "p2_link": "More on MACI",
       "p2_t2": ". The round only accepts a total of {maxRecipients} projects, so we encourage you to apply early.",
-      "p3": "Note: all application data (except contact email address) will be publicly stored on-chain.",
+      "p3": "Note: all application data will be publicly available.",
       "h3": "Submit your application",
       "li1": "Head over to the ",
       "li1_link": "Join page.",
@@ -444,16 +429,11 @@
       "li5": "Connect to the right network via your wallet of choice.",
       "li6": "Send a transaction (with a deposit of {depositAmount} {depositToken}) to the registry contract.",
       "p4": "The registry admin will review project submissions and accept/reject projects according to the criteria.",
-      "p5": "In any case, your {depositToken} will be returned once your application has been either accepted or denied. Note that metadata pointing to all your project information (but not contact information) will be stored publicly on-chain."
+      "p5": "In any case, your {depositToken} will be returned once your application has been either accepted or denied. Note that metadata pointing to all your project information will be publicly available."
     },
     "claim": {
       "h2": "Claim your funds",
-      "p": "After a clr.fund round is finished, it's simple to claim your project's share of the funding. Return to your project's page: you will see a \"claim funds\" button if your project received contributions during the round. Submit the claim transaction to receive your funds."
-    },
-    "how": {
-      "h2": "How does clr.fund work?",
-      "p": "Looking for a more general overview?",
-      "link": "Check out our \"How It Works\" page"
+      "p": "After a funding round is finished, it's simple to claim your project's share of the funding. Return to your project's page: you will see a \"claim funds\" button if your project received contributions during the round. Submit the claim transaction to receive your funds."
     }
   },
   "sybilResistance": {
@@ -539,41 +519,6 @@
       "preview1": "Preview:",
       "address_requirement": "This address, or at least one of the signers, in the case of a multisig, should hold a {link_1}. Alternatively, project should be able to demonstrate that it has completed KYC for a reputable grants program, like the {link_2}, in the past year."
     },
-    "step2": {
-      "h2": "Team details",
-      "p1": "Tell us about the folks behind your project.",
-      "label1": "Contact email",
-      "description1": "For important updates about your project and the funding round.",
-      "input1": "example: doge{'@'}goodboi.com",
-      "notice1": "We won't display this publicly or add it to the on-chain registry.",
-      "error1": "This doesn't look like an email.",
-      "label2": "Team name (optional)",
-      "p2": "If different to project name.",
-      "input2": "ex: clr.fund",
-      "label3": "Team description (optional)",
-      "p3": "If different to project description. Markdown supported.",
-      "input3": "ex: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...",
-      "preview1": "Preview:"
-    },
-    "step3": {
-      "h2": "Links",
-      "p1": "Give contributors some links to check out to learn more about your project. Provide at least one.",
-      "label1": "GitHub",
-      "input1": "example: https://github.com/ethereum/clrfund",
-      "error1": "This doesn't look like a valid URL",
-      "label2": "Radicle",
-      "input2": "example: https://radicle.xyz/ethereum/clrfund",
-      "error2": "This doesn't look like a valid URL",
-      "label3": "Website",
-      "input3": "example: https://clr.fund",
-      "error3": "This doesn't look like a valid URL",
-      "label4": "Twitter",
-      "input4": "example: https://twitter.com/ethereum",
-      "error4": "This doesn't look like a valid URL",
-      "label5": "Chat",
-      "input5": "ex: https://discord.gg/5Prub9zbGz",
-      "error5": "This doesn't look like a valid URL"
-    },
     "step4": {
       "h2": "Images",
       "p1": "We'll upload your images to IPFS, a decentralized storage platform.",
@@ -585,7 +530,7 @@
     },
     "step5": {
       "h2": "Review your information",
-      "warning": "This information will be stored in a smart contract and cannot be edited, so please review carefully.",
+      "warning": "This information will be made publicly available and cannot be edited, so please review carefully.",
       "h3_1": "About the project",
       "edit1": "Edit",
       "h4_1": "Project name",
@@ -599,15 +544,6 @@
       "link1": "View on {blockExplorer} ",
       "ens": "Resolved ENS address",
       "h4_7": "Funding plans",
-      "h3_3": "Team details",
-      "edit3": "Edit",
-      "h4_8": "Contact email",
-      "notice1": "This information won't be added to the smart contract.",
-      "h4_9": "Team name",
-      "h4_10": "Team description",
-      "h3_4": "Links",
-      "edit4": "Edit",
-      "h4_12": "Website",
       "h3_5": "Images",
       "edit5": "Edit",
       "h4_13": "Banner",
@@ -616,9 +552,6 @@
     "step6": {
       "h2": "Submit project",
       "p1": "This is a blockchain transaction that will add your project information to the funding round."
-    },
-    "error": {
-      "not_provided": "Not provided"
     }
   },
   "joinLanding": {
@@ -671,9 +604,9 @@
       "title": "Every donation is amplified by the matching pool.",
       "paragraph": "This fundraiser rewards projects with the most unique demand, not just those with the wealthiest backers.",
       "subtitle": "How it works",
-      "list-1": "{operator} and other donors send funds to the matching pool smart contract.",
+      "list-1": "{operator} and other donors send funds to the matching pool.",
       "list-2": "The round begins and you can donate to your favorite projects.",
-      "list-3": "Once the round finishes, the smart contract distributes the matching pool funds to projects weighted primarily by number of contributions,",
+      "list-3": "Once the round finishes, the fundraiser distributes the matching pool funds to projects weighted primarily by number of contributions,",
       "list-3-strong": "not contribution value",
       "action": "How the round works"
     },
@@ -691,22 +624,13 @@
       "link-1": "About quadratic funding",
       "subtitle-2": "Protect against bribery",
       "paragraph-2": "Using MACI, a zero-knowledge technology, it's impossible to prove how you contributed. This drives bribers insane because they have no idea whether you actually did what they bribed you to do!",
-      "link-2": "About MACI",
-      "subtitle-3": "Built using the CLR protocol",
-      "paragraph-3": "clr.fund is a protocol for efficiently allocating funds to public goods that benefit the Ethereum Network according to the preferences of the Ethereum Community.",
-      "link-3": "About clr.fund"
+      "link-2": "About MACI"
     },
     "footer": {
       "title": "More",
-      "link-1": "About clr.fund",
       "link-2": "How the round works",
-      "link-3": "About {chain}",
-      "link-4": "About MACI",
-      "link-5": "About BrightID",
-      "link-6": "GitHub",
       "link-7": "Discord",
       "link-8": "Forum",
-      "link-9": "More on Ethereum",
       "link-blog": "Blog"
     }
   },
@@ -994,13 +918,9 @@
     "app": "App",
     "dropdown": {
       "home": "Home",
-      "about": "About",
       "how": "How it works",
-      "maci": "Bribery protection",
-      "sybil": "Sybil resistance",
       "code": "Code",
       "recipients": "Recipients",
-      "layer2": "Layer 2",
       "rounds": "Rounds"
     }
   },

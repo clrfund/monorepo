@@ -291,188 +291,6 @@
             </div>
           </div>
           <div v-if="currentStep === 2">
-            <h2 class="step-title">{{ $t('join.step2.h2') }}</h2>
-            <p>{{ $t('join.step2.p1') }}</p>
-            <div class="inputs">
-              <div v-if="isEmailRequired" class="form-background">
-                <label for="team-email" class="input-label">
-                  {{ $t('join.step2.label1') }}
-                </label>
-                <p class="input-description">
-                  {{ $t('join.step2.description1') }}
-                </p>
-                <input
-                  id="team-email"
-                  :placeholder="$t('join.step2.input1')"
-                  v-model.lazy="v$.team.email.$model"
-                  :class="{
-                    input: true,
-                    invalid: v$.team.email.$error,
-                  }"
-                />
-                <p class="input-notice">
-                  {{ $t('join.step2.notice1') }}
-                </p>
-                <p
-                  :class="{
-                    error: true,
-                    hidden: !v$.team.email.$error,
-                  }"
-                >
-                  {{ $t('join.step2.error1') }}
-                </p>
-              </div>
-              <div class="form-background">
-                <label for="team-name" class="input-label">{{ $t('join.step2.label2') }}</label>
-                <p class="input-description">{{ $t('join.step2.p2') }}</p>
-                <input
-                  id="team-name"
-                  type="email"
-                  :placeholder="$t('join.step2.input2')"
-                  v-model="v$.team.name.$model"
-                  :class="{
-                    input: true,
-                    invalid: v$.team.name.$error,
-                  }"
-                />
-              </div>
-              <div class="form-background">
-                <label for="team-desc" class="input-label">{{ $t('join.step2.label3') }}</label>
-                <p class="input-description">
-                  {{ $t('join.step2.p3') }}
-                </p>
-                <textarea
-                  id="team-desc"
-                  :placeholder="$t('join.step2.input3')"
-                  v-model="v$.team.description.$model"
-                  :class="{
-                    input: true,
-                    invalid: v$.team.description.$error,
-                  }"
-                />
-                <p v-if="form.team.description" class="input-label pt-1">
-                  {{ $t('join.step2.preview1') }}
-                </p>
-                <markdown :raw="form.team.description" />
-              </div>
-            </div>
-          </div>
-          <div v-if="currentStep === 3">
-            <h2 class="step-title">{{ $t('join.step3.h2') }}</h2>
-            <p>
-              {{ $t('join.step3.p1') }}
-            </p>
-            <div class="inputs">
-              <div class="form-background">
-                <label for="links-github" class="input-label">{{ $t('join.step3.label1') }}</label>
-                <input
-                  id="links-github"
-                  type="link"
-                  :placeholder="$t('join.step3.input1')"
-                  v-model.lazy="v$.links.github.$model"
-                  :class="{
-                    input: true,
-                    invalid: v$.links.github.$error,
-                  }"
-                />
-                <p
-                  :class="{
-                    error: true,
-                    hidden: !v$.links.github.$error,
-                  }"
-                >
-                  {{ $t('join.step3.error1') }}
-                </p>
-                <!-- TODO: only validate after user removes focus on input -->
-              </div>
-              <div class="form-background">
-                <label for="links-radicle" class="input-label">{{ $t('join.step3.label2') }}</label>
-                <input
-                  id="links-radicle"
-                  type="link"
-                  :placeholder="$t('join.step3.input2')"
-                  v-model.lazy="v$.links.radicle.$model"
-                  :class="{
-                    input: true,
-                    invalid: v$.links.radicle.$error,
-                  }"
-                />
-                <p
-                  :class="{
-                    error: true,
-                    hidden: !v$.links.radicle.$error,
-                  }"
-                >
-                  {{ $t('join.step3.error2') }}
-                </p>
-              </div>
-              <div class="form-background">
-                <label for="links-website" class="input-label">{{ $t('join.step3.label3') }}</label>
-                <input
-                  id="links-website"
-                  type="link"
-                  :placeholder="$t('join.step3.input3')"
-                  v-model.lazy="v$.links.website.$model"
-                  :class="{
-                    input: true,
-                    invalid: v$.links.website.$error,
-                  }"
-                />
-                <p
-                  :class="{
-                    error: true,
-                    hidden: !v$.links.website.$error,
-                  }"
-                >
-                  {{ $t('join.step3.error3') }}
-                </p>
-              </div>
-              <div class="form-background">
-                <label for="links-twitter" class="input-label">{{ $t('join.step3.label4') }}</label>
-                <input
-                  id="links-twitter"
-                  type="link"
-                  :placeholder="$t('join.step3.input4')"
-                  v-model.lazy="v$.links.twitter.$model"
-                  :class="{
-                    input: true,
-                    invalid: v$.links.twitter.$error,
-                  }"
-                />
-                <p
-                  :class="{
-                    error: true,
-                    hidden: !v$.links.twitter.$error,
-                  }"
-                >
-                  {{ $t('join.step3.error4') }}
-                </p>
-              </div>
-              <div class="form-background">
-                <label for="links-discord" class="input-label">{{ $t('join.step3.label5') }}</label>
-                <input
-                  id="links-discord"
-                  type="link"
-                  :placeholder="$t('join.step3.input5')"
-                  class="input"
-                  v-model.lazy="v$.links.discord.$model"
-                  :class="{
-                    input: true,
-                    invalid: v$.links.discord.$error,
-                  }"
-                />
-                <p
-                  :class="{
-                    error: true,
-                    hidden: !v$.links.discord.$error,
-                  }"
-                >
-                  {{ $t('join.step3.error5') }}
-                </p>
-              </div>
-            </div>
-          </div>
-          <div v-if="currentStep === 4">
             <h2 class="step-title">{{ $t('join.step4.h2') }}</h2>
             <p>
               {{ $t('join.step4.p1') }}
@@ -497,7 +315,7 @@
               </div>
             </div>
           </div>
-          <div v-if="currentStep === 5" id="summary">
+          <div v-if="currentStep === 3" id="summary">
             <project-profile
               v-if="showSummaryPreview"
               :project="projectInterface"
@@ -567,103 +385,6 @@
               </div>
               <div class="form-background">
                 <div class="summary-section-header">
-                  <h3 class="step-subtitle">{{ $t('join.step5.h3_3') }}</h3>
-                  <links to="/join/team" class="edit-button"
-                    >{{ $t('join.step5.edit3') }} <img width="16" src="@/assets/edit.svg"
-                  /></links>
-                </div>
-                <div v-if="isEmailRequired" class="summary">
-                  <h4 class="read-only-title">{{ $t('join.step5.h4_8') }}</h4>
-                  <div class="data">{{ form.team.email }}</div>
-                  <div class="input-notice">
-                    {{ $t('join.step5.notice1') }}
-                  </div>
-                </div>
-                <div class="summary">
-                  <h4 class="read-only-title">{{ $t('join.step5.h4_9') }}</h4>
-                  <div class="data">{{ form.team.name }}</div>
-                  <div class="data" v-if="!form.team.name">
-                    {{ $t('join.error.not_provided') }}
-                  </div>
-                </div>
-                <div class="summary">
-                  <h4 class="read-only-title">{{ $t('join.step5.h4_10') }}</h4>
-                  <markdown :raw="form.team.description" />
-                  <div class="data" v-if="!form.team.description">
-                    {{ $t('join.error.not_provided') }}
-                  </div>
-                </div>
-              </div>
-              <div class="form-background">
-                <div class="summary-section-header">
-                  <h3 class="step-subtitle">{{ $t('join.step5.h3_4') }}</h3>
-                  <links to="/join/links" class="edit-button"
-                    >{{ $t('join.step5.edit4') }} <img width="16" src="@/assets/edit.svg"
-                  /></links>
-                </div>
-                <div class="summary">
-                  <h4 class="read-only-title">GitHub</h4>
-                  <div class="data">
-                    {{ form.links.github }}
-                    <links v-if="form.links.github" :to="form.links.github" :hideArrow="true"
-                      ><img width="16" src="@/assets/link.svg"
-                    /></links>
-                  </div>
-                  <div class="data" v-if="!form.links.github">
-                    {{ $t('join.error.not_provided') }}
-                  </div>
-                </div>
-                <div class="summary">
-                  <h4 class="read-only-title">Twitter</h4>
-                  <div class="data">
-                    {{ form.links.twitter }}
-                    <links v-if="form.links.twitter" :to="form.links.twitter" :hideArrow="true"
-                      ><img width="16" src="@/assets/link.svg"
-                    /></links>
-                  </div>
-                  <div class="data" v-if="!form.links.twitter">
-                    {{ $t('join.error.not_provided') }}
-                  </div>
-                </div>
-                <div class="summary">
-                  <h4 class="read-only-title">{{ $t('join.step5.h4_12') }}</h4>
-                  <div class="data" key="">
-                    {{ form.links.website }}
-                    <links v-if="form.links.website" :to="form.links.website" :hideArrow="true"
-                      ><img width="16" src="@/assets/link.svg"
-                    /></links>
-                  </div>
-                  <div class="data" v-if="!form.links.website">
-                    {{ $t('join.error.not_provided') }}
-                  </div>
-                </div>
-                <div class="summary">
-                  <h4 class="read-only-title">Discord</h4>
-                  <div class="data">
-                    {{ form.links.discord }}
-                    <links v-if="form.links.discord" :to="form.links.discord" :hideArrow="true"
-                      ><img width="16" src="@/assets/link.svg"
-                    /></links>
-                  </div>
-                  <div class="data" v-if="!form.links.discord">
-                    {{ $t('join.error.not_provided') }}
-                  </div>
-                </div>
-                <div class="summary">
-                  <h4 class="read-only-title">Radicle</h4>
-                  <div class="data">
-                    {{ form.links.radicle }}
-                    <links v-if="form.links.radicle" :to="form.links.radicle" :hideArrow="true"
-                      ><img width="16" src="@/assets/link.svg"
-                    /></links>
-                  </div>
-                  <div class="data" v-if="!form.links.radicle">
-                    {{ $t('join.error.not_provided') }}
-                  </div>
-                </div>
-              </div>
-              <div class="form-background">
-                <div class="summary-section-header">
                   <h3 class="step-subtitle">{{ $t('join.step5.h3_5') }}</h3>
                   <links to="/join/image" class="edit-button">
                     {{ $t('join.step5.edit5') }}
@@ -685,7 +406,7 @@
               </div>
             </div>
           </div>
-          <div v-if="currentStep === 6">
+          <div v-if="currentStep === 4">
             <h2 class="step-title">{{ $t('join.step6.h2') }}</h2>
             <p>
               {{ $t('join.step6.p1') }}
@@ -758,21 +479,6 @@ const rules = computed(() => {
       resolvedAddress: {},
       plans: { required },
     },
-    team: {
-      name: {},
-      description: {},
-      email: {
-        email,
-        requireEmail: requiredIf(import.meta.env.VITE_GOOGLE_SPREADSHEET_ID),
-      },
-    },
-    links: {
-      github: { url },
-      radicle: { url },
-      website: { url },
-      twitter: { url },
-      discord: { url },
-    },
     image: {
       bannerHash: {
         required,
@@ -790,7 +496,7 @@ const rules = computed(() => {
 const v$ = useVuelidate(rules, form)
 
 const currentStep = ref<number>(0)
-const steps = ['project', 'fund', 'team', 'links', 'image', 'review', 'submit', 'confirm']
+const steps = ['project', 'fund', 'image', 'review', 'submit', 'confirm']
 const stepNames = steps.slice(0, steps.length - 1)
 const showSummaryPreview = ref(false)
 const isWaiting = ref(false)
@@ -880,29 +586,8 @@ function isStepValid(step: number): boolean {
     return false
   }
 
-  if (step === 3) {
-    return isLinkStepValid()
-  }
   const stepName: string = steps[step]
   return !v$.value[stepName]?.$invalid
-}
-
-// Check that at least one link is not empty && no links are invalid
-function isLinkStepValid(): boolean {
-  let isValid = false
-  const links = Object.keys(form.links)
-  for (const link of links) {
-    const linkData = v$.value.links[link]
-    if (!linkData) return false
-    const isInvalid = linkData.$invalid
-    const isEmpty = linkData.$model.length === 0
-    if (isInvalid) {
-      return false
-    } else if (!isEmpty) {
-      isValid = true
-    }
-  }
-  return isValid
 }
 
 function isStepUnlocked(step: number): boolean {

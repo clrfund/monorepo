@@ -253,11 +253,10 @@ p.no-margin {
     .address-card {
       padding: 1rem;
       border-radius: 0.5rem;
-      background: var(--bg-secondary-color);
       gap: 1rem;
     }
     .address-card {
-      background: var(--bg-gradient);
+      background: var(--border-color);
       color: var(--text-color);
 
       .address {

@@ -64,13 +64,12 @@
       "paragraph-1-text-3": "para transferir tus fondos a {chain}",
       "paragraph-2-text-1": "Utiliza el",
       "paragraph-2-link-1": "puente {chain}",
-      "paragraph-2-text-2": "para transferir algunos fondos.",
-      "paragraph-3-text-1": "¿No estás seguro de qué es {chain}?",
-      "paragraph-3-link-1": "Lee nuestra explicación sobre cómo clr.fund utiliza la capa 2 en Ethereum."
+      "paragraph-2-text-2": "para transferir algunos fondos."
     },
     "contributing": {
       "title": "Contribuir a proyectos específicos",
       "li-1-text-1": "Antes de contribuir a proyectos específicos, deberás",
+      "li-register": "registrarse con el coordinador.",
       "li-1-link-1": "verificar que eres una persona única",
       "li-1-text-2": ". Esto ayuda a clr.fund",
       "li-1-link-2": "a resistir los ataques Sybil.",
@@ -91,11 +90,6 @@
       "li-2-text-1": "Una vez que tengas la cantidad deseada de {nativeTokenSymbol} en tu billetera, selecciona \"Agregar fondos\" en la",
       "li-2-link": "página de Proyectos",
       "li-2-text-2": " y confirma las transacciones."
-    },
-    "wow": {
-      "title": "¿Cómo funciona clr.fund?",
-      "paragraph": "¿Buscas una descripción más general?",
-      "link": "Consulta nuestra página \"Cómo funciona\""
     }
   },
   "decentralization": {
@@ -297,14 +291,6 @@
       "p1": "Para manipular los resultados para un votante en particular, el manipulador necesita conocer las elecciones futuras de ese votante: si Charlie me ofrece $1,000,000 para votar por Bob, él necesita saber que realmente votaré por Bob antes de pagarme. De lo contrario, puedo votar por Alice, decirle a Charlie que voté por Bob para obtener los $1,000,000 y el soborno habrá fracasado.",
       "p2": "En las elecciones tradicionales, los votos son secretos, lo que dificulta la manipulación de los votantes. ¡Pero no hay secretos en las blockchains públicas como Ethereum! En la mayoría de los sistemas de votación existentes en Ethereum, los votos son públicos, lo que significa que la manipulación es una amenaza grave."
     },
-    "why": {
-      "h2": "¿Por qué MACI?",
-      "p1": "Ethereum es una parte fundamental de clr.fund y otras soluciones de financiamiento cuadrático como Gitcoin Grants, porque:",
-      "li1": "Ethereum tiene una excelente combinación de bajos costos de infraestructura y alta seguridad (es decir, difícil de piratear) en comparación con otras soluciones de votación electrónica.",
-      "li2": "Ethereum ofrece interoperabilidad perfecta con un ecosistema amplio y en crecimiento de comunidades y herramientas que mejoran y se benefician del financiamiento cuadrático, como las DAO y los sistemas de identidad como BrightID.",
-      "li3": "clr.fund fue construido por y para la comunidad de Ethereum.",
-      "p2": "Si bien alejarse de la publicidad de Ethereum no es una opción atractiva, construir herramientas basadas en Ethereum para resistir la manipulación de votos sí lo es, lo que nos lleva a MACI."
-    },
     "helps": {
       "h2_1": "Cómo ayuda MACI",
       "p1": "El soborno solo funciona si el sobornador puede confirmar que la persona a la que está pagando realmente cumple con las condiciones del soborno. Aquí es donde entra MACI. Con MACI, es imposible probar cómo votaste, por lo que los sobornadores nunca sabrán si hiciste lo que te pagaron hacer.",
@@ -320,8 +306,7 @@
         "p5": "Cuando Alice emite su voto, firma su voto con su clave privada, cifra su firma con la clave pública de Dave y envía el resultado al contrato inteligente.",
         "p6": "Cada votante puede cambiar su par de claves en cualquier momento. Para hacer esto, crea y firma un comando de cambio de clave, lo cifra y lo envía al contrato inteligente. Esto hace que sea imposible que un sobornador esté seguro de que su soborno tiene algún efecto en el voto del sobornado.",
         "p7": "Si Bob, por ejemplo, soborna a Alice para que vote de cierta manera, ella simplemente puede usar la primera clave pública que había registrado, que ahora está anulada, para emitir un voto. Dado que dicho voto está cifrado, al igual que el mensaje de cambio de clave que Alice había enviado anteriormente a Dave, Bob no tiene forma de saber si Alice realmente votó de la manera que él quería.",
-        "p8": "Incluso si Alice revela el texto sin formato de su voto a Bob, solo necesita no mostrarle el comando de clave actualizado que usó previamente para invalidar esa clave. En resumen, siempre que haya enviado un solo comando cifrado antes de su voto, no hay forma de saber si dicho voto es válido o no.",
-        "link": "Lee más sobre los detalles técnicos de MACI aquí."
+        "p8": "Incluso si Alice revela el texto sin formato de su voto a Bob, solo necesita no mostrarle el comando de clave actualizado que usó previamente para invalidar esa clave. En resumen, siempre que haya enviado un solo comando cifrado antes de su voto, no hay forma de saber si dicho voto es válido o no."
       }
     },
     "constraints": {
@@ -449,11 +434,6 @@
     "claim": {
       "h2": "Reclama tus fondos",
       "p": "Después de que una ronda de clr.fund haya finalizado, es sencillo reclamar la parte de financiamiento asignada a tu proyecto. Regresa a la página de tu proyecto: verás un botón \"reclamar fondos\" si tu proyecto recibió contribuciones durante la ronda. Envía la transacción de reclamo para recibir tus fondos."
-    },
-    "how": {
-      "h2": "¿Cómo funciona clr.fund?",
-      "p": "¿Buscas una descripción más general?",
-      "link": "Visita nuestra página \"Cómo funciona\""
     }
   },
   "sybilResistance": {
@@ -539,41 +519,6 @@
       "preview1": "Vista previa:",
       "address_requirement": "Esta dirección, o al menos uno de los firmantes en el caso de una firma múltiple, debería poseer un {link_1}. Alternativamente, el proyecto debería poder demostrar que ha completado el proceso KYC para un programa de subvenciones reputado, como el {link_2}, en el último año."
     },
-    "step2": {
-      "h2": "Detalles del equipo",
-      "p1": "Cuéntanos acerca de las personas detrás de tu proyecto.",
-      "label1": "Correo electrónico de contacto",
-      "description1": "Para actualizaciones importantes sobre tu proyecto y la ronda de financiamiento.",
-      "input1": "ejemplo: perro{'@'}buenchico.com",
-      "notice1": "No mostraremos esto públicamente ni lo agregaremos al registro en cadena.",
-      "error1": "Esto no parece ser un correo electrónico válido.",
-      "label2": "Nombre del equipo (opcional)",
-      "p2": "Si es diferente al nombre del proyecto.",
-      "input2": "ej: clr.fund",
-      "label3": "Descripción del equipo (opcional)",
-      "p3": "Si es diferente a la descripción del proyecto. Soporte de Markdown.",
-      "input3": "ej: CLR.fund es un protocolo de financiación cuadrática que tiene como objetivo facilitar al máximo la configuración, gestión y participación en rondas de financiación cuadrática...",
-      "preview1": "Vista previa:"
-    },
-    "step3": {
-      "h2": "Enlaces",
-      "p1": "Proporciona a los contribuyentes algunos enlaces para obtener más información sobre tu proyecto. Proporciona al menos uno.",
-      "label1": "GitHub",
-      "input1": "ejemplo: https://github.com/ethereum/clrfund",
-      "error1": "Esto no parece ser una URL válida",
-      "label2": "Radicle",
-      "input2": "ejemplo: https://radicle.xyz/ethereum/clrfund",
-      "error2": "Esto no parece ser una URL válida",
-      "label3": "Sitio web",
-      "input3": "ejemplo: https://clr.fund",
-      "error3": "Esto no parece ser una URL válida",
-      "label4": "Twitter",
-      "input4": "ejemplo: https://twitter.com/ethereum",
-      "error4": "Esto no parece ser una URL válida",
-      "label5": "Chat",
-      "input5": "ej: https://discord.gg/5Prub9zbGz",
-      "error5": "Esto no parece ser una URL válida"
-    },
     "step4": {
       "h2": "Imágenes",
       "p1": "Cargaremos tus imágenes en IPFS, una plataforma de almacenamiento descentralizada.",
@@ -599,15 +544,6 @@
       "link1": "Ver en {blockExplorer} ",
       "ens": "Dirección ENS resuelta",
       "h4_7": "Planes de financiamiento",
-      "h3_3": "Detalles del equipo",
-      "edit3": "Editar",
-      "h4_8": "Correo electrónico de contacto",
-      "notice1": "Esta información no se agregará al contrato inteligente.",
-      "h4_9": "Nombre del equipo",
-      "h4_10": "Descripción del equipo",
-      "h3_4": "Enlaces",
-      "edit4": "Editar",
-      "h4_12": "Sitio web",
       "h3_5": "Imágenes",
       "edit5": "Editar",
       "h4_13": "Banner",
@@ -616,9 +552,6 @@
     "step6": {
       "h2": "Enviar proyecto",
       "p1": "Esta es una transacción de blockchain que agregará la información de tu proyecto a la ronda de financiamiento."
-    },
-    "error": {
-      "not_provided": "No proporcionado"
     }
   },
   "joinLanding": {
@@ -691,22 +624,13 @@
       "link-1": "Acerca del financiamiento cuadrático",
       "subtitle-2": "Protección contra el soborno",
       "paragraph-2": "Utilizando MACI, una tecnología de conocimiento cero, es imposible demostrar cómo contribuiste. Esto vuelve locos a los sobornadores porque no tienen idea de si realmente hiciste lo que te sobornaron para hacer.",
-      "link-2": "Acerca de MACI",
-      "subtitle-3": "Construido utilizando el protocolo CLR",
-      "paragraph-3": "clr.fund es un protocolo para asignar eficientemente fondos a bienes públicos que benefician a la Red Ethereum según las preferencias de la Comunidad Ethereum.",
-      "link-3": "Acerca de clr.fund"
+      "link-2": "Acerca de MACI"
     },
     "footer": {
       "title": "Más",
-      "link-1": "Acerca de clr.fund",
       "link-2": "Cómo funciona la ronda",
-      "link-3": "Acerca de {chain}",
-      "link-4": "Acerca de MACI",
-      "link-5": "Acerca de BrightID",
-      "link-6": "GitHub",
       "link-7": "Discord",
       "link-8": "Foro",
-      "link-9": "Más sobre Ethereum",
       "link-blog": "Blog"
     }
   },
@@ -994,13 +918,9 @@
     "app": "Ver Aplicaciones",
     "dropdown": {
       "home": "Inicio",
-      "about": "Acerca de",
       "how": "Cómo funciona",
-      "maci": "Protección contra sobornos",
-      "sybil": "Resistencia a Sybil",
       "code": "Código",
       "recipients": "Destinatarios",
-      "layer2": "Capa 2",
       "rounds": "Rondas"
     }
   },

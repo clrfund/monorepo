@@ -21,9 +21,6 @@
       <div class="profile-name">
         {{ displayAddress }}
       </div>
-      <div class="profile-image">
-        <img v-if="profileImageUrl" :src="profileImageUrl" />
-      </div>
     </div>
     <profile v-if="showProfilePanel" :balance="balance" :ether-balance="etherBalance" @close="toggleProfile" />
   </div>
@@ -69,7 +66,6 @@ const { open: showModal, close } = useModal({
 })
 
 const showProfilePanel = ref<boolean | null>(null)
-const profileImageUrl = ref<string | null>(null)
 
 const etherBalance = computed(() => {
   const etherBalance = currentUser.value?.etherBalance
@@ -113,7 +109,7 @@ function toggleProfile(): void {
   gap: 0.5rem;
   align-items: center;
   cursor: pointer;
-  background: var(--bg-gradient);
+  background: var(--button-action);
   border-radius: 32px;
   padding-right: 0.5rem;
   width: fit-content;
@@ -124,7 +120,7 @@ function toggleProfile(): void {
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: min(20vw, 14ch);
-    color: var(--text-color);
+    color: var(--text-tertiary);
     @media (max-width: $breakpoint-s) {
       display: none;
     }

@@ -14,7 +14,7 @@
       }}
       <span v-if="chain.label.includes('Arbitrum')">
         {{ $t('contributors.funds.paragraph-1-text-2') }}
-        <links to="https://arbitrum.io/bridge-tutorial/"> {{ $t('contributors.funds.paragraph-1-link-1') }}</links>
+        <links :to="chain.bridge"> {{ $t('contributors.funds.paragraph-1-link-1') }}</links>
         {{ $t('contributors.funds.paragraph-1-text-3', { chain: chain.label }) }}
       </span>
       <span v-else-if="chain.bridge">
@@ -23,19 +23,16 @@
         {{ $t('contributors.funds.paragraph-2-text-2') }}
       </span>
     </p>
-    <p v-if="chain.isLayer2">
-      {{ $t('contributors.funds.paragraph-3-text-1', { chain: chain.label }) }}
-      <links to="/about/layer-2">
-        {{ $t('contributors.funds.paragraph-3-link-1', { chain: chain.label }) }}
-      </links>
-    </p>
     <h2>{{ $t('contributors.contributing.title') }}</h2>
     <ol>
-      <li>
+      <li v-if="isBrightIdRequired">
         {{ $t('contributors.contributing.li-1-text-1') }}
         <links to="/verify">{{ $t('contributors.contributing.li-1-link-1') }}</links
         >{{ $t('contributors.contributing.li-1-text-2') }}
         <links to="/about/sybil-resistance">{{ $t('contributors.contributing.li-1-link-2') }}</links>
+      </li>
+      <li v-else>
+        {{ $t('contributors.contributing.li-1-text-1') }} {{ $t('contributors.contributing.li-register') }}
       </li>
       <li>
         {{
@@ -88,18 +85,12 @@
       </li>
     </ol>
     <p></p>
-    <h2>{{ $t('contributors.wow.title') }}</h2>
-    <p>
-      {{ $t('contributors.wow.paragraph') }}
-      <links to="/about/how-it-works">{{ $t('contributors.wow.link') }}</links
-      >.
-    </p>
   </div>
 </template>
 
 <script setup lang="ts">
 import Links from '@/components/Links.vue'
-import { chain } from '@/api/core'
+import { chain, isBrightIdRequired } from '@/api/core'
 import { useAppStore } from '@/stores'
 
 const appStore = useAppStore()

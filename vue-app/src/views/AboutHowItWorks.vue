@@ -42,7 +42,7 @@
         {{ $t('howItWorks.phases.need.li-2-text')
         }}<links to="/join">{{ $t('howItWorks.phases.need.li-2-link') }}</links>
       </li>
-      <li>
+      <li v-if="isBrightIdRequired">
         {{ $t('howItWorks.phases.need.li-3-text') }}
         <links to="/verify">{{ $t('howItWorks.phases.need.li-3-link') }}</links>
       </li>
@@ -60,7 +60,7 @@
           })
         }}
       </li>
-      <li>
+      <li v-if="isBrightIdRequired">
         {{ $t('howItWorks.contribution.need.li-2-text-1') }}
         <links to="/verify">{{ $t('howItWorks.contribution.need.li-2-link') }}</links>
         {{ $t('howItWorks.contribution.need.li-2-text-2') }}
@@ -119,7 +119,7 @@
         <links to="/about/maci">{{ $t('howItWorks.more.li-1-link') }}</links
         >{{ $t('howItWorks.more.li-1-text') }}
       </li>
-      <li>
+      <li v-if="isBrightIdRequired">
         <links to="/about/sybil-resistance">{{ $t('howItWorks.more.li-2-link') }}</links
         >{{ $t('howItWorks.more.li-2-text') }}
       </li>
@@ -129,6 +129,7 @@
 
 <script setup lang="ts">
 import { MAX_CONTRIBUTION_AMOUNT } from '@/api/contributions'
+import { isBrightIdRequired } from '@/api/core'
 
 import Links from '@/components/Links.vue'
 import { useAppStore } from '@/stores'
@@ -140,7 +141,7 @@ const { nativeTokenSymbol } = storeToRefs(appStore)
 const contributionPhaseDays = computed(() => {
   if (appStore.currentRound) {
     const { signUpDeadline, startTime } = appStore.currentRound
-    return Math.ceil(signUpDeadline.diff(startTime, 'seconds').seconds / (24 * 60 * 60 * 1000))
+    return Math.ceil(signUpDeadline.diff(startTime, 'seconds').seconds / (24 * 60 * 60))
   }
   return 'TBD'
 })
@@ -156,7 +157,7 @@ const maxRecipients = computed(() => {
 const reallocationPhaseDays = computed(() => {
   if (appStore.currentRound) {
     const { signUpDeadline, votingDeadline } = appStore.currentRound
-    return Math.ceil(votingDeadline.diff(signUpDeadline, 'seconds').seconds / (24 * 60 * 60 * 1000))
+    return Math.ceil(votingDeadline.diff(signUpDeadline, 'seconds').seconds / (24 * 60 * 60))
   }
   return 'TBD'
 })

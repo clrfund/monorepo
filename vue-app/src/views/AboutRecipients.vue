@@ -91,12 +91,6 @@
     <p>
       {{ $t('recipients.claim.p') }}
     </p>
-    <h2>{{ $t('recipients.how.h2') }}</h2>
-    <p>
-      {{ $t('recipients.how.p') }}
-      <links to="/about/how-it-works">{{ $t('recipients.how.link') }}</links
-      >.
-    </p>
   </div>
 </template>
 

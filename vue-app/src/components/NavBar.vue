@@ -17,34 +17,9 @@
             </links>
           </div>
           <div class="dropdown-item" @click="closeHelpDropdown">
-            <links to="/about">
-              <div class="emoji-wrapper">ℹ️</div>
-              <p class="item-text">{{ $t('navBar.dropdown.about') }}</p>
-            </links>
-          </div>
-
-          <div class="dropdown-item" @click="closeHelpDropdown">
             <links to="/about/how-it-works">
               <div class="emoji-wrapper">⚙️</div>
               <p class="item-text">{{ $t('navBar.dropdown.how') }}</p>
-            </links>
-          </div>
-          <div class="dropdown-item" @click="closeHelpDropdown">
-            <links to="/about/maci">
-              <div class="emoji-wrapper">🤑</div>
-              <p class="item-text">{{ $t('navBar.dropdown.maci') }}</p>
-            </links>
-          </div>
-          <div class="dropdown-item" @click="closeHelpDropdown">
-            <links to="/about/sybil-resistance">
-              <div class="emoji-wrapper">👤</div>
-              <p class="item-text">{{ $t('navBar.dropdown.sybil') }}</p>
-            </links>
-          </div>
-          <div v-if="chain.isLayer2" class="dropdown-item" @click="closeHelpDropdown">
-            <links to="/about/layer-2">
-              <div class="emoji-wrapper">🚀</div>
-              <p class="item-text">{{ $t('navBar.dropdown.layer2') }}</p>
             </links>
           </div>
           <div class="dropdown-item" @click="closeHelpDropdown">

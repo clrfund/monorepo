@@ -49,22 +49,6 @@
     <p>
       {{ $t('maci.vulnerability.p2') }}
     </p>
-    <h2>{{ $t('maci.why.h2') }}</h2>
-    <p>
-      {{ $t('maci.why.p1') }}
-    </p>
-    <ul>
-      <li>
-        {{ $t('maci.why.li1') }}
-      </li>
-      <li>
-        {{ $t('maci.why.li2') }}
-      </li>
-      <li>{{ $t('maci.why.li3') }}</li>
-    </ul>
-    <p>
-      {{ $t('maci.why.p2') }}
-    </p>
     <h2>{{ $t('maci.helps.h2_1') }}</h2>
     <p>
       {{ $t('maci.helps.p1') }}
@@ -82,9 +66,7 @@
     </p>
     <p>
       {{ $t('maci.helps.how.p3_t1') }}
-      <links to="https://github.com/appliedzkp/maci/blob/master/specs/01_introduction.md">{{
-        $t('maci.helps.how.p3_link')
-      }}</links>
+      <links to="https://maci.pse.dev/">{{ $t('maci.helps.how.p3_link') }}</links>
     </p>
     <blockquote>
       <p>
@@ -107,10 +89,6 @@
       </p>
     </blockquote>
 
-    <p>
-      <links to="https://github.com/appliedzkp/maci/tree/master/specs">{{ $t('maci.helps.how.link') }}</links>
-    </p>
-
     <h3>{{ $t('maci.constraints.h3') }}</h3>
     <p>
       {{ $t('maci.constraints.p') }}
@@ -127,15 +105,13 @@
     <h3>{{ $t('maci.more.h3_1') }}</h3>
     <ul>
       <li>
-        <links to="https://ethresear.ch/t/minimal-anti-collusion-infrastructure/541">{{ $t('maci.more.l1') }}</links>
+        <links to="https://ethresear.ch/t/minimal-anti-collusion-infrastructure/5413">{{ $t('maci.more.l1') }}</links>
       </li>
       <li>
         <links to="https://github.com/appliedzkp/maci">{{ $t('maci.more.l2') }}</links>
       </li>
       <li>
-        <links to="https://github.com/appliedzkp/maci/blob/master/specs/01_introduction.md">{{
-          $t('maci.more.l3')
-        }}</links>
+        <links to="https://maci.pse.dev/docs/introduction">{{ $t('maci.more.l3') }}</links>
       </li>
     </ul>
     <h3>{{ $t('maci.more.h3_2') }}</h3>
