@@ -25,6 +25,7 @@ import {
   FundingRound as FundingRoundTemplate,
   OptimisticRecipientRegistry as recipientRegistryTemplate,
   MACI as MACITemplate,
+  Poll as PollTemplate,
 } from '../generated/templates'
 import {
   ClrFund,
@@ -262,6 +263,7 @@ export function handleRoundStarted(event: RoundStarted): void {
   } else {
     let pollAddress = pollAddressCall.value
     fundingRound.pollAddress = pollAddress
+    PollTemplate.create(pollAddress)
 
     let pollContract = PollContract.bind(pollAddress)
     let deployTimeAndDuration = pollContract.try_getDeployTimeAndDuration()
