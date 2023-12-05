@@ -14,7 +14,7 @@
       />
       <div class="title-area">
         <h1>{{ $t('join.title.h1') }}</h1>
-        <div v-if="currentStep === 5">
+        <div v-if="currentStep === 3">
           <div class="toggle-tabs-desktop">
             <p
               class="tab"
