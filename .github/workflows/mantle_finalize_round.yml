@@ -22,7 +22,6 @@ on:
 
 env:
   NODE_VERSION: 16.x
-  NETWORK: "arbitrum-goerli"
   COORDINATOR_ETH_PK: ${{ secrets.MANTLE_TESTNET_COORDINATOR_WALLET_PRIVATE_KEY }}
   COORDINATOR_PK: ${{ secrets.MANTLE_TESTNET_COORDINATOR_MACI_PRIVATE_KEY }}
 
@@ -69,8 +68,8 @@ jobs:
         echo "MACI_START_BLOCK:" $MACI_START_BLOCK
         # tally and finalize
         cd contracts
-        yarn hardhat tally --round-address "${ROUND_ADDRESS}" --network "${NETWORK}"
+        yarn hardhat tally --round-address "${ROUND_ADDRESS}" --network "${{ github.event.inputs.network }}"
         curl --location --request POST 'https://api.pinata.cloud/pinning/pinFileToIPFS' \
           --header "Authorization: Bearer ${{ secrets.PINATA_JWT }}" \
           --form 'file=@"tally.json"'
-        yarn hardhat run --network "${NETWORK}" scripts/finalize.ts
+        yarn hardhat run --network "${{ github.event.inputs.network }}" scripts/finalize.ts
