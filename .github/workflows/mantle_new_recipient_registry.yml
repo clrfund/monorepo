@@ -21,7 +21,7 @@ env:
   WALLET_PRIVATE_KEY: ${{ secrets.MANTLE_TESTNET_COORDINATOR_WALLET_PRIVATE_KEY }}
 
 jobs:
-  create-new-round:
+  new-recipient-registry:
     runs-on: ubuntu-22.04
     steps:
     - name: Use Node.js ${{ env.NODE_VERSION }}
@@ -33,7 +33,7 @@ jobs:
     - name: Build CLR
       run: |
         yarn && yarn build
-    - name: Run create new round script
+    - name: Create new recipient registry
       run: |
         cd contracts
         export FACTORY_ADDRESS="${{ github.event.inputs.factory }}"
