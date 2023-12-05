@@ -17,6 +17,7 @@ import { FundingRound as FundingRoundContract } from '../generated/FundingRoundF
 
 import { OptimisticRecipientRegistry as RecipientRegistryContract } from '../generated/FundingRoundFactory/OptimisticRecipientRegistry'
 import { BrightIdUserRegistry as BrightIdUserRegistryContract } from '../generated/FundingRoundFactory/BrightIdUserRegistry'
+import { createRecipientRegistry } from './RecipientRegistry'
 
 import {
   FundingRound as FundingRoundTemplate,
@@ -30,48 +31,6 @@ import {
   ContributorRegistry,
   Token,
 } from '../generated/schema'
-
-function createRecipientRegistry(
-  fundingRoundFactoryAddress: Address,
-  recipientRegistryAddress: Address
-): RecipientRegistry {
-  log.info('New recipientRegistry {}', [recipientRegistryAddress.toHex()])
-  let recipientRegistryId = recipientRegistryAddress.toHexString()
-  let recipientRegistry = new RecipientRegistry(recipientRegistryId)
-
-  recipientRegistryTemplate.create(recipientRegistryAddress)
-  let recipientRegistryContract = RecipientRegistryContract.bind(
-    recipientRegistryAddress
-  )
-  let baseDeposit = recipientRegistryContract.try_baseDeposit()
-  if (baseDeposit.reverted) {
-    recipientRegistry.baseDeposit = BigInt.fromI32(0)
-    recipientRegistry.challengePeriodDuration = BigInt.fromI32(0)
-  } else {
-    recipientRegistry.baseDeposit = baseDeposit.value
-    let challengePeriodDuration =
-      recipientRegistryContract.challengePeriodDuration()
-    recipientRegistry.challengePeriodDuration = challengePeriodDuration
-  }
-  let controller = recipientRegistryContract.try_controller()
-  let maxRecipients = recipientRegistryContract.try_maxRecipients()
-  let owner = recipientRegistryContract.try_owner()
-
-  if (!controller.reverted) {
-    recipientRegistry.controller = controller.value
-  }
-  if (!maxRecipients.reverted) {
-    recipientRegistry.maxRecipients = maxRecipients.value
-  }
-  if (!owner.reverted) {
-    recipientRegistry.owner = owner.value
-  }
-  recipientRegistry.fundingRoundFactory =
-    fundingRoundFactoryAddress.toHexString()
-  recipientRegistry.save()
-
-  return recipientRegistry
-}
 
 function createContributorRegistry(
   fundingRoundFactoryAddress: Address,
@@ -191,10 +150,7 @@ function createOrUpdateFundingRoundFactory(
   let recipientRegistryId = recipientRegistryAddress.toHexString()
   let recipientRegistry = RecipientRegistry.load(recipientRegistryId)
   if (!recipientRegistry) {
-    createRecipientRegistry(
-      fundingRoundFactoryAddress,
-      recipientRegistryAddress
-    )
+    createRecipientRegistry(fundingRoundFactoryId, recipientRegistryAddress)
   }
 
   let contributorRegistryAddress = fundingRoundFactoryContract.userRegistry()

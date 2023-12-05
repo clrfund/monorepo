@@ -72,10 +72,11 @@
 </template>
 
 <script setup lang="ts">
-import { type Project, getProject, getCurrentRecipientRegistryAddress } from '@/api/projects'
+import { type Project, getProject, getRecipientRegistryAddress } from '@/api/projects'
 import { ensLookup } from '@/utils/accounts'
 import { useAppStore } from '@/stores'
 import { getBlockExplorerByAddress } from '@/utils/explorer'
+import { getCurrentRound } from '@/api/round'
 
 const route = useRoute()
 const appStore = useAppStore()
@@ -86,7 +87,8 @@ const loading = ref<boolean>(true)
 
 onMounted(async () => {
   const recipientId = (route.params.id as string) || ''
-  const recipientRegistryAddress = await getCurrentRecipientRegistryAddress()
+  const currentRoundAddress = appStore.currentRoundAddress || (await getCurrentRound())
+  const recipientRegistryAddress = await getRecipientRegistryAddress(currentRoundAddress)
 
   // retrieve the project information without filtering by the locked or verified status
   const filter = false
