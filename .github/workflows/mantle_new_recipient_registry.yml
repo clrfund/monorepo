@@ -1,4 +1,4 @@
-name: Mantle testnet - Create new round
+name: Mantle testnet - New Recipient Registry
 
 on:
   workflow_dispatch:
