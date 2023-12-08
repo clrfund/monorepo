@@ -1,0 +1,6 @@
+{
+  "network": "mantle",
+  "address": "0x1E98b9b8e45B14c254F02F81059392Bf40B0F3c6",
+  "factoryStartBlock": 25636250,
+  "recipientRegistryStartBlock": 25636250
+}
