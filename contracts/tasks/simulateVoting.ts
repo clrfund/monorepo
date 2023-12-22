@@ -174,6 +174,7 @@ task('simulate-voting', 'Simulate voting for the current round')
           contributorKeypair.pubKey.asContractParam(),
           contributionAmount
         )
+        await contributionTx.wait(5)
         const stateIndex = await getEventArg(
           contributionTx,
           maciContract,
