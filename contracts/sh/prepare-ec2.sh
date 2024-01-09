@@ -47,3 +47,9 @@ cd monorepo
 git checkout feat/aws-scripts
 yarn
 cd contracts && yarn build
+
+# install the cron job to start the tally task at instance reboot
+crontab -l > tmpcron
+echo "@reboot /home/ubuntu/monorepo/contracts/sh/start-tally-with-logging.sh" >> tmpcron
+crontab tmpcron
+rm tmpcron awscliv2.zip
