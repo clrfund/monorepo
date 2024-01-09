@@ -10,15 +10,21 @@
 #
 
 sudo apt update
-sudo apt-get install -y cmake build-essential libgmp-dev libsodium-dev nlohmann-json3-dev nasm g++ curl
+sudo apt-get install -y cmake build-essential libgmp-dev libsodium-dev nlohmann-json3-dev nasm g++ curl jq unzip
 
+# install aws cli
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+
+# install rust
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | bash -s -- -y
 . $HOME/.cargo/env
 
-echo installing zkutil...
+# install zkutil
 cargo install zkutil --version 0.3.2
 
-echo installing nvm...
+# install nvm
 curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -28,8 +34,13 @@ nvm install 16.20.2
 nvm use v16.20.2
 npm install -g yarn
 
+# create logs directory
+mkdir -p logs
+
+# get clrfund
 git clone https://github.com/clrfund/monorepo.git
 
+# download the zk circuit params
 ./monorepo/.github/scripts/download-batch64-params.sh
 
 cd monorepo
