@@ -10,12 +10,16 @@
 #
 
 sudo apt update
-sudo apt-get install cmake build-essential libgmp-dev libsodium-dev nlohmann-json3-dev nasm g++ curl
+sudo apt-get install -y cmake build-essential libgmp-dev libsodium-dev nlohmann-json3-dev nasm g++ curl
 
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | bash -s -- -y
+. $HOME/.cargo/env
+
+echo installing zkutil...
 cargo install zkutil --version 0.3.2
 
-curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash 
+echo installing nvm...
+curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
@@ -26,6 +30,9 @@ npm install -g yarn
 
 git clone https://github.com/clrfund/monorepo.git
 
+./monorepo/.github/scripts/download-batch64-params.sh
+
 cd monorepo
+git checkout feat/aws-scripts
 yarn
-cd contract && yarn build
+cd contracts && yarn build
