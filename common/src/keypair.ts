@@ -1,9 +1,5 @@
 import { utils, BigNumber } from 'ethers'
-import {
-  Keypair as MaciKeypair,
-  PrivKey,
-  PubKey,
-} from '@clrfund/maci-domainobjs'
+import { Keypair as MaciKeypair, PrivKey, PubKey } from 'maci-domainobjs'
 
 const SNARK_FIELD_SIZE = BigInt(
   '21888242871839275222246405745257275088548364400416034343698204186575808495617'

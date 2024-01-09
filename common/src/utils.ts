@@ -1,13 +1,14 @@
 import { BigNumber } from 'ethers'
 import {
+  genTreeCommitment as genTallyResultCommitment,
   genRandomSalt,
   IncrementalQuinTree,
   hashLeftRight,
   hash5,
   hash3,
   hash2,
-} from '@clrfund/maci-crypto'
-import { PubKey, PCommand, Message } from '@clrfund/maci-domainobjs'
+} from 'maci-crypto'
+import { PubKey, PCommand, Message } from 'maci-domainobjs'
 import { Keypair } from './keypair'
 import { utils } from 'ethers'
 import { Tally } from './tally'
@@ -141,7 +142,7 @@ export function getPubKeyId(pubKey: PubKey): string {
  * @parm salt A random salt
  * @return The hash of the results and the salt, with the salt last
  */
-export function genTallyResultCommitment(
+/*export function genTallyResultCommitment(
   results: bigint[],
   salt: bigint,
   depth: number
@@ -151,9 +152,10 @@ export function genTallyResultCommitment(
     tree.insert(result)
   }
   return hashLeftRight(tree.root, salt)
-}
+}*/
 
 export {
+  genTallyResultCommitment,
   Message,
   PCommand as Command,
   IncrementalQuinTree,
