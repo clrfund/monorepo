@@ -49,6 +49,12 @@ const config: HardhatUserConfig = {
       url: process.env.JSONRPC_HTTP_URL || 'http://127.0.0.1:8545',
       accounts,
     },
+    sepolia: {
+      url:
+        process.env.JSONRPC_HTTP_URL ||
+        'https://ethereum-sepolia.publicnode.com',
+      accounts,
+    },
     xdai: {
       url: process.env.JSONRPC_HTTP_URL || 'https://rpc.gnosischain.com',
       timeout: 60000,
