@@ -16,5 +16,5 @@ REGION=$(curl --silent -H "X-aws-ec2-metadata-token: $TOKEN" --silent http://169
 PINATA_JWT=$(aws secretsmanager get-secret-value --region $REGION --secret-id PINATA_JWT | jq -r '.SecretString')
 curl --location --request POST 'https://api.pinata.cloud/pinning/pinFileToIPFS' \
           --header "Authorization: Bearer ${PINATA_JWT}" \
-          --form "file=@"tally.json"
+          --form file=@"tally.json"
 
