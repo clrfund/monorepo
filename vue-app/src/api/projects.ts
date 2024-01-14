@@ -1,5 +1,5 @@
-import { BigNumber, Contract, Signer } from 'ethers'
-import type { TransactionResponse } from '@ethersproject/abstract-provider'
+import { Contract } from 'ethers'
+import type { TransactionResponse, Signer } from 'ethers'
 import { FundingRound, OptimisticRecipientRegistry } from './abi'
 import { clrFundContract, provider, recipientRegistryType, ipfsGatewayUrl } from './core'
 
@@ -18,9 +18,9 @@ export interface LeaderboardProject {
   bannerImageUrl?: string
   thumbnailImageUrl?: string
   imageUrl?: string
-  allocatedAmount: BigNumber
-  votes: BigNumber
-  donation: BigNumber
+  allocatedAmount: bigint
+  votes: bigint
+  donation: bigint
 }
 
 export interface Project {
@@ -158,6 +158,9 @@ export async function getProjectByIndex(
 export async function getRecipientIdByHash(transactionHash: string): Promise<string | null> {
   try {
     const receipt = await provider.getTransactionReceipt(transactionHash)
+    if (!receipt) {
+      return null
+    }
 
     // should only have 1 event, just in case, return the first matching event
     for (const log of receipt.logs) {
@@ -182,9 +185,9 @@ export function toLeaderboardProject(project: any): LeaderboardProject {
     name: project.name,
     index: project.recipientIndex,
     imageUrl,
-    allocatedAmount: BigNumber.from(project.allocatedAmount || '0'),
-    votes: BigNumber.from(project.tallyResult || '0'),
-    donation: BigNumber.from(project.spentVoiceCredits || '0'),
+    allocatedAmount: BigInt(project.allocatedAmount || '0'),
+    votes: BigInt(project.tallyResult || '0'),
+    donation: BigInt(project.spentVoiceCredits || '0'),
   }
 }
 

@@ -1,7 +1,5 @@
-import { Contract, BigNumber, Signer } from 'ethers'
-import type { Event } from 'ethers'
-import { isHexString } from '@ethersproject/bytes'
-import type { TransactionResponse } from '@ethersproject/abstract-provider'
+import { Contract, toNumber, isHexString } from 'ethers'
+import type { EventLog, ContractTransactionResponse, Signer } from 'ethers'
 
 import { SimpleRecipientRegistry } from './abi'
 import { provider, ipfsGatewayUrl } from './core'
@@ -9,7 +7,7 @@ import type { Project } from './projects'
 import type { RegistryInfo, RecipientApplicationData } from './types'
 import { formToRecipientData } from './recipient'
 
-function decodeRecipientAdded(event: Event): Project {
+function decodeRecipientAdded(event: EventLog): Project {
   const args = event.args as any
   const metadata = JSON.parse(args._metadata)
   return {
@@ -46,21 +44,21 @@ export async function getProjects(registryAddress: string, startTime?: number, e
   for (const event of recipientAddedEvents) {
     let project: Project
     try {
-      project = decodeRecipientAdded(event)
+      project = decodeRecipientAdded(event as EventLog)
     } catch {
       // Invalid metadata
       continue
     }
-    const addedAt = (event.args as any)._timestamp.toNumber()
+    const addedAt = toNumber((event as EventLog).args._timestamp)
     if (endTime && addedAt >= endTime) {
       // Hide recipient if it is added after the end of round
       project.isHidden = true
     }
     const removed = recipientRemovedEvents.find(event => {
-      return (event.args as any)._recipientId === project.id
-    })
+      return (event as EventLog).args._recipientId === project.id
+    }) as EventLog
     if (removed) {
-      const removedAt = (removed.args as any)._timestamp.toNumber()
+      const removedAt = toNumber(removed.args._timestamp)
       if (!startTime || removedAt <= startTime) {
         // Start time not specified
         // or recipient had been removed before start time
@@ -89,7 +87,7 @@ export async function getProject(registryAddress: string, recipientId: string): 
   }
   let project
   try {
-    project = decodeRecipientAdded(recipientAddedEvents[0])
+    project = decodeRecipientAdded(recipientAddedEvents[0] as EventLog)
   } catch {
     // Invalid metadata
     return null
@@ -108,23 +106,23 @@ export async function getProject(registryAddress: string, recipientId: string): 
 async function getRegistryInfo(registryAddress: string): Promise<RegistryInfo> {
   const registry = new Contract(registryAddress, SimpleRecipientRegistry, provider)
 
-  let recipientCount
+  let recipientCount: bigint
   try {
     recipientCount = await registry.getRecipientCount()
   } catch {
     // older BaseRecipientRegistry contract did not have recipientCount
     // set it to zero as this information is only
     // used during current round for space calculation
-    recipientCount = BigNumber.from(0)
+    recipientCount = 0n
   }
   const owner = await registry.owner()
 
   // deposit, depositToken and challengePeriodDuration are only relevant to the optimistic registry
   return {
-    deposit: BigNumber.from(0),
+    deposit: 0n,
     depositToken: '',
     challengePeriodDuration: 0,
-    recipientCount: recipientCount.toNumber(),
+    recipientCount: toNumber(recipientCount),
     owner,
   }
 }
@@ -133,7 +131,7 @@ async function addRecipient(
   registryAddress: string,
   recipientApplicationData: RecipientApplicationData,
   signer: Signer,
-): Promise<TransactionResponse> {
+): Promise<ContractTransactionResponse> {
   const registry = new Contract(registryAddress, SimpleRecipientRegistry, signer)
   const recipientData = formToRecipientData(recipientApplicationData)
   const { address, ...metadata } = recipientData

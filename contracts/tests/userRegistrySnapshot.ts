@@ -1,12 +1,11 @@
 import { ethers } from 'hardhat'
-import { use, expect } from 'chai'
-import { solidity } from 'ethereum-waffle'
+import { expect } from 'chai'
 import {
   Contract,
   ContractTransaction,
-  providers,
-  constants,
-  utils,
+  InfuraProvider,
+  ZeroAddress,
+  ZeroHash,
 } from 'ethers'
 import {
   Block,
@@ -16,11 +15,9 @@ import {
   rlpEncodeProof,
 } from '@clrfund/common'
 
-use(solidity)
-
 // Accounts from arbitrum-goerli to call eth_getProof as hardhat network
 // does not support eth_getProof
-const provider = new providers.InfuraProvider('arbitrum-goerli')
+const provider = new InfuraProvider('arbitrum-goerli')
 
 const tokens = [
   {
@@ -107,7 +104,7 @@ describe('SnapshotUserRegistry', function () {
     it('Should throw if token address is 0', async function () {
       await expect(
         userRegistry.setStorageRoot(
-          constants.AddressZero,
+          ZeroAddress,
           block.hash,
           block.stateRoot,
           token.storageSlot,
@@ -120,7 +117,7 @@ describe('SnapshotUserRegistry', function () {
       await expect(
         userRegistry.setStorageRoot(
           token.address,
-          utils.hexZeroPad('0x00', 32),
+          ZeroHash,
           block.stateRoot,
           token.storageSlot,
           accountProofRlpBytes
@@ -133,7 +130,7 @@ describe('SnapshotUserRegistry', function () {
         userRegistry.setStorageRoot(
           token.address,
           block.hash,
-          utils.hexZeroPad('0x00', 32),
+          ZeroHash,
           token.storageSlot,
           accountProofRlpBytes
         )

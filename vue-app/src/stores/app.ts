@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { BigNumber } from 'ethers'
 import {
   type CartItem,
   type Contributor,
@@ -163,10 +162,10 @@ export const useAppStore = defineStore('app', {
         return clrFund.userRegistryAddress
       }
     },
-    matchingPool: (state): BigNumber => {
+    matchingPool: (state): bigint => {
       const { currentRound, clrFund } = state
 
-      let matchingPool = BigNumber.from(0)
+      let matchingPool = BigInt(0)
 
       if (clrFund) {
         matchingPool = clrFund.matchingPool
@@ -438,7 +437,7 @@ export const useAppStore = defineStore('app', {
     setContributor(contributor: Contributor | null) {
       this.contributor = contributor
     },
-    setContribution(contribution: BigNumber | null) {
+    setContribution(contribution: bigint | null) {
       this.contribution = contribution
     },
     async loadContributorData() {

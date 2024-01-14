@@ -1,10 +1,15 @@
-/* eslint-disable @typescript-eslint/camelcase */
-import { ethers, waffle, config } from 'hardhat'
-import { use, expect } from 'chai'
-import { solidity } from 'ethereum-waffle'
-import { BigNumber, Contract, Signer, Wallet } from 'ethers'
-import { Keypair, createMessage, Message, PubKey } from '@clrfund/common'
-import { genTallyResultCommitment } from '@clrfund/common'
+import { ethers, config } from 'hardhat'
+import { HardhatEthersSigner } from '@nomicfoundation/hardhat-ethers/signers'
+import { time } from '@nomicfoundation/hardhat-network-helpers'
+import { expect } from 'chai'
+import { Contract, Signer } from 'ethers'
+import {
+  Keypair,
+  createMessage,
+  Message,
+  PubKey,
+  genTallyResultCommitment,
+} from '@clrfund/common'
 
 import { UNIT } from '../utils/constants'
 import { getEventArg } from '../utils/contracts'
@@ -29,9 +34,7 @@ import { MaciParameters } from '../utils/maciParameters'
 import { readFileSync, existsSync, mkdirSync } from 'fs'
 import path from 'path'
 
-use(solidity)
-
-const ZERO = BigNumber.from(0)
+const ZERO = BigInt(0)
 const DEFAULT_SR_QUEUE_OPS = 4
 const roundDuration = 7 * 86400
 
@@ -43,7 +46,7 @@ const proofOutputDirectory = process.env.PROOF_OUTPUT_DIR || './proof_output'
 const tallyBatchSize = Number(process.env.TALLY_BATCH_SIZE || 8)
 
 let maciTransactionHash: string
-const ALPHA_PRECISION = BigNumber.from(10).pow(18)
+const ALPHA_PRECISION = BigInt(10) ** 18n
 
 const currentBlockTimestamp = async (provider: any): Promise<number> => {
   const blockNum = await provider.getBlockNumber()
@@ -51,11 +54,8 @@ const currentBlockTimestamp = async (provider: any): Promise<number> => {
   return Number(block.timestamp)
 }
 
-function sumVoiceCredits(voiceCredits: BigNumber[]): string {
-  const total = voiceCredits.reduce(
-    (sum, credits) => sum.add(credits),
-    BigNumber.from(0)
-  )
+function sumVoiceCredits(voiceCredits: bigint[]): string {
+  const total = voiceCredits.reduce((sum, credits) => sum + credits, BigInt(0))
   return total.toString()
 }
 
@@ -64,11 +64,11 @@ function sumVoiceCredits(voiceCredits: BigNumber[]): string {
  * recipientsVotes[i][j] is the jth vote received by recipient i
  * returns the tally result for each recipient
  */
-function tallyVotes(recipientsVotes: BigNumber[][]): BigNumber[] {
+function tallyVotes(recipientsVotes: bigint[][]): bigint[] {
   const result = recipientsVotes.map((votes) => {
     return votes.reduce(
-      (sum, voiceCredits) => sum.add(bnSqrt(voiceCredits)),
-      BigNumber.from(0)
+      (sum, voiceCredits) => sum + bnSqrt(voiceCredits),
+      BigInt(0)
     )
   })
   return result
@@ -81,18 +81,16 @@ function tallyVotes(recipientsVotes: BigNumber[][]): BigNumber[] {
  */
 async function calculateClaims(
   fundingRound: Contract,
-  votes: BigNumber[][]
-): Promise<BigNumber[]> {
+  votes: bigint[][]
+): Promise<bigint[]> {
   const alpha = await fundingRound.alpha()
   const factor = await fundingRound.voiceCreditFactor()
   const tallyResult = tallyVotes(votes)
   return tallyResult.map((quadraticVotes, i) => {
     const spent = sumVoiceCredits(votes[i])
-    const quadratic = quadraticVotes.mul(quadraticVotes).mul(factor).mul(alpha)
-    const linear = BigNumber.from(spent)
-      .mul(factor)
-      .mul(ALPHA_PRECISION.sub(alpha))
-    return quadratic.add(linear).div(ALPHA_PRECISION)
+    const quadratic = quadraticVotes * quadraticVotes * factor * alpha
+    const linear = BigInt(spent) * factor * (ALPHA_PRECISION - alpha)
+    return (quadratic + linear) / ALPHA_PRECISION
   })
 }
 
@@ -100,16 +98,14 @@ describe('End-to-end Tests', function () {
   this.timeout(60 * 60 * 1000)
   this.bail(true)
 
-  const provider = waffle.provider
-
-  let deployer: Signer
-  let coordinator: Wallet
-  let poolContributor1: Signer
-  let poolContributor2: Signer
-  let recipient1: Signer
-  let recipient2: Signer
-  let recipient3: Signer
-  let contributors: Signer[]
+  let deployer: HardhatEthersSigner
+  let coordinator: HardhatEthersSigner
+  let poolContributor1: HardhatEthersSigner
+  let poolContributor2: HardhatEthersSigner
+  let recipient1: HardhatEthersSigner
+  let recipient2: HardhatEthersSigner
+  let recipient3: HardhatEthersSigner
+  let contributors: HardhatEthersSigner[]
 
   let poseidonLibraries: { [key: string]: string }
   let userRegistry: Contract
@@ -175,11 +171,7 @@ describe('End-to-end Tests', function () {
     const transferTx = await maciFactory.transferOwnership(clrfund.address)
     await transferTx.wait()
 
-    const SimpleUserRegistry = await ethers.getContractFactory(
-      'SimpleUserRegistry',
-      deployer
-    )
-    userRegistry = await SimpleUserRegistry.deploy()
+    userRegistry = await ethers.deployContract('SimpleUserRegistry', deployer)
     await clrfund.setUserRegistry(userRegistry.address)
     const SimpleRecipientRegistry = await ethers.getContractFactory(
       'SimpleRecipientRegistry',
@@ -259,12 +251,11 @@ describe('End-to-end Tests', function () {
   })
 
   async function timeTravel(duration: number) {
-    const currentTime = await currentBlockTimestamp(provider)
-    await provider.send('evm_increaseTime', [duration + currentTime])
-    await provider.send('evm_mine')
+    const currentTime = await time.latest()
+    await time.increase(duration + currentTime)
   }
 
-  async function makeContributions(amounts: BigNumber[]) {
+  async function makeContributions(amounts: bigint[]) {
     const contributions: { [key: string]: any }[] = []
     for (let index = 0; index < contributors.length; index++) {
       const contributionAmount = amounts[index]
@@ -393,7 +384,7 @@ describe('End-to-end Tests', function () {
     )
 
     // Claim funds
-    const claims: { [index: number]: BigNumber } = {}
+    const claims: { [index: number]: bigint } = {}
     for (const recipientIndex of [1, 2]) {
       const recipient = recipientIndex === 1 ? recipient1 : recipient2
 
@@ -845,7 +836,7 @@ describe('End-to-end Tests', function () {
       null,
       coordinatorKeypair.pubKey,
       1,
-      BigNumber.from(0),
+      BigInt(0),
       2,
       pollId
     )
@@ -896,7 +887,7 @@ describe('End-to-end Tests', function () {
     expect(tally.totalSpentVoiceCredits.spent).to.equal(
       expectedTotalVoiceCredits
     )
-    expect(claims[1]).to.equal(BigNumber.from(0))
+    expect(claims[1]).to.equal(BigInt(0))
 
     const expectedClaims = await calculateClaims(fundingRound, [
       [contribution.voiceCredits, contribution2.voiceCredits],

@@ -1,4 +1,4 @@
-import { BigNumber } from 'ethers'
+import { id } from 'ethers'
 import {
   genTreeCommitment as genTallyResultCommitment,
   genRandomSalt,
@@ -10,7 +10,6 @@ import {
 } from 'maci-crypto'
 import { PubKey, PCommand, Message } from 'maci-domainobjs'
 import { Keypair } from './keypair'
-import { utils } from 'ethers'
 import { Tally } from './tally'
 
 const LEAVES_PER_NODE = 5
@@ -28,18 +27,18 @@ interface MerkleProof {
   leaf: Leaf
 }
 
-export function bnSqrt(a: BigNumber): BigNumber {
+export function bnSqrt(a: bigint): bigint {
   // Take square root from a big number
   // https://stackoverflow.com/a/52468569/1868395
-  if (a.isZero()) {
+  if (a === 0n) {
     return a
   }
-  let x
-  let x1 = a.div(2)
+  let x: bigint
+  let x1 = a / 2n
   do {
     x = x1
-    x1 = x.add(a.div(x)).div(2)
-  } while (!x.eq(x1))
+    x1 = (x + a / x) / 2n
+  } while (x !== x1)
   return x
 }
 
@@ -49,7 +48,7 @@ export function createMessage(
   newUserKeypair: Keypair | null,
   coordinatorPubKey: PubKey,
   voteOptionIndex: number | null,
-  voiceCredits: BigNumber | null,
+  voiceCredits: bigint | null,
   nonce: number,
   pollId: bigint,
   salt?: bigint
@@ -59,15 +58,13 @@ export function createMessage(
     salt = genRandomSalt() as bigint
   }
 
-  const quadraticVoteWeight = voiceCredits
-    ? bnSqrt(voiceCredits)
-    : BigNumber.from(0)
+  const quadraticVoteWeight = voiceCredits ? bnSqrt(voiceCredits) : 0n
 
   const command = new PCommand(
     BigInt(userStateIndex),
     encKeypair.pubKey,
     BigInt(voteOptionIndex || 0),
-    BigInt(quadraticVoteWeight.toString()),
+    quadraticVoteWeight,
     BigInt(nonce),
     pollId,
     salt
@@ -127,32 +124,8 @@ export function getRecipientClaimData(
  */
 export function getPubKeyId(pubKey: PubKey): string {
   const pubKeyPair = pubKey.asContractParam()
-  const id = utils.id(pubKeyPair.x + '.' + pubKeyPair.y)
-  return id
+  return id(pubKeyPair.x + '.' + pubKeyPair.y)
 }
-
-/*
- * This function was copied from MACI to work around tree shaking not working
- * https://github.com/privacy-scaling-explorations/maci/blob/master/core/ts/MaciState.ts#L1581
- *
- * A helper function which hashes a list of results with a salt and returns the
- * hash.
- *
- * @param results A list of vote weights
- * @parm salt A random salt
- * @return The hash of the results and the salt, with the salt last
- */
-/*export function genTallyResultCommitment(
-  results: bigint[],
-  salt: bigint,
-  depth: number
-): bigint {
-  const tree = new IncrementalQuinTree(depth, BigInt(0), 5, hash5)
-  for (const result of results) {
-    tree.insert(result)
-  }
-  return hashLeftRight(tree.root, salt)
-}*/
 
 export {
   genTallyResultCommitment,

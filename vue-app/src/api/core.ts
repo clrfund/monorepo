@@ -1,4 +1,4 @@
-import { ethers } from 'ethers'
+import { JsonRpcProvider, Contract } from 'ethers'
 
 import { ClrFund } from './abi'
 import { CHAIN_INFO } from '@/utils/chains'
@@ -16,8 +16,8 @@ if (!walletConnectProjectId) {
   throw new Error('Please provide wallet connect project id')
 }
 
-export const mainnetProvider = new ethers.providers.StaticJsonRpcProvider(import.meta.env.VITE_ETHEREUM_MAINNET_API_URL)
-export const provider = new ethers.providers.StaticJsonRpcProvider(rpcUrl)
+export const mainnetProvider = new JsonRpcProvider(import.meta.env.VITE_ETHEREUM_MAINNET_API_URL)
+export const provider = new JsonRpcProvider(rpcUrl)
 export const chainId = Number(import.meta.env.VITE_ETHEREUM_API_CHAINID)
 export const chain = CHAIN_INFO[chainId]
 if (!chain) throw new Error('invalid chain id')
@@ -37,7 +37,8 @@ if (!ipfsPinningJwt && !(ipfsApiKey && ipfsSecretApiKey)) {
 
 //TODO: need to be able to pass the clrfund contract address dynamically, note all places this is used make clrfund address a parameter that defaults to the env. variable set
 //NOTE: these calls will be replaced by subgraph queries eventually.
-export const clrFundContract = new ethers.Contract(import.meta.env.VITE_CLRFUND_ADDRESS as string, ClrFund, provider)
+export const clrFundContract = new Contract(import.meta.env.VITE_CLRFUND_ADDRESS as string, ClrFund, provider)
+export const clrfundContractAddress = import.meta.env.VITE_CLRFUND_ADDRESS as string
 export const userRegistryType = import.meta.env.VITE_USER_REGISTRY_TYPE
 export enum UserRegistryType {
   BRIGHT_ID = 'brightid',

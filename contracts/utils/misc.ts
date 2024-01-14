@@ -3,7 +3,6 @@ import fs from 'fs'
 
 /**
  * Get the tally file path
- *
  * @param outputDir The output directory
  * @returns The tally file path
  */
@@ -13,7 +12,6 @@ export function getTalyFilePath(outputDir: string) {
 
 /**
  * Check if the path exist
- *
  * @param path The path to check for existence
  * @returns true if the path exists
  */

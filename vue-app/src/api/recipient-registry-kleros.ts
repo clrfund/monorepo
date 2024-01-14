@@ -1,5 +1,5 @@
-import { Contract, type Event, Signer, BigNumber } from 'ethers'
-import type { TransactionResponse } from '@ethersproject/abstract-provider'
+import { Contract, toNumber } from 'ethers'
+import type { TransactionResponse, Signer, EventLog } from 'ethers'
 import { gtcrDecode } from '@kleros/gtcr-encoder'
 
 import { KlerosGTCR, KlerosGTCRAdapter } from './abi'
@@ -26,7 +26,7 @@ async function getTcrColumns(tcr: Contract): Promise<TcrColumn[]> {
   const metaEvidenceEvents = await tcr.queryFilter(metaEvidenceFilter, 0)
   // Take last event with even index
   const regMetaEvidenceEvent = metaEvidenceEvents[metaEvidenceEvents.length - 2]
-  const ipfsPath = (regMetaEvidenceEvent.args as any)._evidence
+  const ipfsPath = (regMetaEvidenceEvent as EventLog).args._evidence
   const tcrDataResponse = await fetch(`${ipfsGatewayUrl}${ipfsPath}`)
   const tcrData = await tcrDataResponse.json()
   return tcrData.metadata.columns
@@ -56,7 +56,7 @@ function decodeTcrItemData(
   }
 }
 
-function decodeRecipientAdded(event: Event, columns: TcrColumn[]): Project {
+function decodeRecipientAdded(event: EventLog, columns: TcrColumn[]): Project {
   const args = event.args as any
   return {
     id: args._tcrItemId,
@@ -78,17 +78,17 @@ export async function getProjects(registryAddress: string, startTime?: number, e
   const recipientRemovedEvents = await registry.queryFilter(recipientRemovedFilter, 0)
   const projects: Project[] = []
   for (const event of recipientAddedEvents) {
-    const project = decodeRecipientAdded(event, tcrColumns)
-    const addedAt = (event.args as any)._timestamp.toNumber()
+    const project = decodeRecipientAdded(event as EventLog, tcrColumns)
+    const addedAt = toNumber((event as EventLog).args._timestamp)
     if (endTime && addedAt >= endTime) {
       // Hide recipient if it is added after the end of round.
       project.isHidden = true
     }
     const removed = recipientRemovedEvents.find(event => {
-      return (event.args as any)._tcrItemId === project.id
+      return (event as EventLog).args._tcrItemId === project.id
     })
     if (removed) {
-      const removedAt = (removed.args as any)._timestamp.toNumber()
+      const removedAt = toNumber((removed as EventLog).args._timestamp)
       if (!startTime || removedAt <= startTime) {
         // Start time not specified
         // or recipient had been removed before start time
@@ -106,7 +106,7 @@ export async function getProjects(registryAddress: string, startTime?: number, e
   const tcrItemSubmittedFilter = tcr.filters.ItemSubmitted()
   const tcrItemSubmittedEvents = await tcr.queryFilter(tcrItemSubmittedFilter, 0)
   for (const event of tcrItemSubmittedEvents) {
-    const tcrItemId = (event.args as any)._itemID
+    const tcrItemId = (event as EventLog).args._itemID
     const registered = projects.find(item => item.id === tcrItemId)
     if (registered) {
       // Already registered (or registered and removed)
@@ -151,7 +151,7 @@ export async function getProject(registryAddress: string, recipientId: string): 
     isHidden: false,
     isLocked: false,
     extra: {
-      tcrItemStatus: tcrItemStatus.toNumber(),
+      tcrItemStatus: toNumber(tcrItemStatus),
       tcrItemUrl: `${KLEROS_CURATE_URL}/${recipientId}`,
     },
   }
@@ -159,7 +159,7 @@ export async function getProject(registryAddress: string, recipientId: string): 
   const recipientAddedEvents = await registry.queryFilter(recipientAddedFilter, 0)
   if (recipientAddedEvents.length !== 0) {
     const recipientAddedEvent = recipientAddedEvents[0]
-    project.index = (recipientAddedEvent.args as any)._index.toNumber()
+    project.index = toNumber((recipientAddedEvent as EventLog).args._index)
   }
   const recipientRemovedFilter = registry.filters.RecipientRemoved(recipientId)
   const recipientRemovedEvents = await registry.queryFilter(recipientRemovedFilter, 0)
@@ -190,7 +190,7 @@ async function getRegistryInfo(registryAddress: string): Promise<RegistryInfo> {
     // older BaseRecipientRegistry contract did not have recipientCount
     // set it to zero as this information is only
     // used during current round for space calculation
-    recipientCount = BigNumber.from(0)
+    recipientCount = BigInt(0)
   }
 
   // Kleros registry does not have owner
@@ -198,7 +198,7 @@ async function getRegistryInfo(registryAddress: string): Promise<RegistryInfo> {
 
   // deposit, depositToken and challengePeriodDuration are only relevant to the optimistic registry
   return {
-    deposit: BigNumber.from(0),
+    deposit: BigInt(0),
     depositToken: '',
     challengePeriodDuration: 0,
     recipientCount: recipientCount.toNumber(),

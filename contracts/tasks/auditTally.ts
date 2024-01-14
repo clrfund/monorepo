@@ -6,8 +6,7 @@
  */
 
 import { task, types } from 'hardhat/config'
-import { utils, providers, Contract, BigNumber } from 'ethers'
-import { EventFilter, Log } from '@ethersproject/abstract-provider'
+import { Contract, EventFilter, type Log, type Provider } from 'ethers'
 import { Ipfs } from '../utils/ipfs'
 import fs from 'fs'
 
@@ -36,7 +35,7 @@ async function fetchLogs({
   lastBlock,
   blocksPerBatch,
 }: {
-  provider: providers.Provider
+  provider: Provider
   filter: EventFilter
   startBlock: number
   lastBlock: number

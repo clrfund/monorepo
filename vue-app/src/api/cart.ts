@@ -1,7 +1,6 @@
 import { type CartItem, getContributorMessages } from './contributions'
 import type { RoundInfo } from './round'
 import { Keypair, Command } from '@clrfund/common'
-import { BigNumber } from 'ethers'
 import { getProjectByIndex } from './projects'
 import { formatAmount } from '@/utils/amounts'
 import { maxDecimals } from './core'
@@ -37,7 +36,7 @@ export async function getCommittedCart(
     const { voteOptionIndex, newVoteWeight } = command
 
     const voteWeightString = newVoteWeight.toString()
-    const amount = BigNumber.from(voteWeightString).mul(voteWeightString).mul(voiceCreditFactor)
+    const amount = BigInt(voteWeightString) * BigInt(voteWeightString) * voiceCreditFactor
 
     const project = await getProjectByIndex(recipientRegistryAddress, Number(voteOptionIndex))
 
@@ -49,7 +48,7 @@ export async function getCommittedCart(
     // cannot be reduced, isCleared is used to mark deleted items
     return {
       amount: formatAmount(amount, nativeTokenDecimals, null, maxDecimals),
-      isCleared: amount.isZero(),
+      isCleared: amount === 0n,
       ...project,
     }
   })

@@ -6,13 +6,13 @@ import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 
-import {DomainObjs} from '@clrfund/maci-contracts/contracts/DomainObjs.sol';
-import {MACI} from '@clrfund/maci-contracts/contracts/MACI.sol';
-import {Poll} from '@clrfund/maci-contracts/contracts/Poll.sol';
-import {Tally} from '@clrfund/maci-contracts/contracts/Tally.sol';
+import {DomainObjs} from 'maci-contracts/contracts/utilities/DomainObjs.sol';
+import {MACI} from 'maci-contracts/contracts/MACI.sol';
+import {Poll} from 'maci-contracts/contracts/Poll.sol';
+import {Tally} from 'maci-contracts/contracts/Tally.sol';
 import {TopupToken} from './TopupToken.sol';
-import {SignUpGatekeeper} from "@clrfund/maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol";
-import {InitialVoiceCreditProxy} from "@clrfund/maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol";
+import {SignUpGatekeeper} from "maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol";
+import {InitialVoiceCreditProxy} from "maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol";
 
 import './userRegistry/IUserRegistry.sol';
 import './recipientRegistry/IRecipientRegistry.sol';
@@ -25,7 +25,7 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   error NotCoordinator();
   error PollNotSet();
   error TallyNotSet();
-  error InvalidPollId();
+  error InvalidPoll();
   error InvalidTally();
   error MaciAlreadySet();
   error MaciNotSet();
@@ -86,9 +86,7 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   bool public isFinalized = false;
   bool public isCancelled = false;
 
-  uint256 public pollId;
   Poll public poll;
-
   Tally public tally;
 
   address public coordinator;
@@ -115,7 +113,7 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   event TallyPublished(string _tallyHash);
   event Voted(address indexed _contributor);
   event TallyResultsAdded(uint256 indexed _voteOptionIndex, uint256 _tally);
-  event PollSet(uint256 indexed _pollId, address indexed _poll);
+  event PollSet(address indexed _poll);
   event TallySet(address indexed _tally);
 
   modifier onlyCoordinator() {
@@ -178,19 +176,18 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
 
   /**
     * @dev Set the MACI poll
-    * @param _pollId The poll id.
+    * @param _poll The poll address.
     */
-  function setPoll(uint256 _pollId)
+  function setPoll(address _poll)
     external
     onlyOwner
   {
-    poll = maci.getPoll(_pollId);
-    if (address(poll) == address(0)) {
-      revert InvalidPollId();
+    if (_poll == address(0)) {
+      revert InvalidPoll();
     }
 
-    pollId = _pollId;
-    emit PollSet(pollId, address(poll));
+    poll = Poll(_poll);
+    emit PollSet(_poll);
   }
 
   /**
@@ -471,7 +468,6 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
       revert TallyHashNotPublished();
     }
 
-
     // make sure we have received all the tally results
     (,,, uint8 voteOptionTreeDepth) = poll.treeDepths();
     uint256 totalResults = uint256(LEAVES_PER_NODE) ** uint256(voteOptionTreeDepth);
@@ -616,7 +612,7 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   function _addTallyResult(
     uint256 _voteOptionIndex,
     uint256 _tallyResult,
-    uint256[][] calldata _tallyResultProof,
+    uint256[][] memory _tallyResultProof,
     uint256 _tallyResultSalt,
     uint256 _spentVoiceCreditsHash,
     uint256 _perVOSpentVoiceCreditsHash
@@ -652,7 +648,6 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
 
   /**
     * @dev Add and verify tally results by batch.
-    * @param _voteOptionTreeDepth Vote option tree depth.
     * @param _voteOptionIndices Vote option index.
     * @param _tallyResults The results of vote tally for the recipients.
     * @param _tallyResultProofs Proofs of correctness of the vote tally results.
@@ -661,7 +656,6 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
     * @param _perVOSpentVoiceCreditsHashes hashLeftRight(merkle root of the no spent voice credits per vote option, perVOSpentVoiceCredits salt)
    */
   function addTallyResultsBatch(
-    uint8 _voteOptionTreeDepth,
     uint256[] calldata _voteOptionIndices,
     uint256[] calldata _tallyResults,
     uint256[][][] calldata _tallyResultProofs,

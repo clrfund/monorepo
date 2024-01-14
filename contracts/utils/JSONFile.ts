@@ -3,7 +3,6 @@ import fs from 'fs'
 export class JSONFile {
   /**
    * Read the content of the JSON file
-   *
    * @param path The path of the JSON file
    * @returns
    */

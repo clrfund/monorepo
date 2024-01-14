@@ -66,6 +66,7 @@ export type EventType =
 
 export type AbiInfo = {
   type: EventType
+  name: string
   abi: string
 }
 

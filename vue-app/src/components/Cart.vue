@@ -226,8 +226,7 @@
 </template>
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { BigNumber } from 'ethers'
-import { parseFixed } from '@ethersproject/bignumber'
+import { parseUnits } from 'ethers'
 import { DateTime } from 'luxon'
 import WalletModal from '@/components/WalletModal.vue'
 import SignatureModal from '@/components/SignatureModal.vue'
@@ -238,7 +237,7 @@ import CartItems from '@/components/CartItems.vue'
 import Links from '@/components/Links.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import { MAX_CONTRIBUTION_AMOUNT, MAX_CART_SIZE, type CartItem, isContributionAmountValid } from '@/api/contributions'
-import { userRegistryType, UserRegistryType, operator, isBrightIdRequired } from '@/api/core'
+import { userRegistryType, UserRegistryType, operator } from '@/api/core'
 import { RoundStatus } from '@/api/round'
 import { formatAmount as _formatAmount } from '@/utils/amounts'
 import FundsNeededWarning from '@/components/FundsNeededWarning.vue'
@@ -408,7 +407,7 @@ const tokenSymbol = computed(() => {
   // TODO: configure eslint to catch the error below (currentRound should add .value)
   return currentRound.value ? _currentRound?.nativeTokenSymbol : ''
 })
-const contribution = computed(() => appStore.contribution || BigNumber.from(0))
+const contribution = computed<bigint>(() => appStore.contribution || BigInt(0))
 
 const filteredCart = computed<CartItem[]>(() => {
   // Once reallocation phase ends, use committedCart for cart items
@@ -423,11 +422,11 @@ const isCartEmpty = computed(() => {
   return (
     currentUser.value &&
     // contribution.value !== null &&
-    contribution.value.isZero() &&
+    contribution.value === 0n &&
     filteredCart.value.length === 0
   )
 })
-function formatAmount(value: BigNumber): string {
+function formatAmount(value: BigInt): string {
   const { nativeTokenDecimals } = currentRound.value!
   return _formatAmount(value, nativeTokenDecimals)
 }
@@ -444,34 +443,34 @@ function isFormValid(): boolean {
 }
 
 function getCartMatchingPoolTotal(): string {
-  return formatAmount(contribution.value.sub(getCartTotal(committedCart.value)))
+  return formatAmount(contribution.value - getCartTotal(committedCart.value))
 }
 
-function getCartTotal(cart: Array<CartItem>): BigNumber {
+function getCartTotal(cart: Array<CartItem>): bigint {
   const { nativeTokenDecimals, voiceCreditFactor } = currentRound.value!
-  return cart.reduce((total: BigNumber, item: CartItem) => {
-    let amount
+  return cart.reduce((total: bigint, item: CartItem) => {
+    let amount: bigint
     try {
-      amount = parseFixed(item.amount, nativeTokenDecimals)
+      amount = parseUnits(item.amount, nativeTokenDecimals)
     } catch {
       return total
     }
-    return total.add(amount.div(voiceCreditFactor).mul(voiceCreditFactor))
-  }, BigNumber.from(0))
+    return total + (amount / voiceCreditFactor) * voiceCreditFactor
+  }, BigInt(0))
 }
 
-function getTotal(): BigNumber {
+function getTotal(): bigint {
   return hasUserContributed.value ? contribution.value : getCartTotal(cart.value)
 }
 
 function isGreaterThanMax(): boolean {
-  const decimals = currentRound.value?.nativeTokenDecimals
-  const maxContributionAmount = BigNumber.from(10).pow(BigNumber.from(decimals)).mul(MAX_CONTRIBUTION_AMOUNT)
-  return getTotal().gt(maxContributionAmount)
+  const decimals = currentRound.value?.nativeTokenDecimals || 0
+  const maxContributionAmount = BigInt(10) ** BigInt(decimals) * BigInt(MAX_CONTRIBUTION_AMOUNT)
+  return getTotal() > maxContributionAmount
 }
 
 function isGreaterThanInitialContribution(): boolean {
-  return getCartTotal(cart.value).gt(contribution.value)
+  return getCartTotal(cart.value) > contribution.value
 }
 
 const isBrightIdRequired = computed(
@@ -506,18 +505,18 @@ const errorMessage = computed<string | null>(() => {
     return t('dynamic.cart.error.cart_changes_exceed_cap')
   } else {
     const total = getTotal()
-    if (contribution.value.isZero()) {
+    if (contribution.value === 0n) {
       // Contributing
       if (DateTime.local() >= currentRound.value.signUpDeadline) {
         return t('dynamic.cart.error.contributions_over')
         // the above error might not be necessary now we have our cart states in the HTML above
       } else if (currentRound.value.contributors >= currentRound.value.maxContributors) {
         return t('dynamic.cart.error.reached_contributor_limit')
-      } else if (total.eq(BigNumber.from(0)) && !isCartEmpty.value) {
+      } else if (total === BigInt(0) && !isCartEmpty.value) {
         return t('dynamic.cart.error.must_be_gt_zero', {
           nativeTokenSymbol: currentRound.value.nativeTokenSymbol,
         })
-      } else if (total.gt(currentUser.value.balance)) {
+      } else if (total > currentUser.value.balance) {
         const balanceDisplay = _formatAmount(currentUser.value.balance, currentRound.value.nativeTokenDecimals)
         return t('dynamic.cart.error.not_enough_funds', {
           balance: balanceDisplay,
@@ -550,14 +549,14 @@ const errorMessage = computed<string | null>(() => {
 })
 
 function hasUnallocatedFunds(): boolean {
-  return errorMessage.value === null && !contribution.value.isZero() && getTotal().lt(contribution.value)
+  return errorMessage.value === null && contribution.value !== 0n && getTotal() < contribution.value
 }
 
 const votes = computed(() => {
   const { nativeTokenDecimals, voiceCreditFactor } = currentRound.value!
-  const formattedVotes: [number, BigNumber][] = cart.value.map((item: CartItem) => {
-    const amount = parseFixed(item.amount, nativeTokenDecimals)
-    const voiceCredits = amount.div(voiceCreditFactor)
+  const formattedVotes: [number, bigint][] = cart.value.map((item: CartItem) => {
+    const amount = parseUnits(item.amount, nativeTokenDecimals)
+    const voiceCredits = amount / voiceCreditFactor
     return [item.index, voiceCredits]
   })
   return formattedVotes
@@ -596,7 +595,7 @@ function submitCart(event: any) {
     },
   })
 
-  if (contribution.value.isZero() || !hasUserVoted.value) {
+  if (contribution.value === 0n || !hasUserVoted.value) {
     openContributionModal()
   } else {
     openReallocationModal()

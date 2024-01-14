@@ -121,7 +121,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
-import { BigNumber, Contract } from 'ethers'
+import { Contract } from 'ethers'
 import { Keypair, PubKey, Message, createMessage } from '@clrfund/common'
 
 import Transaction from '@/components/Transaction.vue'
@@ -144,7 +144,7 @@ const { currentUser } = storeToRefs(userStore)
 const emit = defineEmits(['close'])
 
 interface Props {
-  votes: [number, BigNumber][]
+  votes: [number, bigint][]
 }
 
 const props = defineProps<Props>()
@@ -210,22 +210,23 @@ async function sendVotes() {
       },
     })
   } catch (error) {
-    voteTxError.value = error.message
+    voteTxError.value = (error as Error).message
     return
   }
   step.value += 1
 }
 
-const fundingRound = computed(() => {
+async function getFundingRoundContract() {
   const { fundingRoundAddress } = currentRound.value!
-  return new Contract(fundingRoundAddress, FundingRound, userStore.signer)
-})
+  const signer = await userStore.getSigner()
+  return new Contract(fundingRoundAddress, FundingRound, signer)
+}
 
 const total = computed(() => {
   const { voiceCreditFactor } = currentRound.value!
-  return props.votes.reduce((total: BigNumber, [, voiceCredits]) => {
-    return total.add(voiceCredits.mul(voiceCreditFactor))
-  }, BigNumber.from(0))
+  return props.votes.reduce((total: bigint, [, voiceCredits]) => {
+    return total + voiceCredits * voiceCreditFactor
+  }, BigInt(0))
 })
 
 const renderTotal = computed(() => {
@@ -237,14 +238,16 @@ async function contribute() {
   try {
     step.value += 1
     const { nativeTokenAddress, voiceCreditFactor, maciAddress, fundingRoundAddress } = currentRound.value!
-    const token = new Contract(nativeTokenAddress, ERC20, userStore.signer)
+    const signer = await userStore.getSigner()
+    const signerAddess = await signer.getAddress()
+    const token = new Contract(nativeTokenAddress, ERC20, signer)
     // Approve transfer (step 1)
-    const allowance = await token.allowance(userStore.signer.getAddress(), fundingRoundAddress)
+    const allowance = await token.allowance(signerAddess, fundingRoundAddress)
     if (allowance < total.value) {
       try {
         await waitForTransaction(token.approve(fundingRoundAddress, total.value), hash => (approvalTxHash.value = hash))
       } catch (error) {
-        approvalTxError.value = error.message
+        approvalTxError.value = (error as Error).message
         return
       }
     }
@@ -258,16 +261,17 @@ async function contribute() {
 
     let contributionTxReceipt
     try {
+      const fundingRoundContract = await getFundingRoundContract()
       contributionTxReceipt = await waitForTransaction(
-        fundingRound.value.contribute(contributorKeypair.pubKey.asContractParam(), total.value),
+        fundingRoundContract.contribute(contributorKeypair.pubKey.asContractParam(), total.value),
         hash => (contributionTxHash.value = hash),
       )
     } catch (error) {
-      contributionTxError.value = error.message
+      contributionTxError.value = (error as Error).message
       return
     }
     // Get state index
-    const maci = new Contract(maciAddress, MACI, userStore.signer)
+    const maci = new Contract(maciAddress, MACI, signer)
     const stateIndex = getEventArg(contributionTxReceipt, maci, 'SignUp', '_stateIndex')
     const contributor = {
       keypair: contributorKeypair,

@@ -1,4 +1,12 @@
-import { Contract, EventFilter, providers, constants, utils } from 'ethers'
+import {
+  Contract,
+  EventFilter,
+  Interface,
+  Fragment,
+  EventFragment,
+  Addressable,
+  ZeroAddress,
+} from 'ethers'
 import { ProviderFactory } from './providers/ProviderFactory'
 import { Project } from './types'
 import { RecipientState } from './constants'
@@ -7,10 +15,12 @@ import { Log } from './providers/BaseProvider'
 import { toDate } from './date'
 import { EVENT_ABIS } from './abi'
 
-function getFilter(address: string, abi: string): EventFilter {
-  const eventInterface = new utils.Interface([abi])
-  const events = Object.values(eventInterface.events)
-  const topic0 = eventInterface.getEventTopic(events[0].name)
+function getFilter(address: string | Addressable, abi: string): EventFilter {
+  const eventInterface = new Interface([abi])
+  const events = eventInterface.fragments
+    .filter(Fragment.isEvent)
+    .map((evt) => evt as EventFragment)
+  const topic0 = events[0].topicHash
   return { address, topics: [topic0] }
 }
 
@@ -50,7 +60,7 @@ export class RecipientRegistryLogProcessor {
     // fetch event logs containing project information
     const lastBlock = endBlock
       ? endBlock
-      : await this.registry.provider.getBlockNumber()
+      : await this.registry.runner?.provider?.getBlockNumber()
 
     console.log(
       `Fetching event logs from the recipient registry`,
@@ -66,7 +76,7 @@ export class RecipientRegistryLogProcessor {
     for (let i = 0; i < EVENT_ABIS.length; i++) {
       const { add, remove } = EVENT_ABIS[i]
 
-      const filter = getFilter(this.registry.address, add.abi)
+      const filter = getFilter(this.registry.target, add.abi)
       const addLogs = await logProvider.fetchLogs({
         filter,
         startBlock,
@@ -75,7 +85,7 @@ export class RecipientRegistryLogProcessor {
       })
 
       if (addLogs.length > 0) {
-        const filter = getFilter(this.registry.address, remove.abi)
+        const filter = getFilter(this.registry.target, remove.abi)
         const removeLogs = await logProvider.fetchLogs({
           filter,
           startBlock,
@@ -99,7 +109,7 @@ export class RecipientRegistryLogProcessor {
     return logs
   }
 
-  async parseLogs(logs: providers.Log[]): Promise<Record<string, Project>> {
+  async parseLogs(logs: Log[]): Promise<Record<string, Project>> {
     const recipients: Record<string, Project> = {}
 
     for (let i = 0; i < logs.length; i++) {
@@ -112,16 +122,18 @@ export class RecipientRegistryLogProcessor {
       } catch (err) {
         console.log('failed to parse', (err as Error).message)
       }
-      const address = parsed.recipientAddress || constants.AddressZero
+      const address = parsed.recipientAddress || ZeroAddress
       const id = parsed.id || '0'
 
       const [block, transaction] = await Promise.all([
-        this.registry.provider.getBlock(log.blockNumber),
-        this.registry.provider.getTransactionReceipt(log.transactionHash),
+        this.registry.runner?.provider?.getBlock(log.blockNumber),
+        this.registry.runner?.provider?.getTransactionReceipt(
+          log.transactionHash
+        ),
       ])
-      const blockTimestamp = toDate(block.timestamp)
+      const blockTimestamp = toDate(block?.timestamp || 0)
       const createdAt = parsed.createdAt || blockTimestamp
-      const requester = transaction.from
+      const requester = transaction?.from
 
       if (!recipients[id]) {
         recipients[id] = {

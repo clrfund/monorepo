@@ -286,7 +286,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
-import type { BigNumber } from 'ethers'
 import { DateTime } from 'luxon'
 import { hasDateElapsed } from '@/utils/dates'
 import { type RoundInfo, getRoundInfo, getLeaderboardRoundInfo } from '@/api/round'
@@ -343,7 +342,7 @@ const formatTotalInRound = computed(() => {
   }
 
   const { contributions, matchingPool } = roundInfo.value
-  const totalInRound = contributions.add(matchingPool)
+  const totalInRound = contributions * matchingPool
 
   return formatAmount(totalInRound)
 })
@@ -395,7 +394,7 @@ function formatDate(value: DateTime): string {
   return value.toLocaleString(DateTime.DATETIME_SHORT) || ''
 }
 
-function formatAmount(value: BigNumber | string): string {
+function formatAmount(value: bigint | string): string {
   if (!nativeTokenDecimals.value) {
     return ''
   }

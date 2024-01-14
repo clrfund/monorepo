@@ -1,4 +1,4 @@
-import { Contract, BigNumber, ContractReceipt } from 'ethers'
+import { Contract, ContractTransactionReceipt } from 'ethers'
 import {
   bnSqrt,
   createMessage,
@@ -12,12 +12,7 @@ import {
   Keypair,
 } from '@clrfund/common'
 import * as os from 'os'
-import {
-  mergeMessages,
-  mergeSignups,
-  genProofs,
-  proveOnChain,
-} from '@clrfund/maci-cli'
+import { mergeMessages, mergeSignups, genProofs, proveOnChain } from 'maci-cli'
 
 import { getTalyFilePath, isPathExist } from './misc'
 import { CIRCUITS } from './circuits'
@@ -105,9 +100,9 @@ export async function addTallyResultsBatch(
   tallyData: any,
   batchSize: number,
   startIndex = 0,
-  callback?: (processed: number, receipt: ContractReceipt) => void
-): Promise<BigNumber> {
-  let totalGasUsed = BigNumber.from(0)
+  callback?: (processed: number, receipt: ContractTransactionReceipt) => void
+): Promise<number> {
+  let totalGasUsed = 0
   const { tally } = tallyData.results
 
   const spentVoiceCreditsHash = hashLeftRight(
@@ -150,7 +145,6 @@ export async function addTallyResultsBatch(
     )
 
     const tx = await fundingRound.addTallyResultsBatch(
-      recipientTreeDepth,
       ...data,
       BigInt(tallyData.results.salt).toString(),
       spentVoiceCreditsHash.toString(),
@@ -163,7 +157,7 @@ export async function addTallyResultsBatch(
       const totalProcessed = i + data[1].length
       callback(totalProcessed, receipt)
     }
-    totalGasUsed = totalGasUsed.add(receipt.gasUsed)
+    totalGasUsed = totalGasUsed + Number(receipt.gasUsed)
   }
   return totalGasUsed
 }

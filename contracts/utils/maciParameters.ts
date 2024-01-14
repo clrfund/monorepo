@@ -1,7 +1,7 @@
 import { Contract } from 'ethers'
 
-import { VerifyingKey } from '@clrfund/maci-domainobjs'
-import { extractVk } from '@clrfund/maci-circuits'
+import { VerifyingKey } from 'maci-domainobjs'
+import { extractVk } from 'maci-circuits'
 import { CIRCUITS } from './circuits'
 import path from 'path'
 
@@ -119,6 +119,9 @@ export class MaciParameters {
 
   static mock(circuit: string): MaciParameters {
     const processVk = VerifyingKey.fromObj({
+      protocol: 1,
+      curve: 1,
+      nPublic: 1,
       vk_alpha_1: [1, 2],
       vk_beta_2: [
         [1, 2],
@@ -132,6 +135,7 @@ export class MaciParameters {
         [1, 2],
         [1, 2],
       ],
+      vk_alphabeta_12: [[[1, 2, 3]]],
       IC: [[1, 2]],
     })
     const params = CIRCUITS[circuit]

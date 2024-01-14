@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { useAppStore } from '@/stores'
 import type { WalletUser } from '@/stores'
 import { getContributionAmount, hasContributorVoted } from '@/api/contributions'
-import type { BigNumber, Signer } from 'ethers'
+import type { Signer } from 'ethers'
 import { ensLookup, isValidSignature } from '@/utils/accounts'
 import { UserRegistryType, userRegistryType } from '@/api/core'
 import { getBrightId, type BrightId } from '@/api/bright-id'
@@ -19,13 +19,12 @@ export const useUserStore = defineStore('user', {
   state: (): UserState => ({
     currentUser: null,
   }),
-  getters: {
-    signer(): Signer {
+  getters: {},
+  actions: {
+    async getSigner() {
       assert(this.currentUser, ASSERT_NOT_CONNECTED_WALLET)
       return this.currentUser.walletProvider.getSigner()
     },
-  },
-  actions: {
     loginUser(user: WalletUser) {
       this.currentUser = {
         walletAddress: user.walletAddress,
@@ -43,7 +42,8 @@ export const useUserStore = defineStore('user', {
     async requestSignature() {
       assert(this.currentUser, ASSERT_NOT_CONNECTED_WALLET)
       if (!this.currentUser.encryptionKey) {
-        const signature = await this.signer.signMessage(LOGIN_MESSAGE)
+        const signer = await this.currentUser.walletProvider.getSigner()
+        const signature = await signer.signMessage(LOGIN_MESSAGE)
 
         if (!isValidSignature(signature)) {
           // gnosis safe does not return signature in hex string
@@ -62,7 +62,7 @@ export const useUserStore = defineStore('user', {
 
       let nativeTokenAddress = ''
       let userRegistryAddress = ''
-      let balance: BigNumber | null = null
+      let balance: bigint | null = null
       let isRegistered: boolean | undefined = undefined
       const walletAddress = this.currentUser.walletAddress
 

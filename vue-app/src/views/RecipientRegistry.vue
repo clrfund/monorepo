@@ -142,7 +142,7 @@ import Links from '@/components/Links.vue'
 import TransactionModal from '@/components/TransactionModal.vue'
 import { useUserStore, useRecipientStore } from '@/stores'
 import { storeToRefs } from 'pinia'
-import type { TransactionResponse } from '@ethersproject/abstract-provider'
+import type { TransactionResponse } from 'ethers'
 import { useModal } from 'vue-final-modal'
 import { showError } from '@/utils/modal'
 

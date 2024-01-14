@@ -48,7 +48,6 @@
 <script setup lang="ts">
 import type { LeaderboardProject } from '@/api/projects'
 import type { RoundInfo } from '@/api/round'
-import type { BigNumber } from 'ethers'
 import { formatAmount } from '@/utils/amounts'
 
 interface Props {
@@ -75,7 +74,7 @@ const isThird = computed(() => {
   return props.rank === 3
 })
 
-function formatAllocationAmount(amount?: BigNumber): string {
+function formatAllocationAmount(amount?: bigint): string {
   const tokenDecimals = props.round.nativeTokenDecimals
   return amount ? formatAmount(amount, tokenDecimals, null, 0) : '0'
 }

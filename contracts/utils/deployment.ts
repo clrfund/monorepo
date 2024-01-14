@@ -1,13 +1,18 @@
-import { Signer, Contract, utils, BigNumber, ContractTransaction } from 'ethers'
-import { link } from 'ethereum-waffle'
+import {
+  Signer,
+  Contract,
+  ContractTransaction,
+  encodeBytes32String,
+} from 'ethers'
 import path from 'path'
 
 import { readFileSync } from 'fs'
-import { HardhatEthersHelpers } from '@nomiclabs/hardhat-ethers/types'
+import { HardhatEthersHelpers } from '@nomicfoundation/hardhat-ethers/types'
 import { DEFAULT_CIRCUIT } from './circuits'
 import { isPathExist } from './misc'
 import { MaciParameters } from './maciParameters'
 import { PrivKey, Keypair } from '@clrfund/common'
+import { ZERO_ADDRESS } from './constants'
 
 // Number.MAX_SAFE_INTEGER - 1
 export const challengePeriodSeconds = '9007199254740990'
@@ -33,15 +38,6 @@ export interface BrightIdParams {
   context: string
   verifierAddress: string
   sponsor: string
-}
-
-export function linkBytecode(bytecode: string, libraries: Libraries): string {
-  // Workarounds for https://github.com/nomiclabs/buidler/issues/611
-  const linkable = { evm: { bytecode: { object: bytecode } } }
-  for (const [libraryName, libraryAddress] of Object.entries(libraries)) {
-    link(linkable, libraryName, libraryAddress.toLowerCase())
-  }
-  return linkable.evm.bytecode.object
 }
 
 type PoseidonName = 'PoseidonT3' | 'PoseidonT4' | 'PoseidonT5' | 'PoseidonT6'
@@ -103,13 +99,12 @@ export async function deployContract({
   ethers,
   signer,
 }: deployContractOptions): Promise<Contract> {
-  const contractFactory = await ethers.getContractFactory(name, {
+  const contract = await ethers.deployContract(name, contractArgs, {
     signer,
     libraries,
   })
 
-  const contract = await contractFactory.deploy(...contractArgs)
-  return await contract.deployed()
+  return await contract.waitForDeployment()
 }
 
 /**
@@ -156,7 +151,7 @@ export async function deployUserRegistry({
     )
 
     userRegistry = await BrightIdUserRegistry.deploy(
-      utils.formatBytes32String(brightidContext),
+      encodeBytes32String(brightidContext),
       brightidVerifier,
       brightidSponsor
     )
@@ -166,14 +161,10 @@ export async function deployUserRegistry({
       throw new Error('unsupported user registry type: ' + registryType)
     }
 
-    const UserRegistry = await ethers.getContractFactory(
-      userRegistryName,
-      signer
-    )
-    userRegistry = await UserRegistry.deploy()
+    userRegistry = await ethers.deployContract(userRegistryName, signer)
   }
 
-  await userRegistry.deployTransaction.wait()
+  await userRegistry.waitForDeployment()
   return userRegistry
 }
 
@@ -197,7 +188,7 @@ export async function deployRecipientRegistry({
 }: {
   type: string
   controller: string
-  deposit?: BigNumber
+  deposit?: bigint
   challengePeriod?: string
   ethers: HardhatEthersHelpers
   signer?: Signer
@@ -274,10 +265,10 @@ export async function deployPoseidonLibraries({
   })
 
   const libraries = {
-    PoseidonT3: PoseidonT3Contract.address,
-    PoseidonT4: PoseidonT4Contract.address,
-    PoseidonT5: PoseidonT5Contract.address,
-    PoseidonT6: PoseidonT6Contract.address,
+    PoseidonT3: await PoseidonT3Contract.getAddress(),
+    PoseidonT4: await PoseidonT4Contract.getAddress(),
+    PoseidonT5: await PoseidonT5Contract.getAddress(),
+    PoseidonT6: await PoseidonT6Contract.getAddress(),
   }
   return libraries
 }
@@ -327,8 +318,7 @@ export async function deployPollFactory({
  * using the byte codes in the artifactsPath
  *
  * libraries - poseidon libraries
- * artifactsPath - path that contacts the poseidon abi and bytecode
- *
+ * artifactsPath - path of artifact containing the poseidon abi and bytecode
  * @returns the MessageProcessor and Tally contracts
  */
 export async function deployMessageProcesorAndTally({
@@ -361,9 +351,10 @@ export async function deployMessageProcesorAndTally({
     signer,
     ethers,
   })
+
   const tallyContract = await deployContract({
     name: 'Tally',
-    contractArgs: [verifierContract.address],
+    contractArgs: [verifierContract.target],
     libraries,
     ethers,
     signer,
@@ -372,7 +363,7 @@ export async function deployMessageProcesorAndTally({
   // deploy the message processing contract
   const mpContract = await deployContract({
     name: 'MessageProcessor',
-    contractArgs: [verifierContract.address],
+    contractArgs: [verifierContract.target],
     signer,
     libraries,
     ethers,
@@ -386,11 +377,9 @@ export async function deployMessageProcesorAndTally({
 
 /**
  * Deploy an instance of MACI factory
- *
  * libraries - poseidon contracts
  * ethers - hardhat ethers handle
  * signer - if signer is not provided, use default signer in ethers
- *
  * @returns MACI factory contract
  */
 export async function deployMaciFactory({
@@ -415,15 +404,44 @@ export async function deployMaciFactory({
     signer,
   })
 
-  const maciFactory = await deployContract({
-    name: 'MACIFactory',
-    libraries,
-    contractArgs: [vkRegistry.address, pollFactory.address],
+  const verifier = await deployContract({
+    name: 'Verifier',
     ethers,
     signer,
   })
 
-  const transferTx = await vkRegistry.transferOwnership(maciFactory.address)
+  const tallyFactory = await deployContract({
+    name: 'TallyFactory',
+    libraries,
+    ethers,
+    signer,
+  })
+
+  const messageProcessorFactory = await deployContract({
+    name: 'MessageProcessorFactory',
+    libraries,
+    ethers,
+    signer,
+  })
+
+  // all the factories to deploy MACI contracts
+  const factories = {
+    pollFactory: pollFactory.target,
+    tallyFactory: tallyFactory.target,
+    // subsidy is not currently used
+    subsidyFactory: ZERO_ADDRESS,
+    messageProcessorFactory: messageProcessorFactory.target,
+  }
+
+  const maciFactory = await deployContract({
+    name: 'MACIFactory',
+    libraries,
+    contractArgs: [vkRegistry.target, factories, verifier.target],
+    ethers,
+    signer,
+  })
+
+  const transferTx = await vkRegistry.transferOwnership(maciFactory.target)
   await transferTx.wait()
 
   return maciFactory
@@ -454,7 +472,6 @@ export async function setMaciParameters(
 
 /**
  * Set the coordinator address and maci public key in the funding round factory
- *
  * @param fundingRoundFactory funding round factory contract
  * @param coordinatorAddress
  * @param MaciPrivateKey
@@ -470,7 +487,7 @@ export async function setCoordinator({
 }): Promise<ContractTransaction> {
   // Generate or use the passed in coordinator key
   const privKey = coordinatorMacisk
-    ? PrivKey.unserialize(coordinatorMacisk)
+    ? PrivKey.deserialize(coordinatorMacisk)
     : undefined
 
   const keypair = new Keypair(privKey)

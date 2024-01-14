@@ -1,5 +1,5 @@
 import type { Contract } from 'ethers'
-import type { TransactionResponse, TransactionReceipt } from '@ethersproject/abstract-provider'
+import type { TransactionResponse, TransactionReceipt } from 'ethers'
 import { provider, MAX_WAIT_DEPTH } from '@/api/core'
 import { isSameAddress } from '@/utils/accounts'
 
@@ -54,7 +54,7 @@ export async function waitForTransactionAndCheck(
         resolve(receipt)
       } else {
         if (depth > MAX_WAIT_DEPTH) {
-          throw new Error('Time out waiting for transaction ' + receipt.transactionHash)
+          throw new Error('Time out waiting for transaction ' + receipt.hash)
         }
 
         const timeoutMs = 2 ** depth * 10

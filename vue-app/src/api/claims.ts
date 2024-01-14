@@ -1,4 +1,4 @@
-import { Contract, BigNumber } from 'ethers'
+import { Contract } from 'ethers'
 import sdk from '@/graphql/sdk'
 
 import { FundingRound } from './abi'
@@ -9,7 +9,7 @@ export async function getAllocatedAmount(
   tokenDecimals: number,
   result: string,
   spent: string,
-): Promise<BigNumber> {
+): Promise<bigint> {
   const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
   const allocatedAmount = await fundingRound.getAllocatedAmount(result, spent)
   return allocatedAmount

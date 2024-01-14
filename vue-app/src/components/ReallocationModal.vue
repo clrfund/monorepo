@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts" setup>
-import { BigNumber, Contract } from 'ethers'
+import { Contract } from 'ethers'
 import type { PubKey, Message } from '@clrfund/common'
 import Transaction from '@/components/Transaction.vue'
 import { waitForTransaction } from '@/utils/contracts'
@@ -33,7 +33,7 @@ import { useAppStore, useUserStore } from '@/stores'
 import { useRouter } from 'vue-router'
 
 interface Props {
-  votes: [number, BigNumber][]
+  votes: [number, bigint][]
 }
 
 const props = defineProps<Props>()
@@ -53,8 +53,9 @@ onMounted(() => {
 
 async function vote() {
   const contributor = appStore.contributor
-  const { coordinatorPubKey, fundingRoundAddress } = appStore.currentRound!
-  const fundingRound = new Contract(fundingRoundAddress, FundingRound, userStore.signer)
+  const { coordinatorPubKey, fundingRoundAddress, pollId } = appStore.currentRound!
+  const signer = await userStore.getSigner()
+  const fundingRound = new Contract(fundingRoundAddress, FundingRound, signer)
   const messages: Message[] = []
   const encPubKeys: PubKey[] = []
   let nonce = 1
@@ -67,6 +68,7 @@ async function vote() {
       recipientIndex,
       voiceCredits,
       nonce,
+      pollId,
     )
     messages.push(message)
     encPubKeys.push(encPubKey)

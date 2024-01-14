@@ -6,10 +6,11 @@ import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 import '@openzeppelin/contracts/utils/structs/EnumerableSet.sol';
 
-import {SignUpGatekeeper} from "@clrfund/maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol";
-import {InitialVoiceCreditProxy} from "@clrfund/maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol";
-import {PollFactory} from '@clrfund/maci-contracts/contracts/Poll.sol';
-import {Params} from '@clrfund/maci-contracts/contracts/Params.sol';
+import {SignUpGatekeeper} from "maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol";
+import {InitialVoiceCreditProxy} from "maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol";
+import {PollFactory} from 'maci-contracts/contracts/PollFactory.sol';
+import {Params} from 'maci-contracts/contracts/utilities/Params.sol';
+import {DomainObjs} from 'maci-contracts/contracts/utilities/DomainObjs.sol';
 
 import './MACIFactory.sol';
 import './userRegistry/IUserRegistry.sol';
@@ -19,7 +20,7 @@ import './OwnableUpgradeable.sol';
 import {FundingRoundFactory} from './FundingRoundFactory.sol';
 import {TopupToken} from './TopupToken.sol';
 
-contract ClrFund is OwnableUpgradeable, IPubKey, SnarkCommon, Params {
+contract ClrFund is OwnableUpgradeable, DomainObjs, SnarkCommon, Params {
   using EnumerableSet for EnumerableSet.AddressSet;
   using SafeERC20 for ERC20;
 
@@ -185,7 +186,7 @@ contract ClrFund is OwnableUpgradeable, IPubKey, SnarkCommon, Params {
     rounds.push(newRound);
 
     TopupToken topupToken = newRound.topupToken();
-    MACI maci = maciFactory.deployMaci(
+    (MACI maci, address poll)= maciFactory.deployMaci(
       SignUpGatekeeper(newRound),
       InitialVoiceCreditProxy(newRound),
       address(topupToken),
@@ -195,9 +196,7 @@ contract ClrFund is OwnableUpgradeable, IPubKey, SnarkCommon, Params {
     );
 
     newRound.setMaci(maci);
-
-    // since we just created a new MACI, the first poll id starts from 0
-    newRound.setPoll(0);
+    newRound.setPoll(poll);
 
     emit RoundStarted(address(newRound));
   }

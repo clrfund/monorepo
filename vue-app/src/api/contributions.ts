@@ -1,7 +1,5 @@
-import { BigNumber, Contract, Signer, FixedNumber } from 'ethers'
-import { parseFixed } from '@ethersproject/bignumber'
-
-import type { TransactionResponse } from '@ethersproject/abstract-provider'
+import { Contract, FixedNumber, parseUnits } from 'ethers'
+import type { TransactionResponse, Signer } from 'ethers'
 import { Keypair, PubKey, PrivKey, Message, Command, getPubKeyId } from '@clrfund/common'
 
 import type { RoundInfo } from './round'
@@ -61,19 +59,16 @@ export function serializeContributorData(contributor: Contributor): string {
 export function deserializeContributorData(data: string | null): Contributor | null {
   if (data) {
     const parsed = JSON.parse(data)
-    const keypair = new Keypair(PrivKey.unserialize(parsed.privateKey))
+    const keypair = new Keypair(PrivKey.deserialize(parsed.privateKey))
     return { keypair, stateIndex: parsed.stateIndex }
   } else {
     return null
   }
 }
 
-export async function getContributionAmount(
-  fundingRoundAddress: string,
-  contributorAddress: string,
-): Promise<BigNumber> {
+export async function getContributionAmount(fundingRoundAddress: string, contributorAddress: string): Promise<BigInt> {
   if (!fundingRoundAddress) {
-    return BigNumber.from(0)
+    return 0n
   }
   const data = await sdk.GetContributionsAmount({
     fundingRoundAddress: fundingRoundAddress.toLowerCase(),
@@ -81,13 +76,13 @@ export async function getContributionAmount(
   })
 
   if (!data.contributions.length) {
-    return BigNumber.from(0)
+    return 0n
   }
 
-  return BigNumber.from(data.contributions[0].amount)
+  return BigInt(data.contributions[0].amount)
 }
 
-export async function getTotalContributed(fundingRoundAddress: string): Promise<{ count: number; amount: BigNumber }> {
+export async function getTotalContributed(fundingRoundAddress: string): Promise<{ count: number; amount: bigint }> {
   const nativeTokenAddress = await clrFundContract.nativeToken()
   const nativeToken = new Contract(nativeTokenAddress, ERC20, provider)
   const balance = await nativeToken.balanceOf(fundingRoundAddress)
@@ -97,7 +92,7 @@ export async function getTotalContributed(fundingRoundAddress: string): Promise<
   })
 
   if (!data.fundingRound?.contributorCount) {
-    return { count: 0, amount: BigNumber.from(0) }
+    return { count: 0, amount: 0n }
   }
 
   const count = parseInt(data.fundingRound.contributorCount)
@@ -128,19 +123,16 @@ export function isContributionAmountValid(value: string, currentRound: RoundInfo
   // 	return true
   // }
   const { nativeTokenDecimals, voiceCreditFactor } = currentRound
-  let amount
+  let amount: bigint
   try {
-    amount = parseFixed(value, nativeTokenDecimals)
+    amount = parseUnits(value, nativeTokenDecimals)
   } catch {
     return false
   }
-  if (amount.lte(BigNumber.from(0))) {
+  if (amount <= 0n) {
     return false
   }
-  const normalizedValue = FixedNumber.fromValue(
-    amount.div(voiceCreditFactor).mul(voiceCreditFactor),
-    nativeTokenDecimals,
-  )
+  const normalizedValue = FixedNumber.fromValue((amount / voiceCreditFactor) * voiceCreditFactor, nativeTokenDecimals)
     .toUnsafeFloat()
     .toString()
   return normalizedValue === value
@@ -207,10 +199,10 @@ export async function getContributorMessages({
   let latestTransaction: Transaction | null = null
   const latestMessages = result.messages
     .filter(message => {
-      const { iv, data, blockNumber, transactionIndex } = message
+      const { msgType, data, blockNumber, transactionIndex } = message
 
       try {
-        const maciMessage = new Message(iv, data || [])
+        const maciMessage = new Message(BigInt(msgType), data || [])
         const { command, signature } = Command.decrypt(maciMessage, sharedKey)
         if (!command.verifySignature(signature, contributorKey.pubKey)) {
           // Not signed by this user, filter it out
@@ -240,8 +232,8 @@ export async function getContributorMessages({
       return latestTransaction && tx.compare(latestTransaction) === 0
     })
     .map(message => {
-      const { iv, data } = message
-      return new Message(iv, data || [])
+      const { msgType, data } = message
+      return new Message(BigInt(msgType), data || [])
     })
 
   return latestMessages

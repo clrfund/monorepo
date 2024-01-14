@@ -4,10 +4,9 @@ import dotenv from 'dotenv'
 
 import { TASK_COMPILE_SOLIDITY_GET_SOURCE_PATHS } from 'hardhat/builtin-tasks/task-names'
 import { subtask, task } from 'hardhat/config'
-import '@nomiclabs/hardhat-waffle'
+import '@nomicfoundation/hardhat-toolbox'
 import '@nomiclabs/hardhat-ganache'
 import 'hardhat-contract-sizer'
-import '@nomiclabs/hardhat-etherscan'
 import './tasks'
 
 dotenv.config()
@@ -181,7 +180,7 @@ task(
       const artifact = JSON.parse(
         fs
           .readFileSync(
-            `./node_modules/@clrfund/maci-contracts/artifacts/contracts/crypto/Hasher.sol/${contractName}.json`
+            `./node_modules/maci-contracts/artifacts/contracts/crypto/${contractName}.sol/${contractName}.json`
           )
           .toString()
       )
