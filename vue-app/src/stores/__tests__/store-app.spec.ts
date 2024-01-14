@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers'
 import { expect } from 'vitest'
 
 import { setActivePinia, createPinia } from 'pinia'
@@ -96,7 +95,7 @@ describe('Cart mutations', () => {
     const appStore = useAppStore()
     const item1 = createItem({ id: '0x1' })
     const item2 = createItem({ id: '0x2' })
-    appStore.$patch({ cart: [item1, item2], contribution: BigNumber.from(0) })
+    appStore.$patch({ cart: [item1, item2], contribution: BigInt(0) })
     appStore.removeCartItem(item1)
     expect(appStore.cart.length).to.equal(1)
     expect(appStore.cart[0].id).to.equal(item2.id)
@@ -105,7 +104,7 @@ describe('Cart mutations', () => {
   it('does not remove item that is not in cart', () => {
     const appStore = useAppStore()
     const item = createItem({ id: '0x1' })
-    appStore.$patch({ cart: [item], contribution: BigNumber.from(0) })
+    appStore.$patch({ cart: [item], contribution: BigInt(0) })
     const newItem = createItem({ id: '0x2' })
     expect(() => {
       appStore.removeCartItem(newItem)
@@ -128,7 +127,7 @@ describe('Cart mutations', () => {
     const appStore = useAppStore()
     const item1 = createItem({ id: '0x1' })
     const item2 = createItem({ id: '0x2' })
-    appStore.$patch({ cart: [item1, item2], contribution: BigNumber.from(1) })
+    appStore.$patch({ cart: [item1, item2], contribution: BigInt(1) })
     appStore.removeCartItem(item1)
     expect(appStore.cart.length).to.equal(2)
     expect(appStore.cart[0].amount).to.equal('0')
@@ -148,7 +147,7 @@ describe('Cart mutations', () => {
     const newItem2 = createItem({ id: '92' })
     appStore.$patch({
       cart: [...items, newItem1, newItem2],
-      contribution: BigNumber.from(1),
+      contribution: BigInt(1),
     })
     expect(appStore.cart.length).to.equal(MAX_CART_SIZE + 1)
 

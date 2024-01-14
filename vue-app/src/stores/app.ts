@@ -30,7 +30,7 @@ export type AppState = {
   cartEditModeSelected: boolean
   committedCart: CartItem[]
   cartLoaded: boolean
-  contribution: BigNumber | null
+  contribution: BigInt | null
   contributor: Contributor | null
   hasVoted: boolean
   currentRound: RoundInfo | null
@@ -146,7 +146,7 @@ export const useAppStore = defineStore('app', {
     },
     hasUserContributed: (state): boolean => {
       const userStore = useUserStore()
-      return !!userStore.currentUser && !!state.contribution && !state.contribution.isZero()
+      return !!userStore.currentUser && !!state.contribution && state.contribution !== BigInt(0)
     },
     operator: (): string => {
       return operator
@@ -348,7 +348,7 @@ export const useAppStore = defineStore('app', {
         throw new Error('item is not in the cart')
       } else if (this.contribution === null) {
         throw new Error('invalid operation')
-      } else if (this.contribution.isZero() || this.cart.length > MAX_CART_SIZE) {
+      } else if (this.contribution === BigInt(0) || this.cart.length > MAX_CART_SIZE) {
         this.cart.splice(itemIndex, 1)
       } else {
         // The number of MACI messages can't go down after initial submission
