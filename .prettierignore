@@ -22,6 +22,7 @@ contracts/state.json
 contracts/tally.json
 contracts/proofs.json
 contracts/proof_output
+contracts/typechain-types
 
 # local env files
 .env
