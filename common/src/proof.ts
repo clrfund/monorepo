@@ -4,10 +4,9 @@ import {
   encodeRlp,
   decodeRlp,
   zeroPadValue,
-  type JsonRpcProvider,
-  toQuantity,
   toBeHex,
 } from 'ethers'
+import type { JsonRpcProvider } from 'ethers'
 
 /**
  * RLP encode the proof returned from eth_getProof
