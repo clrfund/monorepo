@@ -6,21 +6,18 @@ import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 import '@openzeppelin/contracts/utils/structs/EnumerableSet.sol';
 
-import {SignUpGatekeeper} from "maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol";
-import {InitialVoiceCreditProxy} from "maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol";
-import {PollFactory} from 'maci-contracts/contracts/PollFactory.sol';
 import {Params} from 'maci-contracts/contracts/utilities/Params.sol';
 import {DomainObjs} from 'maci-contracts/contracts/utilities/DomainObjs.sol';
 
-import './MACIFactory.sol';
+import {IMACIFactory} from './interfaces/IMACIFactory.sol';
 import './userRegistry/IUserRegistry.sol';
 import './recipientRegistry/IRecipientRegistry.sol';
-import {FundingRound} from './FundingRound.sol';
-import './OwnableUpgradeable.sol';
-import {FundingRoundFactory} from './FundingRoundFactory.sol';
+import {IFundingRound} from './interfaces/IFundingRound.sol';
+import {OwnableUpgradeable} from './OwnableUpgradeable.sol';
+import {IFundingRoundFactory} from './interfaces/IFundingRoundFactory.sol';
 import {TopupToken} from './TopupToken.sol';
 
-contract ClrFund is OwnableUpgradeable, DomainObjs, SnarkCommon, Params {
+contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
   using EnumerableSet for EnumerableSet.AddressSet;
   using SafeERC20 for ERC20;
 
@@ -28,15 +25,15 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, SnarkCommon, Params {
   address public coordinator;
 
   ERC20 public nativeToken;
-  MACIFactory public maciFactory;
+  IMACIFactory public maciFactory;
   IUserRegistry public userRegistry;
   IRecipientRegistry public recipientRegistry;
   PubKey public coordinatorPubKey;
 
   EnumerableSet.AddressSet private fundingSources;
-  FundingRound[] private rounds;
+  IFundingRound[] private rounds;
 
-  FundingRoundFactory public roundFactory;
+  IFundingRoundFactory public roundFactory;
 
   // Events
   event FundingSourceAdded(address _source);
@@ -49,6 +46,8 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, SnarkCommon, Params {
   event UserRegistrySet();
   event RecipientRegistrySet();
   event FundingRoundTemplateChanged();
+  event FundingRoundFactorySet(address _roundFactory);
+  event MaciFactorySet(address _maciFactory);
 
   // errors
   error FundingSourceAlreadyAdded();
@@ -57,10 +56,6 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, SnarkCommon, Params {
   error NotFinalized();
   error NotAuthorized();
   error NoCurrentRound();
-  error NoCoordinator();
-  error NoToken();
-  error NoRecipientRegistry();
-  error NoUserRegistry();
   error NotOwnerOfMaciFactory();
   error InvalidFundingRoundFactory();
   error InvalidMaciFactory();
@@ -75,14 +70,58 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, SnarkCommon, Params {
     external
   {
     __Ownable_init();
-
-    if (address(_maciFactory) == address(0)) revert InvalidMaciFactory();
-    if (_roundFactory == address(0)) revert InvalidFundingRoundFactory();
-
-    maciFactory = MACIFactory(_maciFactory);
-    roundFactory = FundingRoundFactory(_roundFactory);
+    _setMaciFactory(_maciFactory);
+    _setFundingRoundFactory(_roundFactory);
 
     emit Initialized();
+  }
+
+  /**
+    * @dev Set MACI factory.
+    * @param _maciFactory Address of a MACI factory.
+    */
+  function _setMaciFactory(address _maciFactory) private
+  {
+    if (_maciFactory == address(0)) revert InvalidMaciFactory();
+
+    maciFactory = IMACIFactory(_maciFactory);
+
+    emit MaciFactorySet(address(_maciFactory));
+  }
+
+  /**
+    * @dev Set MACI factory.
+    * @param _maciFactory Address of a MACI factory.
+    */
+  function setMaciFactory(address _maciFactory)
+    external
+    onlyOwner
+  {
+    _setMaciFactory(_maciFactory);
+  }
+
+  /**
+  * @dev Set Funding found factory.
+  * @param _roundFactory Factory Address of a funding round factory.
+  */
+  function _setFundingRoundFactory(address _roundFactory) private
+  {
+    if (_roundFactory == address(0)) revert InvalidFundingRoundFactory();
+
+    roundFactory = IFundingRoundFactory(_roundFactory);
+
+    emit FundingRoundFactorySet(address(roundFactory));
+  }
+
+  /**
+  * @dev Set Funding found factory.
+  * @param _roundFactory Factory Address of a funding round factory.
+  */
+  function setFundingRoundFactory(address _roundFactory)
+  public
+  onlyOwner
+  {
+    _setFundingRoundFactory(_roundFactory);
   }
 
   /**
@@ -107,8 +146,8 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, SnarkCommon, Params {
     onlyOwner
   {
     recipientRegistry = _recipientRegistry;
-    (, uint256 maxVoteOptions) = maciFactory.maxValues();
-    recipientRegistry.setMaxRecipients(maxVoteOptions);
+    MaxValues memory maxValues = maciFactory.maxValues();
+    recipientRegistry.setMaxRecipients(maxValues.maxVoteOptions);
 
     emit RecipientRegistrySet();
   }
@@ -146,10 +185,10 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, SnarkCommon, Params {
   function getCurrentRound()
     public
     view
-    returns (FundingRound _currentRound)
+    returns (IFundingRound _currentRound)
   {
     if (rounds.length == 0) {
-      return FundingRound(address(0));
+      return IFundingRound(address(0));
     }
     return rounds[rounds.length - 1];
   }
@@ -163,40 +202,18 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, SnarkCommon, Params {
   )
     external
     onlyOwner
-    requireToken
-    requireCoordinator
-    requireRecipientRegistry
-    requireUserRegistry
   {
-    FundingRound currentRound = getCurrentRound();
+    IFundingRound currentRound = getCurrentRound();
     if (address(currentRound) != address(0) && !currentRound.isFinalized()) {
       revert NotFinalized();
     }
     // Make sure that the max number of recipients is set correctly
-    (, uint256 maxVoteOptions) = maciFactory.maxValues();
-    recipientRegistry.setMaxRecipients(maxVoteOptions);
+    MaxValues memory maxValues = maciFactory.maxValues();
+    recipientRegistry.setMaxRecipients(maxValues.maxVoteOptions);
+
     // Deploy funding round and MACI contracts
-    FundingRound newRound = roundFactory.deploy(
-      nativeToken,
-      userRegistry,
-      recipientRegistry,
-      coordinator,
-      address(this)
-    );
-    rounds.push(newRound);
-
-    TopupToken topupToken = newRound.topupToken();
-    (MACI maci, address poll)= maciFactory.deployMaci(
-      SignUpGatekeeper(newRound),
-      InitialVoiceCreditProxy(newRound),
-      address(topupToken),
-      duration,
-      coordinator,
-      coordinatorPubKey
-    );
-
-    newRound.setMaci(maci);
-    newRound.setPoll(poll);
+    address newRound = roundFactory.deploy(duration, address(this));
+    rounds.push(IFundingRound(newRound));
 
     emit RoundStarted(address(newRound));
   }
@@ -234,7 +251,7 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, SnarkCommon, Params {
     external
     onlyOwner
   {
-    FundingRound currentRound = getCurrentRound();
+    IFundingRound currentRound = getCurrentRound();
     requireCurrentRound(currentRound);
 
     ERC20 roundToken = currentRound.nativeToken();
@@ -264,7 +281,7 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, SnarkCommon, Params {
     external
     onlyOwner
   {
-    FundingRound currentRound = getCurrentRound();
+    IFundingRound currentRound = getCurrentRound();
     requireCurrentRound(currentRound);
 
     if (currentRound.isFinalized()) {
@@ -312,7 +329,7 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, SnarkCommon, Params {
     // the address being 0x0
     coordinator = address(0);
     coordinatorPubKey = PubKey(0, 0);
-    FundingRound currentRound = getCurrentRound();
+    IFundingRound currentRound = getCurrentRound();
     if (address(currentRound) != address(0) && !currentRound.isFinalized()) {
       currentRound.cancel();
       emit RoundFinalized(address(currentRound));
@@ -327,37 +344,9 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, SnarkCommon, Params {
     _;
   }
 
-  function requireCurrentRound(FundingRound currentRound) private pure {
+  function requireCurrentRound(IFundingRound currentRound) private pure {
     if (address(currentRound) == address(0)) {
       revert NoCurrentRound();
     }
-  }
-
-  modifier requireToken() {
-    if (address(nativeToken) == address(0)) {
-      revert NoToken();
-    }
-    _;
-  }
-
-  modifier requireCoordinator() {
-    if (coordinator == address(0)) {
-      revert NoCoordinator();
-    }
-    _;
-  }
-
-  modifier requireUserRegistry() {
-    if (address(userRegistry) == address(0)) {
-      revert NoUserRegistry();
-    }
-    _;
-  }
-
-  modifier requireRecipientRegistry() {
-    if (address(recipientRegistry) == address(0)) {
-      revert NoRecipientRegistry();
-    }
-    _;
   }
 }

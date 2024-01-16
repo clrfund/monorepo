@@ -101,9 +101,7 @@ describe('MACI factory', () => {
       signUpGatekeeper.target,
       initialVoiceCreditProxy.target,
       topupContract.target,
-      duration,
-      coordinator.address,
-      coordinatorPubKey
+      deployer.address
     )
     await expect(maciDeployed).to.emit(maciFactory, 'MaciDeployed')
 
@@ -123,9 +121,7 @@ describe('MACI factory', () => {
       signUpGatekeeper.target,
       initialVoiceCreditProxy.target,
       topupContract.target,
-      duration,
-      coordinator.address,
-      coordinatorPubKey
+      coordinator.address
     )
     await expect(deployTx).to.emit(maciFactory, 'MaciDeployed')
   })
@@ -139,9 +135,7 @@ describe('MACI factory', () => {
       signUpGatekeeper.target,
       initialVoiceCreditProxy.target,
       topupContract.target,
-      duration,
-      coordinator.address,
-      coordinatorPubKey
+      deployer.address
     )
 
     const maciAddress = await getEventArg(
@@ -166,9 +160,7 @@ describe('MACI factory', () => {
       signUpGatekeeper.target,
       initialVoiceCreditProxy.target,
       topupContract.target,
-      duration,
-      coordinator.address,
-      coordinatorPubKey
+      deployer.address
     )
 
     const maciAddress = await getEventArg(

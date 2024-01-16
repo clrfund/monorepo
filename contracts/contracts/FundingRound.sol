@@ -11,24 +11,36 @@ import {MACI} from 'maci-contracts/contracts/MACI.sol';
 import {Poll} from 'maci-contracts/contracts/Poll.sol';
 import {Tally} from 'maci-contracts/contracts/Tally.sol';
 import {TopupToken} from './TopupToken.sol';
-import {SignUpGatekeeper} from "maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol";
-import {InitialVoiceCreditProxy} from "maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol";
+import {SignUpGatekeeper} from 'maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol';
+import {InitialVoiceCreditProxy} from 'maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
+import {CommonUtilities} from 'maci-contracts/contracts/utilities/CommonUtilities.sol';
+import {SnarkCommon} from 'maci-contracts/contracts/crypto/SnarkCommon.sol';
+import {ITallySubsidyFactory} from 'maci-contracts/contracts/interfaces/ITallySubsidyFactory.sol';
+import {IMessageProcessorFactory} from 'maci-contracts/contracts/interfaces/IMPFactory.sol';
+import {IClrFund} from './interfaces/IClrFund.sol';
+import {IMACIFactory} from './interfaces/IMACIFactory.sol';
+import {MACICommon} from './MACICommon.sol';
 
 import './userRegistry/IUserRegistry.sol';
 import './recipientRegistry/IRecipientRegistry.sol';
 
-contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, DomainObjs {
+contract FundingRound is
+  Ownable,
+  SignUpGatekeeper,
+  InitialVoiceCreditProxy,
+  DomainObjs,
+  SnarkCommon,
+  CommonUtilities,
+  MACICommon
+{
   using SafeERC20 for ERC20;
 
   // Errors
   error OnlyMaciCanRegisterVoters();
   error NotCoordinator();
-  error PollNotSet();
-  error TallyNotSet();
   error InvalidPoll();
   error InvalidTally();
   error MaciAlreadySet();
-  error MaciNotSet();
   error ContributionAmountIsZero();
   error ContributionAmountTooLarge();
   error AlreadyContributed();
@@ -55,6 +67,16 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   error BudgetGreaterThanVotes();
   error IncompleteTallyResults();
   error NoVotes();
+  error InvalidMaci();
+  error InvalidNativeToken();
+  error InvalidUserRegistry();
+  error InvalidRecipientRegistry();
+  error invalidCoordinator();
+  error invalidMaciFactory();
+  error InvalidTallyFactory();
+  error InvalidMessageProcessorFactory();
+  error UnexpectedPollAddress(address expected, address actual);
+
 
   // Constants
   uint256 private constant MAX_VOICE_CREDITS = 10 ** 9;  // MACI allows 2 ** 32 voice credits max
@@ -86,6 +108,7 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   bool public isFinalized = false;
   bool public isCancelled = false;
 
+  uint256 public pollId;
   Poll public poll;
   Tally public tally;
 
@@ -95,6 +118,8 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   TopupToken public topupToken;
   IUserRegistry public userRegistry;
   IRecipientRegistry public recipientRegistry;
+  ITallySubsidyFactory public immutable tallyFactory;
+  IMessageProcessorFactory public immutable messageProcessorFactory;
   string public tallyHash;
 
   // The alpha used in quadratic funding formula
@@ -125,47 +150,88 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
 
   /**
     * @dev Set round parameters.
-    * @param _nativeToken Address of a token which will be accepted for contributions.
-    * @param _userRegistry Address of the registry of verified users.
-    * @param _recipientRegistry Address of the recipient registry.
-    * @param _coordinator Address of the coordinator.
+    * @param _duration the funding round duration
+    * @param _clrfund the clrfund contract containing information
+    *                 to deploy a funding round, e.g. nativeToke, coordinator address
+    *                 coordinator public key, etc.
     */
   constructor(
-    ERC20 _nativeToken,
-    IUserRegistry _userRegistry,
-    IRecipientRegistry _recipientRegistry,
-    address _coordinator
+    uint256 _duration,
+    IClrFund _clrfund
   )
   {
-    nativeToken = _nativeToken;
+    _validate(_clrfund);
+    nativeToken = _clrfund.nativeToken();
     voiceCreditFactor = (MAX_CONTRIBUTION_AMOUNT * uint256(10) ** nativeToken.decimals()) / MAX_VOICE_CREDITS;
     voiceCreditFactor = voiceCreditFactor > 0 ? voiceCreditFactor : 1;
-    userRegistry = _userRegistry;
-    recipientRegistry = _recipientRegistry;
-    coordinator = _coordinator;
+
+    userRegistry = _clrfund.userRegistry();
+    recipientRegistry = _clrfund.recipientRegistry();
+    coordinator = _clrfund.coordinator();
     topupToken = new TopupToken();
+
+    IMACIFactory maciFactory = _clrfund.maciFactory();
+    Factories memory factories = maciFactory.factories();
+    tallyFactory = ITallySubsidyFactory(factories.tallyFactory);
+    messageProcessorFactory = IMessageProcessorFactory(factories.messageProcessorFactory);
+
+    maci = maciFactory.deployMaci(
+      SignUpGatekeeper(this),
+      InitialVoiceCreditProxy(this),
+      address(topupToken),
+      address(this)
+    );
+    if (isAddressZero(address(maci))) revert InvalidMaci();
+
+    MACI.PollContracts memory pollContracts = maci.deployPoll(
+      _duration,
+      maciFactory.maxValues(),
+      maciFactory.treeDepths(),
+      _clrfund.coordinatorPubKey(),
+      address(maciFactory.verifier()),
+      address(maciFactory.vkRegistry()),
+      // pass false to not deploy the subsidy contract
+      false
+    );
+
+    _setPollAndTally(pollContracts);
+
+    // transfer poll contracts ownership to coordinator for vote tallying
+    Ownable(pollContracts.poll).transferOwnership(coordinator);
+    Ownable(pollContracts.messageProcessor).transferOwnership(coordinator);
+    Ownable(pollContracts.tally).transferOwnership(coordinator);
   }
 
   /**
-   * @dev Check if the voting period is over.
+   * @dev Is the given address a zero address
    */
-  function isVotingOver() internal view returns (bool) {
-    if (address(poll) == address(0)) {
-      revert PollNotSet();
-    }
-    (uint256 deployTime, uint256 duration) = poll.getDeployTimeAndDuration();
-    uint256 secondsPassed = block.timestamp - deployTime;
-    return (secondsPassed >= duration);
+  function isAddressZero(address addressValue) public pure returns (bool) {
+    return (addressValue == address(0));
   }
+
+  /**
+   * @dev validate that the clrfund contract has been initialized properly
+   * with non zero addresses
+   * @param _clrfund the clrfund contract
+   */
+  function _validate(IClrFund _clrfund) private view {
+    if (isAddressZero(address(_clrfund.nativeToken()))) revert InvalidNativeToken();
+    if (isAddressZero(address(_clrfund.userRegistry()))) revert InvalidUserRegistry();
+    if (isAddressZero(address(_clrfund.recipientRegistry()))) revert InvalidRecipientRegistry();
+    if (isAddressZero(_clrfund.coordinator())) revert invalidCoordinator();
+    if (isAddressZero(address(_clrfund.maciFactory()))) revert invalidMaciFactory();
+
+    IMACIFactory maciFactory = _clrfund.maciFactory();
+    MACICommon.Factories memory factories = maciFactory.factories();
+    if (isAddressZero(factories.tallyFactory)) revert InvalidTallyFactory();
+    if (isAddressZero(factories.messageProcessorFactory)) revert InvalidMessageProcessorFactory();
+  }
+
 
   /**
    * @dev Have the votes been tallied
    */
   function isTallied() internal view returns (bool) {
-    if (address(tally) == address(0)) {
-      revert TallyNotSet();
-    }
-
     (uint256 numSignUps, ) = poll.numSignUpsAndMessages();
     (, uint256 tallyBatchSize, ) = poll.batchSizes();
     uint256 tallyBatchNum = tally.tallyBatchNum();
@@ -175,52 +241,63 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   }
 
   /**
-    * @dev Set the MACI poll
-    * @param _poll The poll address.
-    */
-  function setPoll(address _poll)
-    external
-    onlyOwner
+  * @dev Set the tally contract
+  * @param _tally The tally contract address
+  */
+  function _setTally(address _tally)
+    private
   {
-    if (_poll == address(0)) {
-      revert InvalidPoll();
-    }
-
-    poll = Poll(_poll);
-    emit PollSet(_poll);
-  }
-
-  /**
-    * @dev Set the tally contract
-    * @param _tally The tally contract address
-    */
-  function setTally(Tally _tally)
-    external
-    onlyCoordinator
-  {
-    if (address(_tally) == address(0)) {
+    if (_tally == address(0)) {
       revert InvalidTally();
     }
 
-    tally = _tally;
-
+    tally = Tally(_tally);
     emit TallySet(address(tally));
   }
 
   /**
-    * @dev Link MACI instance to this funding round.
+    * @dev Reset tally results. This should only be used if the tally script
+    *     failed to proveOnChain due to unexpected error processing MACI logs
     */
-  function setMaci(
-    MACI _maci
-  )
+  function resetTally()
     external
-    onlyOwner
+    onlyCoordinator
   {
-    if (address(maci) != address(0)) {
-      revert MaciAlreadySet();
+    _votingPeriodOver(poll);
+    if (isFinalized) {
+      revert RoundAlreadyFinalized();
     }
 
-    maci = _maci;
+    address verifier = address(tally.verifier());
+    address vkRegistry = address(tally.vkRegistry());
+    address mp = messageProcessorFactory.deploy(verifier, vkRegistry, address(poll), coordinator);
+    address newTally = tallyFactory.deploy(verifier, vkRegistry, address(poll), mp, coordinator);
+    _setTally(newTally);
+  }
+
+  /**
+    * @dev Link Poll and Tally contracts to this funding round.
+    */
+  function _setPollAndTally(MACI.PollContracts memory _pollContracts) private
+  {
+    if (_pollContracts.poll == address(0)) {
+      revert InvalidPoll();
+    }
+
+    // we only create 1 poll per maci, make sure MACI use pollId = 0
+    // as the first poll index
+    pollId = 0;
+    address expectedPoll = maci.getPoll(pollId);
+    if( _pollContracts.poll != expectedPoll ) {
+      revert UnexpectedPollAddress(expectedPoll, _pollContracts.poll);
+    }
+
+    if (address(_pollContracts.tally) == address(0)) {
+      revert InvalidTally();
+    }
+
+    poll = Poll(_pollContracts.poll);
+    _setTally(_pollContracts.tally);
   }
 
   /**
@@ -234,7 +311,6 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   )
     external
   {
-    if (address(maci) == address(0)) revert MaciNotSet();
     if (isFinalized) revert RoundAlreadyFinalized();
     if (amount == 0) revert ContributionAmountIsZero();
     if (amount > MAX_VOICE_CREDITS * voiceCreditFactor) revert ContributionAmountTooLarge();
@@ -324,10 +400,6 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   )
     external
   {
-    if (address(poll) == address(0)) {
-      revert PollNotSet();
-    }
-
     uint256 batchSize = _messages.length;
     for (uint8 i = 0; i < batchSize; i++) {
       poll.publishMessage(_messages[i], _encPubKeys[i]);
@@ -425,13 +497,8 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
       revert NoProjectHasMoreThanOneVote();
     }
 
-    uint256 quadraticVotes = voiceCreditFactor * _totalVotesSquares;
-    if (_budget < quadraticVotes) {
-      _alpha = (_budget - contributions) * ALPHA_PRECISION / (quadraticVotes - contributions);
-    } else {
-      // protect against overflow error in getAllocatedAmount()
-      _alpha = ALPHA_PRECISION;
-    }
+    return  (_budget - contributions) * ALPHA_PRECISION /
+            (voiceCreditFactor * (_totalVotesSquares - _totalSpent));
 
   }
 
@@ -455,12 +522,9 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
     if (isFinalized) {
       revert RoundAlreadyFinalized();
     }
-    if (address(maci) == address(0)) {
-      revert MaciNotSet();
-    }
-    if (!isVotingOver()) {
-      revert VotingIsNotOver();
-    }
+
+    _votingPeriodOver(poll);
+
     if (!isTallied()) {
       revert VotesNotTallied();
     }
@@ -475,11 +539,7 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
       revert IncompleteTallyResults();
     }
 
-/* TODO how to check this in maci v1??
-    totalVotes = maci.totalVotes();
     // If nobody voted, the round should be cancelled to avoid locking of matching funds
-    require(totalVotes > 0, 'FundingRound: No votes');
-*/
     if ( _totalSpent == 0) {
       revert NoVotes();
     }
@@ -531,8 +591,10 @@ contract FundingRound is Ownable, SignUpGatekeeper, InitialVoiceCreditProxy, Dom
   {
     // amount = ( alpha * (quadratic votes)^2 + (precision - alpha) * totalSpent ) / precision
     uint256 quadratic = alpha * voiceCreditFactor * _tallyResult * _tallyResult;
-    uint256 linear = (ALPHA_PRECISION - alpha) * voiceCreditFactor * _spent;
-    return (quadratic + linear) / ALPHA_PRECISION;
+    uint256 totalSpentCredits = voiceCreditFactor * _spent;
+    uint256 linearPrecision = ALPHA_PRECISION * totalSpentCredits;
+    uint256 linearAlpha = alpha * totalSpentCredits;
+    return ((quadratic + linearPrecision) - linearAlpha) / ALPHA_PRECISION;
   }
 
   /**

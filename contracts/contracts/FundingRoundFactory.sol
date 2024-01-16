@@ -3,28 +3,28 @@
 pragma solidity ^0.8.10;
 
 import {FundingRound} from './FundingRound.sol';
-import {ERC20} from '@openzeppelin/contracts/token/ERC20/ERC20.sol';
-import {IUserRegistry} from './userRegistry/IUserRegistry.sol';
-import {IRecipientRegistry} from './recipientRegistry/IRecipientRegistry.sol';
+import {IClrFund} from './interfaces/IClrFund.sol';
 
+/**
+* @dev A factory to deploy the funding round contract
+*/
 contract FundingRoundFactory {
+  /**
+  * @dev Deploy the funding round contract
+  * @param _duration the funding round duration
+  * @param _clrfund the clrfund contract containing information used to
+  *                 deploy a funding round, e.g. nativeToken, coordinator address
+  *                 coordinator public key, etc.
+   */
   function deploy(
-    ERC20 _nativeToken,
-    IUserRegistry _userRegistry,
-    IRecipientRegistry _recipientRegistry,
-    address _coordinator,
-    address _owner
+    uint256 _duration,
+    address _clrfund
   )
     external
-    returns (FundingRound newRound)
+    returns (address)
   {
-    newRound = new FundingRound(
-      _nativeToken,
-      _userRegistry,
-      _recipientRegistry,
-      _coordinator
-    );
-
-    newRound.transferOwnership(_owner);
+    FundingRound newRound = new FundingRound(_duration, IClrFund(_clrfund));
+    newRound.transferOwnership(_clrfund);
+    return address(newRound);
   }
 }

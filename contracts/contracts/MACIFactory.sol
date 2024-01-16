@@ -15,17 +15,10 @@ import {SnarkCommon} from 'maci-contracts/contracts/crypto/SnarkCommon.sol';
 import {Ownable} from '@openzeppelin/contracts/access/Ownable.sol';
 import {Params} from 'maci-contracts/contracts/utilities/Params.sol';
 import {DomainObjs} from 'maci-contracts/contracts/utilities/DomainObjs.sol';
+import {MACICommon} from './MACICommon.sol';
 
-contract MACIFactory is Ownable, Params, SnarkCommon, DomainObjs {
+contract MACIFactory is Ownable, Params, SnarkCommon, DomainObjs, MACICommon {
   
-  // all the factories used to create MACI contracts
-  struct Factories {
-    address pollFactory;
-    address tallyFactory;
-    // subsidyFactory is not currently used, it's just a place holder here
-    address subsidyFactory;
-    address messageProcessorFactory;
-  }
 
   // Verifying Key Registry containing circuit parameters
   VkRegistry public vkRegistry;
@@ -171,12 +164,10 @@ contract MACIFactory is Ownable, Params, SnarkCommon, DomainObjs {
     SignUpGatekeeper signUpGatekeeper,
     InitialVoiceCreditProxy initialVoiceCreditProxy,
     address topupCredit,
-    uint256 duration,
-    address coordinator,
-    PubKey calldata coordinatorPubKey
+    address maciOwner
   )
     external
-    returns (MACI _maci, address _poll)
+    returns (MACI _maci)
   {
     if (!vkRegistry.hasProcessVk(
       stateTreeDepth,
@@ -206,8 +197,7 @@ contract MACIFactory is Ownable, Params, SnarkCommon, DomainObjs {
       stateTreeDepth
     );
 
-    _poll = _maci.deployPoll(duration, maxValues, treeDepths, coordinatorPubKey, address(verifier), address(vkRegistry), false);
-    Ownable(_poll).transferOwnership(coordinator);
+    _maci.transferOwnership(maciOwner);
 
     emit MaciDeployed(address(_maci));
   }
