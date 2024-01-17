@@ -40,6 +40,7 @@ contract FundingRound is
   error NotCoordinator();
   error InvalidPoll();
   error InvalidTally();
+  error InvalidMessageProcessor();
   error MaciAlreadySet();
   error ContributionAmountIsZero();
   error ContributionAmountTooLarge();
@@ -61,12 +62,12 @@ contract FundingRound is
   error IncorrectTallyResult();
   error IncorrectSpentVoiceCredits();
   error IncorrectPerVOSpentVoiceCredits();
-  error VotingIsNotOver();
   error FundsAlreadyClaimed();
   error TallyHashNotPublished();
-  error BudgetGreaterThanVotes();
-  error IncompleteTallyResults();
+  error IncompleteTallyResults(uint256 total, uint256 actual);
   error NoVotes();
+  error MaciNotSet();
+  error PollNotSet();
   error InvalidMaci();
   error InvalidNativeToken();
   error InvalidUserRegistry();
@@ -118,8 +119,8 @@ contract FundingRound is
   TopupToken public topupToken;
   IUserRegistry public userRegistry;
   IRecipientRegistry public recipientRegistry;
-  ITallySubsidyFactory public immutable tallyFactory;
-  IMessageProcessorFactory public immutable messageProcessorFactory;
+  ITallySubsidyFactory public tallyFactory;
+  IMessageProcessorFactory public messageProcessorFactory;
   string public tallyHash;
 
   // The alpha used in quadratic funding formula
@@ -150,56 +151,27 @@ contract FundingRound is
 
   /**
     * @dev Set round parameters.
-    * @param _duration the funding round duration
-    * @param _clrfund the clrfund contract containing information
-    *                 to deploy a funding round, e.g. nativeToke, coordinator address
-    *                 coordinator public key, etc.
     */
   constructor(
-    uint256 _duration,
-    IClrFund _clrfund
+    ERC20 _nativeToken,
+    IUserRegistry _userRegistry,
+    IRecipientRegistry _recipientRegistry,
+    address _coordinator
   )
   {
-    _validate(_clrfund);
-    nativeToken = _clrfund.nativeToken();
+    if (isAddressZero(address(_nativeToken))) revert InvalidNativeToken();
+    if (isAddressZero(address(_userRegistry))) revert InvalidUserRegistry();
+    if (isAddressZero(address(_recipientRegistry))) revert InvalidRecipientRegistry();
+    if (isAddressZero(_coordinator)) revert invalidCoordinator();
+
+    nativeToken = _nativeToken;
     voiceCreditFactor = (MAX_CONTRIBUTION_AMOUNT * uint256(10) ** nativeToken.decimals()) / MAX_VOICE_CREDITS;
     voiceCreditFactor = voiceCreditFactor > 0 ? voiceCreditFactor : 1;
 
-    userRegistry = _clrfund.userRegistry();
-    recipientRegistry = _clrfund.recipientRegistry();
-    coordinator = _clrfund.coordinator();
+    userRegistry = _userRegistry;
+    recipientRegistry = _recipientRegistry;
+    coordinator = _coordinator;
     topupToken = new TopupToken();
-
-    IMACIFactory maciFactory = _clrfund.maciFactory();
-    Factories memory factories = maciFactory.factories();
-    tallyFactory = ITallySubsidyFactory(factories.tallyFactory);
-    messageProcessorFactory = IMessageProcessorFactory(factories.messageProcessorFactory);
-
-    maci = maciFactory.deployMaci(
-      SignUpGatekeeper(this),
-      InitialVoiceCreditProxy(this),
-      address(topupToken),
-      address(this)
-    );
-    if (isAddressZero(address(maci))) revert InvalidMaci();
-
-    MACI.PollContracts memory pollContracts = maci.deployPoll(
-      _duration,
-      maciFactory.maxValues(),
-      maciFactory.treeDepths(),
-      _clrfund.coordinatorPubKey(),
-      address(maciFactory.verifier()),
-      address(maciFactory.vkRegistry()),
-      // pass false to not deploy the subsidy contract
-      false
-    );
-
-    _setPollAndTally(pollContracts);
-
-    // transfer poll contracts ownership to coordinator for vote tallying
-    Ownable(pollContracts.poll).transferOwnership(coordinator);
-    Ownable(pollContracts.messageProcessor).transferOwnership(coordinator);
-    Ownable(pollContracts.tally).transferOwnership(coordinator);
   }
 
   /**
@@ -210,28 +182,9 @@ contract FundingRound is
   }
 
   /**
-   * @dev validate that the clrfund contract has been initialized properly
-   * with non zero addresses
-   * @param _clrfund the clrfund contract
-   */
-  function _validate(IClrFund _clrfund) private view {
-    if (isAddressZero(address(_clrfund.nativeToken()))) revert InvalidNativeToken();
-    if (isAddressZero(address(_clrfund.userRegistry()))) revert InvalidUserRegistry();
-    if (isAddressZero(address(_clrfund.recipientRegistry()))) revert InvalidRecipientRegistry();
-    if (isAddressZero(_clrfund.coordinator())) revert invalidCoordinator();
-    if (isAddressZero(address(_clrfund.maciFactory()))) revert invalidMaciFactory();
-
-    IMACIFactory maciFactory = _clrfund.maciFactory();
-    MACICommon.Factories memory factories = maciFactory.factories();
-    if (isAddressZero(factories.tallyFactory)) revert InvalidTallyFactory();
-    if (isAddressZero(factories.messageProcessorFactory)) revert InvalidMessageProcessorFactory();
-  }
-
-
-  /**
    * @dev Have the votes been tallied
    */
-  function isTallied() internal view returns (bool) {
+  function isTallied() private view returns (bool) {
     (uint256 numSignUps, ) = poll.numSignUpsAndMessages();
     (, uint256 tallyBatchSize, ) = poll.batchSizes();
     uint256 tallyBatchNum = tally.tallyBatchNum();
@@ -244,10 +197,9 @@ contract FundingRound is
   * @dev Set the tally contract
   * @param _tally The tally contract address
   */
-  function _setTally(address _tally)
-    private
+  function _setTally(address _tally) private
   {
-    if (_tally == address(0)) {
+    if (isAddressZero(_tally)) {
       revert InvalidTally();
     }
 
@@ -263,6 +215,8 @@ contract FundingRound is
     external
     onlyCoordinator
   {
+    if (isAddressZero(address(maci))) revert MaciNotSet();
+
     _votingPeriodOver(poll);
     if (isFinalized) {
       revert RoundAlreadyFinalized();
@@ -276,28 +230,41 @@ contract FundingRound is
   }
 
   /**
-    * @dev Link Poll and Tally contracts to this funding round.
+    * @dev Link MACI related contracts to this funding round.
     */
-  function _setPollAndTally(MACI.PollContracts memory _pollContracts) private
+  function setMaci(
+    MACI _maci,
+    MACI.PollContracts memory _pollContracts,
+    Factories memory _factories
+  )
+    external
+    onlyOwner
   {
-    if (_pollContracts.poll == address(0)) {
-      revert InvalidPoll();
-    }
+    if (!isAddressZero(address(maci))) revert MaciAlreadySet();
+
+    if (isAddressZero(address(_maci))) revert InvalidMaci();
+    if (isAddressZero(_pollContracts.poll)) revert InvalidPoll();
+    if (isAddressZero(_pollContracts.messageProcessor)) revert InvalidMessageProcessor();
+    if (isAddressZero(_factories.tallyFactory)) revert InvalidTallyFactory();
+    if (isAddressZero(_factories.messageProcessorFactory)) revert InvalidMessageProcessorFactory();
 
     // we only create 1 poll per maci, make sure MACI use pollId = 0
     // as the first poll index
     pollId = 0;
-    address expectedPoll = maci.getPoll(pollId);
+
+    address expectedPoll = _maci.getPoll(pollId);
     if( _pollContracts.poll != expectedPoll ) {
       revert UnexpectedPollAddress(expectedPoll, _pollContracts.poll);
     }
 
-    if (address(_pollContracts.tally) == address(0)) {
-      revert InvalidTally();
-    }
-
+    maci = _maci;
     poll = Poll(_pollContracts.poll);
     _setTally(_pollContracts.tally);
+
+    // save a copy of the factory in case we need to reset the tally result by recreating the
+    // the tally and message processor contracts
+    tallyFactory = ITallySubsidyFactory(_factories.tallyFactory);
+    messageProcessorFactory = IMessageProcessorFactory(_factories.messageProcessorFactory);
   }
 
   /**
@@ -311,6 +278,7 @@ contract FundingRound is
   )
     external
   {
+    if (isAddressZero(address(maci))) revert MaciNotSet();
     if (isFinalized) revert RoundAlreadyFinalized();
     if (amount == 0) revert ContributionAmountIsZero();
     if (amount > MAX_VOICE_CREDITS * voiceCreditFactor) revert ContributionAmountTooLarge();
@@ -400,6 +368,8 @@ contract FundingRound is
   )
     external
   {
+    if (isAddressZero(address(poll))) revert PollNotSet();
+
     uint256 batchSize = _messages.length;
     for (uint8 i = 0; i < batchSize; i++) {
       poll.publishMessage(_messages[i], _encPubKeys[i]);
@@ -523,6 +493,8 @@ contract FundingRound is
       revert RoundAlreadyFinalized();
     }
 
+    if (isAddressZero(address(maci))) revert MaciNotSet();
+
     _votingPeriodOver(poll);
 
     if (!isTallied()) {
@@ -536,7 +508,7 @@ contract FundingRound is
     (,,, uint8 voteOptionTreeDepth) = poll.treeDepths();
     uint256 totalResults = uint256(LEAVES_PER_NODE) ** uint256(voteOptionTreeDepth);
     if ( totalTallyResults != totalResults ) {
-      revert IncompleteTallyResults();
+      revert IncompleteTallyResults(totalResults, totalTallyResults);
     }
 
     // If nobody voted, the round should be cancelled to avoid locking of matching funds
@@ -728,6 +700,8 @@ contract FundingRound is
     external
     onlyCoordinator
   {
+    if (isAddressZero(address(maci))) revert MaciNotSet();
+
     if (!isTallied()) {
       revert VotesNotTallied();
     }

@@ -20,7 +20,7 @@
  *
  * If token is not provided, a new ERC20 token will be created
  */
-import { BigNumber } from 'ethers'
+import { parseUnits } from 'ethers'
 import { ethers, network } from 'hardhat'
 import { getEventArg } from '../utils/contracts'
 import { newMaciPrivateKey } from '../utils/maci'
@@ -143,7 +143,7 @@ async function main(args: any) {
   // set token
   let tokenAddress = args.token
   if (!tokenAddress) {
-    const initialTokenSupply = UNIT.mul(args.initialTokenSupply)
+    const initialTokenSupply = UNIT * BigInt(args.initialTokenSupply)
     const tokenContract = await deployContract({
       name: 'AnyOldERC20Token',
       contractArgs: [initialTokenSupply],
@@ -205,9 +205,9 @@ async function main(args: any) {
   }
 }
 
-function parseDeposit(deposit: string): BigNumber {
+function parseDeposit(deposit: string): bigint {
   try {
-    return ethers.utils.parseUnits(deposit)
+    return parseUnits(deposit)
   } catch (e) {
     throw new Error(`Error parsing deposit ${(e as Error).message}`)
   }

@@ -2,13 +2,12 @@ import { artifacts, ethers, config } from 'hardhat'
 import { Contract, TransactionResponse } from 'ethers'
 import { expect } from 'chai'
 import { deployMockContract, MockContract } from '@clrfund/waffle-mock-contract'
-import { Keypair } from '@clrfund/common'
 
 import { getEventArg, getGasUsage } from '../utils/contracts'
 import { deployMaciFactory, deployPoseidonLibraries } from '../utils/deployment'
 import { MaciParameters } from '../utils/maciParameters'
-import { DEFAULT_CIRCUIT } from '../utils/circuits'
 import { HardhatEthersSigner } from '@nomicfoundation/hardhat-ethers/signers'
+import { Keypair } from '@clrfund/common'
 
 describe('MACI factory', () => {
   let deployer: HardhatEthersSigner
@@ -46,7 +45,7 @@ describe('MACI factory', () => {
       5600000
     )
 
-    maciParameters = MaciParameters.mock(DEFAULT_CIRCUIT)
+    maciParameters = MaciParameters.mock()
 
     const SignUpGatekeeperArtifact =
       await artifacts.readArtifact('SignUpGatekeeper')
@@ -101,6 +100,9 @@ describe('MACI factory', () => {
       signUpGatekeeper.target,
       initialVoiceCreditProxy.target,
       topupContract.target,
+      duration,
+      coordinator.address,
+      coordinatorPubKey,
       deployer.address
     )
     await expect(maciDeployed).to.emit(maciFactory, 'MaciDeployed')
@@ -121,6 +123,9 @@ describe('MACI factory', () => {
       signUpGatekeeper.target,
       initialVoiceCreditProxy.target,
       topupContract.target,
+      duration,
+      coordinator.address,
+      coordinatorPubKey,
       coordinator.address
     )
     await expect(deployTx).to.emit(maciFactory, 'MaciDeployed')
@@ -135,6 +140,9 @@ describe('MACI factory', () => {
       signUpGatekeeper.target,
       initialVoiceCreditProxy.target,
       topupContract.target,
+      duration,
+      coordinator.address,
+      coordinatorPubKey,
       deployer.address
     )
 
@@ -160,6 +168,9 @@ describe('MACI factory', () => {
       signUpGatekeeper.target,
       initialVoiceCreditProxy.target,
       topupContract.target,
+      duration,
+      coordinator.address,
+      coordinatorPubKey,
       deployer.address
     )
 

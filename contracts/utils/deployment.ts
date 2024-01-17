@@ -1,7 +1,7 @@
 import {
   Signer,
   Contract,
-  ContractTransaction,
+  ContractTransactionResponse,
   encodeBytes32String,
 } from 'ethers'
 import path from 'path'
@@ -313,69 +313,6 @@ export async function deployPollFactory({
 }
 
 /**
- * Deploy the contracts needed to run the proveOnChain script.
- * If the poseidon contracts are not provided, it will create them
- * using the byte codes in the artifactsPath
- *
- * libraries - poseidon libraries
- * artifactsPath - path of artifact containing the poseidon abi and bytecode
- * @returns the MessageProcessor and Tally contracts
- */
-export async function deployMessageProcesorAndTally({
-  artifactsPath,
-  libraries,
-  ethers,
-  signer,
-}: {
-  libraries?: Libraries
-  artifactsPath?: string
-  signer?: Signer
-  ethers: HardhatEthersHelpers
-}): Promise<{
-  mpContract: Contract
-  tallyContract: Contract
-}> {
-  if (!libraries) {
-    if (!artifactsPath) {
-      throw Error('Need the artifacts path to create the poseidon contracts')
-    }
-    libraries = await deployPoseidonLibraries({
-      artifactsPath,
-      ethers,
-      signer,
-    })
-  }
-
-  const verifierContract = await deployContract({
-    name: 'Verifier',
-    signer,
-    ethers,
-  })
-
-  const tallyContract = await deployContract({
-    name: 'Tally',
-    contractArgs: [verifierContract.target],
-    libraries,
-    ethers,
-    signer,
-  })
-
-  // deploy the message processing contract
-  const mpContract = await deployContract({
-    name: 'MessageProcessor',
-    contractArgs: [verifierContract.target],
-    signer,
-    libraries,
-    ethers,
-  })
-
-  return {
-    mpContract,
-    tallyContract,
-  }
-}
-
-/**
  * Deploy an instance of MACI factory
  * libraries - poseidon contracts
  * ethers - hardhat ethers handle
@@ -457,7 +394,7 @@ export async function setMaciParameters(
   maciFactory: Contract,
   directory: string,
   circuit = DEFAULT_CIRCUIT
-): Promise<ContractTransaction> {
+): Promise<ContractTransactionResponse> {
   if (!isPathExist(directory)) {
     throw new Error(`Path ${directory} does not exists`)
   }
@@ -484,7 +421,7 @@ export async function setCoordinator({
   clrfundContract: Contract
   coordinatorAddress: string
   coordinatorMacisk?: string
-}): Promise<ContractTransaction> {
+}): Promise<ContractTransactionResponse> {
   // Generate or use the passed in coordinator key
   const privKey = coordinatorMacisk
     ? PrivKey.deserialize(coordinatorMacisk)

@@ -34,6 +34,9 @@ interface IMACIFactory {
     SignUpGatekeeper signUpGatekeeper,
     InitialVoiceCreditProxy initialVoiceCreditProxy,
     address topupCredit,
+    uint256 duration,
+    address coordinator,
+    DomainObjs.PubKey calldata coordinatorPubKey,
     address maciOwner
-  ) external returns (MACI _maci);
+  ) external returns (MACI _maci, MACI.PollContracts memory _pollContracts);
 }

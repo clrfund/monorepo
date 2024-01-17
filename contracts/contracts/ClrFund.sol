@@ -59,6 +59,7 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
   error NotOwnerOfMaciFactory();
   error InvalidFundingRoundFactory();
   error InvalidMaciFactory();
+  error RecipientRegistryNotSet();
 
   /**
   * @dev Initialize clrfund instance with MACI factory and new round templates
@@ -207,6 +208,9 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
     if (address(currentRound) != address(0) && !currentRound.isFinalized()) {
       revert NotFinalized();
     }
+
+    if (address(recipientRegistry) == address(0)) revert RecipientRegistryNotSet();
+
     // Make sure that the max number of recipients is set correctly
     MaxValues memory maxValues = maciFactory.maxValues();
     recipientRegistry.setMaxRecipients(maxValues.maxVoteOptions);

@@ -14,6 +14,18 @@ export interface ZkFiles {
   tallyWasm: string
 }
 
+type TreeDepths = {
+  intStateTreeDepth: number
+  messageTreeSubDepth: number
+  messageTreeDepth: number
+  voteOptionTreeDepth: number
+}
+
+type MaxValues = {
+  maxMessages: number
+  maxVoteOptions: number
+}
+
 /**
  * Get the zkey file path
  * @param name zkey file name
@@ -42,6 +54,8 @@ export class MaciParameters {
   messageBatchSize: number
   processVk: VerifyingKey
   tallyVk: VerifyingKey
+  treeDepths: TreeDepths
+  maxValues: MaxValues
 
   constructor(parameters: { [name: string]: any } = {}) {
     this.stateTreeDepth = parameters.stateTreeDepth
@@ -54,6 +68,16 @@ export class MaciParameters {
     this.messageBatchSize = parameters.messageBatchSize
     this.processVk = parameters.processVk
     this.tallyVk = parameters.tallyVk
+    this.treeDepths = {
+      intStateTreeDepth: this.intStateTreeDepth,
+      messageTreeSubDepth: this.messageTreeSubDepth,
+      messageTreeDepth: this.messageTreeDepth,
+      voteOptionTreeDepth: this.voteOptionTreeDepth,
+    }
+    this.maxValues = {
+      maxMessages: this.maxMessages,
+      maxVoteOptions: this.maxVoteOptions,
+    }
   }
 
   asContractParam(): any[] {
@@ -117,7 +141,7 @@ export class MaciParameters {
     })
   }
 
-  static mock(circuit: string): MaciParameters {
+  static mock(): MaciParameters {
     const processVk = VerifyingKey.fromObj({
       protocol: 1,
       curve: 1,
@@ -138,7 +162,20 @@ export class MaciParameters {
       vk_alphabeta_12: [[[1, 2, 3]]],
       IC: [[1, 2]],
     })
-    const params = CIRCUITS[circuit]
+
+    // use smaller voteOptionTreeDepth for testing
+    const params = {
+      maxValues: { maxMessages: 390625, maxVoteOptions: 25 },
+      treeDepths: {
+        stateTreeDepth: 6,
+        intStateTreeDepth: 2,
+        messageTreeSubDepth: 2,
+        messageTreeDepth: 8,
+        voteOptionTreeDepth: 2,
+      },
+      batchSizes: { messageBatchSize: 25 },
+    }
+
     return new MaciParameters({
       ...params.maxValues,
       ...params.treeDepths,

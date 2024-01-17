@@ -20,7 +20,7 @@
     "big-integer": "^1.6.52",
     "commander": "^11.1.0",
     "dotenv": "^8.2.0",
-    "maci-contracts": "0.0.0-ci.2e62774",
+    "maci-contracts": "0.0.0-ci.ae1f52e",
     "solidity-rlp": "2.0.8"
   },
   "devDependencies": {
@@ -41,9 +41,9 @@
     "hardhat-contract-sizer": "^2.10.0",
     "hardhat-gas-reporter": "^1.0.8",
     "ipfs-only-hash": "^2.0.1",
-    "maci-circuits": "0.0.0-ci.2e62774",
-    "maci-cli": "0.0.0-ci.2e62774",
-    "maci-domainobjs": "0.0.0-ci.2e62774",
+    "maci-circuits": "0.0.0-ci.ae1f52e",
+    "maci-cli": "0.0.0-ci.ae1f52e",
+    "maci-domainobjs": "0.0.0-ci.ae1f52e",
     "mocha": "^10.2.0",
     "solidity-coverage": "^0.8.1",
     "ts-node": "^10.9.2",

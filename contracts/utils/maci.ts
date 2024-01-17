@@ -305,17 +305,8 @@ export async function mergeMaciSubtrees(
   pollId: string,
   numOperations: number
 ) {
-  await mergeMessages({
-    contract: maciAddress,
-    poll_id: pollId,
-    num_queue_ops: numOperations,
-  })
-
-  await mergeSignups({
-    contract: maciAddress,
-    poll_id: pollId,
-    num_queue_ops: numOperations,
-  })
+  await mergeMessages(Number(pollId), maciAddress, numOperations.toString())
+  await mergeSignups(Number(pollId), maciAddress, numOperations.toString())
 }
 
 /**

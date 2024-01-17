@@ -13,11 +13,9 @@ import {
   deployMaciFactory,
 } from '../utils/deployment'
 import { MaciParameters } from '../utils/maciParameters'
-import { DEFAULT_CIRCUIT } from '../utils/circuits'
 import { HardhatEthersSigner } from '@nomicfoundation/hardhat-ethers/signers'
 
 const roundDuration = 10000
-const circuit = DEFAULT_CIRCUIT
 
 describe('Clr fund deployer', async () => {
   let deployer: HardhatEthersSigner
@@ -57,7 +55,7 @@ describe('Clr fund deployer', async () => {
       signer: deployer,
       ethers,
     })
-    const params = MaciParameters.mock(circuit)
+    const params = MaciParameters.mock()
     await maciFactory.setMaciParameters(...params.asContractParam())
 
     factoryTemplate = await deployContract({
@@ -209,7 +207,7 @@ describe('Clr fund deployer', async () => {
         recipientRegistry.target
       )
       expect(await recipientRegistry.controller()).to.equal(clrfund.target)
-      const params = MaciParameters.mock(circuit)
+      const params = MaciParameters.mock()
       expect(await recipientRegistry.maxRecipients()).to.equal(
         5 ** params.voteOptionTreeDepth
       )
@@ -356,17 +354,14 @@ describe('Clr fund deployer', async () => {
     })
 
     // TODO investigate why this fails
-    it.skip('reverts if recipient registry is not set', async () => {
+    it('reverts if recipient registry is not set', async () => {
       await clrfund.setUserRegistry(userRegistry.target)
       await clrfund.setToken(token.target)
       await clrfund.setCoordinator(coordinator.address, coordinatorPubKey)
 
       await expect(
         clrfund.deployNewRound(roundDuration)
-      ).to.be.revertedWithCustomError(
-        roundInterface,
-        'InvalidRecipientRegistry'
-      )
+      ).to.be.revertedWithCustomError(clrfund, 'RecipientRegistryNotSet')
     })
 
     it('reverts if native token is not set', async () => {

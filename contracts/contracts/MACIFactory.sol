@@ -164,10 +164,13 @@ contract MACIFactory is Ownable, Params, SnarkCommon, DomainObjs, MACICommon {
     SignUpGatekeeper signUpGatekeeper,
     InitialVoiceCreditProxy initialVoiceCreditProxy,
     address topupCredit,
+    uint256 duration,
+    address coordinator,
+    PubKey calldata coordinatorPubKey,
     address maciOwner
   )
     external
-    returns (MACI _maci)
+    returns (MACI _maci, MACI.PollContracts memory _pollContracts)
   {
     if (!vkRegistry.hasProcessVk(
       stateTreeDepth,
@@ -196,6 +199,22 @@ contract MACIFactory is Ownable, Params, SnarkCommon, DomainObjs, MACICommon {
       TopupCredit(topupCredit),
       stateTreeDepth
     );
+
+    _pollContracts = _maci.deployPoll(
+      duration,
+      maxValues,
+      treeDepths,
+      coordinatorPubKey,
+      address(verifier),
+      address(vkRegistry),
+      // pass false to not deploy the subsidy contract
+      false
+    );
+
+    // transfer ownership to coordinator to run the tally scripts
+    Ownable(_pollContracts.poll).transferOwnership(coordinator);
+    Ownable(_pollContracts.messageProcessor).transferOwnership(coordinator);
+    Ownable(_pollContracts.tally).transferOwnership(coordinator);
 
     _maci.transferOwnership(maciOwner);
 
