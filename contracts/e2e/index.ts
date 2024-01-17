@@ -1,6 +1,6 @@
 import { ethers, config } from 'hardhat'
 import { HardhatEthersSigner } from '@nomicfoundation/hardhat-ethers/signers'
-import { time } from '@nomicfoundation/hardhat-network-helpers'
+import { time, mine } from '@nomicfoundation/hardhat-network-helpers'
 import { expect } from 'chai'
 import { Contract, toNumber } from 'ethers'
 import {
@@ -151,7 +151,6 @@ describe('End-to-end Tests', function () {
 
     const roundFactory = await deployContract({
       name: 'FundingRoundFactory',
-      libraries: poseidonLibraries,
       signer: deployer,
       ethers,
     })
@@ -184,7 +183,7 @@ describe('End-to-end Tests', function () {
     }
 
     // Configure factory
-    await clrfund.setToken(token.address)
+    await clrfund.setToken(token.target)
     coordinatorKeypair = new Keypair()
     await clrfund.setCoordinator(
       coordinator.address,
@@ -194,14 +193,14 @@ describe('End-to-end Tests', function () {
     // Add funds to matching pool
     const poolContributionAmount = UNIT * BigInt(5)
     await (token.connect(poolContributor1) as Contract).transfer(
-      clrfund.address,
+      clrfund.target,
       poolContributionAmount
     )
 
     // Add additional funding source
     await clrfund.addFundingSource(await poolContributor2.getAddress())
     await (token.connect(poolContributor2) as Contract).approve(
-      clrfund.address,
+      clrfund.target,
       poolContributionAmount
     )
 
@@ -234,6 +233,7 @@ describe('End-to-end Tests', function () {
     // Deploy new funding round and MACI
     const newRoundTx = await clrfund.deployNewRound(roundDuration)
     maciTransactionHash = newRoundTx.hash
+
     const fundingRoundAddress = await clrfund.getCurrentRound()
     fundingRound = await ethers.getContractAt(
       'FundingRound',
@@ -242,7 +242,9 @@ describe('End-to-end Tests', function () {
     const maciAddress = await fundingRound.maci()
     maci = await ethers.getContractAt('MACI', maciAddress)
 
-    pollId = BigInt(await fundingRound.pollId())
+    pollId = await fundingRound.pollId()
+
+    await mine()
   })
 
   async function makeContributions(amounts: bigint[]) {
@@ -258,7 +260,7 @@ describe('End-to-end Tests', function () {
       await userRegistry.addUser(contributorAddress)
       // Approve transfer
       await (token.connect(contributor) as Contract).approve(
-        fundingRound.address,
+        fundingRound.target,
         contributionAmount
       )
       // Contribute
@@ -295,11 +297,11 @@ describe('End-to-end Tests', function () {
   async function finalizeRound(): Promise<any> {
     // Process messages and tally votes
     const maciAddress = await maci.getAddress()
-    await mergeMaciSubtrees(
+    await mergeMaciSubtrees({
       maciAddress,
-      pollId.toString(),
-      DEFAULT_SR_QUEUE_OPS
-    )
+      pollId,
+      numOperations: DEFAULT_SR_QUEUE_OPS,
+    })
 
     const random = Math.floor(Math.random() * 10 ** 8)
     const outputDir = path.join(proofOutputDirectory, `${random}`)
@@ -307,16 +309,17 @@ describe('End-to-end Tests', function () {
       mkdirSync(outputDir, { recursive: true })
     }
 
+    // past an end block that's later than the MACI start block
     const genProofArgs = getGenProofArgs({
       maciAddress,
       pollId,
       coordinatorMacisk: coordinatorKeypair.privKey.serialize(),
-      maciTxHash: maciTransactionHash,
       rapidSnark,
       circuitType: circuit,
       circuitDirectory,
       outputDir,
       blocksPerBatch: DEFAULT_GET_LOG_BATCH_SIZE,
+      maciTxHash: maciTransactionHash,
     })
 
     await genProofs(genProofArgs)
@@ -427,7 +430,7 @@ describe('End-to-end Tests', function () {
 
       // Spend voice credits on both recipients
       for (const recipientIndex of [1, 2]) {
-        const voiceCredits = contribution.voiceCredits.div(2)
+        const voiceCredits = BigInt(contribution.voiceCredits) / BigInt(2)
         const [message, encPubKey] = createMessage(
           contribution.stateIndex,
           newContributorKeypair,
@@ -459,7 +462,9 @@ describe('End-to-end Tests', function () {
     )
     const expectedClaims = await calculateClaims(
       fundingRound,
-      new Array(2).fill(contributions.map((x) => x.voiceCredits.div(2)))
+      new Array(2).fill(
+        contributions.map((x) => BigInt(x.voiceCredits) / BigInt(2))
+      )
     )
     console.log('expected claim', claims[1], expectedClaims[0])
     expect(BigInt(claims[1])).to.equal(expectedClaims[0])
@@ -475,7 +480,7 @@ describe('End-to-end Tests', function () {
     // 2 contirbutors, divide their contributions into 4 parts, only contribute 2 parts to 2 projects
     for (const contribution of contributions) {
       const contributor = contribution.signer
-      const voiceCredits = contribution.voiceCredits.div(4)
+      const voiceCredits = BigInt(contribution.voiceCredits) / BigInt(4)
       let nonce = 1
       const messages: Message[] = []
       const encPubKeys: PubKey[] = []
@@ -504,7 +509,7 @@ describe('End-to-end Tests', function () {
     await time.increase(roundDuration)
     const { tally, claims } = await finalizeRound()
     const expectedTotalVoiceCredits = sumVoiceCredits(
-      contributions.map((x) => x.voiceCredits.div(2))
+      contributions.map((x) => BigInt(x.voiceCredits) / BigInt(2))
     )
     expect(tally.totalSpentVoiceCredits.spent).to.equal(
       expectedTotalVoiceCredits
@@ -512,7 +517,9 @@ describe('End-to-end Tests', function () {
 
     const expectedClaims = await calculateClaims(
       fundingRound,
-      new Array(2).fill(contributions.map((x) => x.voiceCredits.div(4)))
+      new Array(2).fill(
+        contributions.map((x) => BigInt(x.voiceCredits) / BigInt(4))
+      )
     )
     expect(claims[1]).to.equal(expectedClaims[0])
     expect(claims[2]).to.equal(expectedClaims[1])
@@ -684,8 +691,8 @@ describe('End-to-end Tests', function () {
         [3, BigInt(contribution.voiceCredits) / BigInt(3)],
       ],
       [
-        [1, contribution.voiceCredits.div(2)],
-        [2, contribution.voiceCredits.div(2)],
+        [1, BigInt(contribution.voiceCredits) / BigInt(2)],
+        [2, BigInt(contribution.voiceCredits) / BigInt(2)],
         [3, ZERO],
       ],
     ]
@@ -742,7 +749,7 @@ describe('End-to-end Tests', function () {
       expectedTotalVoiceCredits
     )
 
-    const voiceCredits1 = contribution.voiceCredits.div(2)
+    const voiceCredits1 = BigInt(contribution.voiceCredits) / BigInt(2)
     const submittedVoiceCredits = [
       [voiceCredits1],
       [voiceCredits1, contribution2.voiceCredits],

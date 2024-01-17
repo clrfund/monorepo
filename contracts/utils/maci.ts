@@ -21,6 +21,8 @@ import {
 
 import { getTalyFilePath, isPathExist } from './misc'
 import { getCircuitFiles } from './circuits'
+import fs from 'fs'
+import path from 'path'
 
 interface TallyResult {
   recipientIndex: number
@@ -173,6 +175,9 @@ type getGenProofArgsInput = {
   outputDir: string
   // number of blocks of logs to fetch per batch
   blocksPerBatch: number
+  // fetch logs from MACI from these start and end blocks
+  startBlock?: number
+  endBlock?: number
   // flag to turn on verbose logging in MACI cli
   quiet?: boolean
 }
@@ -220,6 +225,8 @@ export function getGenProofArgs(args: getGenProofArgsInput): GenProofCliArgs {
     rapidSnark,
     outputDir,
     blocksPerBatch,
+    startBlock,
+    endBlock,
     quiet,
   } = args
 
@@ -249,8 +256,9 @@ export function getGenProofArgs(args: getGenProofArgsInput): GenProofCliArgs {
       processWasm,
       tallyWasm,
       useWasm: true,
-      stateFile: undefined,
       blocksPerBatch,
+      startBlock,
+      endBlock,
       quiet,
     }
   } else {
@@ -277,26 +285,55 @@ export function getGenProofArgs(args: getGenProofArgsInput): GenProofCliArgs {
       transactionHash: maciTxHash,
       useWasm: false,
       blocksPerBatch,
+      startBlock,
+      endBlock,
       quiet,
     }
   }
 }
 
 /**
+ * This is just temporary solution until the issue is resolved:
+ * https://github.com/privacy-scaling-explorations/maci/issues/1039
+ */
+function ensureContractAddressFileExist() {
+  fs.writeFileSync(
+    path.join(
+      path.dirname(__dirname),
+      '/node_modules/maci-cli/build/contractAddresses.json'
+    ),
+    JSON.stringify({})
+  )
+}
+
+/**
  * Merge MACI message and signups subtrees
  * Must merge the subtrees before calling genProofs
- *
  * @param maciAddress MACI contract address
  * @param pollId Poll id
  * @param numOperations Number of operations to perform for the merge
  */
-export async function mergeMaciSubtrees(
-  maciAddress: string,
-  pollId: string,
+export async function mergeMaciSubtrees({
+  maciAddress,
+  pollId,
+  numOperations,
+  quiet,
+}: {
+  maciAddress: string
+  pollId: bigint
   numOperations: number
-) {
-  await mergeMessages(Number(pollId), maciAddress, numOperations.toString())
-  await mergeSignups(Number(pollId), maciAddress, numOperations.toString())
+  quiet?: boolean
+}) {
+  if (!maciAddress) throw new Error('Missing MACI address')
+
+  // this is to work around issue https://github.com/privacy-scaling-explorations/maci/issues/1039
+  ensureContractAddressFileExist()
+
+  const pollIdAsNumber = toNumber(pollId)
+  const numOperationsAsString = numOperations.toString()
+
+  await mergeMessages(pollIdAsNumber, maciAddress, numOperationsAsString, quiet)
+  await mergeSignups(pollIdAsNumber, maciAddress, numOperationsAsString, quiet)
 }
 
 /**
@@ -321,12 +358,14 @@ export function newMaciPrivateKey(): string {
  * @param genProofArgs an object with all the arguments for the MACI genProofs command
  */
 export async function genProofs(genProofArgs: GenProofCliArgs): Promise<void> {
+  const pollId = toNumber(genProofArgs.pollId)
+
   await maciGenProofs(
     genProofArgs.outputDir,
     genProofArgs.tallyFile,
     genProofArgs.tallyZkey,
     genProofArgs.processZkey,
-    toNumber(genProofArgs.pollId),
+    pollId,
     genProofArgs.subsidyFile,
     genProofArgs.subsidyZkey,
     genProofArgs.rapidsnark,
