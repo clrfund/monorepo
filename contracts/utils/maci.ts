@@ -1,4 +1,4 @@
-import { Contract, ContractTransactionReceipt } from 'ethers'
+import { Contract, ContractTransactionReceipt, toNumber } from 'ethers'
 import {
   bnSqrt,
   createMessage,
@@ -12,25 +12,20 @@ import {
   Keypair,
 } from '@clrfund/common'
 import * as os from 'os'
-import { mergeMessages, mergeSignups, genProofs, proveOnChain } from 'maci-cli'
+import {
+  mergeMessages,
+  mergeSignups,
+  genProofs as maciGenProofs,
+  proveOnChain as maciProveOnChain,
+} from 'maci-cli'
 
 import { getTalyFilePath, isPathExist } from './misc'
-import { CIRCUITS } from './circuits'
-import path from 'path'
+import { getCircuitFiles } from './circuits'
 
 interface TallyResult {
   recipientIndex: number
   result: string
   proof: any[]
-}
-
-export interface ZkFiles {
-  processZkFile: string
-  processWitness: string
-  processWasm: string
-  tallyZkFile: string
-  tallyWitness: string
-  tallyWasm: string
 }
 
 export const isOsArm = os.arch().includes('arm')
@@ -162,28 +157,10 @@ export async function addTallyResultsBatch(
   return totalGasUsed
 }
 
-/**
- * Get the zkey file path
- * @param name zkey file name
- * @returns zkey file path
- */
-export function getCircuitFiles(circuit: string, directory: string): ZkFiles {
-  const params = CIRCUITS[circuit]
-  return {
-    processZkFile: path.join(directory, params.processMessagesZkey),
-    processWitness: path.join(directory, params.processWitness),
-    processWasm: path.join(directory, params.processWasm),
-    tallyZkFile: path.join(directory, params.tallyVotesZkey),
-    tallyWitness: path.join(directory, params.tallyWitness),
-    tallyWasm: path.join(directory, params.tallyWasm),
-  }
-}
-
 /* Input to getGenProofArgs() */
 type getGenProofArgsInput = {
   maciAddress: string
-  providerUrl: string
-  pollId: string
+  pollId: bigint
   // coordinator's MACI serialized secret key
   coordinatorMacisk: string
   // the transaction hash of the creation of the MACI contract
@@ -194,36 +171,47 @@ type getGenProofArgsInput = {
   rapidSnark?: string
   // where the proof will be produced
   outputDir: string
+  // number of blocks of logs to fetch per batch
+  blocksPerBatch: number
+  // flag to turn on verbose logging in MACI cli
+  quiet?: boolean
 }
 
-type getGenProofArgsResult = {
-  contract: string
-  eth_provider: string
-  poll_id: string
-  tally_file: string
+type GenProofCliArgs = {
+  outputDir: string
+  tallyFile: string
+  tallyZkey: string
+  processZkey: string
+  pollId: bigint
+  subsidyFile?: string
+  subsidyZkey?: string
   rapidsnark?: string
-  process_witnessgen?: string
-  tally_witnessgen?: string
-  process_wasm?: string
-  tally_wasm?: string
-  process_zkey: string
-  tally_zkey: string
-  transaction_hash?: string
-  output: string
-  privkey: string
-  macistate: string
-  cleanup: boolean
+  processWitgen?: string
+  processDatFile?: string
+  tallyWitgen?: string
+  tallyDatFile?: string
+  subsidyWitgen?: string
+  subsidyDatFile?: string
+  coordinatorPrivKey?: string
+  maciAddress?: string
+  transactionHash?: string
+  processWasm?: string
+  tallyWasm?: string
+  subsidyWasm?: string
+  useWasm?: boolean
+  stateFile?: string
+  startBlock?: number
+  blocksPerBatch?: number
+  endBlock?: number
+  quiet?: boolean
 }
 
 /*
  * Get the arguments to pass to the genProof function
  */
-export function getGenProofArgs(
-  args: getGenProofArgsInput
-): getGenProofArgsResult {
+export function getGenProofArgs(args: getGenProofArgsInput): GenProofCliArgs {
   const {
     maciAddress,
-    providerUrl,
     pollId,
     coordinatorMacisk,
     maciTxHash,
@@ -231,38 +219,39 @@ export function getGenProofArgs(
     circuitDirectory,
     rapidSnark,
     outputDir,
+    blocksPerBatch,
+    quiet,
   } = args
 
   const tallyFile = getTalyFilePath(outputDir)
-  const maciStateFile = path.join(outputDir, `macistate`)
 
   const {
     processZkFile,
     tallyZkFile,
     processWitness,
     processWasm,
+    processDatFile,
     tallyWitness,
     tallyWasm,
+    tallyDatFile,
   } = getCircuitFiles(circuitType, circuitDirectory)
 
-  // do not cleanup threads after calling genProofs,
-  // the script will exit and end threads at the end
-  const cleanup = false
   if (isOsArm) {
     return {
-      contract: maciAddress,
-      eth_provider: providerUrl,
-      poll_id: pollId.toString(),
-      tally_file: tallyFile,
-      process_wasm: processWasm,
-      process_zkey: processZkFile,
-      tally_zkey: tallyZkFile,
-      tally_wasm: tallyWasm,
-      transaction_hash: maciTxHash,
-      output: outputDir,
-      privkey: coordinatorMacisk,
-      macistate: maciStateFile,
-      cleanup,
+      outputDir,
+      tallyFile,
+      tallyZkey: tallyZkFile,
+      processZkey: processZkFile,
+      pollId,
+      coordinatorPrivKey: coordinatorMacisk,
+      maciAddress,
+      transactionHash: maciTxHash,
+      processWasm,
+      tallyWasm,
+      useWasm: true,
+      stateFile: undefined,
+      blocksPerBatch,
+      quiet,
     }
   } else {
     if (!rapidSnark) {
@@ -274,20 +263,21 @@ export function getGenProofArgs(
     }
 
     return {
-      contract: maciAddress,
-      eth_provider: providerUrl,
-      poll_id: pollId.toString(),
-      tally_file: tallyFile,
-      rapidsnark: rapidSnark,
-      process_witnessgen: processWitness,
-      tally_witnessgen: tallyWitness,
-      process_zkey: processZkFile,
-      tally_zkey: tallyZkFile,
-      transaction_hash: maciTxHash,
-      output: outputDir,
-      privkey: coordinatorMacisk,
-      macistate: maciStateFile,
-      cleanup,
+      outputDir,
+      tallyFile,
+      tallyZkey: tallyZkFile,
+      processZkey: processZkFile,
+      pollId,
+      processWitgen: processWitness,
+      processDatFile,
+      tallyWitgen: tallyWitness,
+      tallyDatFile,
+      coordinatorPrivKey: coordinatorMacisk,
+      maciAddress,
+      transactionHash: maciTxHash,
+      useWasm: false,
+      blocksPerBatch,
+      quiet,
     }
   }
 }
@@ -325,4 +315,72 @@ export function newMaciPrivateKey(): string {
   return secretKey
 }
 
-export { createMessage, getRecipientClaimData, bnSqrt, proveOnChain, genProofs }
+/**
+ * This function is a temporary wrapper for MACI genProofs command until the MACI genProofs
+ * changed to take an object argument
+ * @param genProofArgs an object with all the arguments for the MACI genProofs command
+ */
+export async function genProofs(genProofArgs: GenProofCliArgs): Promise<void> {
+  await maciGenProofs(
+    genProofArgs.outputDir,
+    genProofArgs.tallyFile,
+    genProofArgs.tallyZkey,
+    genProofArgs.processZkey,
+    toNumber(genProofArgs.pollId),
+    genProofArgs.subsidyFile,
+    genProofArgs.subsidyZkey,
+    genProofArgs.rapidsnark,
+    genProofArgs.processWitgen,
+    genProofArgs.processDatFile,
+    genProofArgs.tallyWitgen,
+    genProofArgs.tallyDatFile,
+    genProofArgs.subsidyWitgen,
+    genProofArgs.subsidyDatFile,
+    genProofArgs.coordinatorPrivKey,
+    genProofArgs.maciAddress,
+    genProofArgs.transactionHash,
+    genProofArgs.processWasm,
+    genProofArgs.tallyWasm,
+    genProofArgs.subsidyWasm,
+    genProofArgs.useWasm,
+    genProofArgs.stateFile,
+    genProofArgs.startBlock,
+    genProofArgs.blocksPerBatch,
+    genProofArgs.endBlock,
+    genProofArgs.quiet
+  )
+}
+
+/**
+ * Structure to store the proveOnChain arguments
+ */
+type proveOnChainCliArgs = {
+  pollId: bigint
+  proofDir: string
+  subsidyEnabled: boolean
+  maciAddress?: string
+  messageProcessorAddress?: string
+  tallyAddress?: string
+  subsidyAddress?: string
+  quiet?: boolean
+}
+
+/**
+ * This function is a temporary wrapper for the MACI proveOnChain function until
+ * the function is changed back to taking 1 argument object as opposed to positional arguments
+ * @param arg an object containging all the proveOnChain arguments
+ */
+export async function proveOnChain(arg: proveOnChainCliArgs) {
+  await maciProveOnChain(
+    arg.pollId.toString(),
+    arg.proofDir,
+    arg.subsidyEnabled,
+    arg.maciAddress,
+    arg.messageProcessorAddress,
+    arg.tallyAddress,
+    arg.subsidyAddress,
+    arg.quiet
+  )
+}
+
+export { createMessage, getRecipientClaimData, bnSqrt }

@@ -2,17 +2,7 @@ import { Contract } from 'ethers'
 
 import { VerifyingKey } from 'maci-domainobjs'
 import { extractVk } from 'maci-circuits'
-import { CIRCUITS } from './circuits'
-import path from 'path'
-
-export interface ZkFiles {
-  processZkFile: string
-  processWitness: string
-  processWasm: string
-  tallyZkFile: string
-  tallyWitness: string
-  tallyWasm: string
-}
+import { CIRCUITS, getCircuitFiles } from './circuits'
 
 type TreeDepths = {
   intStateTreeDepth: number
@@ -24,23 +14,6 @@ type TreeDepths = {
 type MaxValues = {
   maxMessages: number
   maxVoteOptions: number
-}
-
-/**
- * Get the zkey file path
- * @param name zkey file name
- * @returns zkey file path
- */
-export function getCircuitFiles(circuit: string, directory: string): ZkFiles {
-  const params = CIRCUITS[circuit]
-  return {
-    processZkFile: path.join(directory, params.processMessagesZkey),
-    processWitness: path.join(directory, params.processWitness),
-    processWasm: path.join(directory, params.processWasm),
-    tallyZkFile: path.join(directory, params.tallyVotesZkey),
-    tallyWitness: path.join(directory, params.tallyWitness),
-    tallyWasm: path.join(directory, params.tallyWasm),
-  }
 }
 
 export class MaciParameters {

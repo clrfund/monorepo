@@ -2,7 +2,7 @@ import { ethers, config } from 'hardhat'
 import { HardhatEthersSigner } from '@nomicfoundation/hardhat-ethers/signers'
 import { time } from '@nomicfoundation/hardhat-network-helpers'
 import { expect } from 'chai'
-import { Contract, Signer } from 'ethers'
+import { Contract, toNumber } from 'ethers'
 import {
   Keypair,
   createMessage,
@@ -11,13 +11,12 @@ import {
   genTallyResultCommitment,
 } from '@clrfund/common'
 
-import { UNIT } from '../utils/constants'
+import { UNIT, ALPHA_PRECISION } from '../utils/constants'
 import { getEventArg } from '../utils/contracts'
 import {
   deployContract,
   deployPoseidonLibraries,
   deployMaciFactory,
-  deployMessageProcesorAndTally,
 } from '../utils/deployment'
 import { getIpfsHash } from '../utils/ipfs'
 import {
@@ -37,6 +36,7 @@ import path from 'path'
 const ZERO = BigInt(0)
 const DEFAULT_SR_QUEUE_OPS = 4
 const roundDuration = 7 * 86400
+const DEFAULT_GET_LOG_BATCH_SIZE = 10000
 
 // MACI zkFiles
 const circuit = process.env.CIRCUIT_TYPE || DEFAULT_CIRCUIT
@@ -44,15 +44,6 @@ const circuitDirectory = process.env.CIRCUIT_DIRECTORY || '../../params'
 const rapidSnark = process.env.RAPID_SNARK || '~/rapidsnark/package/bin/prover'
 const proofOutputDirectory = process.env.PROOF_OUTPUT_DIR || './proof_output'
 const tallyBatchSize = Number(process.env.TALLY_BATCH_SIZE || 8)
-
-let maciTransactionHash: string
-const ALPHA_PRECISION = BigInt(10) ** 18n
-
-const currentBlockTimestamp = async (provider: any): Promise<number> => {
-  const blockNum = await provider.getBlockNumber()
-  const block = await provider.getBlock(blockNum)
-  return Number(block.timestamp)
-}
 
 function sumVoiceCredits(voiceCredits: bigint[]): string {
   const total = voiceCredits.reduce((sum, credits) => sum + credits, BigInt(0))
@@ -97,6 +88,8 @@ async function calculateClaims(
 describe('End-to-end Tests', function () {
   this.timeout(60 * 60 * 1000)
   this.bail(true)
+
+  let maciTransactionHash: string
 
   let deployer: HardhatEthersSigner
   let coordinator: HardhatEthersSigner
@@ -164,30 +157,30 @@ describe('End-to-end Tests', function () {
     })
 
     const initClrfundTx = await clrfund.init(
-      maciFactory.address,
-      roundFactory.address
+      maciFactory.target,
+      roundFactory.target
     )
     await initClrfundTx.wait()
-    const transferTx = await maciFactory.transferOwnership(clrfund.address)
+    const transferTx = await maciFactory.transferOwnership(clrfund.target)
     await transferTx.wait()
 
     userRegistry = await ethers.deployContract('SimpleUserRegistry', deployer)
-    await clrfund.setUserRegistry(userRegistry.address)
+    await clrfund.setUserRegistry(userRegistry.target)
     const SimpleRecipientRegistry = await ethers.getContractFactory(
       'SimpleRecipientRegistry',
       deployer
     )
-    recipientRegistry = await SimpleRecipientRegistry.deploy(clrfund.address)
-    await clrfund.setRecipientRegistry(recipientRegistry.address)
+    recipientRegistry = await SimpleRecipientRegistry.deploy(clrfund.target)
+    await clrfund.setRecipientRegistry(recipientRegistry.target)
 
     // Deploy ERC20 token contract
     const Token = await ethers.getContractFactory('AnyOldERC20Token', deployer)
-    const tokenInitialSupply = UNIT.mul(10000)
+    const tokenInitialSupply = UNIT * BigInt(10000)
     token = await Token.deploy(tokenInitialSupply)
-    await token.transfer(await poolContributor1.getAddress(), UNIT.mul(50))
-    await token.transfer(await poolContributor2.getAddress(), UNIT.mul(50))
+    await token.transfer(await poolContributor1.getAddress(), UNIT * BigInt(50))
+    await token.transfer(await poolContributor2.getAddress(), UNIT * BigInt(50))
     for (const contributor of contributors) {
-      await token.transfer(await contributor.getAddress(), UNIT.mul(100))
+      await token.transfer(await contributor.getAddress(), UNIT * BigInt(100))
     }
 
     // Configure factory
@@ -199,16 +192,18 @@ describe('End-to-end Tests', function () {
     )
 
     // Add funds to matching pool
-    const poolContributionAmount = UNIT.mul(5)
-    await token
-      .connect(poolContributor1)
-      .transfer(clrfund.address, poolContributionAmount)
+    const poolContributionAmount = UNIT * BigInt(5)
+    await (token.connect(poolContributor1) as Contract).transfer(
+      clrfund.address,
+      poolContributionAmount
+    )
 
     // Add additional funding source
     await clrfund.addFundingSource(await poolContributor2.getAddress())
-    await token
-      .connect(poolContributor2)
-      .approve(clrfund.address, poolContributionAmount)
+    await (token.connect(poolContributor2) as Contract).approve(
+      clrfund.address,
+      poolContributionAmount
+    )
 
     // Add recipients
     await recipientRegistry.addRecipient(
@@ -250,11 +245,6 @@ describe('End-to-end Tests', function () {
     pollId = BigInt(await fundingRound.pollId())
   })
 
-  async function timeTravel(duration: number) {
-    const currentTime = await time.latest()
-    await time.increase(duration + currentTime)
-  }
-
   async function makeContributions(amounts: bigint[]) {
     const contributions: { [key: string]: any }[] = []
     for (let index = 0; index < contributors.length; index++) {
@@ -267,17 +257,18 @@ describe('End-to-end Tests', function () {
       const contributorAddress = await contributor.getAddress()
       await userRegistry.addUser(contributorAddress)
       // Approve transfer
-      await token
-        .connect(contributor)
-        .approve(fundingRound.address, contributionAmount)
+      await (token.connect(contributor) as Contract).approve(
+        fundingRound.address,
+        contributionAmount
+      )
       // Contribute
       const contributorKeypair = new Keypair()
-      const contributionTx = await fundingRound
-        .connect(contributor)
-        .contribute(
-          contributorKeypair.pubKey.asContractParam(),
-          contributionAmount
-        )
+      const contributionTx = await (
+        fundingRound.connect(contributor) as Contract
+      ).contribute(
+        contributorKeypair.pubKey.asContractParam(),
+        contributionAmount
+      )
       const stateIndex = await getEventArg(
         contributionTx,
         maci,
@@ -293,20 +284,19 @@ describe('End-to-end Tests', function () {
       contributions.push({
         signer: contributor,
         keypair: contributorKeypair,
-        stateIndex: parseInt(stateIndex),
+        stateIndex: toNumber(stateIndex),
         contribution: contributionAmount,
-        voiceCredits: voiceCredits,
+        voiceCredits: BigInt(voiceCredits),
       })
     }
     return contributions
   }
 
   async function finalizeRound(): Promise<any> {
-    const providerUrl = (provider as any)._hardhatNetwork.config.url
-
     // Process messages and tally votes
+    const maciAddress = await maci.getAddress()
     await mergeMaciSubtrees(
-      maci.address,
+      maciAddress,
       pollId.toString(),
       DEFAULT_SR_QUEUE_OPS
     )
@@ -316,47 +306,47 @@ describe('End-to-end Tests', function () {
     if (!existsSync(outputDir)) {
       mkdirSync(outputDir, { recursive: true })
     }
+
     const genProofArgs = getGenProofArgs({
-      maciAddress: maci.address,
-      providerUrl,
-      pollId: pollId.toString(),
+      maciAddress,
+      pollId,
       coordinatorMacisk: coordinatorKeypair.privKey.serialize(),
       maciTxHash: maciTransactionHash,
       rapidSnark,
       circuitType: circuit,
       circuitDirectory,
       outputDir,
+      blocksPerBatch: DEFAULT_GET_LOG_BATCH_SIZE,
     })
+
     await genProofs(genProofArgs)
 
-    const { mpContract, tallyContract } = await deployMessageProcesorAndTally({
-      libraries: poseidonLibraries,
-      ethers,
-      signer: coordinator,
-    })
-
+    const tallyAddress = await maci.getPoll(pollId)
+    const tallyContract = await ethers.getContractAt('Tally', tallyAddress)
+    const messageProcessorAddress = await tallyContract.mp()
     // Submit proofs to MACI contract
     await proveOnChain({
-      contract: maci.address,
-      poll_id: pollId.toString(),
-      mp: mpContract.address,
-      tally: tallyContract.address,
-      //subsidy: tallyContract.address, // TODO: make subsidy optional
-      proof_dir: genProofArgs.output,
+      pollId,
+      proofDir: genProofArgs.outputDir,
+      subsidyEnabled: false,
+      maciAddress,
+      messageProcessorAddress,
+      tallyAddress,
     })
     console.log('finished proveOnChain')
 
-    await fundingRound.connect(coordinator).setTally(tallyContract.address)
-    const tally = JSON.parse(readFileSync(genProofArgs.tally_file).toString())
+    const tally = JSON.parse(readFileSync(genProofArgs.tallyFile).toString())
     const tallyHash = await getIpfsHash(tally)
-    await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
+    await (fundingRound.connect(coordinator) as Contract).publishTallyHash(
+      tallyHash
+    )
     console.log('Tally hash', tallyHash)
 
     // add tally results to funding round
     const recipientTreeDepth = params.voteOptionTreeDepth
     console.log('Adding tally result on chain in batches of', tallyBatchSize)
     await addTallyResultsBatch(
-      fundingRound.connect(coordinator),
+      fundingRound.connect(coordinator) as Contract,
       recipientTreeDepth,
       tally,
       tallyBatchSize
@@ -364,13 +354,13 @@ describe('End-to-end Tests', function () {
     console.log('Finished adding tally results')
 
     const newResultCommitment = genTallyResultCommitment(
-      tally.results.tally.map((x) => BigInt(x)),
+      tally.results.tally.map((x: string) => BigInt(x)),
       tally.results.salt,
       recipientTreeDepth
     )
 
     const perVOSpentVoiceCreditsCommitment = genTallyResultCommitment(
-      tally.perVOSpentVoiceCredits.tally.map((x) => BigInt(x)),
+      tally.perVOSpentVoiceCredits.tally.map((x: string) => BigInt(x)),
       tally.perVOSpentVoiceCredits.salt,
       recipientTreeDepth
     )
@@ -393,9 +383,9 @@ describe('End-to-end Tests', function () {
         recipientTreeDepth,
         tally
       )
-      const claimTx = await fundingRound
-        .connect(recipient)
-        .claimFunds(...claimData)
+      const claimTx = await (
+        fundingRound.connect(recipient) as Contract
+      ).claimFunds(...claimData)
       const claimedAmount = await getEventArg(
         claimTx,
         fundingRound,
@@ -409,8 +399,8 @@ describe('End-to-end Tests', function () {
 
   it('should allocate funds correctly when users change keys', async () => {
     const contributions = await makeContributions([
-      UNIT.mul(50).div(10),
-      UNIT.mul(50).div(10),
+      (UNIT * BigInt(50)) / BigInt(10),
+      (UNIT * BigInt(50)) / BigInt(10),
     ])
     // Submit messages
     for (const contribution of contributions) {
@@ -453,13 +443,13 @@ describe('End-to-end Tests', function () {
         nonce += 1
       }
 
-      await fundingRound.connect(contributor).submitMessageBatch(
+      await (fundingRound.connect(contributor) as Contract).submitMessageBatch(
         messages.reverse().map((msg) => msg.asContractParam()),
         encPubKeys.reverse().map((key) => key.asContractParam())
       )
     }
 
-    await timeTravel(roundDuration)
+    await time.increase(roundDuration)
     const { tally, claims } = await finalizeRound()
     const expectedTotalVoiceCredits = sumVoiceCredits(
       contributions.map((x) => x.voiceCredits)
@@ -471,14 +461,15 @@ describe('End-to-end Tests', function () {
       fundingRound,
       new Array(2).fill(contributions.map((x) => x.voiceCredits.div(2)))
     )
-    expect(claims[1]).to.equal(expectedClaims[0])
-    expect(claims[2]).to.equal(expectedClaims[1])
+    console.log('expected claim', claims[1], expectedClaims[0])
+    expect(BigInt(claims[1])).to.equal(expectedClaims[0])
+    expect(BigInt(claims[2])).to.equal(expectedClaims[1])
   })
 
   it('should allocate funds correctly if not all voice credits are spent', async () => {
     const contributions = await makeContributions([
-      UNIT.mul(36).div(10),
-      UNIT.mul(36).div(10),
+      (UNIT * BigInt(36)) / BigInt(10),
+      (UNIT * BigInt(36)) / BigInt(10),
     ])
 
     // 2 contirbutors, divide their contributions into 4 parts, only contribute 2 parts to 2 projects
@@ -504,13 +495,13 @@ describe('End-to-end Tests', function () {
         encPubKeys.push(encPubKey)
         nonce += 1
       }
-      await fundingRound.connect(contributor).submitMessageBatch(
+      await (fundingRound.connect(contributor) as Contract).submitMessageBatch(
         messages.reverse().map((msg) => msg.asContractParam()),
         encPubKeys.reverse().map((key) => key.asContractParam())
       )
     }
 
-    await timeTravel(roundDuration)
+    await time.increase(roundDuration)
     const { tally, claims } = await finalizeRound()
     const expectedTotalVoiceCredits = sumVoiceCredits(
       contributions.map((x) => x.voiceCredits.div(2))
@@ -529,14 +520,14 @@ describe('End-to-end Tests', function () {
 
   it('should overwrite votes 1', async () => {
     const [contribution, contribution2] = await makeContributions([
-      UNIT.mul(5),
-      UNIT.mul(90),
+      UNIT * BigInt(5),
+      UNIT * BigInt(90),
     ])
     const contributor = contribution.signer
     const votes = [
-      [1, contribution.voiceCredits.div(6)],
-      [2, contribution.voiceCredits.div(2)],
-      [1, contribution.voiceCredits.div(2)],
+      [1, BigInt(contribution.voiceCredits) / BigInt(6)],
+      [2, BigInt(contribution.voiceCredits) / BigInt(2)],
+      [1, BigInt(contribution.voiceCredits) / BigInt(2)],
     ]
     const messages: Message[] = []
     const encPubKeys: PubKey[] = []
@@ -556,7 +547,7 @@ describe('End-to-end Tests', function () {
       messages.push(message)
       encPubKeys.push(encPubKey)
     }
-    await fundingRound.connect(contributor).submitMessageBatch(
+    await (fundingRound.connect(contributor) as Contract).submitMessageBatch(
       messages.reverse().map((msg) => msg.asContractParam()),
       encPubKeys.reverse().map((key) => key.asContractParam())
     )
@@ -570,14 +561,14 @@ describe('End-to-end Tests', function () {
       1,
       pollId
     )
-    await fundingRound
-      .connect(contribution2.signer)
-      .submitMessageBatch(
-        [message.asContractParam()],
-        [encPubKey.asContractParam()]
-      )
+    await (
+      fundingRound.connect(contribution2.signer) as Contract
+    ).submitMessageBatch(
+      [message.asContractParam()],
+      [encPubKey.asContractParam()]
+    )
 
-    await timeTravel(roundDuration)
+    await time.increase(roundDuration)
     const { tally, claims } = await finalizeRound()
     const expectedTotalVoiceCredits = sumVoiceCredits([
       contribution.voiceCredits,
@@ -587,7 +578,7 @@ describe('End-to-end Tests', function () {
       expectedTotalVoiceCredits
     )
 
-    const voiceCredits1 = contribution.voiceCredits.div(2)
+    const voiceCredits1 = BigInt(contribution.voiceCredits) / BigInt(2)
     const submittedVoiceCredits = [
       [voiceCredits1],
       [voiceCredits1, contribution2.voiceCredits],
@@ -605,15 +596,15 @@ describe('End-to-end Tests', function () {
 
   it('should overwrite votes 2', async () => {
     const [contribution, contribution2] = await makeContributions([
-      UNIT.mul(90),
-      UNIT.mul(40),
+      UNIT * BigInt(90),
+      UNIT * BigInt(40),
     ])
     const contributor = contribution.signer
     const votes = [
-      [1, contribution.voiceCredits.div(2)],
-      [2, contribution.voiceCredits.div(2)],
+      [1, BigInt(contribution.voiceCredits) / BigInt(2)],
+      [2, BigInt(contribution.voiceCredits) / BigInt(2)],
       [1, ZERO],
-      [2, contribution.voiceCredits],
+      [2, BigInt(contribution.voiceCredits)],
     ]
     const messages: Message[] = []
     const encPubKeys: PubKey[] = []
@@ -633,7 +624,7 @@ describe('End-to-end Tests', function () {
       messages.push(message)
       encPubKeys.push(encPubKey)
     }
-    await fundingRound.connect(contributor).submitMessageBatch(
+    await (fundingRound.connect(contributor) as Contract).submitMessageBatch(
       messages.reverse().map((msg) => msg.asContractParam()),
       encPubKeys.reverse().map((key) => key.asContractParam())
     )
@@ -649,14 +640,14 @@ describe('End-to-end Tests', function () {
       1,
       pollId
     )
-    await fundingRound
-      .connect(contribution2.signer)
-      .submitMessageBatch(
-        [message.asContractParam()],
-        [encPubKey.asContractParam()]
-      )
+    await (
+      fundingRound.connect(contribution2.signer) as Contract
+    ).submitMessageBatch(
+      [message.asContractParam()],
+      [encPubKey.asContractParam()]
+    )
 
-    await timeTravel(roundDuration)
+    await time.increase(roundDuration)
     const { tally, claims } = await finalizeRound()
     const expectedTotalVoiceCredits = sumVoiceCredits([
       contribution.voiceCredits,
@@ -682,15 +673,15 @@ describe('End-to-end Tests', function () {
 
   it('should overwrite previous batch of votes', async () => {
     const [contribution, contribution2] = await makeContributions([
-      UNIT.mul(5),
-      UNIT.mul(40),
+      UNIT * BigInt(5),
+      UNIT * BigInt(40),
     ])
     const contributor = contribution.signer
     const votes = [
       [
-        [1, contribution.voiceCredits.div(3)],
-        [2, contribution.voiceCredits.div(3)],
-        [3, contribution.voiceCredits.div(3)],
+        [1, BigInt(contribution.voiceCredits) / BigInt(3)],
+        [2, BigInt(contribution.voiceCredits) / BigInt(3)],
+        [3, BigInt(contribution.voiceCredits) / BigInt(3)],
       ],
       [
         [1, contribution.voiceCredits.div(2)],
@@ -717,7 +708,7 @@ describe('End-to-end Tests', function () {
         messages.push(message)
         encPubKeys.push(encPubKey)
       }
-      await fundingRound.connect(contributor).submitMessageBatch(
+      await (fundingRound.connect(contributor) as Contract).submitMessageBatch(
         messages.reverse().map((msg) => msg.asContractParam()),
         encPubKeys.reverse().map((key) => key.asContractParam())
       )
@@ -734,14 +725,14 @@ describe('End-to-end Tests', function () {
       1,
       pollId
     )
-    await fundingRound
-      .connect(contribution2.signer)
-      .submitMessageBatch(
-        [message.asContractParam()],
-        [encPubKey.asContractParam()]
-      )
+    await (
+      fundingRound.connect(contribution2.signer) as Contract
+    ).submitMessageBatch(
+      [message.asContractParam()],
+      [encPubKey.asContractParam()]
+    )
 
-    await timeTravel(roundDuration)
+    await time.increase(roundDuration)
     const { tally, claims } = await finalizeRound()
     const expectedTotalVoiceCredits = sumVoiceCredits([
       contribution.voiceCredits,
@@ -772,8 +763,8 @@ describe('End-to-end Tests', function () {
 
   it('should invalidate votes in case of bribe', async () => {
     const [contribution, contribution2] = await makeContributions([
-      UNIT.mul(90),
-      UNIT.mul(40),
+      UNIT * BigInt(90),
+      UNIT * BigInt(40),
     ])
     const contributor = contribution.signer
     let message
@@ -807,7 +798,7 @@ describe('End-to-end Tests', function () {
     )
     messageBatch1.push(message)
     encPubKeyBatch1.push(encPubKey)
-    await fundingRound.connect(contributor).submitMessageBatch(
+    await (fundingRound.connect(contributor) as Contract).submitMessageBatch(
       messageBatch1.reverse().map((msg) => msg.asContractParam()),
       encPubKeyBatch1.reverse().map((key) => key.asContractParam())
     )
@@ -855,7 +846,7 @@ describe('End-to-end Tests', function () {
     )
     messageBatch2.push(message)
     encPubKeyBatch2.push(encPubKey)
-    await fundingRound.connect(contributor).submitMessageBatch(
+    await (fundingRound.connect(contributor) as Contract).submitMessageBatch(
       messageBatch2.reverse().map((msg) => msg.asContractParam()),
       encPubKeyBatch2.reverse().map((key) => key.asContractParam())
     )
@@ -871,14 +862,14 @@ describe('End-to-end Tests', function () {
       1,
       pollId
     )
-    await fundingRound
-      .connect(contribution2.signer)
-      .submitMessageBatch(
-        [message.asContractParam()],
-        [encPubKey.asContractParam()]
-      )
+    await (
+      fundingRound.connect(contribution2.signer) as Contract
+    ).submitMessageBatch(
+      [message.asContractParam()],
+      [encPubKey.asContractParam()]
+    )
 
-    await timeTravel(roundDuration)
+    await time.increase(roundDuration)
     const { tally, claims } = await finalizeRound()
     const expectedTotalVoiceCredits = sumVoiceCredits([
       contribution.voiceCredits,
