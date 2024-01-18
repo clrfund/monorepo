@@ -51,12 +51,27 @@ async function verifyClrFund(clrfund: Contract, run: any): Promise<string> {
   }
 }
 
-async function verifyRecipientRegistry(
-  factory: Contract,
+async function verifyFundingRoundFactory(
+  clrfund: Contract,
   run: any
 ): Promise<string> {
   try {
-    const address = await factory.recipientRegistry()
+    const address = await clrfund.roundFactory()
+    if (address !== ZERO_ADDRESS) {
+      await run('verify:verify', { address })
+    }
+    return SUCCESS
+  } catch (error) {
+    return (error as Error).message
+  }
+}
+
+async function verifyRecipientRegistry(
+  clrfund: Contract,
+  run: any
+): Promise<string> {
+  try {
+    const address = await clrfund.recipientRegistry()
     if (address !== ZERO_ADDRESS) {
       await run('verify-recipient-registry', { address })
     }
@@ -101,7 +116,12 @@ async function verifyMaci(maciAddress: string, run: any): Promise<string> {
 
 async function verifyTally(tally: Contract, run: any): Promise<string> {
   try {
-    const constructorArguments = await Promise.all([tally.verifier()])
+    const constructorArguments = await Promise.all([
+      tally.verifier(),
+      tally.vkRegistry(),
+      tally.poll(),
+      tally.mp(),
+    ])
     await run('verify:verify', { address: tally.target, constructorArguments })
     return SUCCESS
   } catch (error) {
@@ -198,6 +218,8 @@ task('verify-all', 'Verify all clrfund contracts')
       if (sponsor) {
         await verifyContract('Sponsor', sponsor, run, results)
       }
+      status = await verifyFundingRoundFactory(clrfundContract, run)
+      results.push({ name: 'Funding Round Factory', status })
 
       const roundAddress = await clrfundContract.getCurrentRound()
       if (roundAddress !== ZERO_ADDRESS) {

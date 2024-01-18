@@ -87,12 +87,12 @@ async function main(args: any) {
     })
 
     const setUserRegistryTx = await clrfundContract.setUserRegistry(
-      userRegistryContract.address
+      userRegistryContract.target
     )
 
     await setUserRegistryTx.wait()
     console.log(
-      `New ${args.userRegistryType} user registry: ${userRegistryContract.address}`
+      `New ${args.userRegistryType} user registry: ${userRegistryContract.target}`
     )
   }
 

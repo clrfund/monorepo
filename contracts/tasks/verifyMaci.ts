@@ -14,8 +14,13 @@ task('verify-maci', 'Verify a MACI contract')
     const maci = await ethers.getContractAt('MACI', maciAddress)
     const constructorArguments = await Promise.all([
       maci.pollFactory(),
+      maci.messageProcessorFactory(),
+      maci.tallyFactory(),
+      maci.subsidyFactory(),
       maci.signUpGatekeeper(),
       maci.initialVoiceCreditProxy(),
+      maci.topupCredit(),
+      maci.stateTreeDepth(),
     ])
 
     console.log('Verifying the MACI contract', maciAddress)
