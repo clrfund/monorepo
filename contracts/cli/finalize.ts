@@ -33,7 +33,7 @@ async function main(args: any) {
     'FundingRound',
     currentRoundAddress
   )
-  console.log('Current round', fundingRound.address)
+  console.log('Current round', fundingRound.target)
 
   const pollAddress = await fundingRound.poll()
   const pollContract = await ethers.getContractAt('Poll', pollAddress)
