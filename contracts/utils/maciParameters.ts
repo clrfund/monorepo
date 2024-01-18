@@ -24,7 +24,6 @@ export class MaciParameters {
   voteOptionTreeDepth: number
   maxMessages: number
   maxVoteOptions: number
-  messageBatchSize: number
   processVk: VerifyingKey
   tallyVk: VerifyingKey
   treeDepths: TreeDepths
@@ -38,7 +37,6 @@ export class MaciParameters {
     this.voteOptionTreeDepth = parameters.voteOptionTreeDepth
     this.maxMessages = parameters.maxMessages
     this.maxVoteOptions = parameters.maxVoteOptions
-    this.messageBatchSize = parameters.messageBatchSize
     this.processVk = parameters.processVk
     this.tallyVk = parameters.tallyVk
     this.treeDepths = {
@@ -63,7 +61,6 @@ export class MaciParameters {
         voteOptionTreeDepth: this.voteOptionTreeDepth,
       },
       { maxMessages: this.maxMessages, maxVoteOptions: this.maxVoteOptions },
-      this.messageBatchSize,
       this.processVk.asContractParam(),
       this.tallyVk.asContractParam(),
     ]
@@ -85,7 +82,6 @@ export class MaciParameters {
     return new MaciParameters({
       ...params.maxValues,
       ...params.treeDepths,
-      ...params.batchSizes,
       processVk,
       tallyVk,
     })
@@ -100,7 +96,6 @@ export class MaciParameters {
       voteOptionTreeDepth,
     } = await maciFactory.treeDepths()
     const { maxMessages, maxVoteOptions } = await maciFactory.maxValues()
-    const messageBatchSize = await maciFactory.messageBatchSize()
 
     return new MaciParameters({
       stateTreeDepth,
@@ -110,7 +105,6 @@ export class MaciParameters {
       voteOptionTreeDepth,
       maxMessages,
       maxVoteOptions,
-      messageBatchSize,
     })
   }
 
@@ -146,13 +140,11 @@ export class MaciParameters {
         messageTreeDepth: 8,
         voteOptionTreeDepth: 2,
       },
-      batchSizes: { messageBatchSize: 25 },
     }
 
     return new MaciParameters({
       ...params.maxValues,
       ...params.treeDepths,
-      ...params.batchSizes,
       processVk,
       tallyVk: processVk.copy(),
     })
