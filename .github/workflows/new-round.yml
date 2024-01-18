@@ -3,7 +3,7 @@ name: Create new round
 on: workflow_dispatch
 
 env:
-  NODE_VERSION: 16.x
+  NODE_VERSION: 18.x
   SUBGRPAH_URL: "https://api.thegraph.com/subgraphs/name/clrfund/clrfund-arbitrum-goerli"
   WALLET_PRIVATE_KEY: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_WALLET_PRIVATE_KEY }}
 
