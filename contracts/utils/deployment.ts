@@ -132,8 +132,9 @@ export async function deployUserRegistry({
   brightidVerifier?: string
   brightidSponsor?: string
 }): Promise<Contract> {
-  let userRegistry: Contract
+  let contractArgs: any[] = []
   const registryType = (userRegistryType || '').toLowerCase()
+
   if (registryType === 'brightid') {
     if (!brightidContext) {
       throw new Error('Missing BrightId context')
@@ -145,27 +146,24 @@ export async function deployUserRegistry({
       throw new Error('Missing BrightId sponsor contract address')
     }
 
-    const BrightIdUserRegistry = await ethers.getContractFactory(
-      'BrightIdUserRegistry',
-      signer
-    )
-
-    userRegistry = await BrightIdUserRegistry.deploy(
+    contractArgs = [
       encodeBytes32String(brightidContext),
       brightidVerifier,
-      brightidSponsor
-    )
-  } else {
-    const userRegistryName = userRegistryNames[registryType]
-    if (!userRegistryName) {
-      throw new Error('unsupported user registry type: ' + registryType)
-    }
-
-    userRegistry = await ethers.deployContract(userRegistryName, signer)
+      brightidSponsor,
+    ]
   }
 
-  await userRegistry.waitForDeployment()
-  return userRegistry
+  const userRegistryName = userRegistryNames[registryType]
+  if (!userRegistryName) {
+    throw new Error('unsupported user registry type: ' + registryType)
+  }
+
+  return deployContract({
+    name: userRegistryName,
+    contractArgs,
+    ethers,
+    signer,
+  })
 }
 
 /**
@@ -213,10 +211,14 @@ export async function deployRecipientRegistry({
       ? [controller]
       : [deposit, challengePeriod, controller]
 
-  const factory = await ethers.getContractFactory(registryName, signer)
-  const recipientRegistry = await factory.deploy(...args)
+  const recipientRegistry = await ethers.deployContract(
+    registryName,
+    args,
+    signer
+  )
 
-  return await recipientRegistry.deployed()
+  await recipientRegistry.waitForDeployment()
+  return recipientRegistry
 }
 
 /**

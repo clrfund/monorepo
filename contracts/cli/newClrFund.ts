@@ -2,16 +2,20 @@
  * Create a new instance of the ClrFund contract.
  *
  * If the coordinator ETH address is not provided, use the signer address
- * If the COORDINATOR_MACISK env. varibale not set, create a new random MACI key
+ * If the COORDINATOR_MACISK environment varibale not set in the .env file,
+ * this script will create a new random MACI key
+ *
+ * Display help:
+ *  yarn ts-node cli/newClrFund.ts -h
  *
  * Sample usage:
  *
  *  HARDHAT_NETWORK=localhost yarn ts-node cli/newClrFund.ts \
  *    --deployer <clrfund deployer contract address> \
  *    --token <native token address> \
- *    [--coordinator <coordinator ETH address> ] \
- *    [--user-registry-type <user registry type> ] \
- *    [--recipient-registry-type <recipient registry type> ]
+ *    --coordinator <coordinator ETH address> \
+ *    --user-registry-type <user registry type> \
+ *    --recipient-registry-type <recipient registry type>
  *
  *
  * If user registry address and recipient registry address are not provided,
@@ -111,7 +115,7 @@ async function main(args: any) {
     'ClrFundDeployer',
     deployer
   )
-  console.log('ClrFundDeployer:', clrfundDeployer.address)
+  console.log('ClrFundDeployer:', clrfundDeployer.target)
 
   const tx = await clrfundDeployer.deployClrFund()
   const receipt = await tx.wait()
@@ -167,7 +171,7 @@ async function main(args: any) {
       brightidVerifier: args.brightidVerifier,
       brightidSponsor: args.brightidSponsor,
     })
-    userRegistryAddress = userRegistryContract.address
+    userRegistryAddress = await userRegistryContract.getAddress()
   }
   const setUserRegistryTx =
     await clrfundContract.setUserRegistry(userRegistryAddress)
@@ -188,7 +192,7 @@ async function main(args: any) {
       deposit,
       controller: clrfund,
     })
-    recipientRegistryAddress = recipientRegistryContract.address
+    recipientRegistryAddress = await recipientRegistryContract.getAddress()
   }
 
   const setRecipientRegistryTx = await clrfundContract.setRecipientRegistry(
