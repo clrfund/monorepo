@@ -69,22 +69,4 @@ contract ClrFundDeployer is CloneFactory, Ownable {
 
     return address(clrfund);
   }
-
-  /**
-    * @dev Register the clrfund instance for subgraph event processing
-    * @param _clrFundAddress ClrFund address
-    * @param _metadata Clrfund metadata
-    */
-  function registerInstance(
-      address _clrFundAddress,
-      string memory _metadata
-    ) public returns (bool) {
-
-    if (clrfunds[_clrFundAddress] == true) revert ClrFundAlreadyRegistered();
-
-    clrfunds[_clrFundAddress] = true;
-
-    emit Register(_clrFundAddress, _metadata);
-    return true;
-  }
 }
