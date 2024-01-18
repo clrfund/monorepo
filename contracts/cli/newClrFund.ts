@@ -154,7 +154,7 @@ async function main(args: any) {
       ethers,
       signer,
     })
-    tokenAddress = tokenContract.address
+    tokenAddress = await tokenContract.getAddress()
   }
   const setTokenTx = await clrfundContract.setToken(tokenAddress)
   await setTokenTx.wait()
