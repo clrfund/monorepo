@@ -72,8 +72,7 @@ contract FundingRound is
   error InvalidNativeToken();
   error InvalidUserRegistry();
   error InvalidRecipientRegistry();
-  error invalidCoordinator();
-  error invalidMaciFactory();
+  error InvalidCoordinator();
   error InvalidTallyFactory();
   error InvalidMessageProcessorFactory();
   error UnexpectedPollAddress(address expected, address actual);
@@ -162,7 +161,7 @@ contract FundingRound is
     if (isAddressZero(address(_nativeToken))) revert InvalidNativeToken();
     if (isAddressZero(address(_userRegistry))) revert InvalidUserRegistry();
     if (isAddressZero(address(_recipientRegistry))) revert InvalidRecipientRegistry();
-    if (isAddressZero(_coordinator)) revert invalidCoordinator();
+    if (isAddressZero(_coordinator)) revert InvalidCoordinator();
 
     nativeToken = _nativeToken;
     voiceCreditFactor = (MAX_CONTRIBUTION_AMOUNT * uint256(10) ** nativeToken.decimals()) / MAX_VOICE_CREDITS;
