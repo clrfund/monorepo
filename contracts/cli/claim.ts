@@ -11,6 +11,7 @@ import { JSONFile } from '../utils/JSONFile'
 import { ethers } from 'hardhat'
 import { program } from 'commander'
 import { isPathExist } from '../utils/misc'
+import { Contract } from 'ethers'
 
 program
   .description('Claim funnds for test recipients')
@@ -51,7 +52,7 @@ async function main(args: any) {
     )
     const fundingRoundAsRecipient = fundingRoundContract.connect(
       recipients[recipientIndex]
-    )
+    ) as Contract
     const claimTx = await fundingRoundAsRecipient.claimFunds(
       ...recipientClaimData
     )

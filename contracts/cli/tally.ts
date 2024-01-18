@@ -17,13 +17,15 @@
  *
  *  yarn ts-node cli/tally.ts --round-address <address>
  */
-import { ethers, network, config } from 'hardhat'
+import { ethers } from 'hardhat'
 import { Contract } from 'ethers'
 
-import { DEFAULT_SR_QUEUE_OPS } from '../utils/constants'
+import {
+  DEFAULT_SR_QUEUE_OPS,
+  DEFAULT_GET_LOG_BATCH_SIZE,
+} from '../utils/constants'
 import { getIpfsHash } from '../utils/ipfs'
 import { JSONFile } from '../utils/JSONFile'
-import { deployMessageProcesorAndTally } from '../utils/deployment'
 import {
   getGenProofArgs,
   genProofs,
@@ -57,6 +59,11 @@ program
     'The number of operation for tree merging',
     DEFAULT_SR_QUEUE_OPS
   )
+  .option(
+    '-k --blocks-per-batch <blocks>',
+    'The number of blocks per batch of logs to fetch on-chain',
+    DEFAULT_GET_LOG_BATCH_SIZE.toString()
+  )
   .parse()
 
 /**
@@ -73,13 +80,11 @@ async function main(args: any) {
     rapidSnark,
     maciTxHash,
     numQueueOps,
+    blocksPerBatch,
   } = args
 
   const [coordinator] = await ethers.getSigners()
   console.log('Coordinator address: ', coordinator.address)
-
-  const providerUrl = (network.config as any).url
-  console.log('providerUrl', providerUrl)
 
   let clrfundContract: Contract
   try {
@@ -99,7 +104,7 @@ async function main(args: any) {
     fundingRound,
     coordinator
   )
-  console.log('Funding round contract', fundingRoundContract.address)
+  console.log('Funding round contract', fundingRoundContract.target)
 
   const publishedTallyHash = await fundingRoundContract.tallyHash()
   console.log('publishedTallyHash', publishedTallyHash)
@@ -121,59 +126,48 @@ async function main(args: any) {
     // Generate proof and tally file
     const genProofArgs = getGenProofArgs({
       maciAddress,
-      providerUrl,
       pollId,
       coordinatorMacisk,
-      maciTxHash,
       rapidSnark,
       circuitType: circuit,
       circuitDirectory,
       outputDir,
+      blocksPerBatch: Number(blocksPerBatch),
+      maciTxHash,
     })
     console.log('genProofsArg', genProofArgs)
 
-    await mergeMaciSubtrees(maciAddress, pollId, numQueueOps)
+    await mergeMaciSubtrees({ maciAddress, pollId, numOperations: numQueueOps })
     console.log('Completed tree merge')
 
     await genProofs(genProofArgs)
     console.log('Completed genProofs')
 
-    tally = JSONFile.read(genProofArgs.tally_file)
+    tally = JSONFile.read(genProofArgs.tallyFile)
     if (stateFile) {
       // Save tally file in the state
-      JSONFile.update(stateFile, { tallyFile: genProofArgs.tally_file })
+      JSONFile.update(stateFile, { tallyFile: genProofArgs.tallyFile })
     }
 
-    // deploy the MessageProcessor and Tally contracts used by proveOnChain
-    const { mpContract, tallyContract } = await deployMessageProcesorAndTally({
-      artifactsPath: config.paths.artifacts,
-      ethers,
-      signer: coordinator,
-    })
-    console.log('MessageProcessor', mpContract.address)
-    console.log('Tally Contract', tallyContract.address)
-
     try {
+      const pollAddress = await fundingRoundContract.poll()
+      const pollContract = await ethers.getContractAt('Poll', pollAddress)
+      const tallyAddress = await pollContract.tally()
+      const tallyContact = await ethers.getContractAt('Tally', tallyAddress)
+      const messageProcessorAddress = await tallyContact.mp()
       // Submit proofs to MACI contract
       await proveOnChain({
-        contract: maciAddress,
-        poll_id: pollId,
-        mp: mpContract.address,
-        tally: tallyContract.address,
-        //subsidy: tallyContractAddress, // TODO: make subsidy optional
-        proof_dir: outputDir,
+        pollId,
+        proofDir: genProofArgs.outputDir,
+        subsidyEnabled: false,
+        maciAddress,
+        messageProcessorAddress,
+        tallyAddress,
       })
     } catch (e) {
       console.error('proveOnChain failed')
       throw e
     }
-
-    // set the Tally contract address for verifying tally result on chain
-    const setTallyTx = await fundingRoundContract.setTally(
-      tallyContract.address
-    )
-    await setTallyTx.wait()
-    console.log('Tally contract set in funding round')
 
     // Publish tally hash
     const tallyHash = await getIpfsHash(tally)

@@ -10,7 +10,6 @@
 
 import { JSONFile } from '../utils/JSONFile'
 import { PrivKey, Keypair, createMessage } from '@clrfund/common'
-import { BigNumber } from 'ethers'
 import { ethers } from 'hardhat'
 import { program } from 'commander'
 import dotenv from 'dotenv'
@@ -68,7 +67,7 @@ async function main(args: any) {
     nonce += 1
     // Vote
     for (const recipientIndex of [1, 2]) {
-      const votes = BigNumber.from(contributorData.voiceCredits).div(4)
+      const votes = BigInt(contributorData.voiceCredits) / BigInt(4)
       const [message, encPubKey] = createMessage(
         contributorData.stateIndex,
         newContributorKeypair,

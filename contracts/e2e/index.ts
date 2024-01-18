@@ -11,7 +11,11 @@ import {
   genTallyResultCommitment,
 } from '@clrfund/common'
 
-import { UNIT, ALPHA_PRECISION } from '../utils/constants'
+import {
+  UNIT,
+  ALPHA_PRECISION,
+  DEFAULT_GET_LOG_BATCH_SIZE,
+} from '../utils/constants'
 import { getEventArg } from '../utils/contracts'
 import {
   deployContract,
@@ -36,7 +40,6 @@ import path from 'path'
 const ZERO = BigInt(0)
 const DEFAULT_SR_QUEUE_OPS = 4
 const roundDuration = 7 * 86400
-const DEFAULT_GET_LOG_BATCH_SIZE = 10000
 
 // MACI zkFiles
 const circuit = process.env.CIRCUIT_TYPE || DEFAULT_CIRCUIT

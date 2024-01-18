@@ -14,6 +14,7 @@ import { getEventArg } from '../utils/contracts'
 import { program } from 'commander'
 import { ethers } from 'hardhat'
 import { isPathExist } from '../utils/misc'
+import type { FundingRound, ERC20 } from '../typechain-types'
 
 program
   .description('Contribute to a funding round')
@@ -39,7 +40,7 @@ async function main(args: any) {
   const maciAddress = await fundingRound.maci()
   const maci = await ethers.getContractAt('MACI', maciAddress)
 
-  const contributionAmount = UNIT.mul(16).div(10)
+  const contributionAmount = (UNIT * BigInt(16)) / BigInt(10)
 
   state.contributors = {}
   for (const contributor of [contributor1, contributor2]) {
@@ -49,10 +50,12 @@ async function main(args: any) {
     await token.transfer(contributorAddress, contributionAmount)
 
     const contributorKeypair = new Keypair()
-    const tokenAsContributor = token.connect(contributor)
-    await tokenAsContributor.approve(fundingRound.address, contributionAmount)
+    const tokenAsContributor = token.connect(contributor) as ERC20
+    await tokenAsContributor.approve(fundingRound.target, contributionAmount)
 
-    const fundingRoundAsContributor = fundingRound.connect(contributor)
+    const fundingRoundAsContributor = fundingRound.connect(
+      contributor
+    ) as FundingRound
     const contributionTx = await fundingRoundAsContributor.contribute(
       contributorKeypair.pubKey.asContractParam(),
       contributionAmount
