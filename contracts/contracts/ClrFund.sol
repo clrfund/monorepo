@@ -22,6 +22,7 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
   using SafeERC20 for ERC20;
 
   // State
+  bool public isInit = false;
   address public coordinator;
 
   ERC20 public nativeToken;
@@ -60,9 +61,21 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
   error InvalidFundingRoundFactory();
   error InvalidMaciFactory();
   error RecipientRegistryNotSet();
+  error NotInitialized();
 
   /**
-  * @dev Initialize clrfund instance with MACI factory and new round templates
+   * Make sure MACI factory and round factory are set
+   */
+  modifier afterInit() {
+    if (!isInit) {
+      revert NotInitialized();
+    }
+    _;
+  }
+
+
+  /**
+   * @dev Initialize clrfund instance with MACI factory and round factory
    */
   function init(
     address _maciFactory,
@@ -74,6 +87,7 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
     _setMaciFactory(_maciFactory);
     _setFundingRoundFactory(_roundFactory);
 
+    isInit = true;
     emit Initialized();
   }
 
@@ -97,6 +111,7 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
   function setMaciFactory(address _maciFactory)
     external
     onlyOwner
+    afterInit
   {
     _setMaciFactory(_maciFactory);
   }
@@ -121,6 +136,7 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
   function setFundingRoundFactory(address _roundFactory)
   public
   onlyOwner
+  afterInit
   {
     _setFundingRoundFactory(_roundFactory);
   }
@@ -145,6 +161,7 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
   function setRecipientRegistry(IRecipientRegistry _recipientRegistry)
     external
     onlyOwner
+    afterInit
   {
     recipientRegistry = _recipientRegistry;
     MaxValues memory maxValues = maciFactory.maxValues();
@@ -203,6 +220,7 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
   )
     external
     onlyOwner
+    afterInit
   {
     IFundingRound currentRound = getCurrentRound();
     if (address(currentRound) != address(0) && !currentRound.isFinalized()) {
