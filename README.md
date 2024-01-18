@@ -62,11 +62,11 @@ In a future version, we plan to address this by routing ETH and token contributi
 
 ## Development
 
-### Install Node v16 with nvm
+### Install Node v18 with nvm
 
 ```sh
-nvm install 16
-nvm use 16
+nvm install 18
+nvm use 18
 ```
 
 ### Install the dependencies

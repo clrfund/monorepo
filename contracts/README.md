@@ -79,5 +79,6 @@ yarn claim:local
 The following command will verify all clr.fund contracts. It will log a warning if contract already verified or missing.
 
 ```
-yarn hardhat verify-all <funding-round-address> --network <network>
+yarn hardhat verify-all --deployer <clrfund-deployer-address> \
+  --clrfund <clrfund-address>  --network <network>
 ```
