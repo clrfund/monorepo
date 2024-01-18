@@ -170,7 +170,7 @@ type getGenProofArgsInput = {
   // the key get zkeys file mapping, see utils/circuits.ts
   circuitType: string
   circuitDirectory: string
-  rapidSnark?: string
+  rapidsnark?: string
   // where the proof will be produced
   outputDir: string
   // number of blocks of logs to fetch per batch
@@ -222,7 +222,7 @@ export function getGenProofArgs(args: getGenProofArgsInput): GenProofCliArgs {
     maciTxHash,
     circuitType,
     circuitDirectory,
-    rapidSnark,
+    rapidsnark,
     outputDir,
     blocksPerBatch,
     startBlock,
@@ -283,6 +283,7 @@ export function getGenProofArgs(args: getGenProofArgsInput): GenProofCliArgs {
       coordinatorPrivKey: coordinatorMacisk,
       maciAddress,
       transactionHash: maciTxHash,
+      rapidsnark,
       useWasm: false,
       blocksPerBatch,
       startBlock,
