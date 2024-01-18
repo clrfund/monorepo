@@ -262,12 +262,12 @@ export function getGenProofArgs(args: getGenProofArgsInput): GenProofCliArgs {
       quiet,
     }
   } else {
-    if (!rapidSnark) {
+    if (!rapidsnark) {
       throw new Error('Please specify the path to the rapidsnark binary')
     }
 
-    if (!isPathExist(rapidSnark)) {
-      throw new Error(`Path ${rapidSnark} does not exist`)
+    if (!isPathExist(rapidsnark)) {
+      throw new Error(`Path ${rapidsnark} does not exist`)
     }
 
     return {
