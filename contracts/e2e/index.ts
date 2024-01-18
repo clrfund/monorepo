@@ -37,6 +37,8 @@ import { MaciParameters } from '../utils/maciParameters'
 import { readFileSync, existsSync, mkdirSync } from 'fs'
 import path from 'path'
 
+type VoteData = { recipientIndex: number; voiceCredits: bigint }
+
 const ZERO = BigInt(0)
 const DEFAULT_SR_QUEUE_OPS = 4
 const roundDuration = 7 * 86400
@@ -86,6 +88,16 @@ async function calculateClaims(
     const linear = BigInt(spent) * factor * (ALPHA_PRECISION - alpha)
     return (quadratic + linear) / ALPHA_PRECISION
   })
+}
+
+/**
+ * Make a vote with recipient and voice credits information
+ * @param recipientIndex recipient index
+ * @param voiceCredits voice credits in the vote
+ * @returns a Vote
+ */
+function makeVote(recipientIndex: number, voiceCredits: bigint): VoteData {
+  return { recipientIndex, voiceCredits }
 }
 
 describe('End-to-end Tests', function () {
@@ -534,15 +546,15 @@ describe('End-to-end Tests', function () {
       UNIT * BigInt(90),
     ])
     const contributor = contribution.signer
-    const votes = [
-      [1, BigInt(contribution.voiceCredits) / BigInt(6)],
-      [2, BigInt(contribution.voiceCredits) / BigInt(2)],
-      [1, BigInt(contribution.voiceCredits) / BigInt(2)],
+    const votes: VoteData[] = [
+      makeVote(1, BigInt(contribution.voiceCredits) / BigInt(6)),
+      makeVote(2, BigInt(contribution.voiceCredits) / BigInt(2)),
+      makeVote(1, BigInt(contribution.voiceCredits) / BigInt(2)),
     ]
     const messages: Message[] = []
     const encPubKeys: PubKey[] = []
     let nonce = 1
-    for (const [recipientIndex, voiceCredits] of votes) {
+    for (const { recipientIndex, voiceCredits } of votes) {
       const [message, encPubKey] = createMessage(
         contribution.stateIndex,
         contribution.keypair,
@@ -610,16 +622,16 @@ describe('End-to-end Tests', function () {
       UNIT * BigInt(40),
     ])
     const contributor = contribution.signer
-    const votes = [
-      [1, BigInt(contribution.voiceCredits) / BigInt(2)],
-      [2, BigInt(contribution.voiceCredits) / BigInt(2)],
-      [1, ZERO],
-      [2, BigInt(contribution.voiceCredits)],
+    const votes: VoteData[] = [
+      makeVote(1, BigInt(contribution.voiceCredits) / BigInt(2)),
+      makeVote(2, BigInt(contribution.voiceCredits) / BigInt(2)),
+      makeVote(1, ZERO),
+      makeVote(2, BigInt(contribution.voiceCredits)),
     ]
     const messages: Message[] = []
     const encPubKeys: PubKey[] = []
     let nonce = 1
-    for (const [recipientIndex, voiceCredits] of votes) {
+    for (const { recipientIndex, voiceCredits } of votes) {
       const [message, encPubKey] = createMessage(
         contribution.stateIndex,
         contribution.keypair,
@@ -687,23 +699,23 @@ describe('End-to-end Tests', function () {
       UNIT * BigInt(40),
     ])
     const contributor = contribution.signer
-    const votes = [
+    const votes: VoteData[][] = [
       [
-        [1, BigInt(contribution.voiceCredits) / BigInt(3)],
-        [2, BigInt(contribution.voiceCredits) / BigInt(3)],
-        [3, BigInt(contribution.voiceCredits) / BigInt(3)],
+        makeVote(1, BigInt(contribution.voiceCredits) / BigInt(3)),
+        makeVote(2, BigInt(contribution.voiceCredits) / BigInt(3)),
+        makeVote(3, BigInt(contribution.voiceCredits) / BigInt(3)),
       ],
       [
-        [1, BigInt(contribution.voiceCredits) / BigInt(2)],
-        [2, BigInt(contribution.voiceCredits) / BigInt(2)],
-        [3, ZERO],
+        makeVote(1, BigInt(contribution.voiceCredits) / BigInt(2)),
+        makeVote(2, BigInt(contribution.voiceCredits) / BigInt(2)),
+        makeVote(3, ZERO),
       ],
     ]
     for (const batch of votes) {
       const messages: Message[] = []
       const encPubKeys: PubKey[] = []
       let nonce = 1
-      for (const [recipientIndex, voiceCredits] of batch) {
+      for (const { recipientIndex, voiceCredits } of batch) {
         const [message, encPubKey] = createMessage(
           contribution.stateIndex,
           contribution.keypair,
