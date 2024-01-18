@@ -12,6 +12,7 @@ import { ethers } from 'hardhat'
 import { JSONFile } from '../utils/JSONFile'
 import { program } from 'commander'
 import { deployUserRegistry } from '../utils/deployment'
+import { ZERO_ADDRESS } from '../utils/constants'
 
 program
   .description('Deploy a new funding round contract')
@@ -62,7 +63,7 @@ async function main(args: any) {
 
   // check if the current round is finalized before starting a new round to avoid revert
   const currentRoundAddress = await clrfundContract.getCurrentRound()
-  if (currentRoundAddress !== ethers.constants.AddressZero) {
+  if (currentRoundAddress !== ZERO_ADDRESS) {
     const currentRound = await ethers.getContractAt(
       'FundingRound',
       currentRoundAddress
@@ -111,7 +112,7 @@ main(program.opts())
   .then(() => {
     process.exit(0)
   })
-  .catch((err) => {
+  .catch(err => {
     console.error(err)
     process.exit(-1)
   })

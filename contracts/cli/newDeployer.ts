@@ -42,35 +42,35 @@ async function main(args: any) {
   console.log('Deployed Poseidons', libraries)
 
   const maciFactory = await deployMaciFactory({ libraries, ethers })
-  console.log('Deployed MaciFactory at', maciFactory.address)
+  console.log('Deployed MaciFactory at', maciFactory.target)
   await setMaciParameters(maciFactory, args.directory, args.circuit)
 
   const clrfundTemplate = await deployContract({
     name: 'ClrFund',
     ethers,
   })
-  console.log('Deployed ClrFund Template at', clrfundTemplate.address)
+  console.log('Deployed ClrFund Template at', clrfundTemplate.target)
 
   const fundingRoundFactory = await deployContract({
     name: 'FundingRoundFactory',
-    libraries,
     ethers,
   })
-  console.log('Deployed FundingRoundFactory at', fundingRoundFactory.address)
+  console.log('Deployed FundingRoundFactory at', fundingRoundFactory.target)
 
   const clrfundDeployer = await deployContract({
     name: 'ClrFundDeployer',
     ethers,
     contractArgs: [
-      clrfundTemplate.address,
-      maciFactory.address,
-      fundingRoundFactory.address,
+      clrfundTemplate.target,
+      maciFactory.target,
+      fundingRoundFactory.target,
     ],
   })
-  console.log('Deployed ClrfundDeployer at', clrfundDeployer.address)
+  console.log('Deployed ClrfundDeployer at', clrfundDeployer.target)
 
   if (args.stateFile) {
-    JSONFile.update(args.stateFile, { deployer: clrfundDeployer.address })
+    const clrfundDeployerAddress = await clrfundDeployer.getAddress()
+    JSONFile.update(args.stateFile, { deployer: clrfundDeployerAddress })
   }
 }
 
@@ -78,7 +78,7 @@ main(program.opts())
   .then(() => {
     process.exit(0)
   })
-  .catch((err) => {
+  .catch(err => {
     console.error(err)
     process.exit(-1)
   })

@@ -1,5 +1,6 @@
 import { Contract } from 'ethers'
 import { task } from 'hardhat/config'
+import { ZERO_ADDRESS } from '../utils/constants'
 
 const SUCCESS = 'success'
 
@@ -10,14 +11,16 @@ type Result = {
 
 async function verifyDeployer(deployer: Contract, run: any): Promise<string> {
   try {
-    const { address } = deployer
     const constructorArguments = await Promise.all([
       deployer.clrfundTemplate(),
       deployer.maciFactory(),
       deployer.roundFactory(),
     ])
 
-    await run('verify:verify', { address, constructorArguments })
+    await run('verify:verify', {
+      address: deployer.target,
+      constructorArguments,
+    })
     return SUCCESS
   } catch (error) {
     return (error as Error).message
@@ -30,7 +33,9 @@ async function verifyMaciFactory(
 ): Promise<string> {
   try {
     const address = await deployer.maciFactory()
-    await run('verify-maci-factory', { address })
+    if (address !== ZERO_ADDRESS) {
+      await run('verify-maci-factory', { address })
+    }
     return SUCCESS
   } catch (error) {
     return (error as Error).message
@@ -39,7 +44,7 @@ async function verifyMaciFactory(
 
 async function verifyClrFund(clrfund: Contract, run: any): Promise<string> {
   try {
-    await run('verify', { address: clrfund.address })
+    await run('verify', { address: clrfund.target })
     return SUCCESS
   } catch (error) {
     return (error as Error).message
@@ -52,7 +57,9 @@ async function verifyRecipientRegistry(
 ): Promise<string> {
   try {
     const address = await factory.recipientRegistry()
-    await run('verify-recipient-registry', { address })
+    if (address !== ZERO_ADDRESS) {
+      await run('verify-recipient-registry', { address })
+    }
     return SUCCESS
   } catch (error) {
     return (error as Error).message
@@ -60,12 +67,14 @@ async function verifyRecipientRegistry(
 }
 
 async function verifyUserRegistry(
-  factory: Contract,
+  clrfund: Contract,
   run: any
 ): Promise<string> {
   try {
-    const address = await factory.userRegistry()
-    await run('verify-user-registry', { address })
+    const address = await clrfund.userRegistry()
+    if (address !== ZERO_ADDRESS) {
+      await run('verify-user-registry', { address })
+    }
     return SUCCESS
   } catch (error) {
     return (error as Error).message
@@ -93,7 +102,7 @@ async function verifyMaci(maciAddress: string, run: any): Promise<string> {
 async function verifyTally(tally: Contract, run: any): Promise<string> {
   try {
     const constructorArguments = await Promise.all([tally.verifier()])
-    await run('verify:verify', { address: tally.address, constructorArguments })
+    await run('verify:verify', { address: tally.target, constructorArguments })
     return SUCCESS
   } catch (error) {
     return (error as Error).message
@@ -111,8 +120,11 @@ async function verifyPoll(pollContract: Contract, run: any): Promise<string> {
       pollContract.coordinatorPubKey(),
       pollContract.extContracts(),
     ])
-    const { address } = pollContract
-    await run('verify:verify', { address, constructorArguments })
+
+    await run('verify:verify', {
+      address: pollContract.target,
+      constructorArguments,
+    })
     return SUCCESS
   } catch (error) {
     return (error as Error).message
@@ -172,7 +184,7 @@ task('verify-all', 'Verify all clrfund contracts')
     let status = await verifyDeployer(deployerContract, run)
     results.push({ name: 'ClrFund Deployer', status })
     status = await verifyMaciFactory(deployerContract, run)
-    results.push({ name: 'Maci facotry', status })
+    results.push({ name: 'Maci factory', status })
 
     if (clrfund) {
       const clrfundContract = await ethers.getContractAt('ClrFund', clrfund)
@@ -181,14 +193,14 @@ task('verify-all', 'Verify all clrfund contracts')
       status = await verifyRecipientRegistry(clrfundContract, run)
       results.push({ name: 'Recipient registry', status })
       status = await verifyUserRegistry(clrfundContract, run)
-      results.push({ name: 'User factory', status })
+      results.push({ name: 'User registry', status })
       const sponsor = await getBrightIdSponsor(clrfundContract, ethers)
       if (sponsor) {
         await verifyContract('Sponsor', sponsor, run, results)
       }
 
       const roundAddress = await clrfundContract.getCurrentRound()
-      if (roundAddress !== ethers.constants.AddressZero) {
+      if (roundAddress !== ZERO_ADDRESS) {
         const round = await ethers.getContractAt('FundingRound', roundAddress)
         const maciAddress = await round.maci()
         status = await verifyRound(roundAddress, run)
@@ -197,14 +209,14 @@ task('verify-all', 'Verify all clrfund contracts')
         results.push({ name: 'MACI', status })
 
         const poll = await round.poll()
-        if (poll !== ethers.constants.AddressZero) {
+        if (poll !== ZERO_ADDRESS) {
           const pollContract = await ethers.getContractAt('Poll', poll)
           status = await verifyPoll(pollContract, run)
           results.push({ name: 'Poll', status })
         }
 
         const tally = await round.tally()
-        if (tally !== ethers.constants.AddressZero) {
+        if (tally !== ZERO_ADDRESS) {
           const tallyContract = await ethers.getContractAt('Tally', tally)
           status = await verifyTally(tallyContract, run)
           results.push({ name: 'Tally', status })
@@ -231,9 +243,13 @@ task('verify-all', 'Verify all clrfund contracts')
       run,
       results
     )
+
+    const factories = await maciFactory.factories()
+    await verifyContract('PollFactory', factories.pollFactory, run, results)
+    await verifyContract('TallyFactory', factories.tallyFactory, run, results)
     await verifyContract(
-      'PollFactory',
-      await maciFactory.pollFactory(),
+      'MessageProcessorFactory',
+      factories.messageProcessorFactory,
       run,
       results
     )
