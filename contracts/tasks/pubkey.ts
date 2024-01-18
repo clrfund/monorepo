@@ -4,9 +4,9 @@
  *
  * Usage: hardhat pubkey --macisk <secret key>
  */
-import { utils } from 'ethers'
+import { id } from 'ethers'
 import { task } from 'hardhat/config'
-import { PubKey, PrivKey, Keypair } from '@clrfund/maci-domainobjs'
+import { PubKey, PrivKey, Keypair } from '@clrfund/common'
 
 task('pubkey', 'Get the serialized MACI public key')
   .addOptionalParam('x', 'MACI public key x')
@@ -14,7 +14,7 @@ task('pubkey', 'Get the serialized MACI public key')
   .addOptionalParam('macisk', 'MACI secret key')
   .setAction(async ({ x, y, macisk }) => {
     if (macisk) {
-      const keypair = new Keypair(PrivKey.unserialize(macisk))
+      const keypair = new Keypair(PrivKey.deserialize(macisk))
       console.log(`Public Key: ${keypair.pubKey.serialize()}`)
     } else {
       if (!x || !y) {
@@ -24,7 +24,7 @@ task('pubkey', 'Get the serialized MACI public key')
       const pubKey = new PubKey([BigInt(x), BigInt(y)])
       console.log(`Public Key: ${pubKey.serialize()}`)
 
-      const id = utils.id(x + '.' + y)
-      console.log(`Subgraph id: ${id}`)
+      const subgraphId = id(x + '.' + y)
+      console.log(`Subgraph id: ${subgraphId}`)
     }
   })
