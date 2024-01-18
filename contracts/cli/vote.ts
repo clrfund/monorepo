@@ -37,14 +37,14 @@ async function main(args: any) {
     await ethers.getSigners()
 
   const state = JSONFile.read(stateFile)
-  const coordinatorKeyPair = new Keypair(PrivKey.unserialize(coordinatorMacisk))
+  const coordinatorKeyPair = new Keypair(PrivKey.deserialize(coordinatorMacisk))
 
   const pollId = state.pollId
   for (const contributor of [contributor1, contributor2]) {
     const contributorAddress = await contributor.getAddress()
     const contributorData = state.contributors[contributorAddress]
     const contributorKeyPair = new Keypair(
-      PrivKey.unserialize(contributorData.privKey)
+      PrivKey.deserialize(contributorData.privKey)
     )
 
     const messages: { msgType: any; data: string[] }[] = []
