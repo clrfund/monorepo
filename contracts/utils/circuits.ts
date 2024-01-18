@@ -38,12 +38,6 @@ export const CIRCUITS: { [name: string]: any } = {
       // treeArity ** voteOptionTreeDepth
       maxVoteOptions: TREE_ARITY ** 3,
     },
-    batchSizes: {
-      // TODO: confirm the following mapping
-      // https://github.com/privacy-scaling-explorations/maci/blob/master/contracts/contracts/MACI.sol#L259
-      // treeArity ** messageBatchTreeDepth
-      messageBatchSize: TREE_ARITY ** 2,
-    },
   },
 }
 

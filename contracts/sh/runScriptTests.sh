@@ -68,7 +68,7 @@ yarn ts-node cli/tally.ts \
   --clrfund ${CLRFUND} \
   --circuit-directory ${CIRCUIT_DIRECTORY} \
   --circuit "${CIRCUIT}" \
-  --rapid-snark ${RAPID_SNARK} \
+  --rapidsnark ${RAPID_SNARK} \
   --batch-size 8 \
   --output-dir ${OUTPUT_DIR} \
   --maci-tx-hash "${MACI_TRANSACTION_HASH}" \

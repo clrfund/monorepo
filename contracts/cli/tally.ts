@@ -53,7 +53,7 @@ program
   )
   .requiredOption('-o --output-dir <dir>', 'The proof output directory')
   .option('-t --maci-tx-hash <hash>', 'The MACI creation transaction hash')
-  .option('-r --rapid-snark <path>', 'The rapidsnark prover path')
+  .option('-r --rapidsnark <path>', 'The rapidsnark prover path')
   .option(
     '-n --num-queue-ops <num>',
     'The number of operation for tree merging',
@@ -77,7 +77,7 @@ async function main(args: any) {
     outputDir,
     circuit,
     circuitDirectory,
-    rapidSnark,
+    rapidsnark,
     maciTxHash,
     numQueueOps,
     blocksPerBatch,
@@ -128,7 +128,7 @@ async function main(args: any) {
       maciAddress,
       pollId,
       coordinatorMacisk,
-      rapidSnark,
+      rapidsnark,
       circuitType: circuit,
       circuitDirectory,
       outputDir,
