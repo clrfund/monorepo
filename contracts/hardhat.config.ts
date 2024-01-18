@@ -54,6 +54,10 @@ export default {
         process.env.JSONRPC_HTTP_URL || 'https://goerli-rollup.arbitrum.io/rpc',
       accounts,
     },
+    sepolia: {
+      url: process.env.JSONRPC_HTTP_URL || 'http://127.0.0.1:8545',
+      accounts,
+    },
     'mantle-testnet': {
       url: process.env.JSONRPC_HTTP_URL || 'https://rpc.testnet.mantle.xyz',
       accounts,
@@ -69,6 +73,9 @@ export default {
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY || 'YOUR_ETHERSCAN_API_KEY',
+  },
+  sourcify: {
+    enabled: false,
   },
   paths: {
     artifacts: 'build/contracts',
