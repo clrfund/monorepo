@@ -16,6 +16,7 @@ import { DEFAULT_CIRCUIT } from '../utils/circuits'
 import { JSONFile } from '../utils/JSONFile'
 import { ethers, config, network } from 'hardhat'
 import { program } from 'commander'
+import { MaciParameters } from '../utils/maciParameters'
 
 program
   .description('Deploy a new ClrFund deployer')
@@ -41,9 +42,16 @@ async function main(args: any) {
   })
   console.log('Deployed Poseidons', libraries)
 
-  const maciFactory = await deployMaciFactory({ libraries, ethers })
+  const maciParameters = await MaciParameters.fromConfig(
+    args.circuit,
+    args.directory
+  )
+  const maciFactory = await deployMaciFactory({
+    libraries,
+    ethers,
+    maciParameters,
+  })
   console.log('Deployed MaciFactory at', maciFactory.target)
-  await setMaciParameters(maciFactory, args.directory, args.circuit)
 
   const clrfundTemplate = await deployContract({
     name: 'ClrFund',

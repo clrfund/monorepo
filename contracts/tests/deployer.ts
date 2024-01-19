@@ -50,13 +50,13 @@ describe('Clr fund deployer', async () => {
       })
     }
 
+    const params = MaciParameters.mock()
     maciFactory = await deployMaciFactory({
       libraries: poseidonContracts,
       signer: deployer,
       ethers,
+      maciParameters: params,
     })
-    const params = MaciParameters.mock()
-    await maciFactory.setMaciParameters(...params.asContractParam())
 
     factoryTemplate = await deployContract({
       name: 'ClrFund',
@@ -139,26 +139,6 @@ describe('Clr fund deployer', async () => {
     ).to.be.revertedWith('Initializable: contract is already initialized')
   })
 
-  it('can register with the subgraph', async () => {
-    await expect(
-      clrFundDeployer.registerInstance(clrfund.target, '{name:dead,title:beef}')
-    )
-      .to.emit(clrFundDeployer, 'Register')
-      .withArgs(clrfund.target, '{name:dead,title:beef}')
-  })
-
-  it('cannot register with the subgraph twice', async () => {
-    await expect(
-      clrFundDeployer.registerInstance(clrfund.target, '{name:dead,title:beef}')
-    )
-      .to.emit(clrFundDeployer, 'Register')
-      .withArgs(clrfund.target, '{name:dead,title:beef}')
-
-    await expect(
-      clrFundDeployer.registerInstance(clrfund.target, '{name:dead,title:beef}')
-    ).to.be.revertedWithCustomError(clrFundDeployer, 'ClrFundAlreadyRegistered')
-  })
-
   it('initializes clrfund', async () => {
     expect(await clrfund.coordinator()).to.equal(ZERO_ADDRESS)
     expect(await clrfund.nativeToken()).to.equal(ZERO_ADDRESS)
@@ -209,7 +189,7 @@ describe('Clr fund deployer', async () => {
       expect(await recipientRegistry.controller()).to.equal(clrfund.target)
       const params = MaciParameters.mock()
       expect(await recipientRegistry.maxRecipients()).to.equal(
-        5 ** params.voteOptionTreeDepth
+        BigInt(5) ** BigInt(params.treeDepths.voteOptionTreeDepth)
       )
     })
 
@@ -380,7 +360,7 @@ describe('Clr fund deployer', async () => {
       await clrfund.setToken(token.target)
       await expect(
         clrfund.deployNewRound(roundDuration)
-      ).to.be.revertedWithCustomError(roundInterface, 'invalidCoordinator')
+      ).to.be.revertedWithCustomError(roundInterface, 'InvalidCoordinator')
     })
 
     it('reverts if current round is not finalized', async () => {

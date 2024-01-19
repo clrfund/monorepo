@@ -73,18 +73,16 @@ async function claim() {
   const { fundingRoundAddress, recipientTreeDepth } = currentRound.value!
   const fundingRound = new Contract(fundingRoundAddress, FundingRound, signer)
   const recipientClaimData = getRecipientClaimData(props.project.index, recipientTreeDepth, tally.value!)
-  let claimTxReceipt
+  let claimTx
   try {
-    claimTxReceipt = await waitForTransaction(
-      fundingRound.claimFunds(...recipientClaimData),
-      hash => (claimTxHash.value = hash),
-    )
+    claimTx = fundingRound.claimFunds(...recipientClaimData)
+    const claimTxReceipt = await waitForTransaction(claimTx, hash => (claimTxHash.value = hash))
   } catch (error: any) {
     claimTxError.value = error.message
     return
   }
-  amount.value = await getEventArg(claimTxReceipt, fundingRound, 'FundsClaimed', '_amount')
-  recipientAddress.value = await getEventArg(claimTxReceipt, fundingRound, 'FundsClaimed', '_recipient')
+  amount.value = await getEventArg(claimTx, fundingRound, 'FundsClaimed', '_amount')
+  recipientAddress.value = await getEventArg(claimTx, fundingRound, 'FundsClaimed', '_recipient')
 
   props.claimed()
   step.value += 1

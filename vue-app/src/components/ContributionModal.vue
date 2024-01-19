@@ -260,20 +260,18 @@ async function contribute() {
     }
     const contributorKeypair = Keypair.createFromSeed(encryptionKey)
 
-    let contributionTxReceipt
+    let contributionTx
     try {
       const fundingRoundContract = await getFundingRoundContract()
-      contributionTxReceipt = await waitForTransaction(
-        fundingRoundContract.contribute(contributorKeypair.pubKey.asContractParam(), total.value),
-        hash => (contributionTxHash.value = hash),
-      )
+      contributionTx = fundingRoundContract.contribute(contributorKeypair.pubKey.asContractParam(), total.value)
+      await waitForTransaction(contributionTx, hash => (contributionTxHash.value = hash))
     } catch (error) {
       contributionTxError.value = (error as Error).message
       return
     }
     // Get state index
     const maci = new Contract(maciAddress, MACI, signer)
-    const stateIndex = await getEventArg(contributionTxReceipt, maci, 'SignUp', '_stateIndex')
+    const stateIndex = await getEventArg(contributionTx, maci, 'SignUp', '_stateIndex')
     const contributor = {
       keypair: contributorKeypair,
       stateIndex: toNumber(stateIndex),

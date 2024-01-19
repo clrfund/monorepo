@@ -34,18 +34,18 @@ describe('MACI factory', () => {
         signer: deployer,
       })
     }
+    maciParameters = MaciParameters.mock()
     maciFactory = await deployMaciFactory({
       ethers,
       signer: deployer,
       libraries: poseidonContracts,
+      maciParameters,
     })
     const transaction = await maciFactory.deploymentTransaction()
     expect(transaction).to.be.not.null
     expect(await getGasUsage(transaction as TransactionResponse)).lessThan(
       5600000
     )
-
-    maciParameters = MaciParameters.mock()
 
     const SignUpGatekeeperArtifact =
       await artifacts.readArtifact('SignUpGatekeeper')
@@ -66,8 +66,10 @@ describe('MACI factory', () => {
 
   it('sets default MACI parameters', async () => {
     const { maxMessages, maxVoteOptions } = await maciFactory.maxValues()
-    expect(maxMessages).to.equal(BigInt(0))
-    expect(maxVoteOptions).to.equal(BigInt(0))
+    expect(maxMessages).to.be.greaterThan(BigInt(0))
+    expect(maxVoteOptions).to.be.greaterThan(BigInt(0))
+    expect(maxMessages).to.equal(maciParameters.maxValues.maxMessages)
+    expect(maxVoteOptions).to.equal(maciParameters.maxValues.maxVoteOptions)
   })
 
   it('sets MACI parameters', async () => {
@@ -77,9 +79,11 @@ describe('MACI factory', () => {
 
     const { messageTreeDepth } = await maciFactory.treeDepths()
     const { maxMessages, maxVoteOptions } = await maciFactory.maxValues()
-    expect(maxMessages).to.equal(maciParameters.maxMessages)
-    expect(maxVoteOptions).to.equal(maciParameters.maxVoteOptions)
-    expect(messageTreeDepth).to.equal(maciParameters.messageTreeDepth)
+    expect(maxMessages).to.equal(maciParameters.maxValues.maxMessages)
+    expect(maxVoteOptions).to.equal(maciParameters.maxValues.maxVoteOptions)
+    expect(messageTreeDepth).to.equal(
+      maciParameters.treeDepths.messageTreeDepth
+    )
   })
 
   it('allows only owner to set MACI parameters', async () => {
@@ -160,10 +164,6 @@ describe('MACI factory', () => {
   })
 
   it('links with PoseidonT6 correctly', async () => {
-    const setParamTx = await maciFactory.setMaciParameters(
-      ...maciParameters.asContractParam()
-    )
-    await setParamTx.wait()
     const deployTx = await maciFactory.deployMaci(
       signUpGatekeeper.target,
       initialVoiceCreditProxy.target,

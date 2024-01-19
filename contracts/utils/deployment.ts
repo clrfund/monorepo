@@ -3,16 +3,26 @@ import {
   Contract,
   ContractTransactionResponse,
   encodeBytes32String,
+  BaseContract,
 } from 'ethers'
 import path from 'path'
 
 import { readFileSync } from 'fs'
 import { HardhatEthersHelpers } from '@nomicfoundation/hardhat-ethers/types'
-import { DEFAULT_CIRCUIT } from './circuits'
+import {
+  CIRCUITS,
+  DEFAULT_CIRCUIT,
+  getCircuitFiles,
+  CircuitInfo,
+} from './circuits'
 import { isPathExist } from './misc'
 import { MaciParameters } from './maciParameters'
 import { PrivKey, Keypair } from '@clrfund/common'
 import { ZERO_ADDRESS } from './constants'
+import { VkRegistry } from '../typechain-types'
+import { VerifyingKey } from 'maci-domainobjs'
+import { extractVk } from 'maci-circuits'
+import { IVerifyingKeyStruct } from 'maci-contracts'
 
 // Number.MAX_SAFE_INTEGER - 1
 export const challengePeriodSeconds = '9007199254740990'
@@ -325,26 +335,32 @@ export async function deployMaciFactory({
   libraries,
   ethers,
   signer,
+  maciParameters,
 }: {
   libraries: Libraries
   ethers: HardhatEthersHelpers
   signer?: Signer
+  maciParameters: MaciParameters
 }): Promise<Contract> {
-  const pollFactory = await deployContract({
-    name: 'PollFactory',
-    libraries,
-    ethers,
-    signer,
-  })
-
   const vkRegistry = await deployContract({
     name: 'VkRegistry',
     ethers,
     signer,
   })
+  await setVerifyingKeys(
+    vkRegistry as BaseContract as VkRegistry,
+    maciParameters
+  )
 
   const verifier = await deployContract({
     name: 'Verifier',
+    ethers,
+    signer,
+  })
+
+  const pollFactory = await deployContract({
+    name: 'PollFactory',
+    libraries,
     ethers,
     signer,
   })
@@ -380,8 +396,10 @@ export async function deployMaciFactory({
     signer,
   })
 
-  const transferTx = await vkRegistry.transferOwnership(maciFactory.target)
-  await transferTx.wait()
+  const setTx = await maciFactory.setMaciParameters(
+    ...maciParameters.asContractParam()
+  )
+  await setTx.wait()
 
   return maciFactory
 }
@@ -407,6 +425,33 @@ export async function setMaciParameters(
   await setMaciTx.wait()
 
   return setMaciTx
+}
+
+/**
+ * Set Verifying key
+ * @param vkRegistry VKRegistry contract
+ * @param maciParameters MACI tree depths and verifying key information
+ * @returns transaction response
+ */
+export async function setVerifyingKeys(
+  vkRegistry: VkRegistry,
+  params: MaciParameters
+): Promise<ContractTransactionResponse> {
+  const tx = await vkRegistry.setVerifyingKeys(
+    params.stateTreeDepth,
+    params.treeDepths.intStateTreeDepth,
+    params.treeDepths.messageTreeDepth,
+    params.treeDepths.voteOptionTreeDepth,
+    params.messageBatchSize,
+    params.processVk.asContractParam() as IVerifyingKeyStruct,
+    params.tallyVk.asContractParam() as IVerifyingKeyStruct
+  )
+
+  const receipt = await tx.wait()
+  if (receipt?.status !== 1) {
+    throw new Error('Failed to set verifying key; transaction receipt status 1')
+  }
+  return tx
 }
 
 /**

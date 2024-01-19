@@ -182,6 +182,9 @@ type getGenProofArgsInput = {
   quiet?: boolean
 }
 
+/**
+ * GenProof command line arguments
+ */
 type GenProofCliArgs = {
   outputDir: string
   tallyFile: string

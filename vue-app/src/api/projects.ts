@@ -1,4 +1,4 @@
-import { Contract } from 'ethers'
+import { Contract, Interface } from 'ethers'
 import type { TransactionResponse, Signer } from 'ethers'
 import { FundingRound, OptimisticRecipientRegistry } from './abi'
 import { clrFundContract, provider, recipientRegistryType, ipfsGatewayUrl } from './core'
@@ -9,7 +9,6 @@ import KlerosRegistry from './recipient-registry-kleros'
 import sdk from '@/graphql/sdk'
 import { getLeaderboardData } from '@/api/leaderboard'
 import type { RecipientApplicationData } from '@/api/types'
-import { getEventArg } from '@/utils/contracts'
 
 export interface LeaderboardProject {
   id: string // Address or another ID depending on registry implementation
@@ -162,14 +161,18 @@ export async function getRecipientIdByHash(transactionHash: string): Promise<str
       return null
     }
 
+    const eventName = 'RequestSubmitted'
+    const argumentName = '_recipientId'
+    const registryInterface = new Interface(OptimisticRecipientRegistry)
     // should only have 1 event, just in case, return the first matching event
     for (const log of receipt.logs) {
-      const registry = new Contract(log.address, OptimisticRecipientRegistry, provider)
-      try {
-        const recipientId = await getEventArg(receipt, registry, 'RequestSubmitted', '_recipientId')
-        return recipientId
-      } catch {
-        // try next log
+      const event = registryInterface.parseLog({
+        data: log.data,
+        topics: [...log.topics],
+      })
+      // eslint-disable-next-line
+      if (event && event.name === eventName) {
+        return event.args[argumentName]
       }
     }
   } catch {

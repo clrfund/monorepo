@@ -1,7 +1,6 @@
 import { Contract, toNumber, isHexString } from 'ethers'
 import type { TransactionResponse, TransactionReceipt, Signer } from 'ethers'
 import { DateTime } from 'luxon'
-import { getEventArg } from '@/utils/contracts'
 import { chain } from '@/api/core'
 
 import { OptimisticRecipientRegistry } from './abi'
@@ -193,11 +192,6 @@ async function addRecipient(
   const { address, ...metadata } = recipientData
   const transaction = await registry.addRecipient(address, JSON.stringify(metadata), { value: deposit })
   return transaction
-}
-
-export function getRequestId(receipt: TransactionReceipt, registryAddress: string): Promise<string> {
-  const registry = new Contract(registryAddress, OptimisticRecipientRegistry)
-  return getEventArg(receipt, registry, 'RequestSubmitted', '_recipientId')
 }
 
 function decodeProject(recipient: Partial<Recipient>): Project {

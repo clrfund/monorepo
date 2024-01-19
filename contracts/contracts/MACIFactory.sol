@@ -18,7 +18,6 @@ import {DomainObjs} from 'maci-contracts/contracts/utilities/DomainObjs.sol';
 import {MACICommon} from './MACICommon.sol';
 
 contract MACIFactory is Ownable, Params, SnarkCommon, DomainObjs, MACICommon {
-  
 
   // Verifying Key Registry containing circuit parameters
   VkRegistry public vkRegistry;
@@ -31,6 +30,7 @@ contract MACIFactory is Ownable, Params, SnarkCommon, DomainObjs, MACICommon {
   uint8 public stateTreeDepth;
   TreeDepths public treeDepths;
   MaxValues public maxValues;
+  uint256 public messageBatchSize;
 
   // Events
   event MaciParametersChanged();
@@ -119,37 +119,33 @@ contract MACIFactory is Ownable, Params, SnarkCommon, DomainObjs, MACICommon {
     uint8 _stateTreeDepth,
     TreeDepths calldata _treeDepths,
     MaxValues calldata _maxValues,
-    VerifyingKey calldata _processVk,
-    VerifyingKey calldata _tallyVk
+    uint256 _messageBatchSize
   )
     public
     onlyOwner
   {
+
     if (!vkRegistry.hasProcessVk(
-        _stateTreeDepth,
-        _treeDepths.messageTreeDepth,
-        _treeDepths.voteOptionTreeDepth,
-        _treeDepths.messageTreeSubDepth) ||
-      !vkRegistry.hasTallyVk(
-        _stateTreeDepth,
-        _treeDepths.intStateTreeDepth,
-        _treeDepths.voteOptionTreeDepth
-      )
+      _stateTreeDepth,
+      _treeDepths.messageTreeDepth,
+      _treeDepths.voteOptionTreeDepth,
+      _messageBatchSize)
     ) {
-      vkRegistry.setVerifyingKeys(
-        _stateTreeDepth,
-        _treeDepths.intStateTreeDepth,
-        _treeDepths.messageTreeDepth,
-        _treeDepths.voteOptionTreeDepth,
-        _treeDepths.messageTreeSubDepth,
-        _processVk,
-        _tallyVk
-      );
+      revert ProcessVkNotSet();
+    }
+
+    if (!vkRegistry.hasTallyVk(
+      _stateTreeDepth,
+      _treeDepths.intStateTreeDepth,
+      _treeDepths.voteOptionTreeDepth)
+    ) {
+      revert TallyVkNotSet();
     }
 
     stateTreeDepth = _stateTreeDepth;
-    maxValues = _maxValues;
     treeDepths = _treeDepths;
+    maxValues = _maxValues;
+    messageBatchSize = _messageBatchSize;
 
     emit MaciParametersChanged();
   }
@@ -173,7 +169,7 @@ contract MACIFactory is Ownable, Params, SnarkCommon, DomainObjs, MACICommon {
       stateTreeDepth,
       treeDepths.messageTreeDepth,
       treeDepths.voteOptionTreeDepth,
-      treeDepths.messageTreeSubDepth)
+      messageBatchSize)
     ) {
       revert ProcessVkNotSet();
     }

@@ -5,11 +5,38 @@
 
 import path from 'path'
 
+// This should match MACI.TREE_ARITY in the contract
 const TREE_ARITY = 5
 
 export const DEFAULT_CIRCUIT = 'micro'
 
-export const CIRCUITS: { [name: string]: any } = {
+/**
+ * Information about the circuit
+ */
+export type CircuitInfo = {
+  processMessagesZkey: string
+  processWitness: string
+  processWasm: string
+  processDatFile: string
+  tallyVotesZkey: string
+  tallyWitness: string
+  tallyWasm: string
+  tallyDatFile: string
+  stateTreeDepth: number
+  treeDepths: {
+    messageTreeDepth: number
+    messageTreeSubDepth: number
+    voteOptionTreeDepth: number
+    intStateTreeDepth: number
+  }
+  maxValues: {
+    maxMessages: bigint
+    maxVoteOptions: bigint
+  }
+  messageBatchSize: bigint
+}
+
+export const CIRCUITS: { [name: string]: CircuitInfo } = {
   micro: {
     processMessagesZkey: 'processmessages_6-8-2-3_final.zkey',
     processWitness: 'processMessages_6-8-2-3_test',
@@ -19,26 +46,27 @@ export const CIRCUITS: { [name: string]: any } = {
     tallyWitness: 'tallyVotes_6-2-3_test',
     tallyWasm: 'tallyvotes_6-2-3.wasm',
     tallyDatFile: 'tallyVotes_6-2-3_test.dat',
+    // 1st param in processmessages_6-8-2-3
+    stateTreeDepth: 6,
     treeDepths: {
-      // 1st param in processmessages_6-8-2-3
-      stateTreeDepth: 6,
       // 2nd param in processmessages_6-8-2-3
       messageTreeDepth: 8,
       // 3rd param in processmessages_6-8-2-3
       messageTreeSubDepth: 2,
       // last param of processMessages_6-8-2-3 and tallyvotes_6-2-3
       voteOptionTreeDepth: 3,
-      // intStateTreeDepth is the 2nd param in tallyVotes.circom
+      // 2nd param in tallyvotes_6-2-3
       intStateTreeDepth: 2,
     },
     maxValues: {
       // maxMessages and maxVoteOptions are calculated using treeArity = 5 as seen in the following code:
       // https://github.com/privacy-scaling-explorations/maci/blob/master/contracts/contracts/Poll.sol#L115
       // treeArity ** messageTreeDepth
-      maxMessages: TREE_ARITY ** 8,
+      maxMessages: BigInt(TREE_ARITY ** 8),
       // treeArity ** voteOptionTreeDepth
-      maxVoteOptions: TREE_ARITY ** 3,
+      maxVoteOptions: BigInt(TREE_ARITY ** 3),
     },
+    messageBatchSize: BigInt(TREE_ARITY ** 2),
   },
 }
 

@@ -1,22 +1,23 @@
-import { TransactionReceipt, Contract } from 'ethers'
+import { Contract, TransactionResponse } from 'ethers'
 
 /**
  * Get event log argument value
- * @param transactionReceipt transaction receipt
+ * @param transactionReceipt transaction
  * @param contract Contract handle
  * @param eventName event name
  * @param argumentName argument name
  * @returns event argument value
  */
 export async function getEventArg(
-  transactionReceipt: TransactionReceipt,
+  transaction: TransactionResponse,
   contract: Contract,
   eventName: string,
   argumentName: string
 ): Promise<any> {
+  const transactionReceipt = await transaction.wait()
   const contractAddress = await contract.getAddress()
   // eslint-disable-next-line
-  for (const log of transactionReceipt.logs || []) {
+  for (const log of transactionReceipt?.logs || []) {
     if (log.address !== contractAddress) {
       continue
     }
@@ -30,6 +31,6 @@ export async function getEventArg(
     }
   }
   throw new Error(
-    `Event ${eventName} from contract ${contractAddress} not found in transaction ${transactionReceipt.hash}`
+    `Event ${eventName} from contract ${contractAddress} not found in transaction ${transaction.hash}`
   )
 }

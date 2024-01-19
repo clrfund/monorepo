@@ -12,18 +12,13 @@ type TreeDepths = {
 }
 
 type MaxValues = {
-  maxMessages: number
-  maxVoteOptions: number
+  maxMessages: bigint
+  maxVoteOptions: bigint
 }
 
 export class MaciParameters {
   stateTreeDepth: number
-  intStateTreeDepth: number
-  messageTreeSubDepth: number
-  messageTreeDepth: number
-  voteOptionTreeDepth: number
-  maxMessages: number
-  maxVoteOptions: number
+  messageBatchSize: bigint
   processVk: VerifyingKey
   tallyVk: VerifyingKey
   treeDepths: TreeDepths
@@ -31,23 +26,18 @@ export class MaciParameters {
 
   constructor(parameters: { [name: string]: any } = {}) {
     this.stateTreeDepth = parameters.stateTreeDepth
-    this.intStateTreeDepth = parameters.intStateTreeDepth
-    this.messageTreeSubDepth = parameters.messageTreeSubDepth
-    this.messageTreeDepth = parameters.messageTreeDepth
-    this.voteOptionTreeDepth = parameters.voteOptionTreeDepth
-    this.maxMessages = parameters.maxMessages
-    this.maxVoteOptions = parameters.maxVoteOptions
+    this.messageBatchSize = parameters.messageBatchSize
     this.processVk = parameters.processVk
     this.tallyVk = parameters.tallyVk
     this.treeDepths = {
-      intStateTreeDepth: this.intStateTreeDepth,
-      messageTreeSubDepth: this.messageTreeSubDepth,
-      messageTreeDepth: this.messageTreeDepth,
-      voteOptionTreeDepth: this.voteOptionTreeDepth,
+      intStateTreeDepth: parameters.intStateTreeDepth,
+      messageTreeSubDepth: parameters.messageTreeSubDepth,
+      messageTreeDepth: parameters.messageTreeDepth,
+      voteOptionTreeDepth: parameters.voteOptionTreeDepth,
     }
     this.maxValues = {
-      maxMessages: this.maxMessages,
-      maxVoteOptions: this.maxVoteOptions,
+      maxMessages: parameters.maxMessages,
+      maxVoteOptions: parameters.maxVoteOptions,
     }
   }
 
@@ -55,14 +45,16 @@ export class MaciParameters {
     return [
       this.stateTreeDepth,
       {
-        intStateTreeDepth: this.intStateTreeDepth,
-        messageTreeSubDepth: this.messageTreeSubDepth,
-        messageTreeDepth: this.messageTreeDepth,
-        voteOptionTreeDepth: this.voteOptionTreeDepth,
+        intStateTreeDepth: this.treeDepths.intStateTreeDepth,
+        messageTreeSubDepth: this.treeDepths.messageTreeSubDepth,
+        messageTreeDepth: this.treeDepths.messageTreeDepth,
+        voteOptionTreeDepth: this.treeDepths.voteOptionTreeDepth,
       },
-      { maxMessages: this.maxMessages, maxVoteOptions: this.maxVoteOptions },
-      this.processVk.asContractParam(),
-      this.tallyVk.asContractParam(),
+      {
+        maxMessages: this.maxValues.maxMessages,
+        maxVoteOptions: this.maxValues.maxVoteOptions,
+      },
+      this.messageBatchSize,
     ]
   }
 
@@ -80,8 +72,10 @@ export class MaciParameters {
     )
 
     return new MaciParameters({
+      stateTreeDepth: params.stateTreeDepth,
       ...params.maxValues,
       ...params.treeDepths,
+      messageBatchSize: params.messageBatchSize,
       processVk,
       tallyVk,
     })
@@ -96,6 +90,7 @@ export class MaciParameters {
       voteOptionTreeDepth,
     } = await maciFactory.treeDepths()
     const { maxMessages, maxVoteOptions } = await maciFactory.maxValues()
+    const messageBatchSize = await maciFactory.messageBatchSize()
 
     return new MaciParameters({
       stateTreeDepth,
@@ -105,6 +100,7 @@ export class MaciParameters {
       voteOptionTreeDepth,
       maxMessages,
       maxVoteOptions,
+      messageBatchSize,
     })
   }
 
@@ -132,9 +128,8 @@ export class MaciParameters {
 
     // use smaller voteOptionTreeDepth for testing
     const params = {
-      maxValues: { maxMessages: 390625, maxVoteOptions: 25 },
+      maxValues: { maxMessages: BigInt(390625), maxVoteOptions: BigInt(25) },
       treeDepths: {
-        stateTreeDepth: 6,
         intStateTreeDepth: 2,
         messageTreeSubDepth: 2,
         messageTreeDepth: 8,
@@ -143,8 +138,10 @@ export class MaciParameters {
     }
 
     return new MaciParameters({
+      stateTreeDepth: 6,
       ...params.maxValues,
       ...params.treeDepths,
+      messageBatchSize: BigInt(25),
       processVk,
       tallyVk: processVk.copy(),
     })

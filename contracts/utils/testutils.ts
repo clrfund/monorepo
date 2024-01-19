@@ -21,26 +21,6 @@ export async function deployMockContractByName(
 }
 
 /**
- * Deploy an instance of the maciFactory contracct and returns the factory contracts
- * @param signer signer of the contract deployment
- * @param libraries poseidon libraries
- * @returns the contract factories in the maciFactory contract
- */
-export async function deployFactories(
-  signer: Signer,
-  libraries: { [name: string]: string }
-) {
-  const maciFactory = await deployMaciFactory({ libraries, ethers, signer })
-  const factories = await maciFactory.factories()
-  return {
-    pollFactory: factories.pollFactory,
-    tallyFactory: factories.tallyFactory,
-    subsidyFactory: factories.subsidyFactory,
-    messageProcessorFactory: factories.messageProcessorFactory,
-  }
-}
-
-/**
  * Output from the deployTestFundingRound() function
  */
 export type DeployTestFundingRoundOutput = {
@@ -99,7 +79,13 @@ export async function deployTestFundingRound(
   })
 
   const maciParameters = MaciParameters.mock()
-  const factories = await deployFactories(deployer, libraries)
+  const maciFactory = await deployMaciFactory({
+    libraries,
+    ethers,
+    signer: deployer,
+    maciParameters,
+  })
+  const factories = await maciFactory.factories()
   const topupToken = await ethers.deployContract('TopupToken', deployer)
   const vkRegistry = await ethers.deployContract('VkRegistry', deployer)
   const mockVerifier = await deployMockContractByName('Verifier', deployer)
@@ -122,6 +108,7 @@ export async function deployTestFundingRound(
       libraries,
     }
   )
+
   const deployPollTx = await maciInstance.deployPoll(
     roundDuration,
     maciParameters.maxValues,
@@ -139,14 +126,26 @@ export async function deployTestFundingRound(
     'pollAddr'
   )
 
-  // swap out the tally with mock tally for testing
+  // swap out the tally contract with with a mock for testing
   const pollContracts = {
-    tally: mockTally.target,
+    tally: await mockTally.getAddress(),
     poll: pollAddr.poll,
     messageProcessor: pollAddr.messageProcessor,
     subsidy: pollAddr.subsidy,
   }
-  await fundingRound.setMaci(maciInstance.target, pollContracts, factories)
+
+  const factoryContracts = {
+    pollFactory: factories.pollFactory,
+    messageProcessorFactory: factories.messageProcessorFactory,
+    tallyFactory: factories.tallyFactory,
+    subsidyFactory: factories.subsidyFactory,
+  }
+
+  await fundingRound.setMaci(
+    maciInstance.target,
+    pollContracts,
+    factoryContracts
+  )
 
   return {
     token,

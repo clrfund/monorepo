@@ -152,11 +152,8 @@ describe('End-to-end Tests', function () {
       libraries: poseidonLibraries,
       signer: deployer,
       ethers,
+      maciParameters: params,
     })
-    const setMaciTx = await maciFactory.setMaciParameters(
-      ...params.asContractParam()
-    )
-    await setMaciTx.wait()
 
     clrfund = await deployContract({
       name: 'ClrFund',
