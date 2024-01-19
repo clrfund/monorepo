@@ -22,7 +22,7 @@ jobs:
     - name: Install
       run: |
         git config --global url."https://".insteadOf git://
-        yarn
+        yarn && yarn build
     - name: Run tests
       run: yarn test:contracts
 
