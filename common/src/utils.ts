@@ -14,21 +14,8 @@ import { Tally } from './tally'
 
 const LEAVES_PER_NODE = 5
 
-declare type PathElements = bigint[][]
-declare type Indices = number[]
-declare type Leaf = bigint
-
-interface MerkleProof {
-  pathElements: PathElements
-  indices: Indices
-  depth: number
-  /* eslint-disable-next-line @typescript-eslint/ban-types */
-  root: BigInt
-  leaf: Leaf
-}
-
 export function bnSqrt(a: bigint): bigint {
-  // Take square root from a big number
+  // Take square root from a bigint
   // https://stackoverflow.com/a/52468569/1868395
   if (a === 0n) {
     return a
@@ -94,7 +81,7 @@ export function getRecipientClaimData(
   for (const leaf of tally.perVOSpentVoiceCredits.tally) {
     spentTree.insert(BigInt(leaf))
   }
-  const spentProof: MerkleProof = spentTree.genMerklePath(recipientIndex)
+  const spentProof = spentTree.genProof(recipientIndex)
 
   const resultsCommitment = genTallyResultCommitment(
     tally.results.tally.map((x) => BigInt(x)),

@@ -15,6 +15,7 @@ import {
   UNIT,
   ALPHA_PRECISION,
   DEFAULT_GET_LOG_BATCH_SIZE,
+  DEFAULT_SR_QUEUE_OPS,
 } from '../utils/constants'
 import { getEventArg } from '../utils/contracts'
 import {
@@ -40,8 +41,15 @@ import path from 'path'
 type VoteData = { recipientIndex: number; voiceCredits: bigint }
 
 const ZERO = BigInt(0)
-const DEFAULT_SR_QUEUE_OPS = 4
+// funding round duration
 const roundDuration = 7 * 86400
+
+// log output for debugging
+const quiet = !(process.env.DEBUG || false)
+console.log('quiet', quiet)
+function debugLog(message?: any, ...optionalParams: any[]) {
+  if (!quiet) console.log(message, ...optionalParams)
+}
 
 // MACI zkFiles
 const circuit = process.env.CIRCUIT_TYPE || DEFAULT_CIRCUIT
@@ -148,6 +156,7 @@ describe('End-to-end Tests', function () {
     ] = await ethers.getSigners()
 
     // Deploy funding round factory
+    debugLog('Deploying MACI factory')
     const maciFactory = await deployMaciFactory({
       libraries: poseidonLibraries,
       signer: deployer,
@@ -307,6 +316,7 @@ describe('End-to-end Tests', function () {
   }
 
   async function finalizeRound(): Promise<any> {
+    debugLog('Finalizing round')
     // Process messages and tally votes
     const maciAddress = await maci.getAddress()
     await mergeMaciSubtrees({
@@ -314,6 +324,7 @@ describe('End-to-end Tests', function () {
       pollId,
       numOperations: DEFAULT_SR_QUEUE_OPS,
     })
+    debugLog('Merged MACI trees')
 
     const random = Math.floor(Math.random() * 10 ** 8)
     const outputDir = path.join(proofOutputDirectory, `${random}`)
@@ -332,13 +343,18 @@ describe('End-to-end Tests', function () {
       outputDir,
       blocksPerBatch: DEFAULT_GET_LOG_BATCH_SIZE,
       maciTxHash: maciTransactionHash,
+      quiet,
     })
 
+    debugLog('Generating proof')
     await genProofs(genProofArgs)
+    debugLog('Generated proof')
 
-    const tallyAddress = await maci.getPoll(pollId)
-    const tallyContract = await ethers.getContractAt('Tally', tallyAddress)
-    const messageProcessorAddress = await tallyContract.mp()
+    const tallyAddress = await fundingRound.tally()
+    const tallyContact = await ethers.getContractAt('Tally', tallyAddress)
+    const messageProcessorAddress = await tallyContact.mp()
+
+    debugLog('Proving on chain')
     // Submit proofs to MACI contract
     await proveOnChain({
       pollId,
@@ -347,6 +363,7 @@ describe('End-to-end Tests', function () {
       maciAddress,
       messageProcessorAddress,
       tallyAddress,
+      quiet,
     })
     console.log('finished proveOnChain')
 
@@ -358,7 +375,7 @@ describe('End-to-end Tests', function () {
     console.log('Tally hash', tallyHash)
 
     // add tally results to funding round
-    const recipientTreeDepth = params.voteOptionTreeDepth
+    const recipientTreeDepth = params.treeDepths.voteOptionTreeDepth
     console.log('Adding tally result on chain in batches of', tallyBatchSize)
     await addTallyResultsBatch(
       fundingRound.connect(coordinator) as Contract,
@@ -381,6 +398,7 @@ describe('End-to-end Tests', function () {
     )
 
     // Finalize round
+    debugLog('Transfering matching funds')
     await clrfund.transferMatchingFunds(
       tally.totalSpentVoiceCredits.spent,
       tally.totalSpentVoiceCredits.salt,

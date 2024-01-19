@@ -10,7 +10,6 @@ import {
   deployContract,
   deployPoseidonLibraries,
   deployMaciFactory,
-  setMaciParameters,
 } from '../utils/deployment'
 import { DEFAULT_CIRCUIT } from '../utils/circuits'
 import { JSONFile } from '../utils/JSONFile'

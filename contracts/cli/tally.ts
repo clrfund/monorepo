@@ -56,7 +56,7 @@ program
   .option('-r --rapidsnark <path>', 'The rapidsnark prover path')
   .option(
     '-n --num-queue-ops <num>',
-    'The number of operation for tree merging',
+    'The number of operations for MACI tree merging',
     DEFAULT_SR_QUEUE_OPS
   )
   .option(
@@ -64,6 +64,7 @@ program
     'The number of blocks per batch of logs to fetch on-chain',
     DEFAULT_GET_LOG_BATCH_SIZE.toString()
   )
+  .option('-q --quiet', 'Whether to log the output', true)
   .parse()
 
 /**
@@ -81,6 +82,7 @@ async function main(args: any) {
     maciTxHash,
     numQueueOps,
     blocksPerBatch,
+    quiet,
   } = args
 
   const [coordinator] = await ethers.getSigners()
@@ -116,8 +118,7 @@ async function main(args: any) {
       throw Error('Env. variable COORDINATOR_MACISK not set')
     }
 
-    const pollIdBN = await fundingRoundContract.pollId()
-    const pollId = pollIdBN.toString()
+    const pollId = await fundingRoundContract.pollId()
     console.log('PollId', pollId)
 
     const maciAddress = await fundingRoundContract.maci()
@@ -134,10 +135,16 @@ async function main(args: any) {
       outputDir,
       blocksPerBatch: Number(blocksPerBatch),
       maciTxHash,
+      quiet,
     })
     console.log('genProofsArg', genProofArgs)
 
-    await mergeMaciSubtrees({ maciAddress, pollId, numOperations: numQueueOps })
+    await mergeMaciSubtrees({
+      maciAddress,
+      pollId,
+      numQueueOps,
+      quiet,
+    })
     console.log('Completed tree merge')
 
     await genProofs(genProofArgs)
@@ -150,11 +157,10 @@ async function main(args: any) {
     }
 
     try {
-      const pollAddress = await fundingRoundContract.poll()
-      const pollContract = await ethers.getContractAt('Poll', pollAddress)
-      const tallyAddress = await pollContract.tally()
+      const tallyAddress = await fundingRoundContract.tally()
       const tallyContact = await ethers.getContractAt('Tally', tallyAddress)
       const messageProcessorAddress = await tallyContact.mp()
+
       // Submit proofs to MACI contract
       await proveOnChain({
         pollId,
@@ -163,6 +169,7 @@ async function main(args: any) {
         maciAddress,
         messageProcessorAddress,
         tallyAddress,
+        quiet,
       })
     } catch (e) {
       console.error('proveOnChain failed')

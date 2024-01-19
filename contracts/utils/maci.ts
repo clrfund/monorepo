@@ -15,8 +15,9 @@ import * as os from 'os'
 import {
   mergeMessages,
   mergeSignups,
-  genProofs as maciGenProofs,
-  proveOnChain as maciProveOnChain,
+  genProofs,
+  proveOnChain,
+  GenProofsArgs,
 } from 'maci-cli'
 
 import { getTalyFilePath, isPathExist } from './misc'
@@ -53,13 +54,11 @@ export function getRecipientTallyResult(
   for (const leaf of tally.results.tally) {
     resultTree.insert(leaf)
   }
-  const resultProof = resultTree.genMerklePath(recipientIndex)
+  const resultProof = resultTree.genProof(recipientIndex)
   return {
     recipientIndex,
     result,
-    proof: resultProof.pathElements.map((x: bigint[]) =>
-      x.map((y) => y.toString())
-    ),
+    proof: resultProof.pathElements.map((x) => x.map((y) => y.toString())),
   }
 }
 
@@ -217,7 +216,7 @@ type GenProofCliArgs = {
 /*
  * Get the arguments to pass to the genProof function
  */
-export function getGenProofArgs(args: getGenProofArgsInput): GenProofCliArgs {
+export function getGenProofArgs(args: getGenProofArgsInput): GenProofsArgs {
   const {
     maciAddress,
     pollId,
@@ -297,47 +296,39 @@ export function getGenProofArgs(args: getGenProofArgsInput): GenProofCliArgs {
 }
 
 /**
- * This is just temporary solution until the issue is resolved:
- * https://github.com/privacy-scaling-explorations/maci/issues/1039
- */
-function ensureContractAddressFileExist() {
-  fs.writeFileSync(
-    path.join(
-      path.dirname(__dirname),
-      '/node_modules/maci-cli/build/contractAddresses.json'
-    ),
-    JSON.stringify({})
-  )
-}
-
-/**
  * Merge MACI message and signups subtrees
  * Must merge the subtrees before calling genProofs
  * @param maciAddress MACI contract address
  * @param pollId Poll id
- * @param numOperations Number of operations to perform for the merge
+ * @param numQueueOps Number of operations to perform for the merge
+ * @param quiet Whether to log output
  */
 export async function mergeMaciSubtrees({
   maciAddress,
   pollId,
-  numOperations,
+  numQueueOps,
   quiet,
 }: {
   maciAddress: string
   pollId: bigint
-  numOperations: number
+  numQueueOps?: string
   quiet?: boolean
 }) {
   if (!maciAddress) throw new Error('Missing MACI address')
 
-  // this is to work around issue https://github.com/privacy-scaling-explorations/maci/issues/1039
-  ensureContractAddressFileExist()
+  await mergeMessages({
+    pollId,
+    maciContractAddress: maciAddress,
+    numQueueOps,
+    quiet,
+  })
 
-  const pollIdAsNumber = toNumber(pollId)
-  const numOperationsAsString = numOperations.toString()
-
-  await mergeMessages(pollIdAsNumber, maciAddress, numOperationsAsString, quiet)
-  await mergeSignups(pollIdAsNumber, maciAddress, numOperationsAsString, quiet)
+  await mergeSignups({
+    pollId,
+    maciContractAddress: maciAddress,
+    numQueueOps,
+    quiet,
+  })
 }
 
 /**
@@ -356,74 +347,4 @@ export function newMaciPrivateKey(): string {
   return secretKey
 }
 
-/**
- * This function is a temporary wrapper for MACI genProofs command until the MACI genProofs
- * changed to take an object argument
- * @param genProofArgs an object with all the arguments for the MACI genProofs command
- */
-export async function genProofs(genProofArgs: GenProofCliArgs): Promise<void> {
-  const pollId = toNumber(genProofArgs.pollId)
-
-  await maciGenProofs(
-    genProofArgs.outputDir,
-    genProofArgs.tallyFile,
-    genProofArgs.tallyZkey,
-    genProofArgs.processZkey,
-    pollId,
-    genProofArgs.subsidyFile,
-    genProofArgs.subsidyZkey,
-    genProofArgs.rapidsnark,
-    genProofArgs.processWitgen,
-    genProofArgs.processDatFile,
-    genProofArgs.tallyWitgen,
-    genProofArgs.tallyDatFile,
-    genProofArgs.subsidyWitgen,
-    genProofArgs.subsidyDatFile,
-    genProofArgs.coordinatorPrivKey,
-    genProofArgs.maciAddress,
-    genProofArgs.transactionHash,
-    genProofArgs.processWasm,
-    genProofArgs.tallyWasm,
-    genProofArgs.subsidyWasm,
-    genProofArgs.useWasm,
-    genProofArgs.stateFile,
-    genProofArgs.startBlock,
-    genProofArgs.blocksPerBatch,
-    genProofArgs.endBlock,
-    genProofArgs.quiet
-  )
-}
-
-/**
- * Structure to store the proveOnChain arguments
- */
-type proveOnChainCliArgs = {
-  pollId: bigint
-  proofDir: string
-  subsidyEnabled: boolean
-  maciAddress?: string
-  messageProcessorAddress?: string
-  tallyAddress?: string
-  subsidyAddress?: string
-  quiet?: boolean
-}
-
-/**
- * This function is a temporary wrapper for the MACI proveOnChain function until
- * the function is changed back to taking 1 argument object as opposed to positional arguments
- * @param arg an object containging all the proveOnChain arguments
- */
-export async function proveOnChain(arg: proveOnChainCliArgs) {
-  await maciProveOnChain(
-    arg.pollId.toString(),
-    arg.proofDir,
-    arg.subsidyEnabled,
-    arg.maciAddress,
-    arg.messageProcessorAddress,
-    arg.tallyAddress,
-    arg.subsidyAddress,
-    arg.quiet
-  )
-}
-
-export { createMessage, getRecipientClaimData, bnSqrt }
+export { createMessage, getRecipientClaimData, bnSqrt, genProofs, proveOnChain }

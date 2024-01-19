@@ -15,6 +15,7 @@
     "target": "es2020",
     "esModuleInterop": true,
     "module": "commonjs",
+    "moduleResolution": "node",
     "declaration": true
   },
   "exclude": ["node_modules/**"],

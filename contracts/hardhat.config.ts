@@ -187,7 +187,7 @@ task(
       const artifact = JSON.parse(
         fs
           .readFileSync(
-            `./node_modules/maci-contracts/artifacts/contracts/crypto/${contractName}.sol/${contractName}.json`
+            `./node_modules/maci-contracts/build/artifacts/contracts/crypto/${contractName}.sol/${contractName}.json`
           )
           .toString()
       )

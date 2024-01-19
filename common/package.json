@@ -2,9 +2,13 @@
   "name": "@clrfund/common",
   "version": "0.0.1",
   "description": "Common utility functions used by clrfund scripts and app",
-  "main": "src/index",
+  "main": "build/cjs/index.js",
+  "module": "build/esm/index.js",
+  "types": "build/esm/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "yarn build:esm && yarn build:cjs",
+    "build:esm": "tsc -p tsconfig.json --outDir build/esm --module ES6",
+    "build:cjs": "tsc -p tsconfig.json --outDir build/cjs",
     "lint": "eslint 'src/**/*.ts'",
     "clean": "rm -rf build"
   },
@@ -16,8 +20,8 @@
   "dependencies": {
     "@openzeppelin/merkle-tree": "^1.0.5",
     "ethers": "^6.9.2",
-    "maci-crypto": "0.0.0-ci.ae1f52e",
-    "maci-domainobjs": "0.0.0-ci.ae1f52e"
+    "maci-crypto": "0.0.0-ci.a5a9137",
+    "maci-domainobjs": "0.0.0-ci.a5a9137"
   },
   "repository": {
     "type": "git",
