@@ -11,7 +11,7 @@ import { JSONFile } from '../utils/JSONFile'
 import { ethers } from 'hardhat'
 import { program } from 'commander'
 import { isPathExist } from '../utils/misc'
-import { Contract } from 'ethers'
+import { Contract, getNumber } from 'ethers'
 
 program
   .description('Claim funnds for test recipients')
@@ -40,7 +40,11 @@ async function main(args: any) {
   console.log('pollAddress', pollAddress)
 
   const poll = await ethers.getContractAt('Poll', pollAddress)
-  const recipientTreeDepth = (await poll.treeDepths()).voteOptionTreeDepth
+  const treeDepths = await poll.treeDepths()
+  const recipientTreeDepth = getNumber(
+    treeDepths.voteOptionTreeDepth,
+    'voteOptionTreeDepth'
+  )
 
   // Claim funds
   const recipients = [recipient0, recipient1, recipient2]

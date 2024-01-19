@@ -11,6 +11,7 @@ import { ethers } from 'hardhat'
 import { JSONFile } from '../utils/JSONFile'
 import { genTallyResultCommitment } from '@clrfund/common'
 import { program } from 'commander'
+import { getNumber } from 'ethers'
 
 program
   .description('Finalize a funding round')
@@ -42,19 +43,23 @@ async function main(args: any) {
   const treeDepths = await pollContract.treeDepths()
   console.log('voteOptionTreeDepth', treeDepths.voteOptionTreeDepth)
 
-  const totalSpent = parseInt(tally.totalSpentVoiceCredits.spent)
+  const totalSpent = tally.totalSpentVoiceCredits.spent
   const totalSpentSalt = tally.totalSpentVoiceCredits.salt
 
+  const voteOptionTreeDepth = getNumber(
+    treeDepths.voteOptionTreeDepth,
+    'voteOptionTreeDepth'
+  )
   const resultsCommitment = genTallyResultCommitment(
     tally.results.tally.map((x: string) => BigInt(x)),
-    tally.results.salt,
-    treeDepths.voteOptionTreeDepth
+    BigInt(tally.results.salt),
+    voteOptionTreeDepth
   )
 
   const perVOVoiceCreditCommitment = genTallyResultCommitment(
     tally.perVOSpentVoiceCredits.tally.map((x: string) => BigInt(x)),
-    tally.perVOSpentVoiceCredits.salt,
-    treeDepths.voteOptionTreeDepth
+    BigInt(tally.perVOSpentVoiceCredits.salt),
+    voteOptionTreeDepth
   )
 
   const tx = await clrfundContract.transferMatchingFunds(
