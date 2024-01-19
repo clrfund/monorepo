@@ -132,7 +132,7 @@ async function contributeMatchingFunds() {
   // TODO: update to take ClrFund address as a parameter from the route props, default to env. variable
   const matchingPoolAddress = import.meta.env.VITE_MATCHING_POOL_ADDRESS
     ? import.meta.env.VITE_MATCHING_POOL_ADDRESS
-    : clrFundContract.address
+    : clrFundContract.target
 
   try {
     await waitForTransaction(token.transfer(matchingPoolAddress, _amount), hash => (transferTxHash.value = hash))
