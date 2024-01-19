@@ -18,7 +18,7 @@
  *  yarn ts-node cli/tally.ts --round-address <address>
  */
 import { ethers } from 'hardhat'
-import { Contract } from 'ethers'
+import { Contract, toNumber } from 'ethers'
 
 import {
   DEFAULT_SR_QUEUE_OPS,
@@ -133,7 +133,7 @@ async function main(args: any) {
       circuitType: circuit,
       circuitDirectory,
       outputDir,
-      blocksPerBatch: Number(blocksPerBatch),
+      blocksPerBatch: toNumber(blocksPerBatch),
       maciTxHash,
       quiet,
     })
@@ -201,8 +201,8 @@ async function main(args: any) {
     fundingRoundContract,
     3,
     tally,
-    Number(batchSize),
-    startIndex.toNumber(),
+    toNumber(batchSize),
+    toNumber(startIndex),
     (processed: number) => {
       console.log(`Processed ${processed} / ${total}`)
     }
