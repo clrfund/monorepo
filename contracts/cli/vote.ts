@@ -9,7 +9,13 @@
  */
 
 import { JSONFile } from '../utils/JSONFile'
-import { PrivKey, Keypair, createMessage } from '@clrfund/common'
+import {
+  PrivKey,
+  Keypair,
+  createMessage,
+  Message,
+  PubKey,
+} from '@clrfund/common'
 import { ethers } from 'hardhat'
 import { program } from 'commander'
 import dotenv from 'dotenv'
@@ -47,8 +53,8 @@ async function main(args: any) {
       PrivKey.deserialize(contributorData.privKey)
     )
 
-    const messages: { msgType: any; data: string[] }[] = []
-    const encPubKeys: any[] = []
+    const messages: Message[] = []
+    const encPubKeys: PubKey[] = []
     let nonce = 1
     // Change key
     const newContributorKeypair = new Keypair()
@@ -62,8 +68,8 @@ async function main(args: any) {
       nonce,
       pollId
     )
-    messages.push(message.asContractParam())
-    encPubKeys.push(encPubKey.asContractParam())
+    messages.push(message)
+    encPubKeys.push(encPubKey)
     nonce += 1
     // Vote
     for (const recipientIndex of [1, 2]) {
@@ -78,8 +84,8 @@ async function main(args: any) {
         nonce,
         pollId
       )
-      messages.push(message.asContractParam())
-      encPubKeys.push(encPubKey.asContractParam())
+      messages.push(message)
+      encPubKeys.push(encPubKey)
       nonce += 1
     }
 
@@ -89,8 +95,8 @@ async function main(args: any) {
       contributor
     )
     await fundingRoundAsContributor.submitMessageBatch(
-      messages.reverse(),
-      encPubKeys.reverse()
+      messages.reverse().map((msg) => msg.asContractParam()),
+      encPubKeys.reverse().map((key) => key.asContractParam())
     )
     console.log(`Contributor ${contributorAddress} voted.`)
   }
