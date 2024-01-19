@@ -31,7 +31,6 @@ contract MACIFactory is Ownable, Params, SnarkCommon, DomainObjs, MACICommon {
   uint8 public stateTreeDepth;
   TreeDepths public treeDepths;
   MaxValues public maxValues;
-  uint256 public messageBatchSize;
 
   // Events
   event MaciParametersChanged();
@@ -120,7 +119,6 @@ contract MACIFactory is Ownable, Params, SnarkCommon, DomainObjs, MACICommon {
     uint8 _stateTreeDepth,
     TreeDepths calldata _treeDepths,
     MaxValues calldata _maxValues,
-    uint256 _messageBatchSize,
     VerifyingKey calldata _processVk,
     VerifyingKey calldata _tallyVk
   )
@@ -131,7 +129,7 @@ contract MACIFactory is Ownable, Params, SnarkCommon, DomainObjs, MACICommon {
         _stateTreeDepth,
         _treeDepths.messageTreeDepth,
         _treeDepths.voteOptionTreeDepth,
-        _messageBatchSize) ||
+        _treeDepths.messageTreeSubDepth) ||
       !vkRegistry.hasTallyVk(
         _stateTreeDepth,
         _treeDepths.intStateTreeDepth,
@@ -143,7 +141,7 @@ contract MACIFactory is Ownable, Params, SnarkCommon, DomainObjs, MACICommon {
         _treeDepths.intStateTreeDepth,
         _treeDepths.messageTreeDepth,
         _treeDepths.voteOptionTreeDepth,
-        _messageBatchSize,
+        _treeDepths.messageTreeSubDepth,
         _processVk,
         _tallyVk
       );
@@ -152,7 +150,6 @@ contract MACIFactory is Ownable, Params, SnarkCommon, DomainObjs, MACICommon {
     stateTreeDepth = _stateTreeDepth;
     maxValues = _maxValues;
     treeDepths = _treeDepths;
-    messageBatchSize = _messageBatchSize;
 
     emit MaciParametersChanged();
   }
@@ -176,7 +173,7 @@ contract MACIFactory is Ownable, Params, SnarkCommon, DomainObjs, MACICommon {
       stateTreeDepth,
       treeDepths.messageTreeDepth,
       treeDepths.voteOptionTreeDepth,
-      messageBatchSize)
+      treeDepths.messageTreeSubDepth)
     ) {
       revert ProcessVkNotSet();
     }

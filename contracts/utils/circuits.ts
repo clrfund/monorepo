@@ -1,6 +1,7 @@
 // custom configuration for MACI parameters
 // See https://github.com/privacy-scaling-explorations/maci/wiki/Precompiled-v1.1.1 for parameter definition
-// TODO: currently the version of MACI used in clrfund only supports circuit 6-8-2-3 because stateTreeDepth = 6 in MACI contract
+// NOTE: currently the version of MACI used in clrfund only supports circuit 6-8-2-3 because
+// the EmptyBallotRoots.sol published in MACI npm package is hardcoded for stateTreeDepth = 6
 
 import path from 'path'
 
@@ -19,15 +20,15 @@ export const CIRCUITS: { [name: string]: any } = {
     tallyWasm: 'tallyvotes_6-2-3.wasm',
     tallyDatFile: 'tallyVotes_6-2-3_test.dat',
     treeDepths: {
-      //
+      // 1st param in processmessages_6-8-2-3
       stateTreeDepth: 6,
+      // 2nd param in processmessages_6-8-2-3
       messageTreeDepth: 8,
-      // TODO: confirm if messageBatchTreeDepth is the same as _messageTreeSubDepth in TreeDepths.
-      // see https://github.com/clrfund/maci-v1/blob/b5ea1ed4a10c14dc133f8d61e886120cda240003/cli/ts/deployPoll.ts#L153
-      // TODO: is messageBatchTreeDepth == intStateTreeDepth??
+      // 3rd param in processmessages_6-8-2-3
       messageTreeSubDepth: 2,
+      // last param of processMessages_6-8-2-3 and tallyvotes_6-2-3
       voteOptionTreeDepth: 3,
-      // TODO: confirm if intStateTreeDepth is the 2nd param in tallyVotes.circom
+      // intStateTreeDepth is the 2nd param in tallyVotes.circom
       intStateTreeDepth: 2,
     },
     maxValues: {
