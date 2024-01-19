@@ -166,7 +166,7 @@ export async function getRecipientIdByHash(transactionHash: string): Promise<str
     for (const log of receipt.logs) {
       const registry = new Contract(log.address, OptimisticRecipientRegistry, provider)
       try {
-        const recipientId = getEventArg(receipt, registry, 'RequestSubmitted', '_recipientId')
+        const recipientId = await getEventArg(receipt, registry, 'RequestSubmitted', '_recipientId')
         return recipientId
       } catch {
         // try next log

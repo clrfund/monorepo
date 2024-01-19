@@ -83,8 +83,8 @@ async function claim() {
     claimTxError.value = error.message
     return
   }
-  amount.value = getEventArg(claimTxReceipt, fundingRound, 'FundsClaimed', '_amount')
-  recipientAddress.value = getEventArg(claimTxReceipt, fundingRound, 'FundsClaimed', '_recipient')
+  amount.value = await getEventArg(claimTxReceipt, fundingRound, 'FundsClaimed', '_amount')
+  recipientAddress.value = await getEventArg(claimTxReceipt, fundingRound, 'FundsClaimed', '_recipient')
 
   props.claimed()
   step.value += 1

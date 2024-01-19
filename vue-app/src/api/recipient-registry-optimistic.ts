@@ -195,7 +195,7 @@ async function addRecipient(
   return transaction
 }
 
-export function getRequestId(receipt: TransactionReceipt, registryAddress: string): string {
+export function getRequestId(receipt: TransactionReceipt, registryAddress: string): Promise<string> {
   const registry = new Contract(registryAddress, OptimisticRecipientRegistry)
   return getEventArg(receipt, registry, 'RequestSubmitted', '_recipientId')
 }

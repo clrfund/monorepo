@@ -1,7 +1,7 @@
 import type { Contract } from 'ethers'
 import type { TransactionResponse, TransactionReceipt } from 'ethers'
 import { provider, MAX_WAIT_DEPTH } from '@/api/core'
-import { isSameAddress } from '@/utils/accounts'
+import { getEventArg } from '@clrfund/common'
 
 export async function waitForTransaction(
   pendingTransaction: Promise<TransactionResponse>,
@@ -67,29 +67,9 @@ export async function waitForTransactionAndCheck(
   })
 }
 
-export function getEventArg(
-  transactionReceipt: TransactionReceipt,
-  contract: Contract,
-  eventName: string,
-  argumentName: string,
-): any {
-  // eslint-disable-next-line
-  for (const log of transactionReceipt.logs || []) {
-    if (!isSameAddress(log.address, contract.address)) {
-      continue
-    }
-    const event = contract.interface.parseLog(log)
-    // eslint-disable-next-line
-    if (event && event.name === eventName) {
-      return event.args[argumentName]
-    }
-  }
-  throw new Error(
-    `Event ${eventName} from contract ${contract.address} not found in transaction ${transactionReceipt.transactionHash}`,
-  )
-}
-
 export async function isTransactionMined(hash: string): Promise<boolean> {
   const receipt = await provider.getTransactionReceipt(hash)
   return !!receipt
 }
+
+export { getEventArg }

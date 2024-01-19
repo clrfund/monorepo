@@ -23,7 +23,6 @@ import {
   ALPHA_PRECISION,
 } from '../utils/constants'
 import { getEventArg, getGasUsage } from '../utils/contracts'
-import { deployMaciFactory, deployPoseidonLibraries } from '../utils/deployment'
 import {
   bnSqrt,
   createMessage,
@@ -31,8 +30,6 @@ import {
   getRecipientClaimData,
   getRecipientTallyResultsBatch,
 } from '../utils/maci'
-import { DEFAULT_CIRCUIT } from '../utils/circuits'
-import { MaciParameters } from '../utils/maciParameters'
 import { deployTestFundingRound } from '../utils/testutils'
 
 // ethStaker test vectors for Quadratic Funding with alpha

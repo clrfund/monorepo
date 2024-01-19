@@ -121,7 +121,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
-import { Contract } from 'ethers'
+import { Contract, toNumber } from 'ethers'
 import { Keypair, PubKey, Message, createMessage } from '@clrfund/common'
 
 import Transaction from '@/components/Transaction.vue'
@@ -191,8 +191,9 @@ async function sendVotes() {
   }
 
   try {
+    const fundingRoundContract = await getFundingRoundContract()
     await waitForTransaction(
-      fundingRound.value.submitMessageBatch(
+      fundingRoundContract.submitMessageBatch(
         messages.reverse().map(msg => msg.asContractParam()),
         encPubKeys.reverse().map(key => key.asContractParam()),
       ),
@@ -272,10 +273,10 @@ async function contribute() {
     }
     // Get state index
     const maci = new Contract(maciAddress, MACI, signer)
-    const stateIndex = getEventArg(contributionTxReceipt, maci, 'SignUp', '_stateIndex')
+    const stateIndex = await getEventArg(contributionTxReceipt, maci, 'SignUp', '_stateIndex')
     const contributor = {
       keypair: contributorKeypair,
-      stateIndex: stateIndex.toNumber(),
+      stateIndex: toNumber(stateIndex),
     }
     // Save contributor data to storage
     appStore.setContributor(contributor)

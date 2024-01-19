@@ -1,7 +1,5 @@
 import { Log } from '../providers/BaseProvider'
 import { Project } from '../types'
-import { Interface } from 'ethers'
-import { TOPIC_ABIS } from '../abi'
 import { RecipientState } from '../constants'
 import { BaseParser } from './BaseParser'
 
