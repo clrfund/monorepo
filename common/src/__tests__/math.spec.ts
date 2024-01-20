@@ -20,23 +20,23 @@ function getRandom(min: number, max: number) {
   return Math.floor(Math.random() * (max - min) + min)
 }
 
-describe('bnSqrt', function() {
-  it('should throw if value less than 0', function() {
+describe('bnSqrt', function () {
+  it('should throw if value less than 0', function () {
     expect(bnSqrt.bind(bnSqrt, -1n)).to.throw('Complex numbers not support')
   })
 
   for (const test of cases) {
     const [val, expected] = test
-    it(`bnSqrt(${val}) === ${expected}`, function() {
+    it(`bnSqrt(${val}) === ${expected}`, function () {
       expect(bnSqrt(val)).to.eq(expected)
     })
   }
 
-  it('Sqrt(8) throws as it took too long to calculate', function() {
+  it('Sqrt(8) throws as it took too long to calculate', function () {
     expect(bnSqrt.bind(bnSqrt, 8n)).to.throw('Sqrt took too long to calculate')
   })
 
-  it('testing random bigints', function() {
+  it('testing random bigints', function () {
     for (let i = 0; i < 100; i++) {
       const rand = toBigInt(getRandom(5, 200)) * UNIT
       const sqrtVal = bnSqrt(rand)
