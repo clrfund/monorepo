@@ -11,23 +11,9 @@ import {
 import { PubKey, PCommand, Message } from 'maci-domainobjs'
 import { Keypair } from './keypair'
 import { Tally } from './tally'
+import { bnSqrt } from './math'
 
 const LEAVES_PER_NODE = 5
-
-export function bnSqrt(a: bigint): bigint {
-  // Take square root from a bigint
-  // https://stackoverflow.com/a/52468569/1868395
-  if (a === 0n) {
-    return a
-  }
-  let x: bigint
-  let x1 = a / 2n
-  do {
-    x = x1
-    x1 = (x + a / x) / 2n
-  } while (x !== x1)
-  return x
-}
 
 export function createMessage(
   userStateIndex: number,
@@ -84,7 +70,7 @@ export function getRecipientClaimData(
   const spentProof = spentTree.genProof(recipientIndex)
 
   const resultsCommitment = genTallyResultCommitment(
-    tally.results.tally.map((x) => BigInt(x)),
+    tally.results.tally.map(x => BigInt(x)),
     BigInt(tally.results.salt),
     recipientTreeDepth
   )
@@ -97,7 +83,7 @@ export function getRecipientClaimData(
   return [
     recipientIndex,
     spent,
-    spentProof.pathElements.map((x) => x.map((y) => y.toString())),
+    spentProof.pathElements.map(x => x.map(y => y.toString())),
     spentSalt,
     resultsCommitment,
     spentVoiceCreditsCommitment,
