@@ -148,7 +148,7 @@ export async function getContributorIndex(fundingRoundAddress: string, pubKey: P
   if (!fundingRoundAddress) {
     return null
   }
-  const id = getPubKeyId(pubKey)
+  const id = getPubKeyId(fundingRoundAddress, pubKey)
   const data = await sdk.GetContributorIndex({
     fundingRoundAddress: fundingRoundAddress.toLowerCase(),
     publicKeyId: id,
@@ -183,7 +183,7 @@ export async function getContributorMessages({
     return []
   }
 
-  const key = getPubKeyId(contributorKey.pubKey)
+  const key = getPubKeyId(fundingRoundAddress, contributorKey.pubKey)
   const result = await sdk.GetContributorMessages({
     fundingRoundAddress: fundingRoundAddress.toLowerCase(),
     pubKey: key,

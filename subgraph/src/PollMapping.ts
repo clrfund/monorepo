@@ -1,4 +1,4 @@
-import { log, ByteArray, crypto, BigInt } from '@graphprotocol/graph-ts'
+import { log } from '@graphprotocol/graph-ts'
 import { PublishMessage } from '../generated/templates/Poll/Poll'
 
 import { FundingRound, Message, PublicKey } from '../generated/schema'
@@ -37,6 +37,7 @@ export function handlePublishMessage(event: PublishMessage): void {
   message.submittedBy = event.transaction.from
 
   let publicKeyId = makePublicKeyId(
+    fundingRoundId,
     event.params._encPubKey.x,
     event.params._encPubKey.y
   )

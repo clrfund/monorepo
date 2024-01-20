@@ -70,7 +70,7 @@ export function getRecipientClaimData(
   const spentProof = spentTree.genProof(recipientIndex)
 
   const resultsCommitment = genTallyResultCommitment(
-    tally.results.tally.map(x => BigInt(x)),
+    tally.results.tally.map((x) => BigInt(x)),
     BigInt(tally.results.salt),
     recipientTreeDepth
   )
@@ -83,7 +83,7 @@ export function getRecipientClaimData(
   return [
     recipientIndex,
     spent,
-    spentProof.pathElements.map(x => x.map(y => y.toString())),
+    spentProof.pathElements.map((x) => x.map((y) => y.toString())),
     spentSalt,
     resultsCommitment,
     spentVoiceCreditsCommitment,
@@ -92,12 +92,15 @@ export function getRecipientClaimData(
 
 /**
  * get the id of the subgraph public key entity from the pubKey value
+ * @param fundingRoundAddress funding round address
  * @param pubKey MACI public key
  * @returns the id for the subgraph public key entity
  */
-export function getPubKeyId(pubKey: PubKey): string {
+export function getPubKeyId(fundingRoundAddress = '', pubKey: PubKey): string {
   const pubKeyPair = pubKey.asContractParam()
-  return id(pubKeyPair.x + '.' + pubKeyPair.y)
+  return id(
+    fundingRoundAddress.toLowerCase() + '.' + pubKeyPair.x + '.' + pubKeyPair.y
+  )
 }
 
 export {
