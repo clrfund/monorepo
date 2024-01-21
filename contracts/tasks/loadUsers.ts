@@ -1,5 +1,5 @@
 import { task } from 'hardhat/config'
-import { Contract, utils, ContractReceipt } from 'ethers'
+import { Contract, ContractTransactionReceipt, isAddress } from 'ethers'
 import fs from 'fs'
 
 /*
@@ -22,7 +22,7 @@ import fs from 'fs'
 async function addUser(
   registry: Contract,
   address: string
-): Promise<ContractReceipt> {
+): Promise<ContractTransactionReceipt> {
   const tx = await registry.addUser(address)
   const receipt = await tx.wait()
   return receipt
@@ -50,14 +50,14 @@ async function loadFile(registry: Contract, filePath: string) {
 
   for (let i = 0; i < addresses.length; i++) {
     const address = addresses[i]
-    const isValidAddress = Boolean(address) && utils.isAddress(address)
+    const isValidAddress = Boolean(address) && isAddress(address)
     if (isValidAddress) {
       console.log('Adding address', address)
       try {
         const result = await addUser(registry, address)
         if (result.status !== 1) {
           throw new Error(
-            `Transaction ${result.transactionHash} failed with status ${result.status}`
+            `Transaction ${result.hash} failed with status ${result.status}`
           )
         }
       } catch (err: any) {
@@ -67,7 +67,7 @@ async function loadFile(registry: Contract, filePath: string) {
           console.error('Failed to add address', address, err)
         }
       }
-    } else {
+    } else if (address) {
       console.warn('Skipping invalid address', address)
     }
   }
