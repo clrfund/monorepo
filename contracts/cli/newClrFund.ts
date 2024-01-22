@@ -205,7 +205,8 @@ async function main(args: any) {
   )
 
   if (stateFile) {
-    JSONFile.update(stateFile, { clrfund })
+    // save the test data for running the tally script later
+    JSONFile.update(stateFile, { clrfund, coordinatorMacisk })
   }
 }
 
