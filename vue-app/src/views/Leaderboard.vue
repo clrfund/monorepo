@@ -83,12 +83,25 @@ onMounted(async () => {
     return
   }
 
-  projects.value = data.projects
-    .filter(project => project.state != 'Removed')
-    .map(project => toLeaderboardProject(project))
-    .sort((p1: LeaderboardProject, p2: LeaderboardProject) => p2.allocatedAmount - p1.allocatedAmount)
+  try {
+    projects.value = data.projects
+      .filter(project => project.state != 'Removed')
+      .map(project => toLeaderboardProject(project))
+      .sort((p1: LeaderboardProject, p2: LeaderboardProject) => {
+        const diff = p2.allocatedAmount - p1.allocatedAmount
+        if (diff === BigInt(0)) return 0
+        if (diff > BigInt(0)) return 1
+        return -1
+      })
+  } catch (err) {
+    console.log('Error sorting project information', err)
+  }
 
-  round.value = toRoundInfo(data.round, network)
+  try {
+    round.value = toRoundInfo(data.round, network)
+  } catch (e) {
+    console.log('Error converting to round info', e)
+  }
 
   isLoading.value = false
 })

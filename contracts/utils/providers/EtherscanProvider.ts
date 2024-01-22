@@ -5,6 +5,7 @@ const EtherscanApiUrl: Record<string, string> = {
   xdai: 'https://api.gnosisscan.io',
   arbitrum: 'https://api.arbiscan.io',
   'arbitrum-goerli': 'https://api-goerli.arbiscan.io',
+  'arbitrum-sepolia': 'https://api-sepolia.arbiscan.io',
 }
 
 export class EtherscanProvider extends BaseProvider {

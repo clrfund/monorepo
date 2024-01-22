@@ -8,10 +8,10 @@
  */
 
 import { task, types } from 'hardhat/config'
-import { utils, BigNumber } from 'ethers'
+import { formatUnits, parseUnits } from 'ethers'
 import fs from 'fs'
 import { Project, RoundFileContent, Tally } from '../utils/types'
-import { writeToFile } from '../utils/file'
+import { JSONFile } from '../utils/JSONFile'
 
 const COLUMN_PROJECT_NAME = 0
 const COLUMN_RECIPIENT_ADDRESS = 1
@@ -153,7 +153,7 @@ task('merge-allocations', 'Merge the allocations data into the round JSON file')
       totalVoiceCreditsPerVoteOption: { tally: [] },
     }
 
-    let totalPayout = BigNumber.from(0)
+    let totalPayout = BigInt(0)
     for (let index = 0; index < allocations.length; index++) {
       const { recipientAddress, projectName, payoutAmount, votes } =
         allocations[index]
@@ -167,13 +167,13 @@ task('merge-allocations', 'Merge the allocations data into the round JSON file')
         continue
       }
 
-      const allocatedAmountBN = utils.parseUnits(payoutAmount, decimals)
+      const allocatedAmountBN = parseUnits(payoutAmount, decimals)
       const allocatedAmount = allocatedAmountBN.toString()
       const projectKey = makeProjectKey(recipientAddress)
       if (projects[projectKey]) {
         projects[projectKey].allocatedAmount = allocatedAmount
         console.log(index, projectName, '-', payoutAmount)
-        totalPayout = totalPayout.add(allocatedAmount)
+        totalPayout = totalPayout + BigInt(allocatedAmount)
 
         const { recipientIndex } = projects[projectKey]
         if (recipientIndex) {
@@ -186,12 +186,17 @@ task('merge-allocations', 'Merge the allocations data into the round JSON file')
       }
     }
 
-    if (roundData && Object.keys(projects).length > 0 && totalPayout.gt(0)) {
+    if (
+      roundData &&
+      Object.keys(projects).length > 0 &&
+      totalPayout > BigInt(0)
+    ) {
       roundData.projects = Object.values(projects)
-      console.log('totalPayout ', utils.formatUnits(totalPayout, decimals))
+      console.log('totalPayout ', formatUnits(totalPayout, decimals))
 
       roundData.round.matchingPoolSize = totalPayout.toString()
       roundData.tally = sanitizeTally(tally)
-      writeToFile(roundFile, roundData)
+      JSONFile.write(roundFile, roundData)
+      console.log('Finished writing to', roundFile)
     }
   })

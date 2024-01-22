@@ -1,4 +1,4 @@
-import { Contract, Interface } from 'ethers'
+import { Contract, Interface, getNumber } from 'ethers'
 import type { TransactionResponse, Signer } from 'ethers'
 import { FundingRound, OptimisticRecipientRegistry } from './abi'
 import { clrFundContract, provider, recipientRegistryType, ipfsGatewayUrl } from './core'
@@ -186,7 +186,7 @@ export function toLeaderboardProject(project: any): LeaderboardProject {
   return {
     id: project.id,
     name: project.name,
-    index: project.recipientIndex,
+    index: getNumber(project.recipientIndex),
     imageUrl,
     allocatedAmount: BigInt(project.allocatedAmount || '0'),
     votes: BigInt(project.tallyResult || '0'),

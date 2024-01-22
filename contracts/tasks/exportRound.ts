@@ -3,18 +3,20 @@
  *
  * Sample usage:
  *
- *  yarn hardhat export-round --round-address <address> --out-dir ../vue-app/src/rounds --operator <operator> --ipfs <ipfs-gateway-url> --start-block <recipient-registry-start-block> --network <network>
+ *  yarn hardhat export-round --round-address <address> --output-dir ../vue-app/src/rounds \
+ *  --operator <operator> --ipfs <ipfs-gateway-url> \
+ *  --start-block <recipient-registry-start-block> --network <network>
  *
  * To generate the leaderboard view, deploy the clrfund website with the generated round data in the vue-app/src/rounds folder
  */
 
 import { task, types } from 'hardhat/config'
-import { Contract, formatUnits } from 'ethers'
+import { Contract, formatUnits, getNumber } from 'ethers'
 import { Ipfs } from '../utils/ipfs'
 import { Project, Round, RoundFileContent } from '../utils/types'
 import { RecipientRegistryLogProcessor } from '../utils/RecipientRegistryLogProcessor'
 import { getRecipientAddressAbi } from '../utils/abi'
-import { writeToFile } from '../utils/file'
+import { JSONFile } from '../utils/JSONFile'
 import path from 'path'
 import fs from 'fs'
 
@@ -74,7 +76,8 @@ async function updateRoundList(filePath: string, round: RoundListEntry) {
 
   // sort in ascending start time order
   rounds.sort((round1, round2) => round1.startTime - round2.startTime)
-  writeToFile(filePath, rounds)
+  JSONFile.write(filePath, rounds)
+  console.log('Finished writing to', filePath)
 }
 
 async function mergeRecipientTally({
@@ -126,13 +129,14 @@ async function mergeRecipientTally({
         startTime,
         endTime
       )
-    } catch {
+    } catch (err) {
+      console.log('err', err)
       // some older recipient registry contract does not have
       // the getRecipientAddress function, ignore error
     }
 
     const tallyResult = tally.results.tally[i]
-    const spentVoiceCredits = tally.totalVoiceCreditsPerVoteOption.tally[i]
+    const spentVoiceCredits = tally.perVOSpentVoiceCredits.tally[i]
     const formattedDonationAmount = formatUnits(
       BigInt(spentVoiceCredits) * BigInt(voiceCreditFactor),
       nativeTokenDecimals
@@ -162,10 +166,14 @@ async function getRoundInfo(
   ethers: any,
   operator: string
 ): Promise<Round> {
-  console.log('Fetching round data for', roundContract.address)
-  const round: any = { address: roundContract.address }
+  console.log('Fetching round data for', roundContract.target)
+  const address = await roundContract.getAddress()
+
+  let nativeTokenAddress: string
+  let nativeTokenDecimals = BigInt(0)
+  let nativeTokenSymbol = ''
   try {
-    round.nativeTokenAddress = await roundContract.nativeToken()
+    nativeTokenAddress = await roundContract.nativeToken()
   } catch (err) {
     const errorMessage = `Failed to get nativeToken. Make sure the environment variable JSONRPC_HTTP_URL is set properly: ${
       (err as Error).message
@@ -174,14 +182,14 @@ async function getRoundInfo(
   }
 
   try {
-    const token = await ethers.getContractAt('ERC20', round.nativeTokenAddress)
-    round.nativeTokenDecimals = await token.decimals().catch(toUndefined)
-    round.nativeTokenSymbol = await token.symbol().catch(toUndefined)
+    const token = await ethers.getContractAt('ERC20', nativeTokenAddress)
+    nativeTokenDecimals = await token.decimals().catch(toUndefined)
+    nativeTokenSymbol = await token.symbol().catch(toUndefined)
     console.log(
       'Fetched token data',
-      round.nativeTokenAddress,
-      round.nativeTokenSymbol,
-      round.nativeTokenDecimals
+      nativeTokenAddress,
+      nativeTokenSymbol,
+      nativeTokenDecimals
     )
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : ''
@@ -189,67 +197,114 @@ async function getRoundInfo(
   }
 
   const contributorCount = await roundContract.contributorCount().catch(toZero)
-  round.contributorCount = contributorCount.toNumber()
-
   const matchingPoolSize = await roundContract.matchingPoolSize().catch(toZero)
-  round.matchingPoolSize = matchingPoolSize.toString()
 
-  round.totalSpent = await roundContract
+  const totalSpent = await roundContract
     .totalSpent()
     .then(toString)
     .catch(toUndefined)
 
   const voiceCreditFactor = await roundContract.voiceCreditFactor()
-  round.voiceCreditFactor = voiceCreditFactor.toString()
-
-  round.isFinalized = await roundContract.isFinalized()
-  round.isCancelled = await roundContract.isCancelled()
-  round.tallyHash = await roundContract.tallyHash()
+  const isFinalized = await roundContract.isFinalized()
+  const isCancelled = await roundContract.isCancelled()
+  const tallyHash = await roundContract.tallyHash()
+  const maciAddress = await roundContract.maci().catch(toUndefined)
+  const pollAddress = await roundContract.poll().catch(toUndefined)
+  let startTime = 0
+  let endTime = 0
+  let pollId: bigint | undefined
+  let messages: bigint
+  let maxMessages: bigint
+  let maxRecipients: bigint
+  let signUpDuration = BigInt(0)
+  let votingDuration = BigInt(0)
 
   try {
-    round.maciAddress = await roundContract.maci().catch(toUndefined)
-    const maci = await ethers.getContractAt('MACI', round.maciAddress)
-    const startTime = await maci.signUpTimestamp().catch(toZero)
-    round.startTime = startTime.toNumber()
-    const signUpDuration = await maci.signUpDurationSeconds().catch(toZero)
-    const votingDuration = await maci.votingDurationSeconds().catch(toZero)
-    const endTime = startTime.add(signUpDuration).add(votingDuration)
-    round.endTime = endTime.toNumber()
-    round.signUpDuration = signUpDuration.toNumber()
-    round.votingDuration = votingDuration.toNumber()
+    if (pollAddress) {
+      const pollContract = await ethers.getContractAt('Poll', pollAddress)
+      const [roundStartTime, roundDuration] =
+        await pollContract.getDeployTimeAndDuration()
+      startTime = getNumber(roundStartTime)
+      signUpDuration = roundDuration
+      votingDuration = roundDuration
+      endTime = startTime + getNumber(roundDuration)
 
-    const maciTreeDepths = await maci.treeDepths()
-    const messages = await maci.numMessages()
+      pollId = await roundContract.pollId()
 
-    round.messages = messages.toNumber()
-    round.maxMessages = 2 ** maciTreeDepths.messageTreeDepth - 1
-    round.maxRecipients = 5 ** maciTreeDepths.voteOptionTreeDepth - 1
+      messages = await pollContract.numMessages()
+      const maxValues = await pollContract.maxValues()
+      maxMessages = maxValues.maxMessages
+      maxRecipients = maxValues.maxVoteOptions
+    } else {
+      const maci = await ethers.getContractAt('MACI', maciAddress)
+      startTime = await maci.signUpTimestamp().catch(toZero)
+      signUpDuration = await maci.signUpDurationSeconds().catch(toZero)
+      votingDuration = await maci.votingDurationSeconds().catch(toZero)
+      endTime =
+        getNumber(startTime) +
+        getNumber(signUpDuration) +
+        getNumber(votingDuration)
+
+      const treeDepths = await maci.treeDepths()
+      messages = await maci.numMessages()
+      maxMessages = BigInt(2) ** BigInt(treeDepths.messageTreeDepth) - BigInt(1)
+      maxRecipients =
+        BigInt(5) ** BigInt(treeDepths.voteOptionTreeDepth) - BigInt(1)
+    }
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : ''
-    throw new Error(`Failed to get MACI data ${errorMessage}`)
+    throw new Error(`Failed to get round duration ${errorMessage}`)
   }
 
-  round.userRegistryAddress = await roundContract
+  const userRegistryAddress = await roundContract
     .userRegistry()
     .catch(toUndefined)
 
-  round.recipientRegistryAddress = await roundContract.recipientRegistry()
+  const recipientRegistryAddress = await roundContract.recipientRegistry()
+  let recipientDepositAmount = '0'
   try {
     const recipientRegistry = await ethers.getContractAt(
       'OptimisticRecipientRegistry',
-      round.recipientRegistryAddress
+      recipientRegistryAddress
     )
-    round.recipientDepositAmount = await recipientRegistry
+    recipientDepositAmount = await recipientRegistry
       .baseDeposit()
       .then(toString)
   } catch {
     // ignore error - non optimistic recipient registry does not have deposit
   }
 
-  round.operator = operator
   const providerNetwork = await ethers.provider.getNetwork()
-  round.chainId = providerNetwork.chainId
+  const chainId = getNumber(providerNetwork.chainId)
 
+  const round: Round = {
+    chainId,
+    operator,
+    address,
+    userRegistryAddress,
+    recipientRegistryAddress,
+    recipientDepositAmount,
+    maciAddress,
+    pollAddress,
+    pollId,
+    contributorCount,
+    totalSpent: totalSpent || '',
+    matchingPoolSize,
+    voiceCreditFactor,
+    isFinalized,
+    isCancelled,
+    tallyHash,
+    nativeTokenAddress,
+    nativeTokenSymbol,
+    nativeTokenDecimals: getNumber(nativeTokenDecimals),
+    startTime,
+    endTime,
+    signUpDuration: getNumber(signUpDuration),
+    votingDuration: getNumber(votingDuration),
+    messages,
+    maxMessages,
+    maxRecipients,
+  }
   console.log('Round', round)
   return round
 }
@@ -370,7 +425,8 @@ task('export-round', 'Export round data for the leaderboard')
         projects,
         tally,
       }
-      writeToFile(filename, roundData)
+      JSONFile.write(filename, roundData)
+      console.log('Finished writing to', filename)
 
       // update round list
       const listFilename = roundListFileName(outputDir)

@@ -15,7 +15,9 @@ export class RequestSubmittedParser extends BaseParser {
     const recipientIndex = args._index
 
     const state =
-      args._type === 0 ? RecipientState.Registered : RecipientState.Removed
+      BigInt(args._type) === BigInt(0)
+        ? RecipientState.Registered
+        : RecipientState.Removed
 
     const timestamp = toDate(args._timestamp)
     const createdAt =

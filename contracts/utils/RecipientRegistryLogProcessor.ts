@@ -1,12 +1,4 @@
-import {
-  Contract,
-  EventFilter,
-  Interface,
-  Fragment,
-  EventFragment,
-  Addressable,
-  ZeroAddress,
-} from 'ethers'
+import { Contract, EventFilter, Interface, ZeroAddress } from 'ethers'
 import { ProviderFactory } from './providers/ProviderFactory'
 import { Project } from './types'
 import { RecipientState } from './constants'
@@ -14,13 +6,15 @@ import { ParserFactory } from './parsers/ParserFactory'
 import { Log } from './providers/BaseProvider'
 import { toDate } from './date'
 import { EVENT_ABIS } from './abi'
+import { AbiInfo } from './types'
 
-function getFilter(address: string | Addressable, abi: string): EventFilter {
-  const eventInterface = new Interface([abi])
-  const events = eventInterface.fragments
-    .filter(Fragment.isEvent)
-    .map((evt) => evt as EventFragment)
-  const topic0 = events[0].topicHash
+function getFilter(address: string, abiInfo: AbiInfo): EventFilter {
+  const eventInterface = new Interface([abiInfo.abi])
+  const event = eventInterface.getEvent(abiInfo.name)
+  if (!event) {
+    throw new Error(`Event ${abiInfo.name} not found`)
+  }
+  const topic0 = event.topicHash
   return { address, topics: [topic0] }
 }
 
@@ -62,9 +56,10 @@ export class RecipientRegistryLogProcessor {
       ? endBlock
       : await this.registry.runner?.provider?.getBlockNumber()
 
+    const registryAddress = await this.registry.getAddress()
     console.log(
       `Fetching event logs from the recipient registry`,
-      this.registry.address
+      registryAddress
     )
 
     const logProvider = ProviderFactory.createProvider({
@@ -76,7 +71,7 @@ export class RecipientRegistryLogProcessor {
     for (let i = 0; i < EVENT_ABIS.length; i++) {
       const { add, remove } = EVENT_ABIS[i]
 
-      const filter = getFilter(this.registry.target, add.abi)
+      const filter = getFilter(registryAddress, add)
       const addLogs = await logProvider.fetchLogs({
         filter,
         startBlock,
@@ -85,7 +80,7 @@ export class RecipientRegistryLogProcessor {
       })
 
       if (addLogs.length > 0) {
-        const filter = getFilter(this.registry.target, remove.abi)
+        const filter = getFilter(registryAddress, remove)
         const removeLogs = await logProvider.fetchLogs({
           filter,
           startBlock,
