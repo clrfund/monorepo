@@ -1,4 +1,4 @@
-import { getAddress, isHexString, type Addressable, isAddress } from 'ethers'
+import { getAddress, isHexString, resolveAddress, isAddress } from 'ethers'
 import { mainnetProvider } from '@/api/core'
 
 const SIGNATURE_LENGTH = 65
@@ -23,7 +23,7 @@ export async function resolveEns(name: string): Promise<string | null> {
 
 // Returns true if address is valid ENS or 0x address
 export async function isValidEthAddress(address: string): Promise<boolean> {
-  const resolved = await mainnetProvider.resolveName(address)
+  const resolved = await resolveAddress(address)
   return !!resolved
 }
 
