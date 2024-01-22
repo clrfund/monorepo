@@ -9,8 +9,7 @@
  */
 
 import { task, types } from 'hardhat/config'
-import { HardhatConfig } from 'hardhat/types'
-import { utils, Contract, BigNumber } from 'ethers'
+import { Contract, formatUnits } from 'ethers'
 import { Ipfs } from '../utils/ipfs'
 import { Project, Round, RoundFileContent } from '../utils/types'
 import { RecipientRegistryLogProcessor } from '../utils/RecipientRegistryLogProcessor'
@@ -28,8 +27,8 @@ type RoundListEntry = {
 }
 
 const toUndefined = () => undefined
-const toString = (val: BigNumber) => BigNumber.from(val).toString()
-const toZero = () => BigNumber.from(0)
+const toString = (val: bigint) => BigInt(val).toString()
+const toZero = () => BigInt(0)
 
 function roundFileName(directory: string, address: string): string {
   return path.join(directory, `${address}.json`)
@@ -39,9 +38,9 @@ function roundListFileName(directory: string): string {
   return path.join(directory, 'rounds.json')
 }
 
-function getEtherscanApiKey(config: HardhatConfig, network: string): string {
+function getEtherscanApiKey(config: any, network: string): string {
   let etherscanApiKey = ''
-  if (config.etherscan.apiKey) {
+  if (config.etherscan?.apiKey) {
     if (typeof config.etherscan.apiKey === 'string') {
       etherscanApiKey = config.etherscan.apiKey
     } else {
@@ -134,8 +133,8 @@ async function mergeRecipientTally({
 
     const tallyResult = tally.results.tally[i]
     const spentVoiceCredits = tally.totalVoiceCreditsPerVoteOption.tally[i]
-    const formattedDonationAmount = utils.formatUnits(
-      BigNumber.from(spentVoiceCredits).mul(voiceCreditFactor),
+    const formattedDonationAmount = formatUnits(
+      BigInt(spentVoiceCredits) * BigInt(voiceCreditFactor),
       nativeTokenDecimals
     )
 

@@ -9,8 +9,9 @@ export class JSONFile {
   static read(path: string) {
     try {
       return JSON.parse(fs.readFileSync(path).toString())
-    } catch {
-      return {}
+    } catch (e) {
+      console.log(`Filed to read ${path}`, (e as Error).message)
+      throw e
     }
   }
 

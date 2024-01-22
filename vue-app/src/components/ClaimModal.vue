@@ -59,7 +59,7 @@ const claimTxError = ref('')
 const amount = ref(BigInt(0))
 const recipientAddress = ref('')
 
-function formatAmount(value: BigInt): string {
+function formatAmount(value: bigint): string {
   const { nativeTokenDecimals } = currentRound.value!
   return _formatAmount(value, nativeTokenDecimals)
 }
@@ -73,14 +73,16 @@ async function claim() {
   const { fundingRoundAddress, recipientTreeDepth } = currentRound.value!
   const fundingRound = new Contract(fundingRoundAddress, FundingRound, signer)
   const recipientClaimData = getRecipientClaimData(props.project.index, recipientTreeDepth, tally.value!)
-  let claimTx
+  let claimPromise
   try {
-    claimTx = fundingRound.claimFunds(...recipientClaimData)
-    const claimTxReceipt = await waitForTransaction(claimTx, hash => (claimTxHash.value = hash))
+    claimPromise = fundingRound.claimFunds(...recipientClaimData)
+    const claimTxReceipt = await waitForTransaction(claimPromise, hash => (claimTxHash.value = hash))
   } catch (error: any) {
     claimTxError.value = error.message
     return
   }
+
+  const claimTx = await claimPromise
   amount.value = await getEventArg(claimTx, fundingRound, 'FundsClaimed', '_amount')
   recipientAddress.value = await getEventArg(claimTx, fundingRound, 'FundsClaimed', '_recipient')
 

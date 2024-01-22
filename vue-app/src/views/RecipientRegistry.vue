@@ -200,14 +200,14 @@ function hasProjectLink(request: Request): boolean {
 }
 
 async function approve(request: Request): Promise<void> {
-  await waitForTransactionAndLoad(
-    registerProject(recipientRegistryAddress.value!, request.recipientId, userStore.signer),
-  )
+  const signer = await userStore.getSigner()
+  await waitForTransactionAndLoad(registerProject(recipientRegistryAddress.value!, request.recipientId, signer))
 }
 
 async function reject(request: Request): Promise<void> {
+  const signer = await userStore.getSigner()
   await waitForTransactionAndLoad(
-    rejectProject(recipientRegistryAddress.value!, request.recipientId, request.requester, userStore.signer),
+    rejectProject(recipientRegistryAddress.value!, request.recipientId, request.requester, signer),
   )
 }
 

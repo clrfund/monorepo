@@ -10,3 +10,5 @@ tally.json
 addresses.txt
 proof_output
 typechain-types
+params
+local-state.json

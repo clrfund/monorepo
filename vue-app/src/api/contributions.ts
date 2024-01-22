@@ -1,6 +1,6 @@
-import { Contract, FixedNumber, parseUnits } from 'ethers'
+import { Contract, FixedNumber, parseUnits, id } from 'ethers'
 import type { TransactionResponse, Signer } from 'ethers'
-import { Keypair, PubKey, PrivKey, Message, Command, getPubKeyId } from '@clrfund/common'
+import { Keypair, PubKey, PrivKey, Message, Command } from '@clrfund/common'
 
 import type { RoundInfo } from './round'
 import { FundingRound, ERC20 } from './abi'
@@ -23,6 +23,17 @@ export interface CartItem extends Project {
 export interface Contributor {
   keypair: Keypair
   stateIndex: number
+}
+
+/**
+ * get the id of the subgraph public key entity from the pubKey value
+ * @param fundingRoundAddress funding round address
+ * @param pubKey MACI public key
+ * @returns the id for the subgraph public key entity
+ */
+function getPubKeyId(fundingRoundAddress = '', pubKey: PubKey): string {
+  const pubKeyPair = pubKey.asContractParam()
+  return id(fundingRoundAddress.toLowerCase() + '.' + pubKeyPair.x + '.' + pubKeyPair.y)
 }
 
 export function getCartStorageKey(roundAddress: string): string {
@@ -66,7 +77,7 @@ export function deserializeContributorData(data: string | null): Contributor | n
   }
 }
 
-export async function getContributionAmount(fundingRoundAddress: string, contributorAddress: string): Promise<BigInt> {
+export async function getContributionAmount(fundingRoundAddress: string, contributorAddress: string): Promise<bigint> {
   if (!fundingRoundAddress) {
     return 0n
   }

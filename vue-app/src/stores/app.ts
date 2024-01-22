@@ -30,7 +30,7 @@ export type AppState = {
   cartEditModeSelected: boolean
   committedCart: CartItem[]
   cartLoaded: boolean
-  contribution: BigInt | null
+  contribution: bigint | null
   contributor: Contributor | null
   hasVoted: boolean
   currentRound: RoundInfo | null

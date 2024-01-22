@@ -9,19 +9,12 @@ import path from 'path'
 
 import { readFileSync } from 'fs'
 import { HardhatEthersHelpers } from '@nomicfoundation/hardhat-ethers/types'
-import {
-  CIRCUITS,
-  DEFAULT_CIRCUIT,
-  getCircuitFiles,
-  CircuitInfo,
-} from './circuits'
+import { DEFAULT_CIRCUIT } from './circuits'
 import { isPathExist } from './misc'
 import { MaciParameters } from './maciParameters'
 import { PrivKey, Keypair } from '@clrfund/common'
 import { ZERO_ADDRESS } from './constants'
 import { VkRegistry } from '../typechain-types'
-import { VerifyingKey } from 'maci-domainobjs'
-import { extractVk } from 'maci-circuits'
 import { IVerifyingKeyStruct } from 'maci-contracts'
 
 // Number.MAX_SAFE_INTEGER - 1

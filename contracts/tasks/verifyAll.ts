@@ -129,6 +129,26 @@ async function verifyTally(tally: Contract, run: any): Promise<string> {
   }
 }
 
+async function verifyMessageProcessor(
+  messageProcesor: Contract,
+  run: any
+): Promise<string> {
+  try {
+    const constructorArguments = await Promise.all([
+      messageProcesor.verifier(),
+      messageProcesor.vkRegistry(),
+      messageProcesor.poll(),
+    ])
+    await run('verify:verify', {
+      address: messageProcesor.target,
+      constructorArguments,
+    })
+    return SUCCESS
+  } catch (error) {
+    return (error as Error).message
+  }
+}
+
 async function verifyPoll(pollContract: Contract, run: any): Promise<string> {
   try {
     const [, duration] = await pollContract.getDeployTimeAndDuration()
@@ -206,6 +226,29 @@ task('verify-all', 'Verify all clrfund contracts')
     status = await verifyMaciFactory(deployerContract, run)
     results.push({ name: 'Maci factory', status })
 
+    await verifyContract(
+      'clrfundTemplate',
+      await deployerContract.clrfundTemplate(),
+      run,
+      results
+    )
+    await verifyContract(
+      'VkRegistry',
+      await maciFactory.vkRegistry(),
+      run,
+      results
+    )
+
+    const factories = await maciFactory.factories()
+    await verifyContract('PollFactory', factories.pollFactory, run, results)
+    await verifyContract('TallyFactory', factories.tallyFactory, run, results)
+    await verifyContract(
+      'MessageProcessorFactory',
+      factories.messageProcessorFactory,
+      run,
+      results
+    )
+
     if (clrfund) {
       const clrfundContract = await ethers.getContractAt('ClrFund', clrfund)
       status = await verifyClrFund(clrfundContract, run)
@@ -242,6 +285,16 @@ task('verify-all', 'Verify all clrfund contracts')
           const tallyContract = await ethers.getContractAt('Tally', tally)
           status = await verifyTally(tallyContract, run)
           results.push({ name: 'Tally', status })
+
+          const messageProcessorAddress = await tallyContract.mp()
+          if (messageProcessorAddress !== ZERO_ADDRESS) {
+            const mpContract = await ethers.getContractAt(
+              'MessageProcessor',
+              messageProcessorAddress
+            )
+            status = await verifyMessageProcessor(mpContract, run)
+            results.push({ name: 'MessageProcessor', status })
+          }
         }
 
         await verifyContract(
@@ -252,29 +305,6 @@ task('verify-all', 'Verify all clrfund contracts')
         )
       }
     }
-
-    await verifyContract(
-      'clrfundTemplate',
-      await deployerContract.clrfundTemplate(),
-      run,
-      results
-    )
-    await verifyContract(
-      'VkRegistry',
-      await maciFactory.vkRegistry(),
-      run,
-      results
-    )
-
-    const factories = await maciFactory.factories()
-    await verifyContract('PollFactory', factories.pollFactory, run, results)
-    await verifyContract('TallyFactory', factories.tallyFactory, run, results)
-    await verifyContract(
-      'MessageProcessorFactory',
-      factories.messageProcessorFactory,
-      run,
-      results
-    )
 
     results.forEach(({ name, status }, i) => {
       const color = status === SUCCESS ? '32' : '31'

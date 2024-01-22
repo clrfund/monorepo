@@ -11,7 +11,7 @@
  *
  * Sample usage:
  *
- *  yarn ts-node cli/tally.ts --round-address <address> --start-block <maci-start-block>
+ *  yarn ts-node cli/tally.ts --clrfund <clrfund-address> --start-block <maci-start-block>
  *
  * To rerun:
  *
@@ -46,12 +46,20 @@ program
     '10'
   )
   .requiredOption('-c --circuit <type>', 'The circuit type', DEFAULT_CIRCUIT)
-  .requiredOption('-d --circuit-directory <dir>', 'The circuit directory')
+  .requiredOption(
+    '-d --circuit-directory <dir>',
+    'The circuit directory',
+    './params'
+  )
   .option(
     '-s --state-file <file>',
     'File to store the ClrFundDeployer address for e2e testing'
   )
-  .requiredOption('-o --output-dir <dir>', 'The proof output directory')
+  .option(
+    '-o --output-dir <dir>',
+    'The proof output directory',
+    './proof_output'
+  )
   .option('-t --maci-tx-hash <hash>', 'The MACI creation transaction hash')
   .option('-r --rapidsnark <path>', 'The rapidsnark prover path')
   .option(

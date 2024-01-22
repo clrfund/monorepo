@@ -342,7 +342,7 @@ const formatTotalInRound = computed(() => {
   }
 
   const { contributions, matchingPool } = roundInfo.value
-  const totalInRound = contributions * matchingPool
+  const totalInRound = contributions + matchingPool
 
   return formatAmount(totalInRound)
 })
@@ -398,6 +398,7 @@ function formatAmount(value: bigint | string): string {
   if (!nativeTokenDecimals.value) {
     return ''
   }
+
   return _formatAmount(value, nativeTokenDecimals.value, 4)
 }
 

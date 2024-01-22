@@ -10,6 +10,8 @@ import { ethers } from 'hardhat'
 async function main() {
   const SponsorContract = await ethers.getContractFactory('BrightIdSponsor')
   const sponsor = await SponsorContract.deploy()
+  // wait for the contract to be deployed to the network
+  await sponsor.waitForDeployment()
   console.log('Deployed the sponsor contract at', sponsor.target)
 }
 

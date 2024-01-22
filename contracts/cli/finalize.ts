@@ -3,7 +3,7 @@
  *
  * Sample usage:
  *  HARDHAT_NETWORK=localhost yarn ts-node cli/finalize.ts \
- *    --funding-round <funding round address> \
+ *    --clrfund <clrfund address> \
  *    --tally-file <tally file>
  */
 
@@ -16,7 +16,11 @@ import { getNumber } from 'ethers'
 program
   .description('Finalize a funding round')
   .requiredOption('-c --clrfund <clrfund>', 'The ClrFund contract address')
-  .requiredOption('-t --tally-file <file>', 'The tally file path')
+  .option(
+    '-t --tally-file <file>',
+    'The tally file path',
+    './proof_output/tally.json'
+  )
   .parse()
 
 async function main(args: any) {

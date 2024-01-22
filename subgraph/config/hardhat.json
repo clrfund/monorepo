@@ -1,6 +1,6 @@
 {
   "network": "hardhat",
-  "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-  "factoryStartBlock": 0,
+  "address": "0x8e80FFe6Dc044F4A766Afd6e5a8732Fe0977A493",
+  "clrFundStartBlock": 0,
   "recipientRegistryStartBlock": 0
 }

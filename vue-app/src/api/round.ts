@@ -194,7 +194,7 @@ export async function getRoundInfo(
     matchingPool = 0n
   } else if (isFinalized) {
     status = RoundStatus.Finalized
-    contributions = (await fundingRound.totalSpent()).mul(voiceCreditFactor)
+    contributions = (await fundingRound.totalSpent()) * voiceCreditFactor
     matchingPool = await fundingRound.matchingPoolSize()
   } else if (messages >= maxMessages) {
     status = RoundStatus.Tallying

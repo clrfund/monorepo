@@ -90,19 +90,6 @@ export function getRecipientClaimData(
   ]
 }
 
-/**
- * get the id of the subgraph public key entity from the pubKey value
- * @param fundingRoundAddress funding round address
- * @param pubKey MACI public key
- * @returns the id for the subgraph public key entity
- */
-export function getPubKeyId(fundingRoundAddress = '', pubKey: PubKey): string {
-  const pubKeyPair = pubKey.asContractParam()
-  return id(
-    fundingRoundAddress.toLowerCase() + '.' + pubKeyPair.x + '.' + pubKeyPair.y
-  )
-}
-
 export {
   genTallyResultCommitment,
   Message,

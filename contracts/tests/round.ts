@@ -1,11 +1,10 @@
-import { ethers, artifacts, config } from 'hardhat'
+import { ethers } from 'hardhat'
 import { expect } from 'chai'
 import { HardhatEthersSigner } from '@nomicfoundation/hardhat-ethers/signers'
-import { deployMockContract, MockContract } from '@clrfund/waffle-mock-contract'
+import { MockContract } from '@clrfund/waffle-mock-contract'
 import {
   Contract,
   AbiCoder,
-  Signer,
   parseEther,
   sha256,
   randomBytes,

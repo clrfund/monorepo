@@ -113,7 +113,7 @@
             </div>
             <div>{{ $t('cart.div9') }}</div>
           </div>
-          + {{ formatAmount(contribution.sub(getTotal())) }}
+          + {{ formatAmount(contribution - getTotal()) }}
           {{ tokenSymbol }}
         </div>
         <div
@@ -158,7 +158,7 @@
         <div class="p1" v-if="hasUnallocatedFunds()">
           {{
             $t('cart.div12', {
-              total: formatAmount(contribution.sub(getTotal())),
+              total: formatAmount(contribution - getTotal()),
               tokenSymbol: tokenSymbol,
               contribution: formatAmount(contribution),
             })
@@ -176,7 +176,7 @@
           @click="submitCart"
           :disabled="Boolean(errorMessage) || (hasUserContributed && hasUserVoted && !isDirty)"
         >
-          <template v-if="contribution.isZero()">
+          <template v-if="contribution === BigInt(0)">
             {{
               $t('cart.template1', {
                 total: formatAmount(getTotal()),
@@ -426,7 +426,7 @@ const isCartEmpty = computed(() => {
     filteredCart.value.length === 0
   )
 })
-function formatAmount(value: BigInt): string {
+function formatAmount(value: bigint): string {
   const { nativeTokenDecimals } = currentRound.value!
   return _formatAmount(value, nativeTokenDecimals)
 }
@@ -605,7 +605,7 @@ function submitCart(event: any) {
 }
 
 const canWithdrawContribution = computed(
-  () => currentRound.value?.status === RoundStatus.Cancelled && !contribution.value.isZero(),
+  () => currentRound.value?.status === RoundStatus.Cancelled && !contribution.value,
 )
 
 const showCollapseCart = computed(() => route.name !== 'cart')

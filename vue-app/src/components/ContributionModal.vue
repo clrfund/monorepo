@@ -121,7 +121,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
-import { Contract, toNumber } from 'ethers'
+import { BaseContract, Contract, toNumber } from 'ethers'
 import { Keypair, PubKey, Message, createMessage } from '@clrfund/common'
 
 import Transaction from '@/components/Transaction.vue'
@@ -260,17 +260,18 @@ async function contribute() {
     }
     const contributorKeypair = Keypair.createFromSeed(encryptionKey)
 
-    let contributionTx
+    let contributionPromise
     try {
       const fundingRoundContract = await getFundingRoundContract()
-      contributionTx = fundingRoundContract.contribute(contributorKeypair.pubKey.asContractParam(), total.value)
-      await waitForTransaction(contributionTx, hash => (contributionTxHash.value = hash))
+      contributionPromise = fundingRoundContract.contribute(contributorKeypair.pubKey.asContractParam(), total.value)
+      await waitForTransaction(contributionPromise, hash => (contributionTxHash.value = hash))
     } catch (error) {
       contributionTxError.value = (error as Error).message
       return
     }
     // Get state index
     const maci = new Contract(maciAddress, MACI, signer)
+    const contributionTx = await contributionPromise
     const stateIndex = await getEventArg(contributionTx, maci, 'SignUp', '_stateIndex')
     const contributor = {
       keypair: contributorKeypair,

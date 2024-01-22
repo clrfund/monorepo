@@ -86,7 +86,7 @@ onMounted(async () => {
   projects.value = data.projects
     .filter(project => project.state != 'Removed')
     .map(project => toLeaderboardProject(project))
-    .sort((p1: LeaderboardProject, p2: LeaderboardProject) => p2.allocatedAmount.sub(p1.allocatedAmount))
+    .sort((p1: LeaderboardProject, p2: LeaderboardProject) => p2.allocatedAmount - p1.allocatedAmount)
 
   round.value = toRoundInfo(data.round, network)
 

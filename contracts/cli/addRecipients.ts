@@ -28,19 +28,22 @@ async function main(args: any) {
     signer
   )
 
+  let numAdded = 0
   for (let i = 6; i < 10; i++) {
     const recipient = recipients[i]
+    const recipientAddress = recipient?.address || signer.address
     const addRecipientTx = await recipientRegistry.addRecipient(
-      recipient.address,
+      recipientAddress,
       JSON.stringify({
         name: `recipient ${i}`,
         description: `recipient ${i}`,
       })
     )
     addRecipientTx.wait()
+    numAdded++
   }
 
-  console.log('Added test recipients')
+  console.log(`Added ${numAdded} test recipients`)
 }
 
 main(program.args)

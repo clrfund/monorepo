@@ -941,13 +941,9 @@ async function addRecipient() {
         throw { message: 'round over' }
       }
 
+      const signer = await userStore.getSigner()
       await waitForTransactionAndCheck(
-        _addRecipient(
-          recipientRegistryAddress.value,
-          recipient.value,
-          recipientRegistryInfo.value.deposit,
-          currentUser.value.walletProvider.getSigner(),
-        ),
+        _addRecipient(recipientRegistryAddress.value, recipient.value, recipientRegistryInfo.value.deposit, signer),
         receipt => {
           return isOptimisticRecipientRegistry ? isTransactionInSubgraph(receipt) : Promise.resolve(true)
         },
