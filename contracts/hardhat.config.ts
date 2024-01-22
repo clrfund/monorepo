@@ -54,6 +54,12 @@ export default {
         process.env.JSONRPC_HTTP_URL || 'https://goerli-rollup.arbitrum.io/rpc',
       accounts,
     },
+    'arbitrum-sepolia': {
+      url:
+        process.env.JSONRPC_HTTP_URL ||
+        'https://sepolia-rollup.arbitrum.io/rpc',
+      accounts,
+    },
     sepolia: {
       url: process.env.JSONRPC_HTTP_URL || 'http://127.0.0.1:8545',
       accounts,
@@ -62,17 +68,27 @@ export default {
       url: process.env.JSONRPC_HTTP_URL || 'https://rpc.testnet.mantle.xyz',
       accounts,
     },
-    rinkarby: {
-      url: process.env.JSONRPC_HTTP_URL || 'https://rinkeby.arbitrum.io/rpc',
-      accounts,
-    },
     arbitrum: {
       url: process.env.JSONRPC_HTTP_URL || 'https://arb1.arbitrum.io/rpc',
       accounts,
     },
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY || 'YOUR_ETHERSCAN_API_KEY',
+    apiKey: {
+      arbitrum: process.env.ARBISCAN_API_KEY || 'YOUR_ARBISCAN_API_KEY',
+      'arbitrum-sepolia':
+        process.env.ARBISCAN_API_KEY || 'YOUR_ARBISCAN_API_KEY',
+    },
+    customChains: [
+      {
+        network: 'arbitrum-sepolia',
+        chainId: 421614,
+        urls: {
+          apiURL: 'https://api-sepolia.arbiscan.io/api',
+          browserURL: 'https://sepolia.arbiscan.io',
+        },
+      },
+    ],
   },
   sourcify: {
     enabled: false,
