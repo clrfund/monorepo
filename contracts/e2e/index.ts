@@ -322,7 +322,7 @@ describe('End-to-end Tests', function () {
     await mergeMaciSubtrees({
       maciAddress,
       pollId,
-      numOperations: DEFAULT_SR_QUEUE_OPS,
+      numQueueOps: DEFAULT_SR_QUEUE_OPS,
     })
     debugLog('Merged MACI trees')
 
