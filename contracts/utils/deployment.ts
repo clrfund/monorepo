@@ -46,6 +46,17 @@ export interface BrightIdParams {
 type PoseidonName = 'PoseidonT3' | 'PoseidonT4' | 'PoseidonT5' | 'PoseidonT6'
 
 /**
+ * Log the message based on the quiet flag
+ * @param quiet whether to log the message
+ * @param message the message to log
+ */
+function logInfo(quiet = true, message: string, ...args: any[]) {
+  if (!quiet) {
+    console.log(message, ...args)
+  }
+}
+
+/**
  * Deploy the Poseidon contracts. These contracts
  * have a custom artifact location that the hardhat library cannot
  * retrieve using the standard getContractFactory() function, so, we manually
@@ -329,17 +340,21 @@ export async function deployMaciFactory({
   ethers,
   signer,
   maciParameters,
+  quiet,
 }: {
   libraries: Libraries
   ethers: HardhatEthersHelpers
   signer?: Signer
   maciParameters: MaciParameters
+  quiet?: boolean
 }): Promise<Contract> {
   const vkRegistry = await deployContract({
     name: 'VkRegistry',
     ethers,
     signer,
   })
+  logInfo(quiet, 'Deployed VkRegistry at', vkRegistry.target)
+
   await setVerifyingKeys(
     vkRegistry as BaseContract as VkRegistry,
     maciParameters
@@ -350,6 +365,7 @@ export async function deployMaciFactory({
     ethers,
     signer,
   })
+  logInfo(quiet, 'Deployed Verifier at', verifier.target)
 
   const pollFactory = await deployContract({
     name: 'PollFactory',
@@ -357,6 +373,7 @@ export async function deployMaciFactory({
     ethers,
     signer,
   })
+  logInfo(quiet, 'Deployed PollFactory at', pollFactory.target)
 
   const tallyFactory = await deployContract({
     name: 'TallyFactory',
@@ -364,6 +381,7 @@ export async function deployMaciFactory({
     ethers,
     signer,
   })
+  logInfo(quiet, 'Deployed TallyFactory at', tallyFactory.target)
 
   const messageProcessorFactory = await deployContract({
     name: 'MessageProcessorFactory',
@@ -371,6 +389,11 @@ export async function deployMaciFactory({
     ethers,
     signer,
   })
+  logInfo(
+    quiet,
+    'Deployed MessageProcessorFactory at',
+    messageProcessorFactory.target
+  )
 
   // all the factories to deploy MACI contracts
   const factories = {
@@ -388,6 +411,7 @@ export async function deployMaciFactory({
     ethers,
     signer,
   })
+  logInfo(quiet, 'Deployed MACIFactory at', maciFactory.target)
 
   const setTx = await maciFactory.setMaciParameters(
     ...maciParameters.asContractParam()

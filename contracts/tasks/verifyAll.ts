@@ -27,12 +27,9 @@ async function verifyDeployer(deployer: Contract, run: any): Promise<string> {
   }
 }
 
-async function verifyMaciFactory(
-  deployer: Contract,
-  run: any
-): Promise<string> {
+async function verifyMaciFactory(clrfund: Contract, run: any): Promise<string> {
   try {
-    const address = await deployer.maciFactory()
+    const address = await clrfund.maciFactory()
     if (address !== ZERO_ADDRESS) {
       await run('verify-maci-factory', { address })
     }
@@ -207,31 +204,19 @@ async function getBrightIdSponsor(
  * Verifies all the contracts created for clrfund app
  */
 task('verify-all', 'Verify all clrfund contracts')
-  .addParam('deployer', 'ClrFundDeployer contract address')
-  .addOptionalParam('clrfund', 'ClrFund contract address')
-  .setAction(async ({ deployer, clrfund }, { run, ethers }) => {
-    const deployerContract = await ethers.getContractAt(
-      'ClrFundDeployer',
-      deployer
-    )
-    const maciFactoryAddress = await deployerContract.maciFactory()
+  .addParam('clrfund', 'ClrFund contract address')
+  .setAction(async ({ clrfund }, { run, ethers }) => {
+    const clrfundContract = await ethers.getContractAt('ClrFund', clrfund)
+    const maciFactoryAddress = await clrfundContract.maciFactory()
     const maciFactory = await ethers.getContractAt(
       'MACIFactory',
       maciFactoryAddress
     )
 
     const results: Result[] = []
-    let status = await verifyDeployer(deployerContract, run)
-    results.push({ name: 'ClrFund Deployer', status })
-    status = await verifyMaciFactory(deployerContract, run)
+    let status = await verifyMaciFactory(clrfundContract, run)
     results.push({ name: 'Maci factory', status })
 
-    await verifyContract(
-      'clrfundTemplate',
-      await deployerContract.clrfundTemplate(),
-      run,
-      results
-    )
     await verifyContract(
       'VkRegistry',
       await maciFactory.vkRegistry(),
@@ -249,61 +234,53 @@ task('verify-all', 'Verify all clrfund contracts')
       results
     )
 
-    if (clrfund) {
-      const clrfundContract = await ethers.getContractAt('ClrFund', clrfund)
-      status = await verifyClrFund(clrfundContract, run)
-      results.push({ name: 'ClrFund', status })
-      status = await verifyRecipientRegistry(clrfundContract, run)
-      results.push({ name: 'Recipient registry', status })
-      status = await verifyUserRegistry(clrfundContract, run)
-      results.push({ name: 'User registry', status })
-      const sponsor = await getBrightIdSponsor(clrfundContract, ethers)
-      if (sponsor) {
-        await verifyContract('Sponsor', sponsor, run, results)
+    status = await verifyClrFund(clrfundContract, run)
+    results.push({ name: 'ClrFund', status })
+    status = await verifyRecipientRegistry(clrfundContract, run)
+    results.push({ name: 'Recipient registry', status })
+    status = await verifyUserRegistry(clrfundContract, run)
+    results.push({ name: 'User registry', status })
+    const sponsor = await getBrightIdSponsor(clrfundContract, ethers)
+    if (sponsor) {
+      await verifyContract('Sponsor', sponsor, run, results)
+    }
+    status = await verifyFundingRoundFactory(clrfundContract, run)
+    results.push({ name: 'Funding Round Factory', status })
+
+    const roundAddress = await clrfundContract.getCurrentRound()
+    if (roundAddress !== ZERO_ADDRESS) {
+      const round = await ethers.getContractAt('FundingRound', roundAddress)
+      const maciAddress = await round.maci()
+      status = await verifyRound(roundAddress, run)
+      results.push({ name: 'Funding round', status })
+      status = await verifyMaci(maciAddress, run)
+      results.push({ name: 'MACI', status })
+
+      const poll = await round.poll()
+      if (poll !== ZERO_ADDRESS) {
+        const pollContract = await ethers.getContractAt('Poll', poll)
+        status = await verifyPoll(pollContract, run)
+        results.push({ name: 'Poll', status })
       }
-      status = await verifyFundingRoundFactory(clrfundContract, run)
-      results.push({ name: 'Funding Round Factory', status })
 
-      const roundAddress = await clrfundContract.getCurrentRound()
-      if (roundAddress !== ZERO_ADDRESS) {
-        const round = await ethers.getContractAt('FundingRound', roundAddress)
-        const maciAddress = await round.maci()
-        status = await verifyRound(roundAddress, run)
-        results.push({ name: 'Funding round', status })
-        status = await verifyMaci(maciAddress, run)
-        results.push({ name: 'MACI', status })
+      const tally = await round.tally()
+      if (tally !== ZERO_ADDRESS) {
+        const tallyContract = await ethers.getContractAt('Tally', tally)
+        status = await verifyTally(tallyContract, run)
+        results.push({ name: 'Tally', status })
 
-        const poll = await round.poll()
-        if (poll !== ZERO_ADDRESS) {
-          const pollContract = await ethers.getContractAt('Poll', poll)
-          status = await verifyPoll(pollContract, run)
-          results.push({ name: 'Poll', status })
+        const messageProcessorAddress = await tallyContract.mp()
+        if (messageProcessorAddress !== ZERO_ADDRESS) {
+          const mpContract = await ethers.getContractAt(
+            'MessageProcessor',
+            messageProcessorAddress
+          )
+          status = await verifyMessageProcessor(mpContract, run)
+          results.push({ name: 'MessageProcessor', status })
         }
-
-        const tally = await round.tally()
-        if (tally !== ZERO_ADDRESS) {
-          const tallyContract = await ethers.getContractAt('Tally', tally)
-          status = await verifyTally(tallyContract, run)
-          results.push({ name: 'Tally', status })
-
-          const messageProcessorAddress = await tallyContract.mp()
-          if (messageProcessorAddress !== ZERO_ADDRESS) {
-            const mpContract = await ethers.getContractAt(
-              'MessageProcessor',
-              messageProcessorAddress
-            )
-            status = await verifyMessageProcessor(mpContract, run)
-            results.push({ name: 'MessageProcessor', status })
-          }
-        }
-
-        await verifyContract(
-          'TopupToken',
-          await round.topupToken(),
-          run,
-          results
-        )
       }
+
+      await verifyContract('TopupToken', await round.topupToken(), run, results)
     }
 
     results.forEach(({ name, status }, i) => {
