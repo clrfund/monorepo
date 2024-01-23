@@ -11,7 +11,7 @@
  * Sample usage:
  *
  *  HARDHAT_NETWORK=localhost yarn ts-node cli/newClrFund.ts \
- *    --deployer <clrfund deployer contract address> \
+ *    --directory <circuit directory> \
  *    --token <native token address> \
  *    --coordinator <coordinator ETH address> \
  *    --user-registry-type <user registry type> \
@@ -24,31 +24,35 @@
  *
  * If token is not provided, a new ERC20 token will be created
  */
-import { parseUnits } from 'ethers'
-import { ethers, network } from 'hardhat'
+import { parseUnits, Signer } from 'ethers'
+import { ethers, network, config } from 'hardhat'
 import { getEventArg } from '../utils/contracts'
 import { newMaciPrivateKey } from '../utils/maci'
+import { MaciParameters } from '../utils/maciParameters'
 import {
   challengePeriodSeconds,
   deployContract,
   deployUserRegistry,
   deployRecipientRegistry,
   setCoordinator,
+  deployMaciFactory,
+  deployPoseidonLibraries,
 } from '../utils/deployment'
 import { JSONFile } from '../utils/JSONFile'
 import { Option, program } from 'commander'
 import dotenv from 'dotenv'
-import { UNIT } from '../utils/constants'
+import { UNIT, BRIGHTID_VERIFIER_ADDR } from '../utils/constants'
+import { DEFAULT_CIRCUIT } from '../utils/circuits'
+
 dotenv.config()
 
 const DEFAULT_DEPOSIT_AMOUNT = '0.001'
 
 program
   .description('Deploy a new ClrFund instance')
-  .requiredOption(
-    '-d --deployer <deployer>',
-    'The ClrFund deployer contract address'
-  )
+  .option('-d --deployer <deployer>', 'The ClrFund deployer contract address')
+  .option('-q --circuit <circuit>', 'The circuit type', DEFAULT_CIRCUIT)
+  .option('-z --directory <directory>', 'The circuit directory')
   .option('-c --coordinator <coordinator>', 'The coordinator ETH address')
   .option('-t --token <address>', 'The native token address')
   .addOption(
@@ -58,17 +62,16 @@ program
     ).default(1000)
   )
   .addOption(
-    new Option(
-      '-u --user-registry-type <type>',
-      'The user registry type'
-    ).choices(['simple', 'brightid', 'merkle', 'storage'])
+    new Option('-u --user-registry-type <user>', 'The user registry type')
+      .choices(['simple', 'brightid', 'merkle', 'storage'])
+      .default('simple')
   )
   .option('-x --brightid-context <context>', 'The brightid context')
   .addOption(
     new Option(
       '-v --brightid-verifier <verifier>',
       'The brightid verifier address'
-    ).default('0xdbf0b2ee9887fe11934789644096028ed3febe9c')
+    ).default(BRIGHTID_VERIFIER_ADDR)
   )
   .option(
     '-o --brightid-sponsor <sponsor>',
@@ -76,7 +79,7 @@ program
   )
   .addOption(
     new Option(
-      '-r --recipient-registry-type <type>',
+      '-r --recipient-registry-type <recipient>',
       'The recipient registry type'
     )
       .choices(['simple', 'optimistic'])
@@ -99,18 +102,65 @@ program
   )
   .parse()
 
-async function main(args: any) {
-  const { deployer, coordinator, stateFile } = args
-  const [signer] = await ethers.getSigners()
+/**
+ * Deploy ClrFund as a standalone instance
+ * @param artifactsPath The hardhat artifacts path
+ * @param circuit The circuit type
+ * @param directory The directory containing the zkeys files
+ * @returns ClrFund contract address
+ */
+async function deployStandaloneClrFund({
+  artifactsPath,
+  circuit,
+  directory,
+  signer,
+}: {
+  artifactsPath: string
+  circuit: string
+  directory: string
+  signer: Signer
+}): Promise<string> {
+  const libraries = await deployPoseidonLibraries({
+    artifactsPath,
+    signer,
+    ethers,
+  })
+  console.log('Deployed Poseidons', libraries)
 
-  console.log('Network: ', network.name)
-  console.log(`Deploying from address: ${signer.address}`)
-  console.log('args', args)
+  const maciParameters = await MaciParameters.fromConfig(circuit, directory)
+  const quiet = false
+  const maciFactory = await deployMaciFactory({
+    libraries,
+    ethers,
+    maciParameters,
+    quiet,
+  })
 
-  // If the maci secret key is not set in the env. variable, create a new key
-  const coordinatorMacisk =
-    process.env.COORDINATOR_MACISK ?? newMaciPrivateKey()
+  const fundingRoundFactory = await deployContract({
+    name: 'FundingRoundFactory',
+    ethers,
+  })
 
+  const clrfund = await deployContract({
+    name: 'ClrFund',
+    ethers,
+    signer,
+  })
+  const clrfundAddress = await clrfund.getAddress()
+  console.log('Deployed ClrFund at', clrfundAddress)
+
+  const initTx = await clrfund.init(maciFactory, fundingRoundFactory)
+  await initTx.wait()
+
+  return clrfundAddress
+}
+
+/**
+ * Deploy the ClrFund contract using the deployer contract
+ * @param deployer ClrFund deployer contract
+ * @returns ClrFund contract address
+ */
+async function deployClrFundFromDeployer(deployer: string): Promise<string> {
   const clrfundDeployer = await ethers.getContractAt(
     'ClrFundDeployer',
     deployer
@@ -130,6 +180,34 @@ async function main(args: any) {
       'Unable to get clrfund address after deployment. ' + (e as Error).message
     )
   }
+
+  return clrfund
+}
+
+async function main(args: any) {
+  const { deployer, coordinator, stateFile, circuit, directory } = args
+  const [signer] = await ethers.getSigners()
+
+  console.log('Network: ', network.name)
+  console.log(`Deploying from address: ${signer.address}`)
+  console.log('args', args)
+
+  if (!directory && !deployer) {
+    throw new Error(`'-z --directory <directory>' is required`)
+  }
+
+  // If the maci secret key is not set in the env. variable, create a new key
+  const coordinatorMacisk =
+    process.env.COORDINATOR_MACISK ?? newMaciPrivateKey()
+
+  const clrfund = deployer
+    ? await deployClrFundFromDeployer(deployer)
+    : await deployStandaloneClrFund({
+        signer,
+        circuit,
+        directory,
+        artifactsPath: config.paths.artifacts,
+      })
 
   const clrfundContract = await ethers.getContractAt('ClrFund', clrfund, signer)
 
