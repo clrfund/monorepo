@@ -48,7 +48,7 @@ contract FundingRoundFactory is MACICommon {
     );
 
     // link funding round with maci related contracts
-    newRound.setMaci(maci, pollContracts, maciFactory.factories());
+    newRound.setMaci(maci, pollContracts);
     newRound.transferOwnership(_clrfund);
     maci.transferOwnership(address(newRound));
     return address(newRound);

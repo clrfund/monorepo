@@ -73,8 +73,6 @@ contract FundingRound is
   error InvalidUserRegistry();
   error InvalidRecipientRegistry();
   error InvalidCoordinator();
-  error InvalidTallyFactory();
-  error InvalidMessageProcessorFactory();
   error UnexpectedPollAddress(address expected, address actual);
 
 
@@ -118,8 +116,6 @@ contract FundingRound is
   TopupToken public topupToken;
   IUserRegistry public userRegistry;
   IRecipientRegistry public recipientRegistry;
-  ITallySubsidyFactory public tallyFactory;
-  IMessageProcessorFactory public messageProcessorFactory;
   string public tallyHash;
 
   // The alpha used in quadratic funding formula
@@ -223,6 +219,10 @@ contract FundingRound is
 
     address verifier = address(tally.verifier());
     address vkRegistry = address(tally.vkRegistry());
+
+    IMessageProcessorFactory messageProcessorFactory = maci.messageProcessorFactory();
+    ITallySubsidyFactory tallyFactory = maci.tallyFactory();
+
     address mp = messageProcessorFactory.deploy(verifier, vkRegistry, address(poll), coordinator);
     address newTally = tallyFactory.deploy(verifier, vkRegistry, address(poll), mp, coordinator);
     _setTally(newTally);
@@ -233,8 +233,7 @@ contract FundingRound is
     */
   function setMaci(
     MACI _maci,
-    MACI.PollContracts memory _pollContracts,
-    Factories memory _factories
+    MACI.PollContracts memory _pollContracts
   )
     external
     onlyOwner
@@ -244,8 +243,6 @@ contract FundingRound is
     if (isAddressZero(address(_maci))) revert InvalidMaci();
     if (isAddressZero(_pollContracts.poll)) revert InvalidPoll();
     if (isAddressZero(_pollContracts.messageProcessor)) revert InvalidMessageProcessor();
-    if (isAddressZero(_factories.tallyFactory)) revert InvalidTallyFactory();
-    if (isAddressZero(_factories.messageProcessorFactory)) revert InvalidMessageProcessorFactory();
 
     // we only create 1 poll per maci, make sure MACI use pollId = 0
     // as the first poll index
@@ -259,11 +256,6 @@ contract FundingRound is
     maci = _maci;
     poll = Poll(_pollContracts.poll);
     _setTally(_pollContracts.tally);
-
-    // save a copy of the factory in case we need to reset the tally result by recreating the
-    // the tally and message processor contracts
-    tallyFactory = ITallySubsidyFactory(_factories.tallyFactory);
-    messageProcessorFactory = IMessageProcessorFactory(_factories.messageProcessorFactory);
   }
 
   /**

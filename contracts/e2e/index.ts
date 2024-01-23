@@ -315,7 +315,22 @@ describe('End-to-end Tests', function () {
     return contributions
   }
 
-  async function finalizeRound(): Promise<any> {
+  /**
+   * Get the tally and message processor contract address from the funding round
+   * @returns tally and message processor contract addresses
+   */
+  async function getTallyAndMessageProcessor(): Promise<{
+    tallyAddress: string
+    messageProcessorAddress: string
+  }> {
+    const tallyAddress = await fundingRound.tally()
+    const tallyContact = await ethers.getContractAt('Tally', tallyAddress)
+    const messageProcessorAddress = await tallyContact.mp()
+
+    return { tallyAddress, messageProcessorAddress }
+  }
+
+  async function finalizeRound(testResetTally = false): Promise<any> {
     debugLog('Finalizing round')
     // Process messages and tally votes
     const maciAddress = await maci.getAddress()
@@ -350,9 +365,8 @@ describe('End-to-end Tests', function () {
     await genProofs(genProofArgs)
     debugLog('Generated proof')
 
-    const tallyAddress = await fundingRound.tally()
-    const tallyContact = await ethers.getContractAt('Tally', tallyAddress)
-    const messageProcessorAddress = await tallyContact.mp()
+    const { tallyAddress, messageProcessorAddress } =
+      await getTallyAndMessageProcessor()
 
     debugLog('Proving on chain')
     // Submit proofs to MACI contract
@@ -365,6 +379,26 @@ describe('End-to-end Tests', function () {
       tallyAddress,
       quiet,
     })
+
+    if (testResetTally) {
+      console.log('resetting tally and message processor contracts')
+      const resetTx = await fundingRound.resetTally()
+      await resetTx.wait()
+
+      const { tallyAddress, messageProcessorAddress } =
+        await getTallyAndMessageProcessor()
+      console.log('redoing proveOnChain with new tallyAddress', tallyAddress)
+
+      await proveOnChain({
+        pollId,
+        proofDir: genProofArgs.outputDir,
+        subsidyEnabled: false,
+        maciAddress,
+        messageProcessorAddress,
+        tallyAddress,
+        quiet,
+      })
+    }
     console.log('finished proveOnChain')
 
     const tally = JSON.parse(readFileSync(genProofArgs.tallyFile).toString())
@@ -921,5 +955,61 @@ describe('End-to-end Tests', function () {
       [contribution.voiceCredits, contribution2.voiceCredits],
     ])
     expect(claims[2]).to.equal(expectedClaims[0])
+  })
+
+  it('should allow reset and re-run tally', async () => {
+    const contributions = await makeContributions([
+      (UNIT * BigInt(50)) / BigInt(10),
+      (UNIT * BigInt(50)) / BigInt(10),
+    ])
+    // Submit messages
+    for (const contribution of contributions) {
+      const contributor = contribution.signer
+      const messages: Message[] = []
+      const encPubKeys: PubKey[] = []
+      let nonce = 1
+
+      // Spend voice credits on both recipients
+      for (const recipientIndex of [1, 2]) {
+        const voiceCredits = BigInt(contribution.voiceCredits) / BigInt(2)
+        const [message, encPubKey] = createMessage(
+          contribution.stateIndex,
+          contribution.keypair,
+          null,
+          coordinatorKeypair.pubKey,
+          recipientIndex,
+          voiceCredits,
+          nonce,
+          pollId
+        )
+        messages.push(message)
+        encPubKeys.push(encPubKey)
+        nonce += 1
+      }
+
+      await (fundingRound.connect(contributor) as Contract).submitMessageBatch(
+        messages.reverse().map((msg) => msg.asContractParam()),
+        encPubKeys.reverse().map((key) => key.asContractParam())
+      )
+    }
+
+    await time.increase(roundDuration)
+    const testResetTally = true
+    const { tally, claims } = await finalizeRound(testResetTally)
+    const expectedTotalVoiceCredits = sumVoiceCredits(
+      contributions.map((x) => x.voiceCredits)
+    )
+    expect(tally.totalSpentVoiceCredits.spent).to.equal(
+      expectedTotalVoiceCredits
+    )
+    const expectedClaims = await calculateClaims(
+      fundingRound,
+      new Array(2).fill(
+        contributions.map((x) => BigInt(x.voiceCredits) / BigInt(2))
+      )
+    )
+    console.log('expected claim', claims[1], expectedClaims[0])
+    expect(BigInt(claims[1])).to.equal(expectedClaims[0])
+    expect(BigInt(claims[2])).to.equal(expectedClaims[1])
   })
 })

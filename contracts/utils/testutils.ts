@@ -134,18 +134,7 @@ export async function deployTestFundingRound(
     subsidy: pollAddr.subsidy,
   }
 
-  const factoryContracts = {
-    pollFactory: factories.pollFactory,
-    messageProcessorFactory: factories.messageProcessorFactory,
-    tallyFactory: factories.tallyFactory,
-    subsidyFactory: factories.subsidyFactory,
-  }
-
-  await fundingRound.setMaci(
-    maciInstance.target,
-    pollContracts,
-    factoryContracts
-  )
+  await fundingRound.setMaci(maciInstance.target, pollContracts)
 
   return {
     token,
