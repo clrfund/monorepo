@@ -7,6 +7,8 @@ import {
   RoundFinalized,
   RoundStarted,
   TokenChanged,
+  UserRegistryChanged,
+  RecipientRegistryChanged,
   ClrFund as ClrFundContract,
 } from '../generated/ClrFund/ClrFund'
 
@@ -307,5 +309,21 @@ export function handleRoundStarted(event: RoundStarted): void {
 
 export function handleTokenChanged(event: TokenChanged): void {
   log.info('handleTokenChanged {}', [event.params._token.toHexString()])
+  createOrUpdateClrFund(event.address, event.block.timestamp)
+}
+
+export function handleRecipientRegistryChanged(
+  event: RecipientRegistryChanged
+): void {
+  log.info('handleRecipientRegistryChanged {}', [
+    event.params._recipientRegistry.toHexString(),
+  ])
+  createOrUpdateClrFund(event.address, event.block.timestamp)
+}
+
+export function handleUserRegistryChanged(event: UserRegistryChanged): void {
+  log.info('handleUserRegistryChanged {}', [
+    event.params._userRegistry.toHexString(),
+  ])
   createOrUpdateClrFund(event.address, event.block.timestamp)
 }

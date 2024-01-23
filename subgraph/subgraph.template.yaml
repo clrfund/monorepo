@@ -53,6 +53,10 @@ dataSources:
           handler: handleRoundStarted
         - event: TokenChanged(address)
           handler: handleTokenChanged
+        - event: UserRegistryChanged(address)
+          handler: handleUserRegistryChanged
+        - event: RecipientRegistryChanged(address)
+          handler: handleRecipientRegistryChanged
       file: ./src/ClrFundMapping.ts
   - kind: ethereum/contract
     name: OptimisticRecipientRegistry

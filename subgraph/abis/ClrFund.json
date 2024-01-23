@@ -26,27 +26,7 @@
   },
   {
     "inputs": [],
-    "name": "NoCoordinator",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "NoCurrentRound",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "NoRecipientRegistry",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "NoToken",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "NoUserRegistry",
     "type": "error"
   },
   {
@@ -61,7 +41,17 @@
   },
   {
     "inputs": [],
+    "name": "NotInitialized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "NotOwnerOfMaciFactory",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "RecipientRegistryNotSet",
     "type": "error"
   },
   {
@@ -79,7 +69,27 @@
   },
   {
     "anonymous": false,
-    "inputs": [],
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_roundFactory",
+        "type": "address"
+      }
+    ],
+    "name": "FundingRoundFactoryChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_template",
+        "type": "address"
+      }
+    ],
     "name": "FundingRoundTemplateChanged",
     "type": "event"
   },
@@ -119,6 +129,19 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_maciFactory",
+        "type": "address"
+      }
+    ],
+    "name": "MaciFactoryChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "address",
         "name": "previousOwner",
@@ -136,8 +159,15 @@
   },
   {
     "anonymous": false,
-    "inputs": [],
-    "name": "RecipientRegistrySet",
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_recipientRegistry",
+        "type": "address"
+      }
+    ],
+    "name": "RecipientRegistryChanged",
     "type": "event"
   },
   {
@@ -181,9 +211,29 @@
   },
   {
     "anonymous": false,
-    "inputs": [],
-    "name": "UserRegistrySet",
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_userRegistry",
+        "type": "address"
+      }
+    ],
+    "name": "UserRegistryChanged",
     "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "MESSAGE_DATA_LENGTH",
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
   },
   {
     "inputs": [
@@ -261,7 +311,7 @@
     "name": "getCurrentRound",
     "outputs": [
       {
-        "internalType": "contract FundingRound",
+        "internalType": "contract IFundingRound",
         "name": "_currentRound",
         "type": "address"
       }
@@ -308,10 +358,23 @@
   },
   {
     "inputs": [],
+    "name": "isInit",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "maciFactory",
     "outputs": [
       {
-        "internalType": "contract MACIFactory",
+        "internalType": "contract IMACIFactory",
         "name": "",
         "type": "address"
       }
@@ -383,7 +446,7 @@
     "name": "roundFactory",
     "outputs": [
       {
-        "internalType": "contract FundingRoundFactory",
+        "internalType": "contract IFundingRoundFactory",
         "name": "",
         "type": "address"
       }
@@ -411,12 +474,38 @@
             "type": "uint256"
           }
         ],
-        "internalType": "struct IPubKey.PubKey",
+        "internalType": "struct DomainObjs.PubKey",
         "name": "_coordinatorPubKey",
         "type": "tuple"
       }
     ],
     "name": "setCoordinator",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_roundFactory",
+        "type": "address"
+      }
+    ],
+    "name": "setFundingRoundFactory",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_maciFactory",
+        "type": "address"
+      }
+    ],
+    "name": "setMaciFactory",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
