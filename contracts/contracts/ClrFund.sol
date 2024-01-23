@@ -22,7 +22,6 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
   using SafeERC20 for ERC20;
 
   // State
-  bool public isInit = false;
   address public coordinator;
 
   ERC20 public nativeToken;
@@ -44,11 +43,11 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
   event TokenChanged(address _token);
   event CoordinatorChanged(address _coordinator);
   event Initialized();
-  event UserRegistrySet();
-  event RecipientRegistrySet();
-  event FundingRoundTemplateChanged();
-  event FundingRoundFactorySet(address _roundFactory);
-  event MaciFactorySet(address _maciFactory);
+  event UserRegistryChanged(address _userRegistry);
+  event RecipientRegistryChanged(address _recipientRegistry);
+  event FundingRoundTemplateChanged(address _template);
+  event FundingRoundFactoryChanged(address _roundFactory);
+  event MaciFactoryChanged(address _maciFactory);
 
   // errors
   error FundingSourceAlreadyAdded();
@@ -62,16 +61,6 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
   error InvalidMaciFactory();
   error RecipientRegistryNotSet();
   error NotInitialized();
-
-  /**
-   * Make sure MACI factory and round factory are set
-   */
-  modifier afterInit() {
-    if (!isInit) {
-      revert NotInitialized();
-    }
-    _;
-  }
 
 
   /**
@@ -87,7 +76,6 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
     _setMaciFactory(_maciFactory);
     _setFundingRoundFactory(_roundFactory);
 
-    isInit = true;
     emit Initialized();
   }
 
@@ -101,7 +89,7 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
 
     maciFactory = IMACIFactory(_maciFactory);
 
-    emit MaciFactorySet(address(_maciFactory));
+    emit MaciFactoryChanged(address(_maciFactory));
   }
 
   /**
@@ -111,7 +99,6 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
   function setMaciFactory(address _maciFactory)
     external
     onlyOwner
-    afterInit
   {
     _setMaciFactory(_maciFactory);
   }
@@ -126,7 +113,7 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
 
     roundFactory = IFundingRoundFactory(_roundFactory);
 
-    emit FundingRoundFactorySet(address(roundFactory));
+    emit FundingRoundFactoryChanged(address(roundFactory));
   }
 
   /**
@@ -136,7 +123,6 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
   function setFundingRoundFactory(address _roundFactory)
   public
   onlyOwner
-  afterInit
   {
     _setFundingRoundFactory(_roundFactory);
   }
@@ -151,7 +137,7 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
   {
     userRegistry = _userRegistry;
 
-    emit UserRegistrySet();
+    emit UserRegistryChanged(address(_userRegistry));
   }
 
   /**
@@ -161,13 +147,12 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
   function setRecipientRegistry(IRecipientRegistry _recipientRegistry)
     external
     onlyOwner
-    afterInit
   {
     recipientRegistry = _recipientRegistry;
     MaxValues memory maxValues = maciFactory.maxValues();
     recipientRegistry.setMaxRecipients(maxValues.maxVoteOptions);
 
-    emit RecipientRegistrySet();
+    emit RecipientRegistryChanged(address(_recipientRegistry));
   }
 
   /**
@@ -220,7 +205,6 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
   )
     external
     onlyOwner
-    afterInit
   {
     IFundingRound currentRound = getCurrentRound();
     if (address(currentRound) != address(0) && !currentRound.isFinalized()) {
