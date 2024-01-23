@@ -34,7 +34,12 @@ export class JSONFile {
    * @param data The new data to add to the JSON content
    */
   static update(path: string, data: any) {
-    const state = JSONFile.read(path)
+    let state: any
+    try {
+      state = JSONFile.read(path)
+    } catch {
+      state = {}
+    }
     fs.writeFileSync(path, JSON.stringify({ ...state, ...data }, null, 2))
   }
 
