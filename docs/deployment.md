@@ -1,6 +1,27 @@
 # Deploy to a network
 
-Goto the `contracts` folder to run the deployment scripts.
+## Install MACI dependencies
+
+### Install rapidsnark (if on an intel chip)
+
+Check the MACI doc, https://maci.pse.dev/docs/installation#install-rapidsnark-if-on-an-intel-chip, on how to install the rapidsnark.
+
+
+### Install C++ dependencies (if on intel chip)
+
+```
+sudo apt-get install libgmp-dev nlohmann-json3-dev nasm g++
+```
+
+### Download MACI circuit files
+
+The following script will download the files in the params folder under the current folder where the script is run
+
+```
+monorepo/.github/scripts/download-6-8-2-3.sh
+```
+
+Make a note of this `params` folder as you'll need it to run the tally script.
 
 ## Setup BrightID
 If using BrightID as the user registry type:
@@ -22,6 +43,8 @@ Once the app is registered, you will get an appId which will be set to `BRIGHTID
 
 ## Deploy Contracts
 
+Goto the `contracts` folder.
+
 ### Deploy the BrightID sponsor contract (if using BrightID)
 
 1. Deploy the BrightID sponsor contract
@@ -40,46 +63,42 @@ E.g.
 ```
 JSONRPC_HTTP_URL=https://NETWORK.alchemyapi.io/v2/ADD_API_KEY
 WALLET_PRIVATE_KEY=
-ETHERSCAN_API_KEY=
+ARBISCAN_API_KEY=
 ```
 
 ### Run the deploy script
 Use the `-h` switch to print the command line help menu for all the scripts in the `cli` folder. For hardhat help, use `yarn hardhat help`.
 
 
-1. Download the circuit parameters in the contracts folder. The following script will download the files in the ./params folder
-
-```
-../.github/scripts/download-6-8-2-3.sh
-```
-
-2. Deploy an instance of clrfund deployer
-```
-HARDHAT_NETWORK={network} yarn ts-node cli/newDeployer.ts -d ./params
-```
-
-3. Deploy an instance of clrfund
+1. Deploy an instance of ClrFund
 
 ```
 HARDHAT_NETWORK=localhost yarn ts-node cli/newClrFund.ts \
-   --deployer <clrfund deployer contract address> \
+   --directory <the params folder from previous step> \
    --token <native token address> \
    --coordinator <coordinator ETH address> \
    --user-registry-type <user registry type> \
    --recipient-registry-type <recipient registry type>
 ```
 
-4. deploy new funding round
+2. deploy new funding round
 ```
 HARDHAT_NETWOR=localhost yarn ts-node cli/newRound.ts \
    --clrfund <clrfund contract address> \
    --duration <funding round duration in seconds>
 ```
 
-5. Make sure to save in a safe place the serializedCoordinatorPrivKey, you are going to need it for tallying the votes in future steps.
+3. Make sure to save in a safe place the serializedCoordinatorPrivKey, you are going to need it for tallying the votes in future steps.
 
 
-6. If using a snapshot user registry, run the `set-storage-root` task to set the storage root for the block snapshot for user account verification
+4. To load a list of users into the simple user registry,
+
+```
+yarn hardhat load-users --file-path addresses.txt --user-registry <address> --network <network>
+```
+
+
+If using a snapshot user registry, run the `set-storage-root` task to set the storage root for the block snapshot for user account verification
 
 ```
 yarn hardhat --network {network} set-storage-root --registry 0x7113b39Eb26A6F0a4a5872E7F6b865c57EDB53E0 --slot 2 --token 0x65bc8dd04808d99cf8aa6749f128d55c2051edde --block 34677758 --network arbitrum-goerli
@@ -87,7 +106,7 @@ yarn hardhat --network {network} set-storage-root --registry 0x7113b39Eb26A6F0a4
 
 Note: to get the storage slot '--slot' value, run the `find-storage-slot` task.
 
-7. If using a merkle user registry, run the `load-merkle-users` task to set the merkle root for all the authorized users
+5. If using a merkle user registry, run the `load-merkle-users` task to set the merkle root for all the authorized users
 
 ```
 # for example:
@@ -100,8 +119,7 @@ Note: Make sure to upload generated merkle tree file to IPFS.
 8. Verify all deployed contracts:
 
 ```
-yarn hardhat verify-all --deployer {deployer-address} --network {network}
-yarn hardhat verify-all --deployer {deployer-address} --clrfund {clrfund-address} --network {network}
+yarn hardhat verify-all --clrfund {clrfund-address} --network {network}
 ```
 
 ### Deploy the subgraph
