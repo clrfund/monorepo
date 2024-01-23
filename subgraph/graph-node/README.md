@@ -2,4 +2,8 @@
 
 Preconfigured Docker image for running a Graph Node.
 
-See [docs/deployment.md](../../docs/deployment.md) for details on how to start a graph node for development of clrfund
+To start a graph node for development of clrfund. Make sure to start a local hardhat node first (`yarn start:node` from the root folder).
+
+```sh
+docker compose up -d
+```

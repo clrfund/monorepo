@@ -69,10 +69,10 @@ nvm install 18
 nvm use 18
 ```
 
-### Install the dependencies
+### Install the dependencies and build
 
 ```sh
-yarn
+yarn && yarn build
 
 # Along with the dependencies, git hooks are also installed. At the end of the installation, you will see the following line after a successful setup.
 husky - Git hooks installed
@@ -102,9 +102,8 @@ In a 2nd terminal you will need to run your graph node (more on this
 [here](docs/subgraph.md))
 
 ```sh
-# go to the thegraph repo directory and init the node
-cd graph-node/docker
-docker-compose up
+cd subgraph/graph-node
+docker compose up -d
 ```
 
 And finally, in a 3rd terminal

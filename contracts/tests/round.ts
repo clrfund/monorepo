@@ -27,12 +27,12 @@ import {
   createMessage,
   addTallyResultsBatch,
   getRecipientClaimData,
-  getRecipientTallyResultsBatch,
 } from '../utils/maci'
 import { deployTestFundingRound } from '../utils/testutils'
 
 // ethStaker test vectors for Quadratic Funding with alpha
 import smallTallyTestData from './data/testTallySmall.json'
+import { FundingRound } from '../typechain-types'
 
 const newResultCommitment = hexlify(randomBytes(32))
 const perVOSpentVoiceCreditsHash = hexlify(randomBytes(32))
@@ -79,8 +79,8 @@ describe('Funding Round', () => {
   let recipientRegistry: MockContract
   let tally: MockContract
   let fundingRound: Contract
-  let fundingRoundAsCoordinator: Contract
-  let fundingRoundAsContributor: Contract
+  let fundingRoundAsCoordinator: FundingRound
+  let fundingRoundAsContributor: FundingRound
   let maci: Contract
   let poll: Contract
   let pollId: bigint
@@ -120,8 +120,12 @@ describe('Funding Round', () => {
     await tally.mock.verifySpentVoiceCredits.returns(true)
 
     tokenAsContributor = token.connect(contributor) as Contract
-    fundingRoundAsCoordinator = fundingRound.connect(coordinator) as Contract
-    fundingRoundAsContributor = fundingRound.connect(contributor) as Contract
+    fundingRoundAsCoordinator = fundingRound.connect(
+      coordinator
+    ) as FundingRound
+    fundingRoundAsContributor = fundingRound.connect(
+      contributor
+    ) as FundingRound
 
     await token.transfer(contributor.address, tokenInitialSupply / 4n)
     await token.transfer(anotherContributor.address, tokenInitialSupply / 4n)
@@ -494,9 +498,6 @@ describe('Funding Round', () => {
       )
       await time.increase(roundDuration)
 
-      const fundingRoundAsCoordinator = fundingRound.connect(
-        coordinator
-      ) as Contract
       await fundingRoundAsCoordinator.publishTallyHash(tallyHash)
       await token.transfer(fundingRound.target, matchingPoolSize)
 
@@ -662,9 +663,6 @@ describe('Funding Round', () => {
         totalContributions
       )
       await time.increase(roundDuration)
-      const fundingRoundAsCoordinator = fundingRound.connect(
-        coordinator
-      ) as Contract
       await fundingRoundAsCoordinator.publishTallyHash(tallyHash)
       await token.transfer(fundingRound.target, matchingPoolSize)
 
@@ -691,10 +689,6 @@ describe('Funding Round', () => {
       )
 
       await time.increase(roundDuration)
-
-      const fundingRoundAsCoordinator = fundingRound.connect(
-        coordinator
-      ) as Contract
 
       await fundingRoundAsCoordinator.publishTallyHash(tallyHash)
       await token.transfer(fundingRound.target, matchingPoolSize)
@@ -768,9 +762,6 @@ describe('Funding Round', () => {
       )
       await time.increase(roundDuration)
 
-      const fundingRoundAsCoordinator = fundingRound.connect(
-        coordinator
-      ) as Contract
       await fundingRoundAsCoordinator.publishTallyHash(tallyHash)
       await token.transfer(fundingRound.target, matchingPoolSize)
       await addTallyResultsBatch(
@@ -943,7 +934,7 @@ describe('Funding Round', () => {
     it('allows recipient to claim allocated funds', async () => {
       await token.transfer(fundingRound.target, budget)
       await addTallyResultsBatch(
-        fundingRound.connect(coordinator) as Contract,
+        fundingRoundAsCoordinator,
         tallyTreeDepth,
         smallTallyTestData,
         3
@@ -980,7 +971,7 @@ describe('Funding Round', () => {
     it('allows address different than recipient to claim allocated funds', async () => {
       await token.transfer(fundingRound.target, budget)
       await addTallyResultsBatch(
-        fundingRound.connect(coordinator) as Contract,
+        fundingRoundAsCoordinator,
         tallyTreeDepth,
         smallTallyTestData,
         3
@@ -1009,7 +1000,7 @@ describe('Funding Round', () => {
     it('allows recipient to claim zero amount', async () => {
       await token.transfer(fundingRound.target, budget)
       await addTallyResultsBatch(
-        fundingRound.connect(coordinator) as Contract,
+        fundingRoundAsCoordinator,
         tallyTreeDepth,
         smallTallyTestData,
         3
@@ -1037,7 +1028,7 @@ describe('Funding Round', () => {
       const totalContributions = BigInt(totalSpent) * VOICE_CREDIT_FACTOR
       await token.transfer(fundingRound.target, totalContributions)
       await addTallyResultsBatch(
-        fundingRound.connect(coordinator) as Contract,
+        fundingRoundAsCoordinator,
         tallyTreeDepth,
         smallTallyTestData,
         3
@@ -1092,7 +1083,7 @@ describe('Funding Round', () => {
     it('sends funds allocated to unverified recipients back to matching pool', async () => {
       await token.transfer(fundingRound.target, budget)
       await addTallyResultsBatch(
-        fundingRound.connect(coordinator) as Contract,
+        fundingRoundAsCoordinator,
         tallyTreeDepth,
         smallTallyTestData,
         3
@@ -1122,7 +1113,7 @@ describe('Funding Round', () => {
     it('allows recipient to claim allocated funds only once', async () => {
       await token.transfer(fundingRound.target, budget)
       await addTallyResultsBatch(
-        fundingRound.connect(coordinator) as Contract,
+        fundingRoundAsCoordinator,
         tallyTreeDepth,
         smallTallyTestData,
         3
@@ -1150,7 +1141,7 @@ describe('Funding Round', () => {
       await tally.mock.verifyTallyResult.returns(false)
       await expect(
         addTallyResultsBatch(
-          fundingRound.connect(coordinator) as Contract,
+          fundingRoundAsCoordinator,
           tallyTreeDepth,
           smallTallyTestData,
           3
@@ -1162,7 +1153,7 @@ describe('Funding Round', () => {
       await token.transfer(fundingRound.target, budget)
 
       await addTallyResultsBatch(
-        fundingRound.connect(coordinator) as Contract,
+        fundingRoundAsCoordinator,
         tallyTreeDepth,
         smallTallyTestData,
         3
@@ -1211,7 +1202,7 @@ describe('Funding Round', () => {
     it('adds and verifies tally results', async function () {
       this.timeout(2 * 60 * 1000)
       await addTallyResultsBatch(
-        fundingRound.connect(coordinator) as Contract,
+        fundingRoundAsCoordinator,
         treeDepth,
         smallTallyTestData,
         5
@@ -1230,7 +1221,7 @@ describe('Funding Round', () => {
     it('calculates alpha correctly', async function () {
       this.timeout(2 * 60 * 1000)
       await addTallyResultsBatch(
-        fundingRound.connect(coordinator) as Contract,
+        fundingRoundAsCoordinator,
         treeDepth,
         smallTallyTestData,
         5
@@ -1248,7 +1239,7 @@ describe('Funding Round', () => {
 
     it('finalizes successfully', async function () {
       await addTallyResultsBatch(
-        fundingRound.connect(coordinator) as Contract,
+        fundingRoundAsCoordinator,
         treeDepth,
         smallTallyTestData,
         3
@@ -1322,7 +1313,7 @@ describe('Funding Round', () => {
       }
       const batchSize = 3
       await addTallyResultsBatch(
-        fundingRound.connect(coordinator) as Contract,
+        fundingRoundAsCoordinator,
         tallyTreeDepth,
         tallyWith1Contributor,
         batchSize
@@ -1343,7 +1334,7 @@ describe('Funding Round', () => {
 
     it('calculates claim funds correctly', async function () {
       await addTallyResultsBatch(
-        fundingRound.connect(coordinator) as Contract,
+        fundingRoundAsCoordinator,
         treeDepth,
         smallTallyTestData,
         20
@@ -1399,9 +1390,6 @@ describe('Funding Round', () => {
     })
 
     it('allows only coordinator to add tally results', async function () {
-      const fundingRoundAsContributor = fundingRound.connect(
-        contributor
-      ) as Contract
       await expect(
         addTallyResultsBatch(
           fundingRoundAsContributor,
@@ -1413,9 +1401,6 @@ describe('Funding Round', () => {
     })
 
     it('allows only coordinator to add tally results in batches', async function () {
-      const fundingRoundAsContributor = fundingRound.connect(
-        contributor
-      ) as Contract
       await expect(
         addTallyResultsBatch(
           fundingRoundAsContributor,
@@ -1430,7 +1415,7 @@ describe('Funding Round', () => {
       await tally.mock.tallyBatchNum.returns(0)
       await expect(
         addTallyResultsBatch(
-          fundingRound.connect(coordinator) as Contract,
+          fundingRoundAsCoordinator,
           tallyTreeDepth,
           smallTallyTestData,
           5
@@ -1442,7 +1427,7 @@ describe('Funding Round', () => {
       await tally.mock.tallyBatchNum.returns(0)
       await expect(
         addTallyResultsBatch(
-          fundingRound.connect(coordinator) as Contract,
+          fundingRoundAsCoordinator,
           tallyTreeDepth,
           smallTallyTestData,
           5
@@ -1452,7 +1437,7 @@ describe('Funding Round', () => {
 
     it('prevent adding more tally results if already finalized', async () => {
       await addTallyResultsBatch(
-        fundingRound.connect(coordinator) as Contract,
+        fundingRoundAsCoordinator,
         tallyTreeDepth,
         smallTallyTestData,
         5
@@ -1467,7 +1452,7 @@ describe('Funding Round', () => {
       )
       await expect(
         addTallyResultsBatch(
-          fundingRound.connect(coordinator) as Contract,
+          fundingRoundAsCoordinator,
           tallyTreeDepth,
           smallTallyTestData,
           5
@@ -1476,9 +1461,6 @@ describe('Funding Round', () => {
     })
 
     it('prevents adding tally results that were already verified', async function () {
-      const fundingRoundAsCoordinator = fundingRound.connect(
-        coordinator
-      ) as Contract
       await addTallyResultsBatch(
         fundingRoundAsCoordinator,
         tallyTreeDepth,
@@ -1502,7 +1484,7 @@ describe('Funding Round', () => {
       const total = smallTallyTestData.results.tally.length
       const lastBatch = Math.ceil(total / batchSize)
       await addTallyResultsBatch(
-        fundingRound.connect(coordinator) as Contract,
+        fundingRoundAsCoordinator,
         tallyTreeDepth,
         smallTallyTestData,
         batchSize,
@@ -1519,45 +1501,6 @@ describe('Funding Round', () => {
           }
         }
       )
-    })
-  })
-
-  describe('getRecipientTallyResultsBatch', () => {
-    const treeDepth = 5
-    const batchSize = 5
-    const total = smallTallyTestData.results.tally.length
-    for (const startIndex of [0, Math.floor(total / 2)]) {
-      it(`should pass with startIndex ${startIndex}`, () => {
-        const data = getRecipientTallyResultsBatch(
-          startIndex,
-          treeDepth,
-          smallTallyTestData,
-          batchSize
-        )
-        expect(data).to.have.lengthOf(3)
-        expect(data[1]).to.have.lengthOf(5)
-      })
-    }
-    it(`should pass with startIndex ${total - 1}`, () => {
-      const data = getRecipientTallyResultsBatch(
-        total - 1,
-        treeDepth,
-        smallTallyTestData,
-        batchSize
-      )
-      expect(data).to.have.lengthOf(3)
-      expect(data[1]).to.have.lengthOf(1)
-    })
-    it(`should fail with startIndex ${total}`, () => {
-      const startIndex = total
-      expect(() => {
-        getRecipientTallyResultsBatch(
-          startIndex,
-          treeDepth,
-          smallTallyTestData,
-          batchSize
-        )
-      }).to.throw('Recipient index out of bound')
     })
   })
 

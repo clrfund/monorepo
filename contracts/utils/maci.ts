@@ -1,4 +1,4 @@
-import { Contract, ContractTransactionReceipt, toNumber } from 'ethers'
+import { ContractTransactionReceipt } from 'ethers'
 import {
   bnSqrt,
   createMessage,
@@ -18,26 +18,28 @@ import {
   genProofs,
   proveOnChain,
   GenProofsArgs,
+  genLocalState,
+  verify,
+  TallyData,
 } from 'maci-cli'
 
 import { getTalyFilePath, isPathExist } from './misc'
 import { getCircuitFiles } from './circuits'
-import fs from 'fs'
-import path from 'path'
+import { FundingRound } from '../typechain-types'
 
-interface TallyResult {
+interface TallyResultProof {
   recipientIndex: number
   result: string
-  proof: any[]
+  proof: bigint[][]
 }
 
 export const isOsArm = os.arch().includes('arm')
 
-export function getRecipientTallyResult(
+export function getTallyResultProof(
   recipientIndex: number,
   recipientTreeDepth: number,
-  tally: any
-): TallyResult {
+  tally: TallyData
+): TallyResultProof {
   // Create proof for tally result
   const result = tally.results.tally[recipientIndex]
   if (result == null) {
@@ -52,46 +54,42 @@ export function getRecipientTallyResult(
     hash5
   )
   for (const leaf of tally.results.tally) {
-    resultTree.insert(leaf)
+    resultTree.insert(BigInt(leaf))
   }
   const resultProof = resultTree.genProof(recipientIndex)
   return {
     recipientIndex,
     result,
-    proof: resultProof.pathElements.map((x) => x.map((y) => y.toString())),
+    proof: resultProof.pathElements,
   }
 }
 
-export function getRecipientTallyResultsBatch(
+export function getTallyResultProofBatch(
   recipientStartIndex: number,
   recipientTreeDepth: number,
   tally: any,
   batchSize: number
-): any[] {
+): TallyResultProof[] {
   const tallyCount = tally.results.tally.length
   if (recipientStartIndex >= tallyCount) {
     throw new Error('Recipient index out of bound')
   }
 
-  const tallyData: TallyResult[] = []
+  const proofs: TallyResultProof[] = []
   const lastIndex =
     recipientStartIndex + batchSize > tallyCount
       ? tallyCount
       : recipientStartIndex + batchSize
 
   for (let i = recipientStartIndex; i < lastIndex; i++) {
-    tallyData.push(getRecipientTallyResult(i, recipientTreeDepth, tally))
+    proofs.push(getTallyResultProof(i, recipientTreeDepth, tally))
   }
 
-  return [
-    tallyData.map((item) => item.recipientIndex),
-    tallyData.map((item) => item.result),
-    tallyData.map((item) => item.proof),
-  ]
+  return proofs
 }
 
 export async function addTallyResultsBatch(
-  fundingRound: Contract,
+  fundingRound: FundingRound,
   recipientTreeDepth: number,
   tallyData: any,
   batchSize: number,
@@ -133,7 +131,7 @@ export async function addTallyResultsBatch(
   }
 
   for (let i = startIndex; i < tally.length; i = i + batchSize) {
-    const data = getRecipientTallyResultsBatch(
+    const proofs = getTallyResultProofBatch(
       i,
       recipientTreeDepth,
       tallyData,
@@ -141,16 +139,22 @@ export async function addTallyResultsBatch(
     )
 
     const tx = await fundingRound.addTallyResultsBatch(
-      ...data,
-      BigInt(tallyData.results.salt).toString(),
-      spentVoiceCreditsHash.toString(),
-      BigInt(perVOSpentVoiceCreditsHash).toString()
+      proofs.map((i) => i.recipientIndex),
+      proofs.map((i) => i.result),
+      proofs.map((i) => i.proof),
+      BigInt(tallyData.results.salt),
+      spentVoiceCreditsHash,
+      BigInt(perVOSpentVoiceCreditsHash)
     )
     const receipt = await tx.wait()
+    if (receipt?.status !== 1) {
+      throw new Error('Failed to add tally results on chain')
+    }
+
     if (callback) {
       // the 2nd element in the data array has the array of
       // recipients to be processed for the batch
-      const totalProcessed = i + data[1].length
+      const totalProcessed = i + proofs.length
       callback(totalProcessed, receipt)
     }
     totalGasUsed = totalGasUsed + Number(receipt.gasUsed)
@@ -177,39 +181,9 @@ type getGenProofArgsInput = {
   // fetch logs from MACI from these start and end blocks
   startBlock?: number
   endBlock?: number
+  // MACI state file
+  maciStateFile: string
   // flag to turn on verbose logging in MACI cli
-  quiet?: boolean
-}
-
-/**
- * GenProof command line arguments
- */
-type GenProofCliArgs = {
-  outputDir: string
-  tallyFile: string
-  tallyZkey: string
-  processZkey: string
-  pollId: bigint
-  subsidyFile?: string
-  subsidyZkey?: string
-  rapidsnark?: string
-  processWitgen?: string
-  processDatFile?: string
-  tallyWitgen?: string
-  tallyDatFile?: string
-  subsidyWitgen?: string
-  subsidyDatFile?: string
-  coordinatorPrivKey?: string
-  maciAddress?: string
-  transactionHash?: string
-  processWasm?: string
-  tallyWasm?: string
-  subsidyWasm?: string
-  useWasm?: boolean
-  stateFile?: string
-  startBlock?: number
-  blocksPerBatch?: number
-  endBlock?: number
   quiet?: boolean
 }
 
@@ -229,6 +203,7 @@ export function getGenProofArgs(args: getGenProofArgsInput): GenProofsArgs {
     blocksPerBatch,
     startBlock,
     endBlock,
+    maciStateFile,
     quiet,
   } = args
 
@@ -261,6 +236,7 @@ export function getGenProofArgs(args: getGenProofArgsInput): GenProofsArgs {
       blocksPerBatch,
       startBlock,
       endBlock,
+      stateFile: maciStateFile,
       quiet,
     }
   } else {
@@ -290,6 +266,7 @@ export function getGenProofArgs(args: getGenProofArgsInput): GenProofsArgs {
       blocksPerBatch,
       startBlock,
       endBlock,
+      stateFile: maciStateFile,
       quiet,
     }
   }
@@ -347,4 +324,13 @@ export function newMaciPrivateKey(): string {
   return secretKey
 }
 
-export { createMessage, getRecipientClaimData, bnSqrt, genProofs, proveOnChain }
+export {
+  createMessage,
+  getRecipientClaimData,
+  bnSqrt,
+  genProofs,
+  proveOnChain,
+  verify,
+  genLocalState,
+  TallyData,
+}

@@ -30,12 +30,6 @@ function extract() {
   echo ${val}
 }
 
-# create a ClrFund deployer
-yarn ts-node cli/newDeployer.ts \
-  --directory "${CIRCUIT_DIRECTORY}" \
-  --state-file "${STATE_FILE}" \
-  --circuit "${CIRCUIT}"
-
 # create a new maci key for the coordinator
 MACI_KEYPAIR=$(yarn ts-node cli/newMaciKey.ts)
 export COORDINATOR_MACISK=$(echo "${MACI_KEYPAIR}" | grep -o "macisk.*$")
@@ -43,7 +37,8 @@ export COORDINATOR_MACISK=$(echo "${MACI_KEYPAIR}" | grep -o "macisk.*$")
 # create a new instance of ClrFund
 DEPLOYER=$(extract 'deployer')
 yarn ts-node cli/newClrFund.ts \
-  --deployer "${DEPLOYER}" \
+  --circuit "${CIRCUIT}" \
+  --directory "${CIRCUIT_DIRECTORY}" \
   --user-registry-type simple \
   --recipient-registry-type simple \
   --state-file ${STATE_FILE}

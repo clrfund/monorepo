@@ -20,12 +20,7 @@ export class JSONFile {
    * @returns
    */
   static read(path: string) {
-    try {
-      return JSON.parse(fs.readFileSync(path).toString())
-    } catch (e) {
-      console.log(`Filed to read ${path}`, (e as Error).message)
-      throw e
-    }
+    return JSON.parse(fs.readFileSync(path).toString())
   }
 
   /**

@@ -1,6 +1,10 @@
 /**
  * Finalize a funding round
  *
+ * Make sure to set the following environment variables in the .env file
+ * 1) WALLET_PRIVATE_KEY or WALLET_MNEMONIC
+ *   - clrfund owner's wallet private key to interact with the contract
+ *
  * Sample usage:
  *  HARDHAT_NETWORK=localhost yarn ts-node cli/finalize.ts \
  *    --clrfund <clrfund address> \
