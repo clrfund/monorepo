@@ -23,20 +23,6 @@ jobs:
       run: |
         sudo apt update
         sudo apt-get install cmake build-essential libgmp-dev libsodium-dev nlohmann-json3-dev nasm g++ curl
-    - name: Install rust toolchain
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-    - name: Checkout circom
-      uses: actions/checkout@v3
-      with:
-        repository: iden3/circom
-        path: circom
-    - name: Build circom
-      run: |
-        cd circom
-        cargo build --release
-        cargo install --path circom
     - name: Checkout rapidsnark source code
       uses: actions/checkout@v3
       with:
@@ -52,12 +38,6 @@ jobs:
         mkdir build_prover && cd build_prover
         cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../package
         make -j4 && make install
-    - name: Find rapidsnark
-      run: |
-        cd rapidsnark
-        pwd
-        echo "$GITHUB_WORKSPACE"
-        find . -name "prover"
     - name: Checkout Clrfund
       uses: actions/checkout@v3
       with:
