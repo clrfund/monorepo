@@ -325,7 +325,7 @@ describe('End-to-end Tests', function () {
   }> {
     const tallyAddress = await fundingRound.tally()
     const tallyContact = await ethers.getContractAt('Tally', tallyAddress)
-    const messageProcessorAddress = await tallyContact.mp()
+    const messageProcessorAddress = await tallyContact.messageProcessor()
 
     return { tallyAddress, messageProcessorAddress }
   }
