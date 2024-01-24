@@ -117,7 +117,7 @@ async function verifyTally(tally: Contract, run: any): Promise<string> {
       tally.verifier(),
       tally.vkRegistry(),
       tally.poll(),
-      tally.mp(),
+      tally.messageProcessor(),
     ])
     await run('verify:verify', { address: tally.target, constructorArguments })
     return SUCCESS
