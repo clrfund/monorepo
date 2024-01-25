@@ -37,10 +37,16 @@ async function main(args: any) {
       JSON.stringify({
         name: `recipient ${i}`,
         description: `recipient ${i}`,
+        bannerImageHash: 'QmPAZJkV2TH2hmudpSwj8buxwiG1ckNa2ZbrPFop3Td5oD',
+        thumbnailImageHash: 'QmPAZJkV2TH2hmudpSwj8buxwiG1ckNa2ZbrPFop3Td5oD',
       })
     )
-    addRecipientTx.wait()
-    numAdded++
+    const receipt = await addRecipientTx.wait()
+    if (receipt.status === 1) {
+      numAdded++
+    } else {
+      console.log('Failed to add recipient', i)
+    }
   }
 
   console.log(`Added ${numAdded} test recipients`)
