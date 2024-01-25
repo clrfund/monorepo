@@ -2,7 +2,7 @@
  * Set the native token in the ClrFund contract
  * Sample usage:
  *
- * yarn hardhat set-token --token <token address> --clrfund <clrfund address> --network arbitrum-goerli
+ * yarn hardhat set-token --token <token address> --clrfund <clrfund address> --network <network>
  */
 
 import { task } from 'hardhat/config'
