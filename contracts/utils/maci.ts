@@ -182,7 +182,7 @@ type getGenProofArgsInput = {
   startBlock?: number
   endBlock?: number
   // MACI state file
-  maciStateFile: string
+  maciStateFile?: string
   // flag to turn on verbose logging in MACI cli
   quiet?: boolean
 }

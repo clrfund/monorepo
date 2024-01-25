@@ -146,22 +146,9 @@ async function verifyMessageProcessor(
   }
 }
 
-async function verifyPoll(pollContract: Contract, run: any): Promise<string> {
+async function verifyPoll(address: string, run: any): Promise<string> {
   try {
-    const [, duration] = await pollContract.getDeployTimeAndDuration()
-    const constructorArguments = await Promise.all([
-      Promise.resolve(duration),
-      pollContract.maxValues(),
-      pollContract.treeDepths(),
-      pollContract.batchSizes(),
-      pollContract.coordinatorPubKey(),
-      pollContract.extContracts(),
-    ])
-
-    await run('verify:verify', {
-      address: pollContract.target,
-      constructorArguments,
-    })
+    await run('verify-poll', { address })
     return SUCCESS
   } catch (error) {
     return (error as Error).message
@@ -258,8 +245,7 @@ task('verify-all', 'Verify all clrfund contracts')
 
       const poll = await round.poll()
       if (poll !== ZERO_ADDRESS) {
-        const pollContract = await ethers.getContractAt('Poll', poll)
-        status = await verifyPoll(pollContract, run)
+        status = await verifyPoll(poll, run)
         results.push({ name: 'Poll', status })
       }
 
@@ -269,7 +255,7 @@ task('verify-all', 'Verify all clrfund contracts')
         status = await verifyTally(tallyContract, run)
         results.push({ name: 'Tally', status })
 
-        const messageProcessorAddress = await tallyContract.mp()
+        const messageProcessorAddress = await tallyContract.messageProcessor()
         if (messageProcessorAddress !== ZERO_ADDRESS) {
           const mpContract = await ethers.getContractAt(
             'MessageProcessor',
