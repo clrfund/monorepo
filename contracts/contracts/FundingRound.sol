@@ -74,6 +74,8 @@ contract FundingRound is
   error InvalidRecipientRegistry();
   error InvalidCoordinator();
   error UnexpectedPollAddress(address expected, address actual);
+  error PollAlreadyStarted();
+  error InvalidMaciFactory();
 
 
   // Constants
@@ -134,9 +136,10 @@ contract FundingRound is
   event TallyPublished(string _tallyHash);
   event Voted(address indexed _contributor);
   event TallyResultsAdded(uint256 indexed _voteOptionIndex, uint256 _tally);
-  event PollSet(address indexed _poll);
+  event PollDeployed(uint256 indexed _pollId, address indexed _poll);
   event TallySet(address indexed _tally);
-
+  event MaciSet(address indexed _maci);
+  
   modifier onlyCoordinator() {
     if(msg.sender != coordinator) {
       revert NotCoordinator();
@@ -210,7 +213,7 @@ contract FundingRound is
     external
     onlyCoordinator
   {
-    if (isAddressZero(address(maci))) revert MaciNotSet();
+    if (isAddressZero(address(poll))) revert PollNotSet();
 
     _votingPeriodOver(poll);
     if (isFinalized) {
@@ -232,30 +235,61 @@ contract FundingRound is
     * @dev Link MACI related contracts to this funding round.
     */
   function setMaci(
-    MACI _maci,
-    MACI.PollContracts memory _pollContracts
+    MACI _maci
   )
     external
     onlyOwner
   {
     if (!isAddressZero(address(maci))) revert MaciAlreadySet();
-
     if (isAddressZero(address(_maci))) revert InvalidMaci();
-    if (isAddressZero(_pollContracts.poll)) revert InvalidPoll();
-    if (isAddressZero(_pollContracts.messageProcessor)) revert InvalidMessageProcessor();
-
-    // we only create 1 poll per maci, make sure MACI use pollId = 0
-    // as the first poll index
-    pollId = 0;
-
-    address expectedPoll = _maci.getPoll(pollId);
-    if( _pollContracts.poll != expectedPoll ) {
-      revert UnexpectedPollAddress(expectedPoll, _pollContracts.poll);
-    }
 
     maci = _maci;
-    poll = Poll(_pollContracts.poll);
-    _setTally(_pollContracts.tally);
+  
+    emit MaciSet(address(maci));
+  }
+
+/**
+  * @dev deploy and start Poll.
+  */
+  function deployPoll(
+    uint256 _duration,
+    IMACIFactory _maciFactory, 
+    PubKey memory _coordinatorPubKey
+  )
+    external
+    onlyCoordinator()
+  {
+    if(!isAddressZero(address(poll))) revert PollAlreadyStarted();
+    if(isAddressZero(address(_maciFactory))) revert InvalidMaciFactory();
+    if(isAddressZero(address(maci))) revert MaciNotSet();
+
+    MACI.PollContracts memory pollContracts = maci.deployPoll(
+      _duration,
+      _maciFactory.maxValues(),
+      _maciFactory.treeDepths(),
+      _coordinatorPubKey,
+      address(_maciFactory.verifier()),
+      address(_maciFactory.vkRegistry()),
+      // pass false to not deploy the subsidy contract
+      false
+    );
+
+    // transfer ownership to coordinator to run the tally scripts
+    Ownable(pollContracts.poll).transferOwnership(coordinator);
+    Ownable(pollContracts.messageProcessor).transferOwnership(coordinator);
+    Ownable(pollContracts.tally).transferOwnership(coordinator);
+
+    // only allow 1 poll per round, make sure MACI start pollId from 0
+    pollId = 0;
+    address expectedPoll = maci.getPoll(pollId);
+    if( pollContracts.poll != expectedPoll ) {
+      revert UnexpectedPollAddress(expectedPoll, pollContracts.poll);
+    }
+
+    poll = Poll(pollContracts.poll);
+    _setTally(pollContracts.tally);
+
+    emit PollDeployed(pollId, address(poll));
   }
 
   /**
@@ -269,7 +303,7 @@ contract FundingRound is
   )
     external
   {
-    if (isAddressZero(address(maci))) revert MaciNotSet();
+    if (isAddressZero(address(poll))) revert PollNotSet();
     if (isFinalized) revert RoundAlreadyFinalized();
     if (amount == 0) revert ContributionAmountIsZero();
     if (amount > MAX_VOICE_CREDITS * voiceCreditFactor) revert ContributionAmountTooLarge();
@@ -484,7 +518,8 @@ contract FundingRound is
       revert RoundAlreadyFinalized();
     }
 
-    if (isAddressZero(address(maci))) revert MaciNotSet();
+    // if poll is set, MACI and Tally will also be set
+    if (isAddressZero(address(poll))) revert PollNotSet();
 
     _votingPeriodOver(poll);
 
@@ -691,7 +726,7 @@ contract FundingRound is
     external
     onlyCoordinator
   {
-    if (isAddressZero(address(maci))) revert MaciNotSet();
+    if (isAddressZero(address(poll))) revert PollNotSet();
 
     if (!isTallied()) {
       revert VotesNotTallied();
