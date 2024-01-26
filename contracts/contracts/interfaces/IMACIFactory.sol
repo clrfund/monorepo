@@ -38,5 +38,5 @@ interface IMACIFactory {
     address coordinator,
     DomainObjs.PubKey calldata coordinatorPubKey,
     address maciOwner
-  ) external returns (MACI _maci, MACI.PollContracts memory _pollContracts);
+  ) external returns (MACI _maci);
 }

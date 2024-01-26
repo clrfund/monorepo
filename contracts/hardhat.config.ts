@@ -60,6 +60,14 @@ export default {
         'https://sepolia-rollup.arbitrum.io/rpc',
       accounts,
     },
+    'scroll-sepolia': {
+      url: process.env.JSONRPC_HTTP_URL || 'https://sepolia-rpc.scroll.io',
+      accounts,
+    },
+    scroll: {
+      url: process.env.JSONRPC_HTTP_URL || 'https://rpc.scroll.io',
+      accounts,
+    },
     sepolia: {
       url: process.env.JSONRPC_HTTP_URL || 'http://127.0.0.1:8545',
       accounts,
@@ -78,6 +86,7 @@ export default {
       arbitrum: process.env.ARBISCAN_API_KEY || 'YOUR_ARBISCAN_API_KEY',
       'arbitrum-sepolia':
         process.env.ARBISCAN_API_KEY || 'YOUR_ARBISCAN_API_KEY',
+      'scroll-sepolia': process.env.SCROLLSCAN_API_KEY || 'YOUR_API_KEY',
     },
     customChains: [
       {
@@ -86,6 +95,14 @@ export default {
         urls: {
           apiURL: 'https://api-sepolia.arbiscan.io/api',
           browserURL: 'https://sepolia.arbiscan.io',
+        },
+      },
+      {
+        network: 'scroll-sepolia',
+        chainId: 534351,
+        urls: {
+          apiURL: 'https://api-sepolia.scrollscan.com/api',
+          browserURL: 'https://sepolia.scrollscan.com',
         },
       },
     ],
@@ -116,7 +133,7 @@ export default {
         settings: {
           optimizer: {
             enabled: true,
-            runs: 1000000,
+            runs: 200,
           },
         },
       },
@@ -125,7 +142,7 @@ export default {
         settings: {
           optimizer: {
             enabled: true,
-            runs: 1000000,
+            runs: 200,
           },
         },
       },
@@ -152,7 +169,7 @@ export default {
         settings: {
           optimizer: {
             enabled: true,
-            runs: 1000000,
+            runs: 200,
           },
         },
       },
@@ -161,7 +178,7 @@ export default {
         settings: {
           optimizer: {
             enabled: true,
-            runs: 1000000,
+            runs: 200,
           },
         },
       },
@@ -170,7 +187,7 @@ export default {
         settings: {
           optimizer: {
             enabled: true,
-            runs: 1000000,
+            runs: 200,
           },
         },
       },

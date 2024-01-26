@@ -1,10 +1,11 @@
-import { Signer, Contract } from 'ethers'
+import { Signer, Contract, TransactionResponse } from 'ethers'
 import { MockContract, deployMockContract } from '@clrfund/waffle-mock-contract'
 import { artifacts, ethers, config } from 'hardhat'
 import { deployMaciFactory, deployPoseidonLibraries } from './deployment'
 import { MaciParameters } from './maciParameters'
-import { PubKey } from '@clrfund/common'
-import { getEventArg } from './contracts'
+import { getEventArg, PubKey } from '@clrfund/common'
+import { IG1ContractParams } from 'maci-domainobjs'
+import { ZERO_ADDRESS } from './constants'
 
 /**
  * Deploy a mock contract with the given contract name
@@ -26,6 +27,7 @@ export async function deployMockContractByName(
 export type DeployTestFundingRoundOutput = {
   token: Contract
   fundingRound: Contract
+  maciFactory: Contract
   mockUserRegistry: MockContract
   mockRecipientRegistry: MockContract
   mockVerifier: MockContract
@@ -35,17 +37,22 @@ export type DeployTestFundingRoundOutput = {
 /**
  * Deploy an instance of funding round contract for testing
  * @param tokenSupply initial supply for the native token
- * @param coordinatorAddress the coordinator wallet address
+ * @param coordinator the coordinator signer
+ * @param coordinatorPubKey the coordinator MACI public key
+ * @param startTime The round start time
+ * @param duration The round duration
  * @param deployer singer for the contract deployment
  * @returns all the deployed objects in DeployTestFundingRoundOutput
  */
 export async function deployTestFundingRound(
   tokenSupply: bigint,
-  coordinatorAddress: string,
+  coordinator: Signer,
   coordinatorPubKey: PubKey,
-  roundDuration: number,
+  startTime: number,
+  duration: number,
   deployer: Signer
 ): Promise<DeployTestFundingRoundOutput> {
+  const coordinatorAddress = await coordinator.getAddress()
   const token = await ethers.deployContract(
     'AnyOldERC20Token',
     [tokenSupply],
@@ -85,63 +92,170 @@ export async function deployTestFundingRound(
     signer: deployer,
     maciParameters,
   })
-  const factories = await maciFactory.factories()
-  const topupToken = await ethers.deployContract('TopupToken', deployer)
-  const vkRegistry = await ethers.deployContract('VkRegistry', deployer)
+  const mockMaci = await deployMockContractByName('MACI', deployer)
   const mockVerifier = await deployMockContractByName('Verifier', deployer)
+  const mockPoll = await deployMockContractByName('Poll', deployer)
+  const mockMessageProcessor = await deployMockContractByName(
+    'MessageProcessor',
+    deployer
+  )
   const mockTally = await deployMockContractByName('Tally', deployer)
 
-  const maciInstance = await ethers.deployContract(
-    'MACI',
-    [
-      factories.pollFactory,
-      factories.messageProcessorFactory,
-      factories.tallyFactory,
-      factories.subsidyFactory,
-      fundingRound.target,
-      fundingRound.target,
-      topupToken.target,
-      maciParameters.stateTreeDepth,
-    ],
-    {
-      signer: deployer,
-      libraries,
-    }
-  )
+  const processorAddress = await mockMessageProcessor.getAddress()
+  const tallyAddress = await mockTally.getAddress()
+  const pollAddress = await mockPoll.getAddress()
 
-  const deployPollTx = await maciInstance.deployPoll(
-    roundDuration,
-    maciParameters.maxValues,
-    maciParameters.treeDepths,
-    coordinatorPubKey.asContractParam(),
-    mockVerifier.target,
-    vkRegistry.target,
-    // pass false to not deploy the subsidy contract
-    false
-  )
-  const pollAddr = await getEventArg(
-    deployPollTx,
-    maciInstance,
-    'DeployPoll',
-    'pollAddr'
-  )
+  // mocks all the values
+  await mockTally.mock.tallyBatchNum.returns(1)
+  await mockTally.mock.verifyTallyResult.returns(true)
+  await mockTally.mock.verifySpentVoiceCredits.returns(true)
 
-  // swap out the tally contract with with a mock for testing
-  const pollContracts = {
-    tally: await mockTally.getAddress(),
-    poll: pollAddr.poll,
-    messageProcessor: pollAddr.messageProcessor,
-    subsidy: pollAddr.subsidy,
+  await mockTally.mock.transferOwnership.returns()
+  await mockMessageProcessor.mock.transferOwnership.returns()
+  await mockPoll.mock.transferOwnership.returns()
+  // use a smaller voteOptionTreeDepth for testing
+  const voteOptionTreeDepth = 2
+  await mockPoll.mock.treeDepths.returns(2, 2, 8, voteOptionTreeDepth)
+
+  await mockMaci.mock.getPoll.returns(pollAddress)
+  await mockMaci.mock.deployPoll.returns({
+    poll: pollAddress,
+    messageProcessor: processorAddress,
+    tally: tallyAddress,
+    subsidy: ZERO_ADDRESS,
+  })
+  await mockMaci.mock.signUp.returns()
+
+  await mockPoll.mock.numSignUpsAndMessages.returns(2, 100)
+  await mockPoll.mock.batchSizes.returns(0, 100, 0)
+  await mockPoll.mock.getDeployTimeAndDuration.returns(startTime, duration)
+
+  await fundingRound.setMaci(mockMaci.target)
+
+  const roundAsCoordinator = fundingRound.connect(coordinator) as Contract
+
+  const maciFactoryAddress = await maciFactory.getAddress()
+  const tx = await roundAsCoordinator.deployPoll(
+    duration,
+    maciFactoryAddress,
+    coordinatorPubKey.asContractParam()
+  )
+  const receipt = await tx.wait()
+  if (receipt.status !== 1) {
+    throw new Error('Failed deployPoll()')
   }
-
-  await fundingRound.setMaci(maciInstance.target, pollContracts)
 
   return {
     token,
     fundingRound,
+    maciFactory,
     mockRecipientRegistry,
     mockUserRegistry,
     mockVerifier,
     mockTally,
   }
+}
+
+/**
+ * Deploy a new round
+ * @param clrfund ClrFund contract address
+ * @param duration Round duration
+ * @param maciFactory MACI factory address
+ * @param coordinatorPubKey Coordinator MACI public key
+ * @returns Transaction response object for the round deployment
+ */
+export async function deployNewRound(
+  clrfund: Contract,
+  duration: number,
+  maciFactory: string,
+  coordinatorPubKey: IG1ContractParams,
+  coordinator: Signer
+): Promise<TransactionResponse> {
+  const txPromise = clrfund.deployNewRound(duration)
+  const tx = await txPromise
+  await tx.wait()
+
+  const fundingRoundAddress = await clrfund.getCurrentRound()
+  const fundingRound = await ethers.getContractAt(
+    'FundingRound',
+    fundingRoundAddress,
+    coordinator
+  )
+  const deployPollTx = await fundingRound.deployPoll(
+    duration,
+    maciFactory,
+    coordinatorPubKey
+  )
+  await deployPollTx.wait()
+
+  return tx
+}
+
+/**
+ * Deploy a new round with real MACI
+ */
+export async function deployRoundWithRealMaci(
+  duration: number,
+  coordinatorPubKey: IG1ContractParams,
+  coordinator: Signer,
+  nativeToken: Contract,
+  userRegistry: MockContract,
+  recipientRegistry: MockContract,
+  maciFactory: Contract
+): Promise<Contract> {
+  const nativeTokenAddress = await nativeToken.getAddress()
+  const userRegistryAddress = await userRegistry.getAddress()
+  const recipientRegistryAddress = await recipientRegistry.getAddress()
+  const coordinatorAddress = await coordinator.getAddress()
+  const args = [
+    nativeTokenAddress,
+    userRegistryAddress,
+    recipientRegistryAddress,
+    coordinatorAddress,
+  ]
+
+  const fundingRound = await ethers.deployContract('FundingRound', args)
+  const topupCredit = await fundingRound.topupToken()
+
+  const deployMaciTx = await maciFactory.deployMaci(
+    fundingRound.target,
+    fundingRound.target,
+    topupCredit,
+    duration,
+    coordinatorAddress,
+    coordinatorPubKey,
+    fundingRound.target
+  )
+
+  const deployMaciReceipt = await deployMaciTx.wait()
+  if (deployMaciReceipt.status !== 1) {
+    throw new Error('Failed deployMaci()')
+  }
+
+  const maci = await getEventArg(
+    deployMaciTx,
+    maciFactory,
+    'MaciDeployed',
+    '_maci'
+  )
+  const setMaciTx = await fundingRound.setMaci(maci)
+  const setMaciReceipt = await setMaciTx.wait()
+  if (setMaciReceipt.status !== 1) {
+    throw new Error('Failed to setMaci')
+  }
+
+  const fundingRoundAsCoordinator = fundingRound.connect(
+    coordinator
+  ) as Contract
+  const deployPollTx = await fundingRoundAsCoordinator.deployPoll(
+    duration,
+    maciFactory.target,
+    coordinatorPubKey
+  )
+  const deployPollReceipt = await deployPollTx.wait()
+  if (deployPollReceipt.status !== 1) {
+    throw new Error('Failed to deployPoll')
+  }
+
+  return fundingRound
 }

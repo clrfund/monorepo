@@ -28,7 +28,10 @@ import {
   addTallyResultsBatch,
   getRecipientClaimData,
 } from '../utils/maci'
-import { deployTestFundingRound } from '../utils/testutils'
+import {
+  deployTestFundingRound,
+  deployRoundWithRealMaci,
+} from '../utils/testutils'
 
 // ethStaker test vectors for Quadratic Funding with alpha
 import smallTallyTestData from './data/testTallySmall.json'
@@ -81,6 +84,7 @@ describe('Funding Round', () => {
   let fundingRound: Contract
   let fundingRoundAsCoordinator: FundingRound
   let fundingRoundAsContributor: FundingRound
+  let maciFactory: Contract
   let maci: Contract
   let poll: Contract
   let pollId: bigint
@@ -98,10 +102,12 @@ describe('Funding Round', () => {
 
   beforeEach(async () => {
     const tokenInitialSupply = UNIT * BigInt(1000000)
+    const currentTime = await time.latest()
     const deployed = await deployTestFundingRound(
       tokenInitialSupply + budget,
-      coordinator.address,
+      coordinator,
       coordinatorPubKey,
+      currentTime,
       roundDuration,
       deployer
     )
@@ -110,14 +116,12 @@ describe('Funding Round', () => {
     userRegistry = deployed.mockUserRegistry
     recipientRegistry = deployed.mockRecipientRegistry
     tally = deployed.mockTally
+    maciFactory = deployed.maciFactory
     const mockVerifier = deployed.mockVerifier
 
-    // make the verifier to alwasy returns true
+    // make the verifier to always returns true
     await mockVerifier.mock.verify.returns(true)
     await userRegistry.mock.isVerifiedUser.returns(true)
-    await tally.mock.tallyBatchNum.returns(1)
-    await tally.mock.verifyTallyResult.returns(true)
-    await tally.mock.verifySpentVoiceCredits.returns(true)
 
     tokenAsContributor = token.connect(contributor) as Contract
     fundingRoundAsCoordinator = fundingRound.connect(
@@ -165,6 +169,19 @@ describe('Funding Round', () => {
     let fundingRoundAsContributor: Contract
 
     beforeEach(async () => {
+      // overwrite with real MACI
+      fundingRound = await deployRoundWithRealMaci(
+        roundDuration,
+        coordinatorPubKey.asContractParam(),
+        coordinator,
+        token,
+        userRegistry,
+        recipientRegistry,
+        maciFactory
+      )
+      const maciAddress = await fundingRound.maci()
+      maci = await ethers.getContractAt('MACI', maciAddress)
+
       tokenAsContributor = token.connect(contributor) as Contract
       fundingRoundAsContributor = fundingRound.connect(contributor) as Contract
       encodedContributorAddress = abiCoder.encode(
@@ -255,6 +272,8 @@ describe('Funding Round', () => {
     })
 
     it('should not allow users who have not contributed to sign up directly in MACI', async () => {
+      const maciAddress = await fundingRound.maci()
+      maci = await ethers.getContractAt('MACI', maciAddress)
       const signUpData = abiCoder.encode(['address'], [contributor.address])
       await expect(
         maci.signUp(userPubKey, signUpData, encodedContributorAddress)
@@ -288,6 +307,22 @@ describe('Funding Round', () => {
     let nonce = 1
 
     beforeEach(async () => {
+      // overwrite with real MACI to get events and error
+      fundingRound = await deployRoundWithRealMaci(
+        roundDuration,
+        coordinatorPubKey.asContractParam(),
+        coordinator,
+        token,
+        userRegistry,
+        recipientRegistry,
+        maciFactory
+      )
+      const pollAddress = await fundingRound.poll()
+      poll = await ethers.getContractAt('Poll', pollAddress)
+
+      const maciAddress = await fundingRound.maci()
+      maci = await ethers.getContractAt('MACI', maciAddress)
+
       const tokenAsContributor = token.connect(contributor) as Contract
       await tokenAsContributor.approve(fundingRound.target, contributionAmount)
       fundingRoundAsContributor = fundingRound.connect(contributor) as Contract

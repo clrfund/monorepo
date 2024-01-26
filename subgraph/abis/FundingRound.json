@@ -26,6 +26,233 @@
     "type": "constructor"
   },
   {
+    "inputs": [],
+    "name": "AlreadyContributed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ContributionAmountIsZero",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ContributionAmountTooLarge",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "EmptyTallyHash",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "FundsAlreadyClaimed",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "total",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "actual",
+        "type": "uint256"
+      }
+    ],
+    "name": "IncompleteTallyResults",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "IncorrectPerVOSpentVoiceCredits",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "IncorrectSpentVoiceCredits",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "IncorrectTallyResult",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidBudget",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidCoordinator",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidMaci",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidMaciFactory",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidMessageProcessor",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidNativeToken",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidPoll",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidRecipientRegistry",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidTally",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidUserRegistry",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "MaciAlreadySet",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "MaciNotSet",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NoProjectHasMoreThanOneVote",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NoVoiceCredits",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NoVotes",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotCoordinator",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NothingToWithdraw",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "OnlyMaciCanRegisterVoters",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "PollAlreadyStarted",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "PollNotSet",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "RoundAlreadyFinalized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "RoundCancelled",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "RoundNotCancelled",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "RoundNotFinalized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "TallyHashNotPublished",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "expected",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "actual",
+        "type": "address"
+      }
+    ],
+    "name": "UnexpectedPollAddress",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "UserAlreadyRegistered",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "UserHasNotContributed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "UserNotVerified",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "VoteResultsAlreadyVerified",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "VotesNotTallied",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "VotingPeriodNotPassed",
+    "type": "error"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {
@@ -88,6 +315,19 @@
       {
         "indexed": true,
         "internalType": "address",
+        "name": "_maci",
+        "type": "address"
+      }
+    ],
+    "name": "MaciSet",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
         "name": "previousOwner",
         "type": "address"
       },
@@ -99,6 +339,25 @@
       }
     ],
     "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "_pollId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "_poll",
+        "type": "address"
+      }
+    ],
+    "name": "PollDeployed",
     "type": "event"
   },
   {
@@ -119,6 +378,38 @@
     "inputs": [
       {
         "indexed": true,
+        "internalType": "uint256",
+        "name": "_voteOptionIndex",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_tally",
+        "type": "uint256"
+      }
+    ],
+    "name": "TallyResultsAdded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "_tally",
+        "type": "address"
+      }
+    ],
+    "name": "TallySet",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
         "internalType": "address",
         "name": "_contributor",
         "type": "address"
@@ -129,7 +420,100 @@
   },
   {
     "inputs": [],
+    "name": "MESSAGE_DATA_LENGTH",
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "alpha",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_budget",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_totalVotesSquares",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_totalSpent",
+        "type": "uint256"
+      }
+    ],
+    "name": "calcAlpha",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "_alpha",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "cancel",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_voteOptionIndex",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_spent",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256[][]",
+        "name": "_spentProof",
+        "type": "uint256[][]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_spentSalt",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_resultsCommitment",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_spentVoiceCreditsCommitment",
+        "type": "uint256"
+      }
+    ],
+    "name": "claimFunds",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -149,7 +533,7 @@
             "type": "uint256"
           }
         ],
-        "internalType": "struct MACISharedObjs.PubKey",
+        "internalType": "struct DomainObjs.PubKey",
         "name": "pubKey",
         "type": "tuple"
       },
@@ -178,6 +562,30 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "contributors",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "voiceCredits",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "isRegistered",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "coordinator",
     "outputs": [
@@ -194,12 +602,57 @@
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "_duration",
+        "type": "uint256"
+      },
+      {
+        "internalType": "contract IMACIFactory",
+        "name": "_maciFactory",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "x",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "y",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct DomainObjs.PubKey",
+        "name": "_coordinatorPubKey",
+        "type": "tuple"
+      }
+    ],
+    "name": "deployPoll",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "_totalSpent",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
         "name": "_totalSpentSalt",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_newResultCommitment",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_perVOSpentVoiceCreditsHash",
         "type": "uint256"
       }
     ],
@@ -254,6 +707,25 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "addressValue",
+        "type": "address"
+      }
+    ],
+    "name": "isAddressZero",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -335,6 +807,32 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "poll",
+    "outputs": [
+      {
+        "internalType": "contract Poll",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "pollId",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "string",
@@ -355,6 +853,35 @@
         "internalType": "contract IRecipientRegistry",
         "name": "",
         "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "recipients",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "fundsClaimed",
+        "type": "bool"
+      },
+      {
+        "internalType": "bool",
+        "name": "tallyVerified",
+        "type": "bool"
+      },
+      {
+        "internalType": "uint256",
+        "name": "tallyResult",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -386,6 +913,13 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "resetTally",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "contract MACI",
@@ -401,10 +935,23 @@
   {
     "inputs": [
       {
+        "internalType": "contract MACI",
+        "name": "_maci",
+        "type": "address"
+      }
+    ],
+    "name": "setMaciInstance",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "components": [
           {
             "internalType": "uint256",
-            "name": "iv",
+            "name": "msgType",
             "type": "uint256"
           },
           {
@@ -413,7 +960,7 @@
             "type": "uint256[10]"
           }
         ],
-        "internalType": "struct MACISharedObjs.Message[]",
+        "internalType": "struct DomainObjs.Message[]",
         "name": "_messages",
         "type": "tuple[]"
       },
@@ -430,7 +977,7 @@
             "type": "uint256"
           }
         ],
-        "internalType": "struct MACISharedObjs.PubKey[]",
+        "internalType": "struct DomainObjs.PubKey[]",
         "name": "_encPubKeys",
         "type": "tuple[]"
       }
@@ -438,6 +985,19 @@
     "name": "submitMessageBatch",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "tally",
+    "outputs": [
+      {
+        "internalType": "contract Tally",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -455,25 +1015,12 @@
   },
   {
     "inputs": [],
-    "name": "poll",
+    "name": "topupToken",
     "outputs": [
       {
-        "internalType": "contract Poll",
+        "internalType": "contract TopupToken",
         "name": "",
         "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "pollId",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -494,7 +1041,33 @@
   },
   {
     "inputs": [],
+    "name": "totalTallyResults",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "totalVotes",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalVotesSquares",
     "outputs": [
       {
         "internalType": "uint256",
@@ -545,6 +1118,13 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "withdrawContribution",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address[]",
@@ -552,8 +1132,14 @@
         "type": "address[]"
       }
     ],
-    "name": "withdrawContribution",
-    "outputs": [],
+    "name": "withdrawContributions",
+    "outputs": [
+      {
+        "internalType": "bool[]",
+        "name": "result",
+        "type": "bool[]"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   }

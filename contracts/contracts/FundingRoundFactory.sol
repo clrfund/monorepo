@@ -29,28 +29,28 @@ contract FundingRoundFactory is MACICommon {
     returns (address)
   {
     IClrFund clrfund = IClrFund(_clrfund);
+    address coordinator = clrfund.coordinator();
     FundingRound newRound = new FundingRound(
       clrfund.nativeToken(),
       clrfund.userRegistry(),
       clrfund.recipientRegistry(),
-      clrfund.coordinator()
+      coordinator
     );
 
     IMACIFactory maciFactory = clrfund.maciFactory();
-    (MACI maci, MACI.PollContracts memory pollContracts) = maciFactory.deployMaci(
+    MACI maci = maciFactory.deployMaci(
       SignUpGatekeeper(newRound),
       InitialVoiceCreditProxy(newRound),
       address(newRound.topupToken()),
       _duration,
-      newRound.coordinator(),
+      coordinator,
       clrfund.coordinatorPubKey(),
-      address(this)
+      address(newRound)
     );
 
     // link funding round with maci related contracts
-    newRound.setMaci(maci, pollContracts);
+    newRound.setMaci(maci);
     newRound.transferOwnership(_clrfund);
-    maci.transferOwnership(address(newRound));
     return address(newRound);
   }
 }

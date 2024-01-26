@@ -1,0 +1,6 @@
+{
+  "network": "scroll-sepolia",
+  "address": "0x8d0A832A82F46A5CdD9628C749F87dFf49600FD3",
+  "clrFundStartBlock": 2871760,
+  "recipientRegistryStartBlock": 2871760
+}

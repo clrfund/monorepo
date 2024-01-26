@@ -7,9 +7,13 @@ import {
   TallyPublished,
   RegisterCall,
   Voted,
+  MaciSet,
+  PollDeployed,
   FundingRound as FundingRoundContract,
 } from '../generated/templates/FundingRound/FundingRound'
 import { OptimisticRecipientRegistry as RecipientRegistryContract } from '../generated/templates/FundingRound/OptimisticRecipientRegistry'
+import { Poll as PollTemplate } from '../generated/templates'
+import { Poll as PollContract } from '../generated/ClrFund/Poll'
 
 import {
   Recipient,
@@ -222,4 +226,62 @@ export function handleVoted(event: Voted): void {
     vote.secret = false
   }
   vote.save()
+}
+
+export function handlePollDeployed(event: PollDeployed): void {
+  log.info('handlePollDeployed', [])
+
+  let fundingRoundId = event.address.toHexString()
+  let fundingRound = FundingRound.load(fundingRoundId)
+  if (fundingRound == null) {
+    log.error('Error: handleContribution failed', [])
+    return
+  }
+
+  let pollAddress = event.params._poll
+  fundingRound.pollId = event.params._pollId
+  fundingRound.pollAddress = pollAddress
+
+  PollTemplate.create(pollAddress)
+
+  let pollContract = PollContract.bind(pollAddress)
+  let deployTimeAndDuration = pollContract.try_getDeployTimeAndDuration()
+  if (!deployTimeAndDuration.reverted) {
+    let deployTime = deployTimeAndDuration.value.value0
+    let duration = deployTimeAndDuration.value.value1
+    // MACI's signup deadline is the same as the voting deadline
+    fundingRound.signUpDeadline = deployTime.plus(duration)
+    fundingRound.votingDeadline = fundingRound.signUpDeadline
+    fundingRound.startTime = deployTime
+
+    log.info('New pollAddress', [])
+  }
+
+  let treeDepths = pollContract.try_treeDepths()
+  if (!treeDepths.reverted) {
+    fundingRound.messageTreeDepth = treeDepths.value.value2
+    fundingRound.voteOptionTreeDepth = treeDepths.value.value3
+  }
+
+  let coordinatorPubKey = pollContract.try_coordinatorPubKey()
+  if (!coordinatorPubKey.reverted) {
+    fundingRound.coordinatorPubKeyX = coordinatorPubKey.value.value0
+    fundingRound.coordinatorPubKeyY = coordinatorPubKey.value.value1
+  }
+
+  fundingRound.save()
+}
+
+export function handleMaciSet(event: MaciSet): void {
+  log.info('handleMaciSet', [])
+
+  let fundingRoundId = event.address.toHexString()
+  let fundingRound = FundingRound.load(fundingRoundId)
+  if (fundingRound == null) {
+    log.error('Error: handleContribution failed', [])
+    return
+  }
+
+  fundingRound.maci = event.params._maci
+  fundingRound.save()
 }

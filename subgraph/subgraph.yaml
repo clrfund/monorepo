@@ -105,6 +105,8 @@ templates:
           file: ./abis/OptimisticRecipientRegistry.json
         - name: BrightIdUserRegistry
           file: ./abis/BrightIdUserRegistry.json
+        - name: Poll
+          file: ./abis/Poll.json
       eventHandlers:
         - event: Contribution(indexed address,uint256)
           handler: handleContribution
@@ -118,6 +120,10 @@ templates:
           handler: handleTallyPublished
         - event: Voted(indexed address)
           handler: handleVoted
+        - event: PollDeployed(indexed uint256,indexed address)
+          handler: handlePollDeployed
+        - event: MaciSet(indexed address)
+          handler: handleMaciSet
       file: ./src/FundingRoundMapping.ts
   - name: OptimisticRecipientRegistry
     kind: ethereum/contract

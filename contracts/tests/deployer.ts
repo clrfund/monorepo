@@ -14,6 +14,7 @@ import {
 } from '../utils/deployment'
 import { MaciParameters } from '../utils/maciParameters'
 import { HardhatEthersSigner } from '@nomicfoundation/hardhat-ethers/signers'
+import { deployNewRound } from '../utils/testutils'
 
 const roundDuration = 10000
 
@@ -22,6 +23,7 @@ describe('Clr fund deployer', async () => {
   let coordinator: HardhatEthersSigner
   let contributor: HardhatEthersSigner
   let maciFactory: Contract
+  let maciFactoryAddress: string
   let userRegistry: Contract
   let recipientRegistry: Contract
   let factoryTemplate: Contract
@@ -57,6 +59,7 @@ describe('Clr fund deployer', async () => {
       ethers,
       maciParameters: params,
     })
+    maciFactoryAddress = await maciFactory.getAddress()
 
     factoryTemplate = await deployContract({
       name: 'ClrFund',
@@ -284,7 +287,13 @@ describe('Clr fund deployer', async () => {
       await clrfund.setRecipientRegistry(recipientRegistry.target)
       await clrfund.setToken(token.target)
       await clrfund.setCoordinator(coordinator.address, coordinatorPubKey)
-      const deployed = clrfund.deployNewRound(roundDuration)
+      const deployed = deployNewRound(
+        clrfund,
+        roundDuration,
+        maciFactoryAddress,
+        coordinatorPubKey,
+        coordinator
+      )
       await expect(deployed).to.emit(clrfund, 'RoundStarted')
       const deployTx = await deployed
       // TODO: fix gas usage for deployNewRound()
@@ -309,15 +318,9 @@ describe('Clr fund deployer', async () => {
       )
 
       expect(await fundingRound.maci()).to.equal(maciAddress)
-      const maci = await ethers.getContractAt('MACI', maciAddress)
-      const pollAddress = await getEventArg(
-        deployTx,
-        maci,
-        'DeployPoll',
-        'pollAddr'
-      )
 
-      const poll = await ethers.getContractAt('Poll', pollAddress.poll)
+      const pollAddress = await fundingRound.poll()
+      const poll = await ethers.getContractAt('Poll', pollAddress)
       const roundCoordinatorPubKey = await poll.coordinatorPubKey()
       expect(roundCoordinatorPubKey.x).to.equal(coordinatorPubKey.x)
       expect(roundCoordinatorPubKey.y).to.equal(coordinatorPubKey.y)
@@ -441,7 +444,14 @@ describe('Clr fund deployer', async () => {
         clrfund.target,
         contributionAmount
       )
-      await clrfund.deployNewRound(roundDuration)
+      await deployNewRound(
+        clrfund,
+        roundDuration,
+        maciFactoryAddress,
+        coordinatorPubKey,
+        coordinator
+      )
+
       await time.increase(roundDuration)
       await expect(
         clrfund.transferMatchingFunds(
@@ -454,7 +464,13 @@ describe('Clr fund deployer', async () => {
     })
 
     it('allows owner to finalize round even without matching funds', async () => {
-      await clrfund.deployNewRound(roundDuration)
+      await deployNewRound(
+        clrfund,
+        roundDuration,
+        maciFactoryAddress,
+        coordinatorPubKey,
+        coordinator
+      )
       await time.increase(roundDuration)
       await expect(
         clrfund.transferMatchingFunds(
@@ -473,7 +489,13 @@ describe('Clr fund deployer', async () => {
         contributionAmount
       )
       await clrfund.addFundingSource(deployer.address) // Doesn't have tokens
-      await clrfund.deployNewRound(roundDuration)
+      await deployNewRound(
+        clrfund,
+        roundDuration,
+        maciFactoryAddress,
+        coordinatorPubKey,
+        coordinator
+      )
       await time.increase(roundDuration)
       await expect(
         clrfund.transferMatchingFunds(
@@ -491,7 +513,13 @@ describe('Clr fund deployer', async () => {
         clrfund.target,
         contributionAmount * 2n
       )
-      await clrfund.deployNewRound(roundDuration)
+      await deployNewRound(
+        clrfund,
+        roundDuration,
+        maciFactoryAddress,
+        coordinatorPubKey,
+        coordinator
+      )
       await time.increase(roundDuration)
       await expect(
         clrfund.transferMatchingFunds(
@@ -504,7 +532,13 @@ describe('Clr fund deployer', async () => {
     })
 
     it('allows only owner to finalize round', async () => {
-      await clrfund.deployNewRound(roundDuration)
+      await deployNewRound(
+        clrfund,
+        roundDuration,
+        maciFactoryAddress,
+        coordinatorPubKey,
+        coordinator
+      )
       await time.increase(roundDuration)
       await expect(
         (clrfund.connect(contributor) as Contract).transferMatchingFunds(

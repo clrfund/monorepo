@@ -27,12 +27,14 @@ export class DeployPoll__Params {
     return this._event.parameters[0].value.toBigInt();
   }
 
-  get _pollAddr(): Address {
-    return this._event.parameters[1].value.toAddress();
-  }
-
   get _pubKey(): DeployPoll_pubKeyStruct {
     return changetype<DeployPoll_pubKeyStruct>(
+      this._event.parameters[1].value.toTuple()
+    );
+  }
+
+  get pollAddr(): DeployPollPollAddrStruct {
+    return changetype<DeployPollPollAddrStruct>(
       this._event.parameters[2].value.toTuple()
     );
   }
@@ -48,65 +50,21 @@ export class DeployPoll_pubKeyStruct extends ethereum.Tuple {
   }
 }
 
-export class Init extends ethereum.Event {
-  get params(): Init__Params {
-    return new Init__Params(this);
-  }
-}
-
-export class Init__Params {
-  _event: Init;
-
-  constructor(event: Init) {
-    this._event = event;
+export class DeployPollPollAddrStruct extends ethereum.Tuple {
+  get poll(): Address {
+    return this[0].toAddress();
   }
 
-  get _vkRegistry(): Address {
-    return this._event.parameters[0].value.toAddress();
+  get messageProcessor(): Address {
+    return this[1].toAddress();
   }
 
-  get _topupCredit(): Address {
-    return this._event.parameters[1].value.toAddress();
-  }
-}
-
-export class MergeStateAq extends ethereum.Event {
-  get params(): MergeStateAq__Params {
-    return new MergeStateAq__Params(this);
-  }
-}
-
-export class MergeStateAq__Params {
-  _event: MergeStateAq;
-
-  constructor(event: MergeStateAq) {
-    this._event = event;
+  get tally(): Address {
+    return this[2].toAddress();
   }
 
-  get _pollId(): BigInt {
-    return this._event.parameters[0].value.toBigInt();
-  }
-}
-
-export class MergeStateAqSubRoots extends ethereum.Event {
-  get params(): MergeStateAqSubRoots__Params {
-    return new MergeStateAqSubRoots__Params(this);
-  }
-}
-
-export class MergeStateAqSubRoots__Params {
-  _event: MergeStateAqSubRoots;
-
-  constructor(event: MergeStateAqSubRoots) {
-    this._event = event;
-  }
-
-  get _pollId(): BigInt {
-    return this._event.parameters[0].value.toBigInt();
-  }
-
-  get _numSrQueueOps(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
+  get subsidy(): Address {
+    return this[3].toAddress();
   }
 }
 
@@ -174,6 +132,24 @@ export class SignUp_userPubKeyStruct extends ethereum.Tuple {
   }
 }
 
+export class MACI__deployPollResultPollAddrStruct extends ethereum.Tuple {
+  get poll(): Address {
+    return this[0].toAddress();
+  }
+
+  get messageProcessor(): Address {
+    return this[1].toAddress();
+  }
+
+  get tally(): Address {
+    return this[2].toAddress();
+  }
+
+  get subsidy(): Address {
+    return this[3].toAddress();
+  }
+}
+
 export class MACI__deployPollInput_maxValuesStruct extends ethereum.Tuple {
   get maxMessages(): BigInt {
     return this[0].toBigInt();
@@ -212,6 +188,26 @@ export class MACI__deployPollInput_coordinatorPubKeyStruct extends ethereum.Tupl
   }
 }
 
+export class MACI__hashMessageAndEncPubKeyInput_messageStruct extends ethereum.Tuple {
+  get msgType(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get data(): Array<BigInt> {
+    return this[1].toBigIntArray();
+  }
+}
+
+export class MACI__hashMessageAndEncPubKeyInput_encPubKeyStruct extends ethereum.Tuple {
+  get x(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get y(): BigInt {
+    return this[1].toBigInt();
+  }
+}
+
 export class MACI__hashStateLeafInput_stateLeafStruct extends ethereum.Tuple {
   get pubKey(): MACI__hashStateLeafInput_stateLeafPubKeyStruct {
     return changetype<MACI__hashStateLeafInput_stateLeafPubKeyStruct>(
@@ -238,52 +234,147 @@ export class MACI__hashStateLeafInput_stateLeafPubKeyStruct extends ethereum.Tup
   }
 }
 
+export class MACI__padAndHashMessageResultMessageStruct extends ethereum.Tuple {
+  get msgType(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get data(): Array<BigInt> {
+    return this[1].toBigIntArray();
+  }
+}
+
+export class MACI__padAndHashMessageResultPadKeyStruct extends ethereum.Tuple {
+  get x(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get y(): BigInt {
+    return this[1].toBigInt();
+  }
+}
+
+export class MACI__padAndHashMessageResult {
+  value0: MACI__padAndHashMessageResultMessageStruct;
+  value1: MACI__padAndHashMessageResultPadKeyStruct;
+  value2: BigInt;
+
+  constructor(
+    value0: MACI__padAndHashMessageResultMessageStruct,
+    value1: MACI__padAndHashMessageResultPadKeyStruct,
+    value2: BigInt
+  ) {
+    this.value0 = value0;
+    this.value1 = value1;
+    this.value2 = value2;
+  }
+
+  toMap(): TypedMap<string, ethereum.Value> {
+    let map = new TypedMap<string, ethereum.Value>();
+    map.set("value0", ethereum.Value.fromTuple(this.value0));
+    map.set("value1", ethereum.Value.fromTuple(this.value1));
+    map.set("value2", ethereum.Value.fromUnsignedBigInt(this.value2));
+    return map;
+  }
+
+  getMessage(): MACI__padAndHashMessageResultMessageStruct {
+    return this.value0;
+  }
+
+  getPadKey(): MACI__padAndHashMessageResultPadKeyStruct {
+    return this.value1;
+  }
+
+  getMsgHash(): BigInt {
+    return this.value2;
+  }
+}
+
 export class MACI extends ethereum.SmartContract {
   static bind(address: Address): MACI {
     return new MACI("MACI", address);
+  }
+
+  MESSAGE_DATA_LENGTH(): i32 {
+    let result = super.call(
+      "MESSAGE_DATA_LENGTH",
+      "MESSAGE_DATA_LENGTH():(uint8)",
+      []
+    );
+
+    return result[0].toI32();
+  }
+
+  try_MESSAGE_DATA_LENGTH(): ethereum.CallResult<i32> {
+    let result = super.tryCall(
+      "MESSAGE_DATA_LENGTH",
+      "MESSAGE_DATA_LENGTH():(uint8)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toI32());
   }
 
   deployPoll(
     _duration: BigInt,
     _maxValues: MACI__deployPollInput_maxValuesStruct,
     _treeDepths: MACI__deployPollInput_treeDepthsStruct,
-    _coordinatorPubKey: MACI__deployPollInput_coordinatorPubKeyStruct
-  ): Address {
+    _coordinatorPubKey: MACI__deployPollInput_coordinatorPubKeyStruct,
+    _verifier: Address,
+    _vkRegistry: Address,
+    useSubsidy: boolean
+  ): MACI__deployPollResultPollAddrStruct {
     let result = super.call(
       "deployPoll",
-      "deployPoll(uint256,(uint256,uint256),(uint8,uint8,uint8,uint8),(uint256,uint256)):(address)",
+      "deployPoll(uint256,(uint256,uint256),(uint8,uint8,uint8,uint8),(uint256,uint256),address,address,bool):((address,address,address,address))",
       [
         ethereum.Value.fromUnsignedBigInt(_duration),
         ethereum.Value.fromTuple(_maxValues),
         ethereum.Value.fromTuple(_treeDepths),
-        ethereum.Value.fromTuple(_coordinatorPubKey)
+        ethereum.Value.fromTuple(_coordinatorPubKey),
+        ethereum.Value.fromAddress(_verifier),
+        ethereum.Value.fromAddress(_vkRegistry),
+        ethereum.Value.fromBoolean(useSubsidy)
       ]
     );
 
-    return result[0].toAddress();
+    return changetype<MACI__deployPollResultPollAddrStruct>(
+      result[0].toTuple()
+    );
   }
 
   try_deployPoll(
     _duration: BigInt,
     _maxValues: MACI__deployPollInput_maxValuesStruct,
     _treeDepths: MACI__deployPollInput_treeDepthsStruct,
-    _coordinatorPubKey: MACI__deployPollInput_coordinatorPubKeyStruct
-  ): ethereum.CallResult<Address> {
+    _coordinatorPubKey: MACI__deployPollInput_coordinatorPubKeyStruct,
+    _verifier: Address,
+    _vkRegistry: Address,
+    useSubsidy: boolean
+  ): ethereum.CallResult<MACI__deployPollResultPollAddrStruct> {
     let result = super.tryCall(
       "deployPoll",
-      "deployPoll(uint256,(uint256,uint256),(uint8,uint8,uint8,uint8),(uint256,uint256)):(address)",
+      "deployPoll(uint256,(uint256,uint256),(uint8,uint8,uint8,uint8),(uint256,uint256),address,address,bool):((address,address,address,address))",
       [
         ethereum.Value.fromUnsignedBigInt(_duration),
         ethereum.Value.fromTuple(_maxValues),
         ethereum.Value.fromTuple(_treeDepths),
-        ethereum.Value.fromTuple(_coordinatorPubKey)
+        ethereum.Value.fromTuple(_coordinatorPubKey),
+        ethereum.Value.fromAddress(_verifier),
+        ethereum.Value.fromAddress(_vkRegistry),
+        ethereum.Value.fromBoolean(useSubsidy)
       ]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
+    return ethereum.CallResult.fromValue(
+      changetype<MACI__deployPollResultPollAddrStruct>(value[0].toTuple())
+    );
   }
 
   getPoll(_pollId: BigInt): Address {
@@ -400,30 +491,56 @@ export class MACI extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  hashLeftRight(_left: BigInt, _right: BigInt): BigInt {
+  hashLeftRight(left: BigInt, right: BigInt): BigInt {
     let result = super.call(
       "hashLeftRight",
       "hashLeftRight(uint256,uint256):(uint256)",
       [
-        ethereum.Value.fromUnsignedBigInt(_left),
-        ethereum.Value.fromUnsignedBigInt(_right)
+        ethereum.Value.fromUnsignedBigInt(left),
+        ethereum.Value.fromUnsignedBigInt(right)
       ]
     );
 
     return result[0].toBigInt();
   }
 
-  try_hashLeftRight(
-    _left: BigInt,
-    _right: BigInt
-  ): ethereum.CallResult<BigInt> {
+  try_hashLeftRight(left: BigInt, right: BigInt): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "hashLeftRight",
       "hashLeftRight(uint256,uint256):(uint256)",
       [
-        ethereum.Value.fromUnsignedBigInt(_left),
-        ethereum.Value.fromUnsignedBigInt(_right)
+        ethereum.Value.fromUnsignedBigInt(left),
+        ethereum.Value.fromUnsignedBigInt(right)
       ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  hashMessageAndEncPubKey(
+    _message: MACI__hashMessageAndEncPubKeyInput_messageStruct,
+    _encPubKey: MACI__hashMessageAndEncPubKeyInput_encPubKeyStruct
+  ): BigInt {
+    let result = super.call(
+      "hashMessageAndEncPubKey",
+      "hashMessageAndEncPubKey((uint256,uint256[10]),(uint256,uint256)):(uint256)",
+      [ethereum.Value.fromTuple(_message), ethereum.Value.fromTuple(_encPubKey)]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_hashMessageAndEncPubKey(
+    _message: MACI__hashMessageAndEncPubKeyInput_messageStruct,
+    _encPubKey: MACI__hashMessageAndEncPubKeyInput_encPubKeyStruct
+  ): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "hashMessageAndEncPubKey",
+      "hashMessageAndEncPubKey((uint256,uint256[10]),(uint256,uint256)):(uint256)",
+      [ethereum.Value.fromTuple(_message), ethereum.Value.fromTuple(_encPubKey)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -480,21 +597,6 @@ export class MACI extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
-  isInitialised(): boolean {
-    let result = super.call("isInitialised", "isInitialised():(bool)", []);
-
-    return result[0].toBoolean();
-  }
-
-  try_isInitialised(): ethereum.CallResult<boolean> {
-    let result = super.tryCall("isInitialised", "isInitialised():(bool)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBoolean());
-  }
-
   mergeStateAq(_pollId: BigInt): BigInt {
     let result = super.call("mergeStateAq", "mergeStateAq(uint256):(uint256)", [
       ethereum.Value.fromUnsignedBigInt(_pollId)
@@ -514,6 +616,29 @@ export class MACI extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  messageProcessorFactory(): Address {
+    let result = super.call(
+      "messageProcessorFactory",
+      "messageProcessorFactory():(address)",
+      []
+    );
+
+    return result[0].toAddress();
+  }
+
+  try_messageProcessorFactory(): ethereum.CallResult<Address> {
+    let result = super.tryCall(
+      "messageProcessorFactory",
+      "messageProcessorFactory():(address)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
   nextPollId(): BigInt {
@@ -582,6 +707,63 @@ export class MACI extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  padAndHashMessage(
+    dataToPad: Array<BigInt>,
+    msgType: BigInt
+  ): MACI__padAndHashMessageResult {
+    let result = super.call(
+      "padAndHashMessage",
+      "padAndHashMessage(uint256[2],uint256):((uint256,uint256[10]),(uint256,uint256),uint256)",
+      [
+        ethereum.Value.fromUnsignedBigIntArray(dataToPad),
+        ethereum.Value.fromUnsignedBigInt(msgType)
+      ]
+    );
+
+    return changetype<MACI__padAndHashMessageResult>(
+      new MACI__padAndHashMessageResult(
+        changetype<MACI__padAndHashMessageResultMessageStruct>(
+          result[0].toTuple()
+        ),
+        changetype<MACI__padAndHashMessageResultPadKeyStruct>(
+          result[1].toTuple()
+        ),
+        result[2].toBigInt()
+      )
+    );
+  }
+
+  try_padAndHashMessage(
+    dataToPad: Array<BigInt>,
+    msgType: BigInt
+  ): ethereum.CallResult<MACI__padAndHashMessageResult> {
+    let result = super.tryCall(
+      "padAndHashMessage",
+      "padAndHashMessage(uint256[2],uint256):((uint256,uint256[10]),(uint256,uint256),uint256)",
+      [
+        ethereum.Value.fromUnsignedBigIntArray(dataToPad),
+        ethereum.Value.fromUnsignedBigInt(msgType)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(
+      changetype<MACI__padAndHashMessageResult>(
+        new MACI__padAndHashMessageResult(
+          changetype<MACI__padAndHashMessageResultMessageStruct>(
+            value[0].toTuple()
+          ),
+          changetype<MACI__padAndHashMessageResultPadKeyStruct>(
+            value[1].toTuple()
+          ),
+          value[2].toBigInt()
+        )
+      )
+    );
   }
 
   pollFactory(): Address {
@@ -662,29 +844,6 @@ export class MACI extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
-  signUpTimestamp(): BigInt {
-    let result = super.call(
-      "signUpTimestamp",
-      "signUpTimestamp():(uint256)",
-      []
-    );
-
-    return result[0].toBigInt();
-  }
-
-  try_signUpTimestamp(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "signUpTimestamp",
-      "signUpTimestamp():(uint256)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
   stateAq(): Address {
     let result = super.call("stateAq", "stateAq():(address)", []);
 
@@ -719,6 +878,40 @@ export class MACI extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toI32());
   }
 
+  subsidyFactory(): Address {
+    let result = super.call("subsidyFactory", "subsidyFactory():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_subsidyFactory(): ethereum.CallResult<Address> {
+    let result = super.tryCall(
+      "subsidyFactory",
+      "subsidyFactory():(address)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  tallyFactory(): Address {
+    let result = super.call("tallyFactory", "tallyFactory():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_tallyFactory(): ethereum.CallResult<Address> {
+    let result = super.tryCall("tallyFactory", "tallyFactory():(address)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
   topupCredit(): Address {
     let result = super.call("topupCredit", "topupCredit():(address)", []);
 
@@ -727,21 +920,6 @@ export class MACI extends ethereum.SmartContract {
 
   try_topupCredit(): ethereum.CallResult<Address> {
     let result = super.tryCall("topupCredit", "topupCredit():(address)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
-  vkRegistry(): Address {
-    let result = super.call("vkRegistry", "vkRegistry():(address)", []);
-
-    return result[0].toAddress();
-  }
-
-  try_vkRegistry(): ethereum.CallResult<Address> {
-    let result = super.tryCall("vkRegistry", "vkRegistry():(address)", []);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -771,12 +949,32 @@ export class ConstructorCall__Inputs {
     return this._call.inputValues[0].value.toAddress();
   }
 
-  get _signUpGatekeeper(): Address {
+  get _messageProcessorFactory(): Address {
     return this._call.inputValues[1].value.toAddress();
   }
 
-  get _initialVoiceCreditProxy(): Address {
+  get _tallyFactory(): Address {
     return this._call.inputValues[2].value.toAddress();
+  }
+
+  get _subsidyFactory(): Address {
+    return this._call.inputValues[3].value.toAddress();
+  }
+
+  get _signUpGatekeeper(): Address {
+    return this._call.inputValues[4].value.toAddress();
+  }
+
+  get _initialVoiceCreditProxy(): Address {
+    return this._call.inputValues[5].value.toAddress();
+  }
+
+  get _topupCredit(): Address {
+    return this._call.inputValues[6].value.toAddress();
+  }
+
+  get _stateTreeDepth(): i32 {
+    return this._call.inputValues[7].value.toI32();
   }
 }
 
@@ -826,6 +1024,18 @@ export class DeployPollCall__Inputs {
       this._call.inputValues[3].value.toTuple()
     );
   }
+
+  get _verifier(): Address {
+    return this._call.inputValues[4].value.toAddress();
+  }
+
+  get _vkRegistry(): Address {
+    return this._call.inputValues[5].value.toAddress();
+  }
+
+  get useSubsidy(): boolean {
+    return this._call.inputValues[6].value.toBoolean();
+  }
 }
 
 export class DeployPollCall__Outputs {
@@ -835,8 +1045,10 @@ export class DeployPollCall__Outputs {
     this._call = call;
   }
 
-  get value0(): Address {
-    return this._call.outputValues[0].value.toAddress();
+  get pollAddr(): DeployPollCallPollAddrStruct {
+    return changetype<DeployPollCallPollAddrStruct>(
+      this._call.outputValues[0].value.toTuple()
+    );
   }
 }
 
@@ -878,37 +1090,21 @@ export class DeployPollCall_coordinatorPubKeyStruct extends ethereum.Tuple {
   }
 }
 
-export class InitCall extends ethereum.Call {
-  get inputs(): InitCall__Inputs {
-    return new InitCall__Inputs(this);
+export class DeployPollCallPollAddrStruct extends ethereum.Tuple {
+  get poll(): Address {
+    return this[0].toAddress();
   }
 
-  get outputs(): InitCall__Outputs {
-    return new InitCall__Outputs(this);
-  }
-}
-
-export class InitCall__Inputs {
-  _call: InitCall;
-
-  constructor(call: InitCall) {
-    this._call = call;
+  get messageProcessor(): Address {
+    return this[1].toAddress();
   }
 
-  get _vkRegistry(): Address {
-    return this._call.inputValues[0].value.toAddress();
+  get tally(): Address {
+    return this[2].toAddress();
   }
 
-  get _topupCredit(): Address {
-    return this._call.inputValues[1].value.toAddress();
-  }
-}
-
-export class InitCall__Outputs {
-  _call: InitCall;
-
-  constructor(call: InitCall) {
-    this._call = call;
+  get subsidy(): Address {
+    return this[3].toAddress();
   }
 }
 
@@ -941,7 +1137,7 @@ export class MergeStateAqCall__Outputs {
     this._call = call;
   }
 
-  get value0(): BigInt {
+  get root(): BigInt {
     return this._call.outputValues[0].value.toBigInt();
   }
 }

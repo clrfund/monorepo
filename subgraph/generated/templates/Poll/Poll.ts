@@ -250,18 +250,11 @@ export class Poll__extContractsResult {
   value0: Address;
   value1: Address;
   value2: Address;
-  value3: Address;
 
-  constructor(
-    value0: Address,
-    value1: Address,
-    value2: Address,
-    value3: Address
-  ) {
+  constructor(value0: Address, value1: Address, value2: Address) {
     this.value0 = value0;
     this.value1 = value1;
     this.value2 = value2;
-    this.value3 = value3;
   }
 
   toMap(): TypedMap<string, ethereum.Value> {
@@ -269,24 +262,19 @@ export class Poll__extContractsResult {
     map.set("value0", ethereum.Value.fromAddress(this.value0));
     map.set("value1", ethereum.Value.fromAddress(this.value1));
     map.set("value2", ethereum.Value.fromAddress(this.value2));
-    map.set("value3", ethereum.Value.fromAddress(this.value3));
     return map;
   }
 
-  getVkRegistry(): Address {
+  getMaci(): Address {
     return this.value0;
   }
 
-  getMaci(): Address {
+  getMessageAq(): Address {
     return this.value1;
   }
 
-  getMessageAq(): Address {
-    return this.value2;
-  }
-
   getTopupCredit(): Address {
-    return this.value3;
+    return this.value2;
   }
 }
 
@@ -306,11 +294,11 @@ export class Poll__getDeployTimeAndDurationResult {
     return map;
   }
 
-  getValue0(): BigInt {
+  get_deployTime(): BigInt {
     return this.value0;
   }
 
-  getValue1(): BigInt {
+  get_duration(): BigInt {
     return this.value1;
   }
 }
@@ -326,6 +314,32 @@ export class Poll__hashMessageAndEncPubKeyInput_messageStruct extends ethereum.T
 }
 
 export class Poll__hashMessageAndEncPubKeyInput_encPubKeyStruct extends ethereum.Tuple {
+  get x(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get y(): BigInt {
+    return this[1].toBigInt();
+  }
+}
+
+export class Poll__hashStateLeafInput_stateLeafStruct extends ethereum.Tuple {
+  get pubKey(): Poll__hashStateLeafInput_stateLeafPubKeyStruct {
+    return changetype<Poll__hashStateLeafInput_stateLeafPubKeyStruct>(
+      this[0].toTuple()
+    );
+  }
+
+  get voiceCreditBalance(): BigInt {
+    return this[1].toBigInt();
+  }
+
+  get timestamp(): BigInt {
+    return this[2].toBigInt();
+  }
+}
+
+export class Poll__hashStateLeafInput_stateLeafPubKeyStruct extends ethereum.Tuple {
   get x(): BigInt {
     return this[0].toBigInt();
   }
@@ -376,16 +390,16 @@ export class Poll__numSignUpsAndMessagesResult {
     return map;
   }
 
-  getValue0(): BigInt {
+  getNumSignups(): BigInt {
     return this.value0;
   }
 
-  getValue1(): BigInt {
+  getNumMsgs(): BigInt {
     return this.value1;
   }
 }
 
-export class Poll__padAndHashMessageResultValue0Struct extends ethereum.Tuple {
+export class Poll__padAndHashMessageResultMessageStruct extends ethereum.Tuple {
   get msgType(): BigInt {
     return this[0].toBigInt();
   }
@@ -395,7 +409,7 @@ export class Poll__padAndHashMessageResultValue0Struct extends ethereum.Tuple {
   }
 }
 
-export class Poll__padAndHashMessageResultValue1Struct extends ethereum.Tuple {
+export class Poll__padAndHashMessageResultPadKeyStruct extends ethereum.Tuple {
   get x(): BigInt {
     return this[0].toBigInt();
   }
@@ -406,13 +420,13 @@ export class Poll__padAndHashMessageResultValue1Struct extends ethereum.Tuple {
 }
 
 export class Poll__padAndHashMessageResult {
-  value0: Poll__padAndHashMessageResultValue0Struct;
-  value1: Poll__padAndHashMessageResultValue1Struct;
+  value0: Poll__padAndHashMessageResultMessageStruct;
+  value1: Poll__padAndHashMessageResultPadKeyStruct;
   value2: BigInt;
 
   constructor(
-    value0: Poll__padAndHashMessageResultValue0Struct,
-    value1: Poll__padAndHashMessageResultValue1Struct,
+    value0: Poll__padAndHashMessageResultMessageStruct,
+    value1: Poll__padAndHashMessageResultPadKeyStruct,
     value2: BigInt
   ) {
     this.value0 = value0;
@@ -428,15 +442,15 @@ export class Poll__padAndHashMessageResult {
     return map;
   }
 
-  getValue0(): Poll__padAndHashMessageResultValue0Struct {
+  getMessage(): Poll__padAndHashMessageResultMessageStruct {
     return this.value0;
   }
 
-  getValue1(): Poll__padAndHashMessageResultValue1Struct {
+  getPadKey(): Poll__padAndHashMessageResultPadKeyStruct {
     return this.value1;
   }
 
-  getValue2(): BigInt {
+  getMsgHash(): BigInt {
     return this.value2;
   }
 }
@@ -495,6 +509,29 @@ export class Poll__treeDepthsResult {
 export class Poll extends ethereum.SmartContract {
   static bind(address: Address): Poll {
     return new Poll("Poll", address);
+  }
+
+  MESSAGE_DATA_LENGTH(): i32 {
+    let result = super.call(
+      "MESSAGE_DATA_LENGTH",
+      "MESSAGE_DATA_LENGTH():(uint8)",
+      []
+    );
+
+    return result[0].toI32();
+  }
+
+  try_MESSAGE_DATA_LENGTH(): ethereum.CallResult<i32> {
+    let result = super.tryCall(
+      "MESSAGE_DATA_LENGTH",
+      "MESSAGE_DATA_LENGTH():(uint8)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toI32());
   }
 
   batchSizes(): Poll__batchSizesResult {
@@ -610,22 +647,21 @@ export class Poll extends ethereum.SmartContract {
   extContracts(): Poll__extContractsResult {
     let result = super.call(
       "extContracts",
-      "extContracts():(address,address,address,address)",
+      "extContracts():(address,address,address)",
       []
     );
 
     return new Poll__extContractsResult(
       result[0].toAddress(),
       result[1].toAddress(),
-      result[2].toAddress(),
-      result[3].toAddress()
+      result[2].toAddress()
     );
   }
 
   try_extContracts(): ethereum.CallResult<Poll__extContractsResult> {
     let result = super.tryCall(
       "extContracts",
-      "extContracts():(address,address,address,address)",
+      "extContracts():(address,address,address)",
       []
     );
     if (result.reverted) {
@@ -636,8 +672,7 @@ export class Poll extends ethereum.SmartContract {
       new Poll__extContractsResult(
         value[0].toAddress(),
         value[1].toAddress(),
-        value[2].toAddress(),
-        value[3].toAddress()
+        value[2].toAddress()
       )
     );
   }
@@ -751,29 +786,26 @@ export class Poll extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  hashLeftRight(_left: BigInt, _right: BigInt): BigInt {
+  hashLeftRight(left: BigInt, right: BigInt): BigInt {
     let result = super.call(
       "hashLeftRight",
       "hashLeftRight(uint256,uint256):(uint256)",
       [
-        ethereum.Value.fromUnsignedBigInt(_left),
-        ethereum.Value.fromUnsignedBigInt(_right)
+        ethereum.Value.fromUnsignedBigInt(left),
+        ethereum.Value.fromUnsignedBigInt(right)
       ]
     );
 
     return result[0].toBigInt();
   }
 
-  try_hashLeftRight(
-    _left: BigInt,
-    _right: BigInt
-  ): ethereum.CallResult<BigInt> {
+  try_hashLeftRight(left: BigInt, right: BigInt): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "hashLeftRight",
       "hashLeftRight(uint256,uint256):(uint256)",
       [
-        ethereum.Value.fromUnsignedBigInt(_left),
-        ethereum.Value.fromUnsignedBigInt(_right)
+        ethereum.Value.fromUnsignedBigInt(left),
+        ethereum.Value.fromUnsignedBigInt(right)
       ]
     );
     if (result.reverted) {
@@ -804,6 +836,31 @@ export class Poll extends ethereum.SmartContract {
       "hashMessageAndEncPubKey",
       "hashMessageAndEncPubKey((uint256,uint256[10]),(uint256,uint256)):(uint256)",
       [ethereum.Value.fromTuple(_message), ethereum.Value.fromTuple(_encPubKey)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  hashStateLeaf(_stateLeaf: Poll__hashStateLeafInput_stateLeafStruct): BigInt {
+    let result = super.call(
+      "hashStateLeaf",
+      "hashStateLeaf(((uint256,uint256),uint256,uint256)):(uint256)",
+      [ethereum.Value.fromTuple(_stateLeaf)]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_hashStateLeaf(
+    _stateLeaf: Poll__hashStateLeafInput_stateLeafStruct
+  ): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "hashStateLeaf",
+      "hashStateLeaf(((uint256,uint256),uint256,uint256)):(uint256)",
+      [ethereum.Value.fromTuple(_stateLeaf)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -852,6 +909,21 @@ export class Poll extends ethereum.SmartContract {
       "mergedStateRoot():(uint256)",
       []
     );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  numMessages(): BigInt {
+    let result = super.call("numMessages", "numMessages():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_numMessages(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("numMessages", "numMessages():(uint256)", []);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -922,10 +994,10 @@ export class Poll extends ethereum.SmartContract {
 
     return changetype<Poll__padAndHashMessageResult>(
       new Poll__padAndHashMessageResult(
-        changetype<Poll__padAndHashMessageResultValue0Struct>(
+        changetype<Poll__padAndHashMessageResultMessageStruct>(
           result[0].toTuple()
         ),
-        changetype<Poll__padAndHashMessageResultValue1Struct>(
+        changetype<Poll__padAndHashMessageResultPadKeyStruct>(
           result[1].toTuple()
         ),
         result[2].toBigInt()
@@ -952,10 +1024,10 @@ export class Poll extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(
       changetype<Poll__padAndHashMessageResult>(
         new Poll__padAndHashMessageResult(
-          changetype<Poll__padAndHashMessageResultValue0Struct>(
+          changetype<Poll__padAndHashMessageResultMessageStruct>(
             value[0].toTuple()
           ),
-          changetype<Poll__padAndHashMessageResultValue1Struct>(
+          changetype<Poll__padAndHashMessageResultPadKeyStruct>(
             value[1].toTuple()
           ),
           value[2].toBigInt()
@@ -1149,20 +1221,16 @@ export class ConstructorCall_coordinatorPubKeyStruct extends ethereum.Tuple {
 }
 
 export class ConstructorCall_extContractsStruct extends ethereum.Tuple {
-  get vkRegistry(): Address {
+  get maci(): Address {
     return this[0].toAddress();
   }
 
-  get maci(): Address {
+  get messageAq(): Address {
     return this[1].toAddress();
   }
 
-  get messageAq(): Address {
-    return this[2].toAddress();
-  }
-
   get topupCredit(): Address {
-    return this[3].toAddress();
+    return this[2].toAddress();
   }
 }
 

@@ -13,7 +13,6 @@ import {
 } from '../generated/ClrFund/ClrFund'
 
 import { Token as TokenContract } from '../generated/ClrFund/Token'
-import { Poll as PollContract } from '../generated/ClrFund/Poll'
 import { MACI as MACIContract } from '../generated/ClrFund/MACI'
 
 import { MACIFactory as MACIFactoryContract } from '../generated/ClrFund/MACIFactory'
@@ -27,7 +26,6 @@ import {
   FundingRound as FundingRoundTemplate,
   OptimisticRecipientRegistry as recipientRegistryTemplate,
   MACI as MACITemplate,
-  Poll as PollTemplate,
 } from '../generated/templates'
 import {
   ClrFund,
@@ -239,7 +237,6 @@ export function handleRoundStarted(event: RoundStarted): void {
   fundingRound.voiceCreditFactor = voiceCreditFactor
   fundingRound.contributorCount = contributorCount
   fundingRound.matchingPoolSize = matchingPoolSize
-  fundingRound.startTime = event.block.timestamp
 
   let recipientRegistryId = clrFund.recipientRegistry
   let recipientRegistryAddress = clrFund.recipientRegistryAddress
@@ -251,46 +248,6 @@ export function handleRoundStarted(event: RoundStarted): void {
   let stateTreeDepth = maciContract.try_stateTreeDepth()
   if (!stateTreeDepth.reverted) {
     fundingRound.stateTreeDepth = stateTreeDepth.value
-  }
-
-  log.info('TRY pollAddress', [])
-  let pollIdCall = fundingRoundContract.try_pollId()
-  if (!pollIdCall.reverted) {
-    fundingRound.pollId = pollIdCall.value
-  }
-
-  let pollAddressCall = fundingRoundContract.try_poll()
-  if (pollAddressCall.reverted) {
-    log.info('TRY pollAddress Failed', [])
-  } else {
-    let pollAddress = pollAddressCall.value
-    fundingRound.pollAddress = pollAddress
-    PollTemplate.create(pollAddress)
-
-    let pollContract = PollContract.bind(pollAddress)
-    let deployTimeAndDuration = pollContract.try_getDeployTimeAndDuration()
-    if (!deployTimeAndDuration.reverted) {
-      let deployTime = deployTimeAndDuration.value.value0
-      let duration = deployTimeAndDuration.value.value1
-      // MACI's signup deadline is the same as the voting deadline
-      fundingRound.signUpDeadline = deployTime.plus(duration)
-      fundingRound.votingDeadline = fundingRound.signUpDeadline
-      fundingRound.startTime = deployTime
-
-      log.info('New pollAddress', [])
-    }
-
-    let treeDepths = pollContract.try_treeDepths()
-    if (!treeDepths.reverted) {
-      fundingRound.messageTreeDepth = treeDepths.value.value2
-      fundingRound.voteOptionTreeDepth = treeDepths.value.value3
-    }
-
-    let coordinatorPubKey = pollContract.try_coordinatorPubKey()
-    if (!coordinatorPubKey.reverted) {
-      fundingRound.coordinatorPubKeyX = coordinatorPubKey.value.value0
-      fundingRound.coordinatorPubKeyY = coordinatorPubKey.value.value1
-    }
   }
 
   clrFund.currentRound = fundingRoundId
