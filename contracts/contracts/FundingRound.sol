@@ -74,6 +74,9 @@ contract FundingRound is
   error InvalidRecipientRegistry();
   error InvalidCoordinator();
   error UnexpectedPollAddress(address expected, address actual);
+  error NotContributor();
+  error TopupAmountIsZero();
+  error TopupAmountTooLarge();
 
 
   // Constants
@@ -84,7 +87,7 @@ contract FundingRound is
 
   // Structs
   struct ContributorStatus {
-    uint256 voiceCredits;
+    uint256 amount;
     bool isRegistered;
   }
 
@@ -136,6 +139,7 @@ contract FundingRound is
   event TallyResultsAdded(uint256 indexed _voteOptionIndex, uint256 _tally);
   event PollSet(address indexed _poll);
   event TallySet(address indexed _tally);
+  event Topup(address indexed _sender, uint256 _amount);
 
   modifier onlyCoordinator() {
     if(msg.sender != coordinator) {
@@ -273,12 +277,12 @@ contract FundingRound is
     if (isFinalized) revert RoundAlreadyFinalized();
     if (amount == 0) revert ContributionAmountIsZero();
     if (amount > MAX_VOICE_CREDITS * voiceCreditFactor) revert ContributionAmountTooLarge();
-    if (contributors[msg.sender].voiceCredits != 0) {
+    if (contributors[msg.sender].amount != 0) {
       revert AlreadyContributed();
     }
 
     uint256 voiceCredits = amount / voiceCreditFactor;
-    contributors[msg.sender] = ContributorStatus(voiceCredits, false);
+    contributors[msg.sender] = ContributorStatus(amount, false);
     contributorCount += 1;
     bytes memory signUpGatekeeperData = abi.encode(msg.sender, voiceCredits);
     bytes memory initialVoiceCreditProxyData = abi.encode(msg.sender);
@@ -290,6 +294,34 @@ contract FundingRound is
       initialVoiceCreditProxyData
     );
     emit Contribution(msg.sender, amount);
+  }
+
+  /**
+    * @dev Topup contribution to this funding round.
+    * @param stateIndex Contributor's index.
+    * @param amount Topup amount.
+    */
+  function topup(uint256 stateIndex, uint256 amount)
+    external
+  {
+    if (isAddressZero(address(maci))) revert MaciNotSet();
+    if (isFinalized) revert RoundAlreadyFinalized();
+    if (amount == 0) revert TopupAmountIsZero();
+    if (contributors[msg.sender].amount == 0) revert NotContributor();
+
+    uint256 newTotal = contributors[msg.sender].amount + amount;
+    if (newTotal > MAX_VOICE_CREDITS * voiceCreditFactor) revert TopupAmountTooLarge();
+
+    contributors[msg.sender].amount = newTotal;
+    nativeToken.safeTransferFrom(msg.sender, address(this), amount);
+
+    // use topupToken to authorize the topup on MACI side
+    uint256 voiceCredits = amount / voiceCreditFactor;
+    topupToken.airdrop(voiceCredits);
+    topupToken.approve(address(poll), voiceCredits);
+    poll.topup(stateIndex, voiceCredits);
+
+    emit Topup(msg.sender, amount);
   }
 
     /**
@@ -315,7 +347,7 @@ contract FundingRound is
       revert UserNotVerified();
     }
 
-    if (contributors[user].voiceCredits <= 0) {
+    if (contributors[user].amount <= 0) {
       revert UserHasNotContributed();
     }
 
@@ -341,7 +373,7 @@ contract FundingRound is
     returns (uint256)
   {
     address user = abi.decode(_data, (address));
-    uint256 initialVoiceCredits = contributors[user].voiceCredits;
+    uint256 initialVoiceCredits = contributors[user].amount / voiceCreditFactor;
 
     if (initialVoiceCredits <= 0) {
       revert NoVoiceCredits();
@@ -351,7 +383,7 @@ contract FundingRound is
   }
 
   /**
-    * @dev Submit a batch of messages along with corresponding ephemeral public keys.
+    * @dev Submit a batch of messages along with corresponding public keys.
     */
   function submitMessageBatch(
     Message[] calldata _messages,
@@ -383,9 +415,9 @@ contract FundingRound is
     // Reconstruction of exact contribution amount from VCs may not be possible due to a loss of precision
     for (uint256 i = 0; i < _contributors.length; i++) {
       address contributor = _contributors[i];
-      uint256 amount = contributors[contributor].voiceCredits * voiceCreditFactor;
+      uint256 amount = contributors[contributor].amount;
       if (amount > 0) {
-        contributors[contributor].voiceCredits = 0;
+        contributors[contributor].amount = 0;
         nativeToken.safeTransfer(contributor, amount);
         emit ContributionWithdrawn(contributor);
         result[i] = true;
