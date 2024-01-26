@@ -1,5 +1,4 @@
-import { BigNumber } from 'ethers'
-import { clrFundContract } from './core'
+import { clrfundContractAddress, clrFundContract } from './core'
 import sdk from '@/graphql/sdk'
 
 export interface ClrFund {
@@ -8,20 +7,20 @@ export interface ClrFund {
   nativeTokenDecimals: number
   userRegistryAddress: string
   recipientRegistryAddress: string
-  matchingPool: BigNumber
+  matchingPool: bigint
 }
 
 export async function getClrFundInfo() {
   let nativeTokenAddress = ''
   let nativeTokenSymbol = ''
   let nativeTokenDecimals = 0
-  let matchingPool = BigNumber.from(0)
+  let matchingPool = BigInt(0)
   let userRegistryAddress = ''
   let recipientRegistryAddress = ''
 
   try {
     const data = await sdk.GetClrFundInfo({
-      clrFundAddress: clrFundContract.address.toLowerCase(),
+      clrFundAddress: clrfundContractAddress.toLowerCase(),
     })
 
     const nativeTokenInfo = data.clrFund?.nativeTokenInfo
@@ -55,7 +54,7 @@ export async function getClrFundInfo() {
   }
 }
 
-export async function getMatchingFunds(nativeTokenAddress: string): Promise<BigNumber> {
+export async function getMatchingFunds(nativeTokenAddress: string): Promise<bigint> {
   const matchingFunds = await clrFundContract.getMatchingFunds(nativeTokenAddress)
   return matchingFunds
 }

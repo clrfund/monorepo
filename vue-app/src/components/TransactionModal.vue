@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import type { TransactionResponse } from '@ethersproject/abstract-provider'
+import type { TransactionResponse } from 'ethers'
 // @ts-ignore
 import { VueFinalModal } from 'vue-final-modal'
 import Transaction from '@/components/Transaction.vue'

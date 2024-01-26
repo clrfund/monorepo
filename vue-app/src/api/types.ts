@@ -1,8 +1,6 @@
-import type { BigNumber } from 'ethers'
-
 // Recipient registry info
 export interface RegistryInfo {
-  deposit: BigNumber
+  deposit: bigint
   depositToken: string
   challengePeriodDuration: number
   recipientCount: number

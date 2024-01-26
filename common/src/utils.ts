@@ -1,46 +1,19 @@
-import { BigNumber } from 'ethers'
+import { id } from 'ethers'
 import {
+  genTreeCommitment as genTallyResultCommitment,
   genRandomSalt,
   IncrementalQuinTree,
   hashLeftRight,
   hash5,
   hash3,
   hash2,
-} from '@clrfund/maci-crypto'
-import { PubKey, PCommand, Message } from '@clrfund/maci-domainobjs'
+} from 'maci-crypto'
+import { PubKey, PCommand, Message } from 'maci-domainobjs'
 import { Keypair } from './keypair'
-import { utils } from 'ethers'
 import { Tally } from './tally'
+import { bnSqrt } from './math'
 
 const LEAVES_PER_NODE = 5
-
-declare type PathElements = bigint[][]
-declare type Indices = number[]
-declare type Leaf = bigint
-
-interface MerkleProof {
-  pathElements: PathElements
-  indices: Indices
-  depth: number
-  /* eslint-disable-next-line @typescript-eslint/ban-types */
-  root: BigInt
-  leaf: Leaf
-}
-
-export function bnSqrt(a: BigNumber): BigNumber {
-  // Take square root from a big number
-  // https://stackoverflow.com/a/52468569/1868395
-  if (a.isZero()) {
-    return a
-  }
-  let x
-  let x1 = a.div(2)
-  do {
-    x = x1
-    x1 = x.add(a.div(x)).div(2)
-  } while (!x.eq(x1))
-  return x
-}
 
 export function createMessage(
   userStateIndex: number,
@@ -48,7 +21,7 @@ export function createMessage(
   newUserKeypair: Keypair | null,
   coordinatorPubKey: PubKey,
   voteOptionIndex: number | null,
-  voiceCredits: BigNumber | null,
+  voiceCredits: bigint | null,
   nonce: number,
   pollId: bigint,
   salt?: bigint
@@ -58,15 +31,13 @@ export function createMessage(
     salt = genRandomSalt() as bigint
   }
 
-  const quadraticVoteWeight = voiceCredits
-    ? bnSqrt(voiceCredits)
-    : BigNumber.from(0)
+  const quadraticVoteWeight = voiceCredits ? bnSqrt(voiceCredits) : 0n
 
   const command = new PCommand(
     BigInt(userStateIndex),
     encKeypair.pubKey,
     BigInt(voteOptionIndex || 0),
-    BigInt(quadraticVoteWeight.toString()),
+    quadraticVoteWeight,
     BigInt(nonce),
     pollId,
     salt
@@ -96,7 +67,7 @@ export function getRecipientClaimData(
   for (const leaf of tally.perVOSpentVoiceCredits.tally) {
     spentTree.insert(BigInt(leaf))
   }
-  const spentProof: MerkleProof = spentTree.genMerklePath(recipientIndex)
+  const spentProof = spentTree.genProof(recipientIndex)
 
   const resultsCommitment = genTallyResultCommitment(
     tally.results.tally.map((x) => BigInt(x)),
@@ -119,41 +90,8 @@ export function getRecipientClaimData(
   ]
 }
 
-/**
- * get the id of the subgraph public key entity from the pubKey value
- * @param pubKey MACI public key
- * @returns the id for the subgraph public key entity
- */
-export function getPubKeyId(pubKey: PubKey): string {
-  const pubKeyPair = pubKey.asContractParam()
-  const id = utils.id(pubKeyPair.x + '.' + pubKeyPair.y)
-  return id
-}
-
-/*
- * This function was copied from MACI to work around tree shaking not working
- * https://github.com/privacy-scaling-explorations/maci/blob/master/core/ts/MaciState.ts#L1581
- *
- * A helper function which hashes a list of results with a salt and returns the
- * hash.
- *
- * @param results A list of vote weights
- * @parm salt A random salt
- * @return The hash of the results and the salt, with the salt last
- */
-export function genTallyResultCommitment(
-  results: bigint[],
-  salt: bigint,
-  depth: number
-): bigint {
-  const tree = new IncrementalQuinTree(depth, BigInt(0), 5, hash5)
-  for (const result of results) {
-    tree.insert(result)
-  }
-  return hashLeftRight(tree.root, salt)
-}
-
 export {
+  genTallyResultCommitment,
   Message,
   PCommand as Command,
   IncrementalQuinTree,

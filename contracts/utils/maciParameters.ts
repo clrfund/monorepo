@@ -1,74 +1,60 @@
 import { Contract } from 'ethers'
 
-import { VerifyingKey } from '@clrfund/maci-domainobjs'
-import { extractVk } from '@clrfund/maci-circuits'
-import { CIRCUITS } from './circuits'
-import path from 'path'
+import { VerifyingKey } from 'maci-domainobjs'
+import { extractVk } from 'maci-circuits'
+import { CIRCUITS, getCircuitFiles } from './circuits'
 
-export interface ZkFiles {
-  processZkFile: string
-  processWitness: string
-  processWasm: string
-  tallyZkFile: string
-  tallyWitness: string
-  tallyWasm: string
-}
-
-/**
- * Get the zkey file path
- * @param name zkey file name
- * @returns zkey file path
- */
-export function getCircuitFiles(circuit: string, directory: string): ZkFiles {
-  const params = CIRCUITS[circuit]
-  return {
-    processZkFile: path.join(directory, params.processMessagesZkey),
-    processWitness: path.join(directory, params.processWitness),
-    processWasm: path.join(directory, params.processWasm),
-    tallyZkFile: path.join(directory, params.tallyVotesZkey),
-    tallyWitness: path.join(directory, params.tallyWitness),
-    tallyWasm: path.join(directory, params.tallyWasm),
-  }
-}
-
-export class MaciParameters {
-  stateTreeDepth: number
+type TreeDepths = {
   intStateTreeDepth: number
   messageTreeSubDepth: number
   messageTreeDepth: number
   voteOptionTreeDepth: number
-  maxMessages: number
-  maxVoteOptions: number
-  messageBatchSize: number
+}
+
+type MaxValues = {
+  maxMessages: bigint
+  maxVoteOptions: bigint
+}
+
+export class MaciParameters {
+  stateTreeDepth: number
+  messageBatchSize: bigint
   processVk: VerifyingKey
   tallyVk: VerifyingKey
+  treeDepths: TreeDepths
+  maxValues: MaxValues
 
   constructor(parameters: { [name: string]: any } = {}) {
     this.stateTreeDepth = parameters.stateTreeDepth
-    this.intStateTreeDepth = parameters.intStateTreeDepth
-    this.messageTreeSubDepth = parameters.messageTreeSubDepth
-    this.messageTreeDepth = parameters.messageTreeDepth
-    this.voteOptionTreeDepth = parameters.voteOptionTreeDepth
-    this.maxMessages = parameters.maxMessages
-    this.maxVoteOptions = parameters.maxVoteOptions
     this.messageBatchSize = parameters.messageBatchSize
     this.processVk = parameters.processVk
     this.tallyVk = parameters.tallyVk
+    this.treeDepths = {
+      intStateTreeDepth: parameters.intStateTreeDepth,
+      messageTreeSubDepth: parameters.messageTreeSubDepth,
+      messageTreeDepth: parameters.messageTreeDepth,
+      voteOptionTreeDepth: parameters.voteOptionTreeDepth,
+    }
+    this.maxValues = {
+      maxMessages: parameters.maxMessages,
+      maxVoteOptions: parameters.maxVoteOptions,
+    }
   }
 
   asContractParam(): any[] {
     return [
       this.stateTreeDepth,
       {
-        intStateTreeDepth: this.intStateTreeDepth,
-        messageTreeSubDepth: this.messageTreeSubDepth,
-        messageTreeDepth: this.messageTreeDepth,
-        voteOptionTreeDepth: this.voteOptionTreeDepth,
+        intStateTreeDepth: this.treeDepths.intStateTreeDepth,
+        messageTreeSubDepth: this.treeDepths.messageTreeSubDepth,
+        messageTreeDepth: this.treeDepths.messageTreeDepth,
+        voteOptionTreeDepth: this.treeDepths.voteOptionTreeDepth,
       },
-      { maxMessages: this.maxMessages, maxVoteOptions: this.maxVoteOptions },
+      {
+        maxMessages: this.maxValues.maxMessages,
+        maxVoteOptions: this.maxValues.maxVoteOptions,
+      },
       this.messageBatchSize,
-      this.processVk.asContractParam(),
-      this.tallyVk.asContractParam(),
     ]
   }
 
@@ -86,9 +72,10 @@ export class MaciParameters {
     )
 
     return new MaciParameters({
+      stateTreeDepth: params.stateTreeDepth,
       ...params.maxValues,
       ...params.treeDepths,
-      ...params.batchSizes,
+      messageBatchSize: params.messageBatchSize,
       processVk,
       tallyVk,
     })
@@ -117,8 +104,11 @@ export class MaciParameters {
     })
   }
 
-  static mock(circuit: string): MaciParameters {
+  static mock(): MaciParameters {
     const processVk = VerifyingKey.fromObj({
+      protocol: 1,
+      curve: 1,
+      nPublic: 1,
       vk_alpha_1: [1, 2],
       vk_beta_2: [
         [1, 2],
@@ -132,13 +122,26 @@ export class MaciParameters {
         [1, 2],
         [1, 2],
       ],
+      vk_alphabeta_12: [[[1, 2, 3]]],
       IC: [[1, 2]],
     })
-    const params = CIRCUITS[circuit]
+
+    // use smaller voteOptionTreeDepth for testing
+    const params = {
+      maxValues: { maxMessages: BigInt(390625), maxVoteOptions: BigInt(25) },
+      treeDepths: {
+        intStateTreeDepth: 2,
+        messageTreeSubDepth: 2,
+        messageTreeDepth: 8,
+        voteOptionTreeDepth: 2,
+      },
+    }
+
     return new MaciParameters({
+      stateTreeDepth: 6,
       ...params.maxValues,
       ...params.treeDepths,
-      ...params.batchSizes,
+      messageBatchSize: BigInt(25),
       processVk,
       tallyVk: processVk.copy(),
     })

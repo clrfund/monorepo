@@ -1,4 +1,4 @@
-import { utils } from 'ethers'
+import { decodeBase64, encodeBase64 } from 'ethers'
 import nacl from 'tweetnacl'
 
 const NODE_URL = process.env.VITE_BRIGHTID_NODE_URL || 'https://app.brightid.org/node/v6'
@@ -73,10 +73,10 @@ async function handleSponsorRequest(userAddress) {
   }
 
   const message = JSON.stringify(op)
-  const arrayedMessage = utils.toUtf8Bytes(message)
-  const arrayedKey = utils.base64.decode(brightIdSponsorKey)
+  const arrayedMessage = toUtf8Bytes(message)
+  const arrayedKey = decodeBase64(brightIdSponsorKey)
   const signature = nacl.sign.detached(arrayedMessage, arrayedKey)
-  op.sig = utils.base64.encode(signature)
+  op.sig = encodeBase64(signature)
 
   const res = await fetch(endpoint, {
     method: 'POST',

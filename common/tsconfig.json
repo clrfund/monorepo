@@ -12,11 +12,12 @@
     "sourceMap": true,
     "strict": true,
     "outDir": "./build",
-    "target": "es2018",
+    "target": "es2020",
     "esModuleInterop": true,
     "module": "commonjs",
+    "moduleResolution": "node",
     "declaration": true
   },
   "exclude": ["node_modules/**"],
-  "include": ["./src"]
+  "include": ["src/**/*"]
 }

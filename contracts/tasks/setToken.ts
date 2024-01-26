@@ -2,11 +2,11 @@
  * Set the native token in the ClrFund contract
  * Sample usage:
  *
- * yarn hardhat set-token --token <token address> --clrfund <clrfund address> --network arbitrum-goerli
+ * yarn hardhat set-token --token <token address> --clrfund <clrfund address> --network <network>
  */
 
 import { task } from 'hardhat/config'
-import { Contract, BigNumber } from 'ethers'
+import { Contract } from 'ethers'
 import { deployContract } from '../utils/deployment'
 import { UNIT } from '../utils/constants'
 
@@ -38,13 +38,13 @@ task('set-token', 'Set the token in ClrFund')
 
     let tokenAddress: string = token || ''
     if (!tokenAddress) {
-      const initialTokenSupply = BigNumber.from(tokenAmount).mul(UNIT)
+      const initialTokenSupply = BigInt(tokenAmount) * UNIT
       const tokenContract = await deployContract({
         name: 'AnyOldERC20Token',
         contractArgs: [initialTokenSupply],
         ethers,
       })
-      tokenAddress = tokenContract.address
+      tokenAddress = await tokenContract.getAddress()
       console.log('New token address', tokenAddress)
     }
     await setToken(clrfundContract, tokenAddress)

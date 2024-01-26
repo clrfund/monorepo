@@ -10,12 +10,12 @@ import {
   deployContract,
   deployPoseidonLibraries,
   deployMaciFactory,
-  setMaciParameters,
 } from '../utils/deployment'
 import { DEFAULT_CIRCUIT } from '../utils/circuits'
 import { JSONFile } from '../utils/JSONFile'
 import { ethers, config, network } from 'hardhat'
 import { program } from 'commander'
+import { MaciParameters } from '../utils/maciParameters'
 
 program
   .description('Deploy a new ClrFund deployer')
@@ -41,36 +41,43 @@ async function main(args: any) {
   })
   console.log('Deployed Poseidons', libraries)
 
-  const maciFactory = await deployMaciFactory({ libraries, ethers })
-  console.log('Deployed MaciFactory at', maciFactory.address)
-  await setMaciParameters(maciFactory, args.directory, args.circuit)
+  const maciParameters = await MaciParameters.fromConfig(
+    args.circuit,
+    args.directory
+  )
+  const maciFactory = await deployMaciFactory({
+    libraries,
+    ethers,
+    maciParameters,
+  })
+  console.log('Deployed MaciFactory at', maciFactory.target)
 
   const clrfundTemplate = await deployContract({
     name: 'ClrFund',
     ethers,
   })
-  console.log('Deployed ClrFund Template at', clrfundTemplate.address)
+  console.log('Deployed ClrFund Template at', clrfundTemplate.target)
 
   const fundingRoundFactory = await deployContract({
     name: 'FundingRoundFactory',
-    libraries,
     ethers,
   })
-  console.log('Deployed FundingRoundFactory at', fundingRoundFactory.address)
+  console.log('Deployed FundingRoundFactory at', fundingRoundFactory.target)
 
   const clrfundDeployer = await deployContract({
     name: 'ClrFundDeployer',
     ethers,
     contractArgs: [
-      clrfundTemplate.address,
-      maciFactory.address,
-      fundingRoundFactory.address,
+      clrfundTemplate.target,
+      maciFactory.target,
+      fundingRoundFactory.target,
     ],
   })
-  console.log('Deployed ClrfundDeployer at', clrfundDeployer.address)
+  console.log('Deployed ClrfundDeployer at', clrfundDeployer.target)
 
   if (args.stateFile) {
-    JSONFile.update(args.stateFile, { deployer: clrfundDeployer.address })
+    const clrfundDeployerAddress = await clrfundDeployer.getAddress()
+    JSONFile.update(args.stateFile, { deployer: clrfundDeployerAddress })
   }
 }
 

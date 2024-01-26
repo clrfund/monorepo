@@ -4,7 +4,8 @@ import { Contract } from 'ethers'
 async function getConstructorArguments(maciFactory: Contract): Promise<any[]> {
   const result = await Promise.all([
     maciFactory.vkRegistry(),
-    maciFactory.pollFactory(),
+    maciFactory.factories(),
+    maciFactory.verifier(),
   ])
   return result
 }

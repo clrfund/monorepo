@@ -4,10 +4,9 @@ import dotenv from 'dotenv'
 
 import { TASK_COMPILE_SOLIDITY_GET_SOURCE_PATHS } from 'hardhat/builtin-tasks/task-names'
 import { subtask, task } from 'hardhat/config'
-import '@nomiclabs/hardhat-waffle'
+import '@nomicfoundation/hardhat-toolbox'
 import '@nomiclabs/hardhat-ganache'
 import 'hardhat-contract-sizer'
-import '@nomiclabs/hardhat-etherscan'
 import './tasks'
 
 dotenv.config()
@@ -55,12 +54,18 @@ export default {
         process.env.JSONRPC_HTTP_URL || 'https://goerli-rollup.arbitrum.io/rpc',
       accounts,
     },
-    'mantle-testnet': {
-      url: process.env.JSONRPC_HTTP_URL || 'https://rpc.testnet.mantle.xyz',
+    'arbitrum-sepolia': {
+      url:
+        process.env.JSONRPC_HTTP_URL ||
+        'https://sepolia-rollup.arbitrum.io/rpc',
       accounts,
     },
-    rinkarby: {
-      url: process.env.JSONRPC_HTTP_URL || 'https://rinkeby.arbitrum.io/rpc',
+    sepolia: {
+      url: process.env.JSONRPC_HTTP_URL || 'http://127.0.0.1:8545',
+      accounts,
+    },
+    'mantle-testnet': {
+      url: process.env.JSONRPC_HTTP_URL || 'https://rpc.testnet.mantle.xyz',
       accounts,
     },
     arbitrum: {
@@ -69,7 +74,24 @@ export default {
     },
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY || 'YOUR_ETHERSCAN_API_KEY',
+    apiKey: {
+      arbitrum: process.env.ARBISCAN_API_KEY || 'YOUR_ARBISCAN_API_KEY',
+      'arbitrum-sepolia':
+        process.env.ARBISCAN_API_KEY || 'YOUR_ARBISCAN_API_KEY',
+    },
+    customChains: [
+      {
+        network: 'arbitrum-sepolia',
+        chainId: 421614,
+        urls: {
+          apiURL: 'https://api-sepolia.arbiscan.io/api',
+          browserURL: 'https://sepolia.arbiscan.io',
+        },
+      },
+    ],
+  },
+  sourcify: {
+    enabled: false,
   },
   paths: {
     artifacts: 'build/contracts',
@@ -181,7 +203,7 @@ task(
       const artifact = JSON.parse(
         fs
           .readFileSync(
-            `./node_modules/@clrfund/maci-contracts/artifacts/contracts/crypto/Hasher.sol/${contractName}.json`
+            `./node_modules/maci-contracts/build/artifacts/contracts/crypto/${contractName}.sol/${contractName}.json`
           )
           .toString()
       )

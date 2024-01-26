@@ -1,29 +1,30 @@
-import { waffle, artifacts, ethers, config } from 'hardhat'
-import { Contract } from 'ethers'
-import { use, expect } from 'chai'
-import { solidity } from 'ethereum-waffle'
-import { deployMockContract } from '@ethereum-waffle/mock-contract'
-import { Keypair } from '@clrfund/common'
+import { artifacts, ethers, config } from 'hardhat'
+import { Contract, TransactionResponse } from 'ethers'
+import { expect } from 'chai'
+import { deployMockContract, MockContract } from '@clrfund/waffle-mock-contract'
 
 import { getEventArg, getGasUsage } from '../utils/contracts'
 import { deployMaciFactory, deployPoseidonLibraries } from '../utils/deployment'
 import { MaciParameters } from '../utils/maciParameters'
-import { DEFAULT_CIRCUIT } from '../utils/circuits'
-
-use(solidity)
+import { HardhatEthersSigner } from '@nomicfoundation/hardhat-ethers/signers'
+import { Keypair } from '@clrfund/common'
 
 describe('MACI factory', () => {
-  const provider = waffle.provider
-  const [, deployer, coordinator] = provider.getWallets()
+  let deployer: HardhatEthersSigner
+  let coordinator: HardhatEthersSigner
 
   const duration = 100
   let maciFactory: Contract
-  let signUpGatekeeper: Contract
-  let initialVoiceCreditProxy: Contract
-  let topupContract: Contract
+  let signUpGatekeeper: MockContract
+  let initialVoiceCreditProxy: MockContract
+  let topupContract: MockContract
   let maciParameters: MaciParameters
   let poseidonContracts: { [name: string]: string }
   const coordinatorPubKey = new Keypair().pubKey.asContractParam()
+
+  before(async () => {
+    ;[, deployer, coordinator] = await ethers.getSigners()
+  })
 
   beforeEach(async () => {
     if (!poseidonContracts) {
@@ -33,14 +34,18 @@ describe('MACI factory', () => {
         signer: deployer,
       })
     }
+    maciParameters = MaciParameters.mock()
     maciFactory = await deployMaciFactory({
       ethers,
       signer: deployer,
       libraries: poseidonContracts,
+      maciParameters,
     })
-    expect(await getGasUsage(maciFactory.deployTransaction)).lessThan(5600000)
-
-    maciParameters = MaciParameters.mock(DEFAULT_CIRCUIT)
+    const transaction = await maciFactory.deploymentTransaction()
+    expect(transaction).to.be.not.null
+    expect(await getGasUsage(transaction as TransactionResponse)).lessThan(
+      5600000
+    )
 
     const SignUpGatekeeperArtifact =
       await artifacts.readArtifact('SignUpGatekeeper')
@@ -61,8 +66,10 @@ describe('MACI factory', () => {
 
   it('sets default MACI parameters', async () => {
     const { maxMessages, maxVoteOptions } = await maciFactory.maxValues()
-    expect(maxMessages).to.equal(0)
-    expect(maxVoteOptions).to.equal(0)
+    expect(maxMessages).to.be.greaterThan(BigInt(0))
+    expect(maxVoteOptions).to.be.greaterThan(BigInt(0))
+    expect(maxMessages).to.equal(maciParameters.maxValues.maxMessages)
+    expect(maxVoteOptions).to.equal(maciParameters.maxValues.maxVoteOptions)
   })
 
   it('sets MACI parameters', async () => {
@@ -72,13 +79,15 @@ describe('MACI factory', () => {
 
     const { messageTreeDepth } = await maciFactory.treeDepths()
     const { maxMessages, maxVoteOptions } = await maciFactory.maxValues()
-    expect(maxMessages).to.equal(maciParameters.maxMessages)
-    expect(maxVoteOptions).to.equal(maciParameters.maxVoteOptions)
-    expect(messageTreeDepth).to.equal(maciParameters.messageTreeDepth)
+    expect(maxMessages).to.equal(maciParameters.maxValues.maxMessages)
+    expect(maxVoteOptions).to.equal(maciParameters.maxValues.maxVoteOptions)
+    expect(messageTreeDepth).to.equal(
+      maciParameters.treeDepths.messageTreeDepth
+    )
   })
 
   it('allows only owner to set MACI parameters', async () => {
-    const coordinatorMaciFactory = maciFactory.connect(coordinator)
+    const coordinatorMaciFactory = maciFactory.connect(coordinator) as Contract
     await expect(
       coordinatorMaciFactory.setMaciParameters(
         ...maciParameters.asContractParam()
@@ -92,12 +101,13 @@ describe('MACI factory', () => {
     )
     await setParamTx.wait()
     const maciDeployed = maciFactory.deployMaci(
-      signUpGatekeeper.address,
-      initialVoiceCreditProxy.address,
-      topupContract.address,
+      signUpGatekeeper.target,
+      initialVoiceCreditProxy.target,
+      topupContract.target,
       duration,
       coordinator.address,
-      coordinatorPubKey
+      coordinatorPubKey,
+      deployer.address
     )
     await expect(maciDeployed).to.emit(maciFactory, 'MaciDeployed')
 
@@ -111,15 +121,16 @@ describe('MACI factory', () => {
       ...maciParameters.asContractParam()
     )
     await setParamTx.wait()
-    const coordinatorMaciFactory = maciFactory.connect(coordinator)
+    const coordinatorMaciFactory = maciFactory.connect(coordinator) as Contract
 
     const deployTx = await coordinatorMaciFactory.deployMaci(
-      signUpGatekeeper.address,
-      initialVoiceCreditProxy.address,
-      topupContract.address,
+      signUpGatekeeper.target,
+      initialVoiceCreditProxy.target,
+      topupContract.target,
       duration,
       coordinator.address,
-      coordinatorPubKey
+      coordinatorPubKey,
+      coordinator.address
     )
     await expect(deployTx).to.emit(maciFactory, 'MaciDeployed')
   })
@@ -130,12 +141,13 @@ describe('MACI factory', () => {
     )
     await setParamTx.wait()
     const deployTx = await maciFactory.deployMaci(
-      signUpGatekeeper.address,
-      initialVoiceCreditProxy.address,
-      topupContract.address,
+      signUpGatekeeper.target,
+      initialVoiceCreditProxy.target,
+      topupContract.target,
       duration,
       coordinator.address,
-      coordinatorPubKey
+      coordinatorPubKey,
+      deployer.address
     )
 
     const maciAddress = await getEventArg(
@@ -152,17 +164,14 @@ describe('MACI factory', () => {
   })
 
   it('links with PoseidonT6 correctly', async () => {
-    const setParamTx = await maciFactory.setMaciParameters(
-      ...maciParameters.asContractParam()
-    )
-    await setParamTx.wait()
     const deployTx = await maciFactory.deployMaci(
-      signUpGatekeeper.address,
-      initialVoiceCreditProxy.address,
-      topupContract.address,
+      signUpGatekeeper.target,
+      initialVoiceCreditProxy.target,
+      topupContract.target,
       duration,
       coordinator.address,
-      coordinatorPubKey
+      coordinatorPubKey,
+      deployer.address
     )
 
     const maciAddress = await getEventArg(

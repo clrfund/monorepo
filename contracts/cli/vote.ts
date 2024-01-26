@@ -9,8 +9,13 @@
  */
 
 import { JSONFile } from '../utils/JSONFile'
-import { PrivKey, Keypair, createMessage } from '@clrfund/common'
-import { BigNumber } from 'ethers'
+import {
+  PrivKey,
+  Keypair,
+  createMessage,
+  Message,
+  PubKey,
+} from '@clrfund/common'
 import { ethers } from 'hardhat'
 import { program } from 'commander'
 import dotenv from 'dotenv'
@@ -38,18 +43,18 @@ async function main(args: any) {
     await ethers.getSigners()
 
   const state = JSONFile.read(stateFile)
-  const coordinatorKeyPair = new Keypair(PrivKey.unserialize(coordinatorMacisk))
+  const coordinatorKeyPair = new Keypair(PrivKey.deserialize(coordinatorMacisk))
 
   const pollId = state.pollId
   for (const contributor of [contributor1, contributor2]) {
     const contributorAddress = await contributor.getAddress()
     const contributorData = state.contributors[contributorAddress]
     const contributorKeyPair = new Keypair(
-      PrivKey.unserialize(contributorData.privKey)
+      PrivKey.deserialize(contributorData.privKey)
     )
 
-    const messages: { msgType: any; data: string[] }[] = []
-    const encPubKeys: any[] = []
+    const messages: Message[] = []
+    const encPubKeys: PubKey[] = []
     let nonce = 1
     // Change key
     const newContributorKeypair = new Keypair()
@@ -63,12 +68,12 @@ async function main(args: any) {
       nonce,
       pollId
     )
-    messages.push(message.asContractParam())
-    encPubKeys.push(encPubKey.asContractParam())
+    messages.push(message)
+    encPubKeys.push(encPubKey)
     nonce += 1
     // Vote
     for (const recipientIndex of [1, 2]) {
-      const votes = BigNumber.from(contributorData.voiceCredits).div(4)
+      const votes = BigInt(contributorData.voiceCredits) / BigInt(4)
       const [message, encPubKey] = createMessage(
         contributorData.stateIndex,
         newContributorKeypair,
@@ -79,8 +84,8 @@ async function main(args: any) {
         nonce,
         pollId
       )
-      messages.push(message.asContractParam())
-      encPubKeys.push(encPubKey.asContractParam())
+      messages.push(message)
+      encPubKeys.push(encPubKey)
       nonce += 1
     }
 
@@ -90,8 +95,8 @@ async function main(args: any) {
       contributor
     )
     await fundingRoundAsContributor.submitMessageBatch(
-      messages.reverse(),
-      encPubKeys.reverse()
+      messages.reverse().map((msg) => msg.asContractParam()),
+      encPubKeys.reverse().map((key) => key.asContractParam())
     )
     console.log(`Contributor ${contributorAddress} voted.`)
   }

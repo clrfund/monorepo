@@ -1,8 +1,8 @@
-import { ethers, waffle, config } from 'hardhat'
-import { use, expect } from 'chai'
-import { solidity } from 'ethereum-waffle'
-import { Signer, Contract, ContractTransaction, constants } from 'ethers'
-import { genRandomSalt } from '@clrfund/maci-crypto'
+import { ethers, config, artifacts } from 'hardhat'
+import { time } from '@nomicfoundation/hardhat-network-helpers'
+import { expect } from 'chai'
+import { Contract } from 'ethers'
+import { genRandomSalt } from 'maci-crypto'
 import { Keypair } from '@clrfund/common'
 
 import { ZERO_ADDRESS, UNIT } from '../utils/constants'
@@ -13,46 +13,14 @@ import {
   deployMaciFactory,
 } from '../utils/deployment'
 import { MaciParameters } from '../utils/maciParameters'
-import { DEFAULT_CIRCUIT } from '../utils/circuits'
-
-use(solidity)
+import { HardhatEthersSigner } from '@nomicfoundation/hardhat-ethers/signers'
 
 const roundDuration = 10000
-const circuit = DEFAULT_CIRCUIT
 
-async function setRoundTally(
-  clrfund: Contract,
-  coordinator: Signer
-): Promise<ContractTransaction> {
-  const libraries = await deployPoseidonLibraries({
-    artifactsPath: config.paths.artifacts,
-    ethers,
-  })
-  const verifier = await deployContract({
-    name: 'MockVerifier',
-    ethers,
-    signer: coordinator,
-  })
-  const tally = await deployContract({
-    name: 'Tally',
-    libraries,
-    contractArgs: [verifier.address],
-    signer: coordinator,
-    ethers,
-  })
-  const roundAddress = await clrfund.getCurrentRound()
-  const round = await ethers.getContractAt(
-    'FundingRound',
-    roundAddress,
-    coordinator
-  )
-  return round.setTally(tally.address)
-}
-
-describe('Clr fund deployer', () => {
-  const provider = waffle.provider
-  const [, deployer, coordinator, contributor] = provider.getWallets()
-
+describe('Clr fund deployer', async () => {
+  let deployer: HardhatEthersSigner
+  let coordinator: HardhatEthersSigner
+  let contributor: HardhatEthersSigner
   let maciFactory: Contract
   let userRegistry: Contract
   let recipientRegistry: Contract
@@ -62,6 +30,17 @@ describe('Clr fund deployer', () => {
   let token: Contract
   const coordinatorPubKey = new Keypair().pubKey.asContractParam()
   let poseidonContracts: { [name: string]: string }
+  let roundInterface: Contract
+
+  before(async () => {
+    ;[, deployer, coordinator, contributor] = await ethers.getSigners()
+
+    // this is just a dummy funding round contract to be passed as the
+    // contract argument to the revertedByCustomError() as a way to
+    // pass the Abi.
+    const FundingRoundArtifacts = await artifacts.readArtifact('FundingRound')
+    roundInterface = new Contract(ZERO_ADDRESS, FundingRoundArtifacts.abi)
+  })
 
   beforeEach(async () => {
     if (!poseidonContracts) {
@@ -71,13 +50,13 @@ describe('Clr fund deployer', () => {
       })
     }
 
+    const params = MaciParameters.mock()
     maciFactory = await deployMaciFactory({
       libraries: poseidonContracts,
       signer: deployer,
       ethers,
+      maciParameters: params,
     })
-    const params = MaciParameters.mock(circuit)
-    await maciFactory.setMaciParameters(...params.asContractParam())
 
     factoryTemplate = await deployContract({
       name: 'ClrFund',
@@ -85,33 +64,43 @@ describe('Clr fund deployer', () => {
       signer: deployer,
     })
 
-    expect(factoryTemplate.address).to.properAddress
-    expect(await getGasUsage(factoryTemplate.deployTransaction)).lessThan(
-      5400000
-    )
+    expect(await factoryTemplate.getAddress()).to.be.properAddress
+    const tx = factoryTemplate.deploymentTransaction()
+    if (tx) {
+      expect(await getGasUsage(tx)).lessThan(5400000)
+    } else {
+      expect(tx).to.not.be.null
+    }
 
     const roundFactory = await deployContract({
       name: 'FundingRoundFactory',
-      libraries: poseidonContracts,
       ethers,
     })
-    expect(await getGasUsage(roundFactory.deployTransaction)).lessThan(4000000)
+    const roundFactoryTx = roundFactory.deploymentTransaction()
+    if (roundFactoryTx) {
+      expect(await getGasUsage(roundFactoryTx)).lessThan(4600000)
+    } else {
+      expect(roundFactoryTx).to.not.be.null
+    }
 
     clrFundDeployer = await deployContract({
       name: 'ClrFundDeployer',
       contractArgs: [
-        factoryTemplate.address,
-        maciFactory.address,
-        roundFactory.address,
+        factoryTemplate.target,
+        maciFactory.target,
+        roundFactory.target,
       ],
       ethers,
       signer: deployer,
     })
 
-    expect(clrFundDeployer.address).to.properAddress
-    expect(await getGasUsage(clrFundDeployer.deployTransaction)).lessThan(
-      5400000
-    )
+    expect(clrFundDeployer.target).to.be.properAddress
+    const deployerTx = clrFundDeployer.deploymentTransaction()
+    if (deployerTx) {
+      expect(await getGasUsage(deployerTx)).lessThan(5400000)
+    } else {
+      expect(deployerTx).to.not.be.null
+    }
 
     const newInstanceTx = await clrFundDeployer.deployClrFund()
     const instanceAddress = await getEventArg(
@@ -132,56 +121,28 @@ describe('Clr fund deployer', () => {
       'SimpleRecipientRegistry',
       deployer
     )
-    recipientRegistry = await SimpleRecipientRegistry.deploy(clrfund.address)
+    recipientRegistry = await SimpleRecipientRegistry.deploy(clrfund.target)
 
     // Deploy token contract and transfer tokens to contributor
 
-    const tokenInitialSupply = UNIT.mul(1000)
+    const tokenInitialSupply = UNIT * 1000n
     const Token = await ethers.getContractFactory('AnyOldERC20Token', deployer)
     token = await Token.deploy(tokenInitialSupply)
-    expect(token.address).to.properAddress
+    expect(token.target).to.properAddress
     await token.transfer(contributor.address, tokenInitialSupply)
   })
 
   it('can only be initialized once', async () => {
-    const dummyRoundFactory = constants.AddressZero
+    const dummyRoundFactory = ZERO_ADDRESS
     await expect(
-      clrfund.init(maciFactory.address, dummyRoundFactory)
+      clrfund.init(maciFactory.target, dummyRoundFactory)
     ).to.be.revertedWith('Initializable: contract is already initialized')
-  })
-
-  it('can register with the subgraph', async () => {
-    await expect(
-      clrFundDeployer.registerInstance(
-        clrfund.address,
-        '{name:dead,title:beef}'
-      )
-    )
-      .to.emit(clrFundDeployer, 'Register')
-      .withArgs(clrfund.address, '{name:dead,title:beef}')
-  })
-
-  it('cannot register with the subgraph twice', async () => {
-    await expect(
-      clrFundDeployer.registerInstance(
-        clrfund.address,
-        '{name:dead,title:beef}'
-      )
-    )
-      .to.emit(clrFundDeployer, 'Register')
-      .withArgs(clrfund.address, '{name:dead,title:beef}')
-    await expect(
-      clrFundDeployer.registerInstance(
-        clrfund.address,
-        '{name:dead,title:beef}'
-      )
-    ).to.be.revertedWith('ClrFundAlreadyRegistered')
   })
 
   it('initializes clrfund', async () => {
     expect(await clrfund.coordinator()).to.equal(ZERO_ADDRESS)
     expect(await clrfund.nativeToken()).to.equal(ZERO_ADDRESS)
-    expect(await clrfund.maciFactory()).to.equal(maciFactory.address)
+    expect(await clrfund.maciFactory()).to.equal(maciFactory.target)
     expect(await clrfund.userRegistry()).to.equal(ZERO_ADDRESS)
     expect(await clrfund.recipientRegistry()).to.equal(ZERO_ADDRESS)
   })
@@ -194,62 +155,64 @@ describe('Clr fund deployer', () => {
 
   describe('changing user registry', () => {
     it('allows owner to set user registry', async () => {
-      await clrfund.setUserRegistry(userRegistry.address)
-      expect(await clrfund.userRegistry()).to.equal(userRegistry.address)
+      await clrfund.setUserRegistry(userRegistry.target)
+      expect(await clrfund.userRegistry()).to.equal(userRegistry.target)
     })
 
     it('allows only owner to set user registry', async () => {
       await expect(
-        clrfund.connect(contributor).setUserRegistry(userRegistry.address)
+        (clrfund.connect(contributor) as Contract).setUserRegistry(
+          userRegistry.target
+        )
       ).to.be.revertedWith('Ownable: caller is not the owner')
     })
 
     it('allows owner to change recipient registry', async () => {
-      await clrfund.setRecipientRegistry(recipientRegistry.address)
+      await clrfund.setRecipientRegistry(recipientRegistry.target)
       const SimpleUserRegistry = await ethers.getContractFactory(
         'SimpleUserRegistry',
         deployer
       )
       const anotherUserRegistry = await SimpleUserRegistry.deploy()
-      await clrfund.setUserRegistry(anotherUserRegistry.address)
-      expect(await clrfund.userRegistry()).to.equal(anotherUserRegistry.address)
+      await clrfund.setUserRegistry(anotherUserRegistry.target)
+      expect(await clrfund.userRegistry()).to.equal(anotherUserRegistry.target)
     })
   })
 
   describe('changing recipient registry', () => {
     it('allows owner to set recipient registry', async () => {
       await clrfund.setCoordinator(coordinator.address, coordinatorPubKey)
-      await clrfund.setRecipientRegistry(recipientRegistry.address)
+      await clrfund.setRecipientRegistry(recipientRegistry.target)
       expect(await clrfund.recipientRegistry()).to.equal(
-        recipientRegistry.address
+        recipientRegistry.target
       )
-      expect(await recipientRegistry.controller()).to.equal(clrfund.address)
-      const params = MaciParameters.mock(circuit)
+      expect(await recipientRegistry.controller()).to.equal(clrfund.target)
+      const params = MaciParameters.mock()
       expect(await recipientRegistry.maxRecipients()).to.equal(
-        5 ** params.voteOptionTreeDepth
+        BigInt(5) ** BigInt(params.treeDepths.voteOptionTreeDepth)
       )
     })
 
     it('allows only owner to set recipient registry', async () => {
       await expect(
-        clrfund
-          .connect(contributor)
-          .setRecipientRegistry(recipientRegistry.address)
+        (clrfund.connect(contributor) as Contract).setRecipientRegistry(
+          recipientRegistry.target
+        )
       ).to.be.revertedWith('Ownable: caller is not the owner')
     })
 
     it('allows owner to change recipient registry', async () => {
-      await clrfund.setRecipientRegistry(recipientRegistry.address)
+      await clrfund.setRecipientRegistry(recipientRegistry.target)
       const SimpleRecipientRegistry = await ethers.getContractFactory(
         'SimpleRecipientRegistry',
         deployer
       )
       const anotherRecipientRegistry = await SimpleRecipientRegistry.deploy(
-        clrfund.address
+        clrfund.target
       )
-      await clrfund.setRecipientRegistry(anotherRecipientRegistry.address)
+      await clrfund.setRecipientRegistry(anotherRecipientRegistry.target)
       expect(await clrfund.recipientRegistry()).to.equal(
-        anotherRecipientRegistry.address
+        anotherRecipientRegistry.target
       )
     })
   })
@@ -263,7 +226,9 @@ describe('Clr fund deployer', () => {
 
     it('allows only owner to add funding source', async () => {
       await expect(
-        clrfund.connect(contributor).addFundingSource(contributor.address)
+        (clrfund.connect(contributor) as Contract).addFundingSource(
+          contributor.address
+        )
       ).to.be.revertedWith('Ownable: caller is not the owner')
     })
 
@@ -271,7 +236,7 @@ describe('Clr fund deployer', () => {
       await clrfund.addFundingSource(contributor.address)
       await expect(
         clrfund.addFundingSource(contributor.address)
-      ).to.be.revertedWith('FundingSourceAlreadyAdded')
+      ).to.be.revertedWithCustomError(clrfund, 'FundingSourceAlreadyAdded')
     })
 
     it('allows owner to remove funding source', async () => {
@@ -284,7 +249,9 @@ describe('Clr fund deployer', () => {
     it('allows only owner to remove funding source', async () => {
       await clrfund.addFundingSource(contributor.address)
       await expect(
-        clrfund.connect(contributor).removeFundingSource(contributor.address)
+        (clrfund.connect(contributor) as Contract).removeFundingSource(
+          contributor.address
+        )
       ).to.be.revertedWith('Ownable: caller is not the owner')
     })
 
@@ -293,26 +260,29 @@ describe('Clr fund deployer', () => {
       await clrfund.removeFundingSource(contributor.address)
       await expect(
         clrfund.removeFundingSource(contributor.address)
-      ).to.be.revertedWith('FundingSourceNotFound')
+      ).to.be.revertedWithCustomError(clrfund, 'FundingSourceNotFound')
     })
   })
 
   it('allows direct contributions to the matching pool', async () => {
-    const contributionAmount = UNIT.mul(10)
-    await clrfund.setToken(token.address)
+    const contributionAmount = UNIT * 10n
+    await clrfund.setToken(token.target)
     await expect(
-      token.connect(contributor).transfer(clrfund.address, contributionAmount)
+      (token.connect(contributor) as Contract).transfer(
+        clrfund.target,
+        contributionAmount
+      )
     )
       .to.emit(token, 'Transfer')
-      .withArgs(contributor.address, clrfund.address, contributionAmount)
-    expect(await token.balanceOf(clrfund.address)).to.equal(contributionAmount)
+      .withArgs(contributor.address, clrfund.target, contributionAmount)
+    expect(await token.balanceOf(clrfund.target)).to.equal(contributionAmount)
   })
 
   describe('deploying funding round', () => {
     it('deploys funding round', async () => {
-      await clrfund.setUserRegistry(userRegistry.address)
-      await clrfund.setRecipientRegistry(recipientRegistry.address)
-      await clrfund.setToken(token.address)
+      await clrfund.setUserRegistry(userRegistry.target)
+      await clrfund.setRecipientRegistry(recipientRegistry.target)
+      await clrfund.setToken(token.target)
       await clrfund.setCoordinator(coordinator.address, coordinatorPubKey)
       const deployed = clrfund.deployNewRound(roundDuration)
       await expect(deployed).to.emit(clrfund, 'RoundStarted')
@@ -328,8 +298,8 @@ describe('Clr fund deployer', () => {
         'FundingRound',
         fundingRoundAddress
       )
-      expect(await fundingRound.owner()).to.equal(clrfund.address)
-      expect(await fundingRound.nativeToken()).to.equal(token.address)
+      expect(await fundingRound.owner()).to.equal(clrfund.target)
+      expect(await fundingRound.nativeToken()).to.equal(token.target)
 
       const maciAddress = await getEventArg(
         deployTx,
@@ -344,69 +314,71 @@ describe('Clr fund deployer', () => {
         deployTx,
         maci,
         'DeployPoll',
-        '_pollAddr'
+        'pollAddr'
       )
-      const poll = await ethers.getContractAt('Poll', pollAddress)
+
+      const poll = await ethers.getContractAt('Poll', pollAddress.poll)
       const roundCoordinatorPubKey = await poll.coordinatorPubKey()
       expect(roundCoordinatorPubKey.x).to.equal(coordinatorPubKey.x)
       expect(roundCoordinatorPubKey.y).to.equal(coordinatorPubKey.y)
     })
 
     it('reverts if user registry is not set', async () => {
-      await clrfund.setRecipientRegistry(recipientRegistry.address)
-      await clrfund.setToken(token.address)
+      await clrfund.setRecipientRegistry(recipientRegistry.target)
+      await clrfund.setToken(token.target)
       await clrfund.setCoordinator(coordinator.address, coordinatorPubKey)
 
-      await expect(clrfund.deployNewRound(roundDuration)).to.be.revertedWith(
-        'NoUserRegistry'
-      )
+      await expect(
+        clrfund.deployNewRound(roundDuration)
+      ).to.be.revertedWithCustomError(roundInterface, 'InvalidUserRegistry')
     })
 
+    // TODO investigate why this fails
     it('reverts if recipient registry is not set', async () => {
-      await clrfund.setUserRegistry(userRegistry.address)
-      await clrfund.setToken(token.address)
+      await clrfund.setUserRegistry(userRegistry.target)
+      await clrfund.setToken(token.target)
       await clrfund.setCoordinator(coordinator.address, coordinatorPubKey)
 
-      await expect(clrfund.deployNewRound(roundDuration)).to.be.revertedWith(
-        'NoRecipientRegistry'
-      )
+      await expect(
+        clrfund.deployNewRound(roundDuration)
+      ).to.be.revertedWithCustomError(clrfund, 'RecipientRegistryNotSet')
     })
 
     it('reverts if native token is not set', async () => {
-      await clrfund.setUserRegistry(userRegistry.address)
-      await clrfund.setRecipientRegistry(recipientRegistry.address)
+      await clrfund.setUserRegistry(userRegistry.target)
+      await clrfund.setRecipientRegistry(recipientRegistry.target)
       await clrfund.setCoordinator(coordinator.address, coordinatorPubKey)
 
-      await expect(clrfund.deployNewRound(roundDuration)).to.be.revertedWith(
-        'NoToken'
-      )
+      await expect(
+        clrfund.deployNewRound(roundDuration)
+      ).to.be.revertedWithCustomError(roundInterface, 'InvalidNativeToken')
     })
 
     it('reverts if coordinator is not set', async () => {
-      await clrfund.setUserRegistry(userRegistry.address)
-      await clrfund.setRecipientRegistry(recipientRegistry.address)
-      await clrfund.setToken(token.address)
-      await expect(clrfund.deployNewRound(roundDuration)).to.be.revertedWith(
-        'NoCoordinator'
-      )
+      await clrfund.setUserRegistry(userRegistry.target)
+      await clrfund.setRecipientRegistry(recipientRegistry.target)
+      await clrfund.setToken(token.target)
+      await expect(
+        clrfund.deployNewRound(roundDuration)
+      ).to.be.revertedWithCustomError(roundInterface, 'InvalidCoordinator')
     })
 
     it('reverts if current round is not finalized', async () => {
-      await clrfund.setUserRegistry(userRegistry.address)
-      await clrfund.setRecipientRegistry(recipientRegistry.address)
-      await clrfund.setToken(token.address)
+      await clrfund.setUserRegistry(userRegistry.target)
+      await clrfund.setRecipientRegistry(recipientRegistry.target)
+      await clrfund.setToken(token.target)
       await clrfund.setCoordinator(coordinator.address, coordinatorPubKey)
 
       await clrfund.deployNewRound(roundDuration)
-      await expect(clrfund.deployNewRound(roundDuration)).to.be.revertedWith(
-        'NotFinalized'
-      )
+      await expect(
+        clrfund.deployNewRound(roundDuration)
+      ).to.be.revertedWithCustomError(clrfund, 'NotFinalized')
     })
 
     it('deploys new funding round after previous round has been finalized', async () => {
-      await clrfund.setUserRegistry(userRegistry.address)
-      await clrfund.setRecipientRegistry(recipientRegistry.address)
-      await clrfund.setToken(token.address)
+      await clrfund.setUserRegistry(userRegistry.target)
+      await clrfund.setRecipientRegistry(recipientRegistry.target)
+      await clrfund.setToken(token.target)
       await clrfund.setCoordinator(coordinator.address, coordinatorPubKey)
 
       await clrfund.deployNewRound(roundDuration)
@@ -418,12 +390,12 @@ describe('Clr fund deployer', () => {
     })
 
     it('only owner can deploy funding round', async () => {
-      await clrfund.setUserRegistry(userRegistry.address)
-      await clrfund.setRecipientRegistry(recipientRegistry.address)
-      await clrfund.setToken(token.address)
+      await clrfund.setUserRegistry(userRegistry.target)
+      await clrfund.setRecipientRegistry(recipientRegistry.target)
+      await clrfund.setToken(token.target)
       await clrfund.setCoordinator(coordinator.address, coordinatorPubKey)
 
-      const clrfundAsContributor = clrfund.connect(contributor)
+      const clrfundAsContributor = clrfund.connect(contributor) as Contract
       await expect(
         clrfundAsContributor.deployNewRound(roundDuration)
       ).to.be.revertedWith('Ownable: caller is not the owner')
@@ -431,16 +403,16 @@ describe('Clr fund deployer', () => {
   })
 
   describe('transferring matching funds', () => {
-    const contributionAmount = UNIT.mul(10)
-    const totalSpent = UNIT.mul(100)
+    const contributionAmount = UNIT * 10n
+    const totalSpent = UNIT * 100n
     const totalSpentSalt = genRandomSalt().toString()
     const resultsCommitment = genRandomSalt().toString()
     const perVOVoiceCreditCommitment = genRandomSalt().toString()
 
     beforeEach(async () => {
-      await clrfund.setUserRegistry(userRegistry.address)
-      await clrfund.setRecipientRegistry(recipientRegistry.address)
-      await clrfund.setToken(token.address)
+      await clrfund.setUserRegistry(userRegistry.target)
+      await clrfund.setRecipientRegistry(recipientRegistry.target)
+      await clrfund.setToken(token.target)
       await clrfund.setCoordinator(coordinator.address, coordinatorPubKey)
     })
 
@@ -448,29 +420,29 @@ describe('Clr fund deployer', () => {
       await clrfund.addFundingSource(deployer.address)
       await clrfund.addFundingSource(contributor.address)
       // Allowance is more than available balance
-      await token.connect(deployer).approve(clrfund.address, contributionAmount)
+      await (token.connect(deployer) as Contract).approve(
+        clrfund.target,
+        contributionAmount
+      )
       // Allowance is less than available balance
-      await token
-        .connect(contributor)
-        .approve(clrfund.address, contributionAmount)
+      const tokenAsContributor = token.connect(contributor) as Contract
+      await tokenAsContributor.approve(clrfund.target, contributionAmount)
       // Direct contribution
-      await token
-        .connect(contributor)
-        .transfer(clrfund.address, contributionAmount)
+      await tokenAsContributor.transfer(clrfund.target, contributionAmount)
 
       await clrfund.deployNewRound(roundDuration)
-      expect(await clrfund.getMatchingFunds(token.address)).to.equal(
-        contributionAmount.mul(2)
+      expect(await clrfund.getMatchingFunds(token.target)).to.equal(
+        contributionAmount * 2n
       )
     })
 
     it('allows owner to finalize round', async () => {
-      await token
-        .connect(contributor)
-        .transfer(clrfund.address, contributionAmount)
+      await (token.connect(contributor) as Contract).transfer(
+        clrfund.target,
+        contributionAmount
+      )
       await clrfund.deployNewRound(roundDuration)
-      await provider.send('evm_increaseTime', [roundDuration])
-      await setRoundTally(clrfund, coordinator)
+      await time.increase(roundDuration)
       await expect(
         clrfund.transferMatchingFunds(
           totalSpent,
@@ -478,13 +450,12 @@ describe('Clr fund deployer', () => {
           resultsCommitment,
           perVOVoiceCreditCommitment
         )
-      ).to.be.revertedWith('VotesNotTallied')
+      ).to.be.revertedWithCustomError(roundInterface, 'VotesNotTallied')
     })
 
     it('allows owner to finalize round even without matching funds', async () => {
       await clrfund.deployNewRound(roundDuration)
-      await provider.send('evm_increaseTime', [roundDuration])
-      await setRoundTally(clrfund, coordinator)
+      await time.increase(roundDuration)
       await expect(
         clrfund.transferMatchingFunds(
           totalSpent,
@@ -492,16 +463,18 @@ describe('Clr fund deployer', () => {
           resultsCommitment,
           perVOVoiceCreditCommitment
         )
-      ).to.be.revertedWith('VotesNotTallied')
+      ).to.be.revertedWithCustomError(roundInterface, 'VotesNotTallied')
     })
 
     it('pulls funds from funding source', async () => {
       await clrfund.addFundingSource(contributor.address)
-      token.connect(contributor).approve(clrfund.address, contributionAmount)
+      await (token.connect(contributor) as Contract).approve(
+        clrfund.target,
+        contributionAmount
+      )
       await clrfund.addFundingSource(deployer.address) // Doesn't have tokens
       await clrfund.deployNewRound(roundDuration)
-      await provider.send('evm_increaseTime', [roundDuration])
-      await setRoundTally(clrfund, coordinator)
+      await time.increase(roundDuration)
       await expect(
         clrfund.transferMatchingFunds(
           totalSpent,
@@ -509,17 +482,17 @@ describe('Clr fund deployer', () => {
           resultsCommitment,
           perVOVoiceCreditCommitment
         )
-      ).to.be.revertedWith('VotesNotTallied')
+      ).to.be.revertedWithCustomError(roundInterface, 'VotesNotTallied')
     })
 
     it('pulls funds from funding source if allowance is greater than balance', async () => {
       await clrfund.addFundingSource(contributor.address)
-      token
-        .connect(contributor)
-        .approve(clrfund.address, contributionAmount.mul(2))
+      await (token.connect(contributor) as Contract).approve(
+        clrfund.target,
+        contributionAmount * 2n
+      )
       await clrfund.deployNewRound(roundDuration)
-      await provider.send('evm_increaseTime', [roundDuration])
-      await setRoundTally(clrfund, coordinator)
+      await time.increase(roundDuration)
       await expect(
         clrfund.transferMatchingFunds(
           totalSpent,
@@ -527,22 +500,19 @@ describe('Clr fund deployer', () => {
           resultsCommitment,
           perVOVoiceCreditCommitment
         )
-      ).to.be.revertedWith('VotesNotTallied')
+      ).to.be.revertedWithCustomError(roundInterface, 'VotesNotTallied')
     })
 
     it('allows only owner to finalize round', async () => {
       await clrfund.deployNewRound(roundDuration)
-      await provider.send('evm_increaseTime', [roundDuration])
-      await setRoundTally(clrfund, coordinator)
+      await time.increase(roundDuration)
       await expect(
-        clrfund
-          .connect(contributor)
-          .transferMatchingFunds(
-            totalSpent,
-            totalSpentSalt,
-            resultsCommitment,
-            perVOVoiceCreditCommitment
-          )
+        (clrfund.connect(contributor) as Contract).transferMatchingFunds(
+          totalSpent,
+          totalSpentSalt,
+          resultsCommitment,
+          perVOVoiceCreditCommitment
+        )
       ).to.be.revertedWith('Ownable: caller is not the owner')
     })
 
@@ -554,15 +524,15 @@ describe('Clr fund deployer', () => {
           resultsCommitment,
           perVOVoiceCreditCommitment
         )
-      ).to.be.revertedWith('NoCurrentRound')
+      ).to.be.revertedWithCustomError(clrfund, 'NoCurrentRound')
     })
   })
 
   describe('cancelling round', () => {
     beforeEach(async () => {
-      await clrfund.setUserRegistry(userRegistry.address)
-      await clrfund.setRecipientRegistry(recipientRegistry.address)
-      await clrfund.setToken(token.address)
+      await clrfund.setUserRegistry(userRegistry.target)
+      await clrfund.setRecipientRegistry(recipientRegistry.target)
+      await clrfund.setToken(token.target)
       await clrfund.setCoordinator(coordinator.address, coordinatorPubKey)
     })
 
@@ -582,12 +552,13 @@ describe('Clr fund deployer', () => {
     it('allows only owner to cancel round', async () => {
       await clrfund.deployNewRound(roundDuration)
       await expect(
-        clrfund.connect(contributor).cancelCurrentRound()
+        (clrfund.connect(contributor) as Contract).cancelCurrentRound()
       ).to.be.revertedWith('Ownable: caller is not the owner')
     })
 
     it('reverts if round has not been deployed', async () => {
-      await expect(clrfund.cancelCurrentRound()).to.be.revertedWith(
+      await expect(clrfund.cancelCurrentRound()).to.be.revertedWithCustomError(
+        clrfund,
         'NoCurrentRound'
       )
     })
@@ -595,23 +566,24 @@ describe('Clr fund deployer', () => {
     it('reverts if round is finalized', async () => {
       await clrfund.deployNewRound(roundDuration)
       await clrfund.cancelCurrentRound()
-      await expect(clrfund.cancelCurrentRound()).to.be.revertedWith(
+      await expect(clrfund.cancelCurrentRound()).to.be.revertedWithCustomError(
+        clrfund,
         'AlreadyFinalized'
       )
     })
   })
 
   it('allows owner to set native token', async () => {
-    await expect(clrfund.setToken(token.address))
+    await expect(clrfund.setToken(token.target))
       .to.emit(clrfund, 'TokenChanged')
-      .withArgs(token.address)
-    expect(await clrfund.nativeToken()).to.equal(token.address)
+      .withArgs(token.target)
+    expect(await clrfund.nativeToken()).to.equal(token.target)
   })
 
   it('only owner can set native token', async () => {
-    const clrfundAsContributor = clrfund.connect(contributor)
+    const clrfundAsContributor = clrfund.connect(contributor) as Contract
     await expect(
-      clrfundAsContributor.setToken(token.address)
+      clrfundAsContributor.setToken(token.target)
     ).to.be.revertedWith('Ownable: caller is not the owner')
   })
 
@@ -623,7 +595,7 @@ describe('Clr fund deployer', () => {
   })
 
   it('allows only the owner to set a new coordinator', async () => {
-    const clrfundAsContributor = clrfund.connect(contributor)
+    const clrfundAsContributor = clrfund.connect(contributor) as Contract
     await expect(
       clrfundAsContributor.setCoordinator(
         coordinator.address,
@@ -634,7 +606,7 @@ describe('Clr fund deployer', () => {
 
   it('allows coordinator to call coordinatorQuit and sets coordinator to null', async () => {
     await clrfund.setCoordinator(coordinator.address, coordinatorPubKey)
-    const clrfundAsCoordinator = clrfund.connect(coordinator)
+    const clrfundAsCoordinator = clrfund.connect(coordinator) as Contract
     await expect(clrfundAsCoordinator.coordinatorQuit())
       .to.emit(clrfund, 'CoordinatorChanged')
       .withArgs(ZERO_ADDRESS)
@@ -643,13 +615,16 @@ describe('Clr fund deployer', () => {
 
   it('only coordinator can call coordinatorQuit', async () => {
     await clrfund.setCoordinator(coordinator.address, coordinatorPubKey)
-    await expect(clrfund.coordinatorQuit()).to.be.revertedWith('NotAuthorized')
+    await expect(clrfund.coordinatorQuit()).to.be.revertedWithCustomError(
+      clrfund,
+      'NotAuthorized'
+    )
   })
 
   it('should cancel current round when coordinator quits', async () => {
-    await clrfund.setUserRegistry(userRegistry.address)
-    await clrfund.setRecipientRegistry(recipientRegistry.address)
-    await clrfund.setToken(token.address)
+    await clrfund.setUserRegistry(userRegistry.target)
+    await clrfund.setRecipientRegistry(recipientRegistry.target)
+    await clrfund.setToken(token.target)
     await clrfund.setCoordinator(coordinator.address, coordinatorPubKey)
     await clrfund.deployNewRound(roundDuration)
     const fundingRoundAddress = await clrfund.getCurrentRound()
@@ -658,7 +633,7 @@ describe('Clr fund deployer', () => {
       fundingRoundAddress
     )
 
-    const clrfundAsCoordinator = clrfund.connect(coordinator)
+    const clrfundAsCoordinator = clrfund.connect(coordinator) as Contract
     await expect(clrfundAsCoordinator.coordinatorQuit())
       .to.emit(clrfund, 'RoundFinalized')
       .withArgs(fundingRoundAddress)

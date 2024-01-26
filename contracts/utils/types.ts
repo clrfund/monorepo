@@ -39,6 +39,8 @@ export interface Round {
   recipientRegistryAddress: string
   recipientDepositAmount?: string
   maciAddress: string
+  pollAddress?: string
+  pollId?: bigint
   contributorCount: number
   totalSpent: string
   matchingPoolSize: string
@@ -51,6 +53,11 @@ export interface Round {
   nativeTokenDecimals: number
   startTime: number
   endTime: number
+  signUpDuration: number
+  votingDuration: number
+  messages: bigint
+  maxMessages: bigint
+  maxRecipients: bigint
   blogUrl?: string
 }
 
@@ -66,6 +73,7 @@ export type EventType =
 
 export type AbiInfo = {
   type: EventType
+  name: string
   abi: string
 }
 

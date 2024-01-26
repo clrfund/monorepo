@@ -1,8 +1,6 @@
-import { BigNumber, Contract, Signer } from 'ethers'
-import type { TransactionResponse, TransactionReceipt } from '@ethersproject/abstract-provider'
-import { isHexString } from '@ethersproject/bytes'
+import { Contract, toNumber, isHexString } from 'ethers'
+import type { TransactionResponse, TransactionReceipt, Signer } from 'ethers'
 import { DateTime } from 'luxon'
-import { getEventArg } from '@/utils/contracts'
 import { chain } from '@/api/core'
 
 import { OptimisticRecipientRegistry } from './abi'
@@ -25,14 +23,14 @@ async function getRegistryInfo(registryAddress: string): Promise<RegistryInfo> {
     // older BaseRecipientRegistry contract did not have recipientCount
     // set it to zero as this information is only
     // used during current round for space calculation
-    recipientCount = BigNumber.from(0)
+    recipientCount = BigInt(0)
   }
   const owner = await registry.owner()
   return {
     deposit,
     depositToken: chain.currency,
-    challengePeriodDuration: challengePeriodDuration.toNumber(),
-    recipientCount: recipientCount.toNumber(),
+    challengePeriodDuration: toNumber(challengePeriodDuration),
+    recipientCount: toNumber(recipientCount),
     owner,
   }
 }
@@ -186,7 +184,7 @@ export async function getRequests(registryInfo: RegistryInfo, registryAddress: s
 async function addRecipient(
   registryAddress: string,
   recipientApplicationData: RecipientApplicationData,
-  deposit: BigNumber,
+  deposit: bigint,
   signer: Signer,
 ): Promise<TransactionResponse> {
   const registry = new Contract(registryAddress, OptimisticRecipientRegistry, signer)
@@ -194,11 +192,6 @@ async function addRecipient(
   const { address, ...metadata } = recipientData
   const transaction = await registry.addRecipient(address, JSON.stringify(metadata), { value: deposit })
   return transaction
-}
-
-export function getRequestId(receipt: TransactionReceipt, registryAddress: string): string {
-  const registry = new Contract(registryAddress, OptimisticRecipientRegistry)
-  return getEventArg(receipt, registry, 'RequestSubmitted', '_recipientId')
 }
 
 function decodeProject(recipient: Partial<Recipient>): Project {

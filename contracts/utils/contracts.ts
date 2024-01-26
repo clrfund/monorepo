@@ -1,37 +1,19 @@
-import { BigNumber, Contract } from 'ethers'
-import { TransactionResponse } from '@ethersproject/abstract-provider'
+import { TransactionResponse } from 'ethers'
+import { getEventArg } from '@clrfund/common'
 
 export async function getGasUsage(
   transaction: TransactionResponse
 ): Promise<number> {
   const receipt = await transaction.wait()
-  return receipt.gasUsed.toNumber()
+  return receipt ? Number(receipt.gasUsed) : 0
 }
 
 export async function getTxFee(
   transaction: TransactionResponse
-): Promise<BigNumber> {
+): Promise<bigint> {
   const receipt = await transaction.wait()
   // effectiveGasPrice was introduced by EIP1559
-  return receipt.gasUsed.mul(receipt.effectiveGasPrice)
+  return receipt ? BigInt(receipt.gasUsed) * BigInt(receipt.gasPrice) : 0n
 }
 
-export async function getEventArg(
-  transaction: TransactionResponse,
-  contract: Contract,
-  eventName: string,
-  argumentName: string
-): Promise<any> {
-  // eslint-disable-line @typescript-eslint/no-explicit-any
-  const receipt = await transaction.wait()
-  for (const log of receipt.logs || []) {
-    if (log.address != contract.address) {
-      continue
-    }
-    const event = contract.interface.parseLog(log)
-    if (event && event.name === eventName) {
-      return event.args[argumentName]
-    }
-  }
-  throw new Error('Event not found')
-}
+export { getEventArg }

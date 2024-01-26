@@ -29,7 +29,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { Contract, BigNumber } from 'ethers'
+import { Contract } from 'ethers'
 import { FundingRound } from '@/api/abi'
 import type { Project } from '@/api/projects'
 import Transaction from '@/components/Transaction.vue'
@@ -56,10 +56,10 @@ const props = defineProps<Props>()
 const step = ref(1)
 const claimTxHash = ref('')
 const claimTxError = ref('')
-const amount = ref(BigNumber.from(0))
+const amount = ref(BigInt(0))
 const recipientAddress = ref('')
 
-function formatAmount(value: BigNumber): string {
+function formatAmount(value: bigint): string {
   const { nativeTokenDecimals } = currentRound.value!
   return _formatAmount(value, nativeTokenDecimals)
 }
@@ -69,22 +69,22 @@ onMounted(() => {
 })
 
 async function claim() {
-  const signer = userStore.signer
+  const signer = await userStore.getSigner()
   const { fundingRoundAddress, recipientTreeDepth } = currentRound.value!
   const fundingRound = new Contract(fundingRoundAddress, FundingRound, signer)
   const recipientClaimData = getRecipientClaimData(props.project.index, recipientTreeDepth, tally.value!)
-  let claimTxReceipt
+  let claimPromise
   try {
-    claimTxReceipt = await waitForTransaction(
-      fundingRound.claimFunds(...recipientClaimData),
-      hash => (claimTxHash.value = hash),
-    )
+    claimPromise = fundingRound.claimFunds(...recipientClaimData)
+    const claimTxReceipt = await waitForTransaction(claimPromise, hash => (claimTxHash.value = hash))
   } catch (error: any) {
     claimTxError.value = error.message
     return
   }
-  amount.value = getEventArg(claimTxReceipt, fundingRound, 'FundsClaimed', '_amount')
-  recipientAddress.value = getEventArg(claimTxReceipt, fundingRound, 'FundsClaimed', '_recipient')
+
+  const claimTx = await claimPromise
+  amount.value = await getEventArg(claimTx, fundingRound, 'FundsClaimed', '_amount')
+  recipientAddress.value = await getEventArg(claimTx, fundingRound, 'FundsClaimed', '_recipient')
 
   props.claimed()
   step.value += 1

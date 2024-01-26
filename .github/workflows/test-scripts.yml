@@ -8,7 +8,8 @@ on:
       - '.github/workflows/test-scripts.yml'
 
 env:
-  NODE_VERSION: 16.x
+  NODE_VERSION: 18.x
+  ZKEYS_DOWNLOAD_SCRIPT: "download-6-8-2-3.sh"
 
 jobs:
   script-tests:
@@ -22,13 +23,6 @@ jobs:
       run: |
         sudo apt update
         sudo apt-get install build-essential libgmp-dev libsodium-dev nlohmann-json3-dev nasm g++ curl
-    - name: Install rust toolchain
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-    - name: Install zkutil
-      run: |
-        cargo install zkutil --version 0.3.2
     - name: Checkout rapidsnark source code
       uses: actions/checkout@v3
       with:
@@ -44,19 +38,13 @@ jobs:
         mkdir build_prover && cd build_prover
         cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../package
         make -j4 && make install
-    - name: Find rapidsnark
-      run: |
-        cd rapidsnark
-        pwd
-        echo "$GITHUB_WORKSPACE"
-        find . -name "prover"
     - name: Checkout source code
       uses: actions/checkout@v3
       with:
         path: monorepo
     - name: Download batch 64 params
       run: |
-        $GITHUB_WORKSPACE/monorepo/.github/scripts/download-6-8-2-3.sh
+        $GITHUB_WORKSPACE/monorepo/.github/scripts/${ZKEYS_DOWNLOAD_SCRIPT}
     - name: Build CLR
       run: |
         cd monorepo

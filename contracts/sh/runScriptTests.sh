@@ -9,9 +9,9 @@ set -e
 NOW=$(date +%s)
 export OUTPUT_DIR="./proof_output/${NOW}"
 export CIRCUIT=micro
-export NETWORK=localhost
-export CIRCUIT_DIRECTORY=${CIRCUIT_DIRECTORY:-"./snark-params"}
+export CIRCUIT_DIRECTORY=${CIRCUIT_DIRECTORY:-"./params"}
 export STATE_FILE=${OUTPUT_DIR}/state.json
+export TALLY_FILE=${OUTPUT_DIR}/tally.json
 export HARDHAT_NETWORK=localhost
 export RAPID_SNARK=${RAPID_SNARK:-~/rapidsnark/package/bin/prover}
 
@@ -28,20 +28,14 @@ function extract() {
   echo ${val}
 }
 
-# create a ClrFund deployer
-yarn ts-node cli/newDeployer.ts \
-  --directory "${CIRCUIT_DIRECTORY}" \
-  --state-file "${STATE_FILE}" \
-  --circuit "${CIRCUIT}"
-
 # create a new maci key for the coordinator
 MACI_KEYPAIR=$(yarn ts-node cli/newMaciKey.ts)
 export COORDINATOR_MACISK=$(echo "${MACI_KEYPAIR}" | grep -o "macisk.*$")
 
 # create a new instance of ClrFund
-DEPLOYER=$(extract 'deployer')
 yarn ts-node cli/newClrFund.ts \
-  --deployer "${DEPLOYER}" \
+  --circuit "${CIRCUIT}" \
+  --directory "${CIRCUIT_DIRECTORY}" \
   --user-registry-type simple \
   --recipient-registry-type simple \
   --state-file ${STATE_FILE}
@@ -68,14 +62,12 @@ yarn ts-node cli/tally.ts \
   --clrfund ${CLRFUND} \
   --circuit-directory ${CIRCUIT_DIRECTORY} \
   --circuit "${CIRCUIT}" \
-  --rapid-snark ${RAPID_SNARK} \
+  --rapidsnark ${RAPID_SNARK} \
   --batch-size 8 \
   --output-dir ${OUTPUT_DIR} \
-  --maci-tx-hash "${MACI_TRANSACTION_HASH}" \
-  --state-file ${STATE_FILE}
+  --maci-tx-hash "${MACI_TRANSACTION_HASH}"
  
-# # finalize the round
-TALLY_FILE=$(extract 'tallyFile')
+# finalize the round
 yarn ts-node cli/finalize.ts --clrfund "${CLRFUND}" --tally-file ${TALLY_FILE}
  
 # claim funds

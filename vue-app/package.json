@@ -32,7 +32,7 @@
     "@walletconnect/modal": "^2.6.0",
     "crypto-js": "^4.1.1",
     "ethereum-blockies-base64": "^1.0.2",
-    "ethers": "^5.7.2",
+    "ethers": "^6.9.2",
     "floating-vue": "^2.0.0-beta.20",
     "google-spreadsheet": "^3.3.0",
     "graphql": "^16.6.0",

@@ -1,4 +1,4 @@
-import { log, ByteArray, crypto, BigInt } from '@graphprotocol/graph-ts'
+import { log } from '@graphprotocol/graph-ts'
 import { SignUp } from '../generated/templates/MACI/MACI'
 
 import { FundingRound, PublicKey } from '../generated/schema'
@@ -21,7 +21,11 @@ import { makePublicKeyId } from './PublicKey'
 // - contract.verifier(...)
 
 export function handleSignUp(event: SignUp): void {
+  let fundingRoundAddress = event.transaction.to!
+  let fundingRoundId = fundingRoundAddress.toHex()
+
   let publicKeyId = makePublicKeyId(
+    fundingRoundId,
     event.params._userPubKey.x,
     event.params._userPubKey.y
   )
@@ -34,11 +38,8 @@ export function handleSignUp(event: SignUp): void {
   publicKey.x = event.params._userPubKey.x
   publicKey.y = event.params._userPubKey.y
   publicKey.stateIndex = event.params._stateIndex
-
   publicKey.voiceCreditBalance = event.params._voiceCreditBalance
 
-  let fundingRoundAddress = event.transaction.to!
-  let fundingRoundId = fundingRoundAddress.toHex()
   let fundingRound = FundingRound.load(fundingRoundId)
   if (fundingRound == null) {
     log.error('Error: handleSignUp failed, fundingRound not registered', [])

@@ -1,4 +1,4 @@
-import { Contract } from 'ethers'
+import { Contract, getNumber } from 'ethers'
 import { MACIFactory as MACIFactoryABI } from './abi'
 import { clrFundContract, provider } from './core'
 
@@ -15,6 +15,6 @@ export async function getMACIFactoryInfo(): Promise<MACIFactory> {
 
   return {
     maciFactoryAddress,
-    maxRecipients: 5 ** treeDepths.voteOptionTreeDepth - 1,
+    maxRecipients: 5 ** getNumber(treeDepths.voteOptionTreeDepth) - 1,
   }
 }

@@ -5,8 +5,8 @@ pragma solidity 0.8.10;
 import {MACIFactory} from './MACIFactory.sol';
 import {ClrFund} from './ClrFund.sol';
 import {CloneFactory} from './CloneFactory.sol';
-import {SignUpGatekeeper} from "@clrfund/maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol";
-import {InitialVoiceCreditProxy} from "@clrfund/maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol";
+import {SignUpGatekeeper} from "maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol";
+import {InitialVoiceCreditProxy} from "maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol";
 import {Ownable} from '@openzeppelin/contracts/access/Ownable.sol';
 
 contract ClrFundDeployer is CloneFactory, Ownable {
@@ -61,26 +61,12 @@ contract ClrFundDeployer is CloneFactory, Ownable {
   function deployClrFund() public returns (address) {
     ClrFund clrfund = ClrFund(createClone(clrfundTemplate));
     clrfund.init(maciFactory, roundFactory);
+
+    // clrfund.init() set the owner to us, now transfer to the caller
+    clrfund.transferOwnership(msg.sender);
+
     emit NewInstance(address(clrfund));
 
     return address(clrfund);
-  }
-
-  /**
-    * @dev Register the clrfund instance of subgraph event processing
-    * @param _clrFundAddress ClrFund address
-    * @param _metadata Clrfund metadata
-    */
-  function registerInstance(
-      address _clrFundAddress,
-      string memory _metadata
-    ) public returns (bool) {
-
-    if (clrfunds[_clrFundAddress] == true) revert ClrFundAlreadyRegistered();
-
-    clrfunds[_clrFundAddress] = true;
-
-    emit Register(_clrFundAddress, _metadata);
-    return true;
   }
 }

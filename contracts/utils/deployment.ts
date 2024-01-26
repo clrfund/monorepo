@@ -1,13 +1,21 @@
-import { Signer, Contract, utils, BigNumber, ContractTransaction } from 'ethers'
-import { link } from 'ethereum-waffle'
+import {
+  Signer,
+  Contract,
+  ContractTransactionResponse,
+  encodeBytes32String,
+  BaseContract,
+} from 'ethers'
 import path from 'path'
 
 import { readFileSync } from 'fs'
-import { HardhatEthersHelpers } from '@nomiclabs/hardhat-ethers/types'
+import { HardhatEthersHelpers } from '@nomicfoundation/hardhat-ethers/types'
 import { DEFAULT_CIRCUIT } from './circuits'
 import { isPathExist } from './misc'
 import { MaciParameters } from './maciParameters'
 import { PrivKey, Keypair } from '@clrfund/common'
+import { ZERO_ADDRESS } from './constants'
+import { VkRegistry } from '../typechain-types'
+import { IVerifyingKeyStruct } from 'maci-contracts'
 
 // Number.MAX_SAFE_INTEGER - 1
 export const challengePeriodSeconds = '9007199254740990'
@@ -35,16 +43,18 @@ export interface BrightIdParams {
   sponsor: string
 }
 
-export function linkBytecode(bytecode: string, libraries: Libraries): string {
-  // Workarounds for https://github.com/nomiclabs/buidler/issues/611
-  const linkable = { evm: { bytecode: { object: bytecode } } }
-  for (const [libraryName, libraryAddress] of Object.entries(libraries)) {
-    link(linkable, libraryName, libraryAddress.toLowerCase())
-  }
-  return linkable.evm.bytecode.object
-}
-
 type PoseidonName = 'PoseidonT3' | 'PoseidonT4' | 'PoseidonT5' | 'PoseidonT6'
+
+/**
+ * Log the message based on the quiet flag
+ * @param quiet whether to log the message
+ * @param message the message to log
+ */
+function logInfo(quiet = true, message: string, ...args: any[]) {
+  if (!quiet) {
+    console.log(message, ...args)
+  }
+}
 
 /**
  * Deploy the Poseidon contracts. These contracts
@@ -103,13 +113,12 @@ export async function deployContract({
   ethers,
   signer,
 }: deployContractOptions): Promise<Contract> {
-  const contractFactory = await ethers.getContractFactory(name, {
+  const contract = await ethers.deployContract(name, contractArgs, {
     signer,
     libraries,
   })
 
-  const contract = await contractFactory.deploy(...contractArgs)
-  return await contract.deployed()
+  return await contract.waitForDeployment()
 }
 
 /**
@@ -137,8 +146,9 @@ export async function deployUserRegistry({
   brightidVerifier?: string
   brightidSponsor?: string
 }): Promise<Contract> {
-  let userRegistry: Contract
+  let contractArgs: any[] = []
   const registryType = (userRegistryType || '').toLowerCase()
+
   if (registryType === 'brightid') {
     if (!brightidContext) {
       throw new Error('Missing BrightId context')
@@ -150,31 +160,24 @@ export async function deployUserRegistry({
       throw new Error('Missing BrightId sponsor contract address')
     }
 
-    const BrightIdUserRegistry = await ethers.getContractFactory(
-      'BrightIdUserRegistry',
-      signer
-    )
-
-    userRegistry = await BrightIdUserRegistry.deploy(
-      utils.formatBytes32String(brightidContext),
+    contractArgs = [
+      encodeBytes32String(brightidContext),
       brightidVerifier,
-      brightidSponsor
-    )
-  } else {
-    const userRegistryName = userRegistryNames[registryType]
-    if (!userRegistryName) {
-      throw new Error('unsupported user registry type: ' + registryType)
-    }
-
-    const UserRegistry = await ethers.getContractFactory(
-      userRegistryName,
-      signer
-    )
-    userRegistry = await UserRegistry.deploy()
+      brightidSponsor,
+    ]
   }
 
-  await userRegistry.deployTransaction.wait()
-  return userRegistry
+  const userRegistryName = userRegistryNames[registryType]
+  if (!userRegistryName) {
+    throw new Error('unsupported user registry type: ' + registryType)
+  }
+
+  return deployContract({
+    name: userRegistryName,
+    contractArgs,
+    ethers,
+    signer,
+  })
 }
 
 /**
@@ -197,7 +200,7 @@ export async function deployRecipientRegistry({
 }: {
   type: string
   controller: string
-  deposit?: BigNumber
+  deposit?: bigint
   challengePeriod?: string
   ethers: HardhatEthersHelpers
   signer?: Signer
@@ -222,10 +225,14 @@ export async function deployRecipientRegistry({
       ? [controller]
       : [deposit, challengePeriod, controller]
 
-  const factory = await ethers.getContractFactory(registryName, signer)
-  const recipientRegistry = await factory.deploy(...args)
+  const recipientRegistry = await ethers.deployContract(
+    registryName,
+    args,
+    signer
+  )
 
-  return await recipientRegistry.deployed()
+  await recipientRegistry.waitForDeployment()
+  return recipientRegistry
 }
 
 /**
@@ -274,10 +281,10 @@ export async function deployPoseidonLibraries({
   })
 
   const libraries = {
-    PoseidonT3: PoseidonT3Contract.address,
-    PoseidonT4: PoseidonT4Contract.address,
-    PoseidonT5: PoseidonT5Contract.address,
-    PoseidonT6: PoseidonT6Contract.address,
+    PoseidonT3: await PoseidonT3Contract.getAddress(),
+    PoseidonT4: await PoseidonT4Contract.getAddress(),
+    PoseidonT5: await PoseidonT5Contract.getAddress(),
+    PoseidonT6: await PoseidonT6Contract.getAddress(),
   }
   return libraries
 }
@@ -322,109 +329,94 @@ export async function deployPollFactory({
 }
 
 /**
- * Deploy the contracts needed to run the proveOnChain script.
- * If the poseidon contracts are not provided, it will create them
- * using the byte codes in the artifactsPath
- *
- * libraries - poseidon libraries
- * artifactsPath - path that contacts the poseidon abi and bytecode
- *
- * @returns the MessageProcessor and Tally contracts
- */
-export async function deployMessageProcesorAndTally({
-  artifactsPath,
-  libraries,
-  ethers,
-  signer,
-}: {
-  libraries?: Libraries
-  artifactsPath?: string
-  signer?: Signer
-  ethers: HardhatEthersHelpers
-}): Promise<{
-  mpContract: Contract
-  tallyContract: Contract
-}> {
-  if (!libraries) {
-    if (!artifactsPath) {
-      throw Error('Need the artifacts path to create the poseidon contracts')
-    }
-    libraries = await deployPoseidonLibraries({
-      artifactsPath,
-      ethers,
-      signer,
-    })
-  }
-
-  const verifierContract = await deployContract({
-    name: 'Verifier',
-    signer,
-    ethers,
-  })
-  const tallyContract = await deployContract({
-    name: 'Tally',
-    contractArgs: [verifierContract.address],
-    libraries,
-    ethers,
-    signer,
-  })
-
-  // deploy the message processing contract
-  const mpContract = await deployContract({
-    name: 'MessageProcessor',
-    contractArgs: [verifierContract.address],
-    signer,
-    libraries,
-    ethers,
-  })
-
-  return {
-    mpContract,
-    tallyContract,
-  }
-}
-
-/**
  * Deploy an instance of MACI factory
- *
  * libraries - poseidon contracts
  * ethers - hardhat ethers handle
  * signer - if signer is not provided, use default signer in ethers
- *
  * @returns MACI factory contract
  */
 export async function deployMaciFactory({
   libraries,
   ethers,
   signer,
+  maciParameters,
+  quiet,
 }: {
   libraries: Libraries
   ethers: HardhatEthersHelpers
   signer?: Signer
+  maciParameters: MaciParameters
+  quiet?: boolean
 }): Promise<Contract> {
+  const vkRegistry = await deployContract({
+    name: 'VkRegistry',
+    ethers,
+    signer,
+  })
+  logInfo(quiet, 'Deployed VkRegistry at', vkRegistry.target)
+
+  await setVerifyingKeys(
+    vkRegistry as BaseContract as VkRegistry,
+    maciParameters
+  )
+
+  const verifier = await deployContract({
+    name: 'Verifier',
+    ethers,
+    signer,
+  })
+  logInfo(quiet, 'Deployed Verifier at', verifier.target)
+
   const pollFactory = await deployContract({
     name: 'PollFactory',
     libraries,
     ethers,
     signer,
   })
+  logInfo(quiet, 'Deployed PollFactory at', pollFactory.target)
 
-  const vkRegistry = await deployContract({
-    name: 'VkRegistry',
+  const tallyFactory = await deployContract({
+    name: 'TallyFactory',
+    libraries,
     ethers,
     signer,
   })
+  logInfo(quiet, 'Deployed TallyFactory at', tallyFactory.target)
+
+  const messageProcessorFactory = await deployContract({
+    name: 'MessageProcessorFactory',
+    libraries,
+    ethers,
+    signer,
+  })
+  logInfo(
+    quiet,
+    'Deployed MessageProcessorFactory at',
+    messageProcessorFactory.target
+  )
+
+  // all the factories to deploy MACI contracts
+  const factories = {
+    pollFactory: pollFactory.target,
+    tallyFactory: tallyFactory.target,
+    // subsidy is not currently used
+    subsidyFactory: ZERO_ADDRESS,
+    messageProcessorFactory: messageProcessorFactory.target,
+  }
 
   const maciFactory = await deployContract({
     name: 'MACIFactory',
     libraries,
-    contractArgs: [vkRegistry.address, pollFactory.address],
+    contractArgs: [vkRegistry.target, factories, verifier.target],
     ethers,
     signer,
   })
+  logInfo(quiet, 'Deployed MACIFactory at', maciFactory.target)
 
-  const transferTx = await vkRegistry.transferOwnership(maciFactory.address)
-  await transferTx.wait()
+  const setTx = await maciFactory.setMaciParameters(
+    ...maciParameters.asContractParam()
+  )
+  await setTx.wait()
 
   return maciFactory
 }
@@ -439,7 +431,7 @@ export async function setMaciParameters(
   maciFactory: Contract,
   directory: string,
   circuit = DEFAULT_CIRCUIT
-): Promise<ContractTransaction> {
+): Promise<ContractTransactionResponse> {
   if (!isPathExist(directory)) {
     throw new Error(`Path ${directory} does not exists`)
   }
@@ -453,8 +445,34 @@ export async function setMaciParameters(
 }
 
 /**
+ * Set Verifying key
+ * @param vkRegistry VKRegistry contract
+ * @param maciParameters MACI tree depths and verifying key information
+ * @returns transaction response
+ */
+export async function setVerifyingKeys(
+  vkRegistry: VkRegistry,
+  params: MaciParameters
+): Promise<ContractTransactionResponse> {
+  const tx = await vkRegistry.setVerifyingKeys(
+    params.stateTreeDepth,
+    params.treeDepths.intStateTreeDepth,
+    params.treeDepths.messageTreeDepth,
+    params.treeDepths.voteOptionTreeDepth,
+    params.messageBatchSize,
+    params.processVk.asContractParam() as IVerifyingKeyStruct,
+    params.tallyVk.asContractParam() as IVerifyingKeyStruct
+  )
+
+  const receipt = await tx.wait()
+  if (receipt?.status !== 1) {
+    throw new Error('Failed to set verifying key; transaction receipt status 1')
+  }
+  return tx
+}
+
+/**
  * Set the coordinator address and maci public key in the funding round factory
- *
  * @param fundingRoundFactory funding round factory contract
  * @param coordinatorAddress
  * @param MaciPrivateKey
@@ -467,10 +485,10 @@ export async function setCoordinator({
   clrfundContract: Contract
   coordinatorAddress: string
   coordinatorMacisk?: string
-}): Promise<ContractTransaction> {
+}): Promise<ContractTransactionResponse> {
   // Generate or use the passed in coordinator key
   const privKey = coordinatorMacisk
-    ? PrivKey.unserialize(coordinatorMacisk)
+    ? PrivKey.deserialize(coordinatorMacisk)
     : undefined
 
   const keypair = new Keypair(privKey)

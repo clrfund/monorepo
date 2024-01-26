@@ -1,4 +1,12 @@
-import { utils, providers } from 'ethers'
+import {
+  keccak256,
+  concat,
+  encodeRlp,
+  decodeRlp,
+  zeroPadValue,
+  toBeHex,
+} from 'ethers'
+import type { JsonRpcProvider } from 'ethers'
 
 /**
  * RLP encode the proof returned from eth_getProof
@@ -6,9 +14,9 @@ import { utils, providers } from 'ethers'
  * @returns
  */
 export function rlpEncodeProof(proof: string[]) {
-  const decodedProof = proof.map((node: string) => utils.RLP.decode(node))
+  const decodedProof = proof.map((node: string) => decodeRlp(node))
 
-  return utils.RLP.encode(decodedProof)
+  return encodeRlp(decodedProof)
 }
 
 /**
@@ -18,12 +26,7 @@ export function rlpEncodeProof(proof: string[]) {
  * @returns storage key used in the eth_getProof params
  */
 export function getStorageKey(account: string, slotIndex: number) {
-  return utils.keccak256(
-    utils.concat([
-      utils.hexZeroPad(account, 32),
-      utils.hexZeroPad(utils.hexValue(slotIndex), 32),
-    ])
-  )
+  return keccak256(concat([zeroPadValue(account, 32), toBeHex(slotIndex, 32)]))
 }
 
 /**
@@ -33,7 +36,7 @@ export function getStorageKey(account: string, slotIndex: number) {
  */
 async function getProof(
   params: Array<string | string[]>,
-  provider: providers.JsonRpcProvider
+  provider: JsonRpcProvider
 ): Promise<any> {
   try {
     const proof = await provider.send('eth_getProof', params)
@@ -56,7 +59,7 @@ async function getProof(
 export async function getAccountProof(
   token: string,
   blockHash: string,
-  provider: providers.JsonRpcProvider
+  provider: JsonRpcProvider
 ): Promise<any> {
   const params = [token, [], blockHash]
   return getProof(params, provider)
@@ -76,7 +79,7 @@ export async function getStorageProof(
   blockHash: string,
   userAccount: string,
   storageSlotIndex: number,
-  provider: providers.JsonRpcProvider
+  provider: JsonRpcProvider
 ): Promise<any> {
   const storageKey = getStorageKey(userAccount, storageSlotIndex)
 

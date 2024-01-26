@@ -96,7 +96,7 @@ const depositAmount = computed(() => {
 
 const hasLowFunds = computed(() => {
   if (currentUser.value?.etherBalance && recipientRegistryInfo.value?.deposit) {
-    return currentUser.value.etherBalance.lt(recipientRegistryInfo.value.deposit)
+    return currentUser.value.etherBalance < recipientRegistryInfo.value.deposit
   }
   return false
 })

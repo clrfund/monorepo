@@ -1,13 +1,12 @@
 import { Log } from '../providers/BaseProvider'
 import { Project } from '../types'
-import { utils, BigNumber, constants } from 'ethers'
-import { TOPIC_ABIS } from '../abi'
-import { RecipientState } from '../constants'
+import { toUtf8String as tryToUtf8String, decodeRlp } from 'ethers'
+import { RecipientState, ZERO_ADDRESS } from '../constants'
 import { BaseParser } from './BaseParser'
 
 function toUtf8String(hex: string): string | undefined {
   try {
-    return utils.toUtf8String(hex)
+    return tryToUtf8String(hex)
   } catch {
     return undefined
   }
@@ -25,16 +24,25 @@ function sanitizeImageHash(url: string | undefined): string | undefined {
 function decodeMetadata(rawMetadata: string): any {
   // best effort to parse the rlp encoded metadata
   try {
-    const decoded = utils.RLP.decode(rawMetadata)
-    const utf8s = decoded.map(toUtf8String)
+    const decoded = decodeRlp(rawMetadata)
+
+    if (!Array.isArray(decoded)) {
+      throw new Error('Unexpected metadata format, expecting array')
+    }
+
+    const utf8s = decoded.map((val) => {
+      if (typeof val !== 'string') {
+        throw new Error('Unexpected decoded format, expecting string')
+      }
+      return typeof val === 'string' ? toUtf8String(val) : val
+    })
 
     const name = utf8s[0]
     const recipientAddress = decoded[1]
-    const imageHash = sanitizeImageHash(utf8s[2])
+    const imageHash = sanitizeImageHash(utf8s[2] as string)
     const description = utf8s[3]
     const websiteUrl = utf8s[4]
     const twitterUrl = utf8s[5]
-
     return {
       name,
       recipientAddress,
@@ -55,19 +63,13 @@ export class KlerosRecipientAddedParser extends BaseParser {
   }
 
   parse(log: Log): Partial<Project> {
-    const abiInfo = TOPIC_ABIS[this.topic0]
-    if (!abiInfo) {
-      throw new Error(`topic ${this.topic0} not found`)
-    }
-
-    const parser = new utils.Interface([abiInfo.abi])
-    const { args } = parser.parseLog(log)
+    const args = this.getEventArgs(log)
     const id = args._recipientId
-    const recipientIndex = BigNumber.from(args._index).toNumber()
+    const recipientIndex = Number(args._index)
     const state = RecipientState.Accepted
     const rawMetadata = args._metadata
     const metadata = decodeMetadata(args._metadata)
-    const recipientAddress = metadata?.recipientAddress || constants.AddressZero
+    const recipientAddress = metadata?.recipientAddress || ZERO_ADDRESS
     const name = metadata?.name || '?'
 
     return {

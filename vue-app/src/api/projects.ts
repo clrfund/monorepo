@@ -1,5 +1,5 @@
-import { BigNumber, Contract, Signer } from 'ethers'
-import type { TransactionResponse } from '@ethersproject/abstract-provider'
+import { Contract, Interface, getNumber } from 'ethers'
+import type { TransactionResponse, Signer } from 'ethers'
 import { FundingRound, OptimisticRecipientRegistry } from './abi'
 import { clrFundContract, provider, recipientRegistryType, ipfsGatewayUrl } from './core'
 
@@ -9,7 +9,6 @@ import KlerosRegistry from './recipient-registry-kleros'
 import sdk from '@/graphql/sdk'
 import { getLeaderboardData } from '@/api/leaderboard'
 import type { RecipientApplicationData } from '@/api/types'
-import { getEventArg } from '@/utils/contracts'
 
 export interface LeaderboardProject {
   id: string // Address or another ID depending on registry implementation
@@ -18,9 +17,9 @@ export interface LeaderboardProject {
   bannerImageUrl?: string
   thumbnailImageUrl?: string
   imageUrl?: string
-  allocatedAmount: BigNumber
-  votes: BigNumber
-  donation: BigNumber
+  allocatedAmount: bigint
+  votes: bigint
+  donation: bigint
 }
 
 export interface Project {
@@ -158,15 +157,22 @@ export async function getProjectByIndex(
 export async function getRecipientIdByHash(transactionHash: string): Promise<string | null> {
   try {
     const receipt = await provider.getTransactionReceipt(transactionHash)
+    if (!receipt) {
+      return null
+    }
 
+    const eventName = 'RequestSubmitted'
+    const argumentName = '_recipientId'
+    const registryInterface = new Interface(OptimisticRecipientRegistry)
     // should only have 1 event, just in case, return the first matching event
     for (const log of receipt.logs) {
-      const registry = new Contract(log.address, OptimisticRecipientRegistry, provider)
-      try {
-        const recipientId = getEventArg(receipt, registry, 'RequestSubmitted', '_recipientId')
-        return recipientId
-      } catch {
-        // try next log
+      const event = registryInterface.parseLog({
+        data: log.data,
+        topics: [...log.topics],
+      })
+      // eslint-disable-next-line
+      if (event && event.name === eventName) {
+        return event.args[argumentName]
       }
     }
   } catch {
@@ -180,11 +186,11 @@ export function toLeaderboardProject(project: any): LeaderboardProject {
   return {
     id: project.id,
     name: project.name,
-    index: project.recipientIndex,
+    index: getNumber(project.recipientIndex),
     imageUrl,
-    allocatedAmount: BigNumber.from(project.allocatedAmount || '0'),
-    votes: BigNumber.from(project.tallyResult || '0'),
-    donation: BigNumber.from(project.spentVoiceCredits || '0'),
+    allocatedAmount: BigInt(project.allocatedAmount || '0'),
+    votes: BigInt(project.tallyResult || '0'),
+    donation: BigInt(project.spentVoiceCredits || '0'),
   }
 }
 

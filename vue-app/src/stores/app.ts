@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { BigNumber } from 'ethers'
 import {
   type CartItem,
   type Contributor,
@@ -31,7 +30,7 @@ export type AppState = {
   cartEditModeSelected: boolean
   committedCart: CartItem[]
   cartLoaded: boolean
-  contribution: BigNumber | null
+  contribution: bigint | null
   contributor: Contributor | null
   hasVoted: boolean
   currentRound: RoundInfo | null
@@ -147,7 +146,7 @@ export const useAppStore = defineStore('app', {
     },
     hasUserContributed: (state): boolean => {
       const userStore = useUserStore()
-      return !!userStore.currentUser && !!state.contribution && !state.contribution.isZero()
+      return !!userStore.currentUser && !!state.contribution && state.contribution !== BigInt(0)
     },
     operator: (): string => {
       return operator
@@ -163,10 +162,10 @@ export const useAppStore = defineStore('app', {
         return clrFund.userRegistryAddress
       }
     },
-    matchingPool: (state): BigNumber => {
+    matchingPool: (state): bigint => {
       const { currentRound, clrFund } = state
 
-      let matchingPool = BigNumber.from(0)
+      let matchingPool = BigInt(0)
 
       if (clrFund) {
         matchingPool = clrFund.matchingPool
@@ -349,7 +348,7 @@ export const useAppStore = defineStore('app', {
         throw new Error('item is not in the cart')
       } else if (this.contribution === null) {
         throw new Error('invalid operation')
-      } else if (this.contribution.isZero() || this.cart.length > MAX_CART_SIZE) {
+      } else if (this.contribution === BigInt(0) || this.cart.length > MAX_CART_SIZE) {
         this.cart.splice(itemIndex, 1)
       } else {
         // The number of MACI messages can't go down after initial submission
@@ -438,7 +437,7 @@ export const useAppStore = defineStore('app', {
     setContributor(contributor: Contributor | null) {
       this.contributor = contributor
     },
-    setContribution(contribution: BigNumber | null) {
+    setContribution(contribution: bigint | null) {
       this.contribution = contribution
     },
     async loadContributorData() {

@@ -7,7 +7,7 @@ on:
       - 'contracts/**'
 
 env:
-  NODE_VERSION: 16.x
+  NODE_VERSION: 18.x
 
 jobs:
   test-contracts:
@@ -22,7 +22,7 @@ jobs:
     - name: Install
       run: |
         git config --global url."https://".insteadOf git://
-        yarn
+        yarn && yarn build
     - name: Run tests
       run: yarn test:contracts
 

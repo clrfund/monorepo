@@ -32,7 +32,7 @@ async function main(args: any) {
   const users = [contributor1, contributor2]
   let addUserTx
   for (const account of users) {
-    addUserTx = await userRegistry.addUser(account.getAddress())
+    addUserTx = await userRegistry.addUser(account.address)
     addUserTx.wait()
   }
 

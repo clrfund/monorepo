@@ -17,10 +17,6 @@ type ClrFund @entity {
   voteOptionTreeDepth: BigInt
   tallyBatchSize: BigInt
   messageBatchSize: BigInt
-  batchUstVerifier: Bytes
-  qvtVerifier: Bytes
-  signUpDuration: BigInt
-  votingDuration: BigInt
 
   maxUsers: BigInt
   maxMessages: BigInt

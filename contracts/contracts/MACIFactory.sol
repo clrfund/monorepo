@@ -2,24 +2,31 @@
 
 pragma solidity ^0.8.10;
 
-import {MACI} from '@clrfund/maci-contracts/contracts/MACI.sol';
-import {Poll, PollFactory} from '@clrfund/maci-contracts/contracts/Poll.sol';
-import {SignUpGatekeeper} from '@clrfund/maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol';
-import {InitialVoiceCreditProxy} from '@clrfund/maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
-import {TopupCredit} from '@clrfund/maci-contracts/contracts/TopupCredit.sol';
-import {VkRegistry} from '@clrfund/maci-contracts/contracts/VkRegistry.sol';
-import {SnarkCommon} from '@clrfund/maci-contracts/contracts/crypto/SnarkCommon.sol';
+import {MACI} from 'maci-contracts/contracts/MACI.sol';
+import {IPollFactory} from 'maci-contracts/contracts/interfaces/IPollFactory.sol';
+import {ITallySubsidyFactory} from 'maci-contracts/contracts/interfaces/ITallySubsidyFactory.sol';
+import {IMessageProcessorFactory} from 'maci-contracts/contracts/interfaces/IMPFactory.sol';
+import {SignUpGatekeeper} from 'maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol';
+import {InitialVoiceCreditProxy} from 'maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
+import {TopupCredit} from 'maci-contracts/contracts/TopupCredit.sol';
+import {VkRegistry} from 'maci-contracts/contracts/VkRegistry.sol';
+import {Verifier} from 'maci-contracts/contracts/crypto/Verifier.sol';
+import {SnarkCommon} from 'maci-contracts/contracts/crypto/SnarkCommon.sol';
 import {Ownable} from '@openzeppelin/contracts/access/Ownable.sol';
-import {Params} from '@clrfund/maci-contracts/contracts/Params.sol';
-import {IPubKey} from '@clrfund/maci-contracts/contracts/DomainObjs.sol';
+import {Params} from 'maci-contracts/contracts/utilities/Params.sol';
+import {DomainObjs} from 'maci-contracts/contracts/utilities/DomainObjs.sol';
+import {MACICommon} from './MACICommon.sol';
 
-contract MACIFactory is Ownable, Params, SnarkCommon, IPubKey {
-  // Constants
-  uint8 private constant VOTE_OPTION_TREE_BASE = 5;
+contract MACIFactory is Ownable, Params, SnarkCommon, DomainObjs, MACICommon {
 
-  // State
+  // Verifying Key Registry containing circuit parameters
   VkRegistry public vkRegistry;
-  PollFactory public pollFactory;
+  // All the factory contracts used to deploy Poll, Tally, MessageProcessor, Subsidy
+  Factories public factories;
+  // verifier is used when creating Tally, MessageProcessor, Subsidy
+  Verifier public verifier;
+
+  // circuit parameters
   uint8 public stateTreeDepth;
   TreeDepths public treeDepths;
   MaxValues public maxValues;
@@ -35,13 +42,25 @@ contract MACIFactory is Ownable, Params, SnarkCommon, IPubKey {
   error TallyVkNotSet();
   error InvalidVkRegistry();
   error InvalidPollFactory();
+  error InvalidTallyFactory();
+  error InvalidSubsidyFactory();
+  error InvalidMessageProcessorFactory();
+  error InvalidVerifier();
 
-  constructor(address _vkRegistry, address _pollFactory) {
+  constructor(
+    address _vkRegistry,
+    Factories memory _factories,
+    address _verifier
+  ) {
     if (_vkRegistry == address(0)) revert InvalidVkRegistry();
-    if (_pollFactory == address(0)) revert InvalidPollFactory();
+    if (_factories.pollFactory == address(0)) revert InvalidPollFactory();
+    if (_factories.tallyFactory == address(0)) revert InvalidTallyFactory();
+    if (_factories.messageProcessorFactory == address(0)) revert InvalidMessageProcessorFactory();
+    if (_verifier == address(0)) revert InvalidVerifier();
 
     vkRegistry = VkRegistry(_vkRegistry);
-    pollFactory = PollFactory(_pollFactory);
+    factories = _factories;
+    verifier = Verifier(_verifier);
   }
 
   /**
@@ -60,7 +79,37 @@ contract MACIFactory is Ownable, Params, SnarkCommon, IPubKey {
   function setPollFactory(address _pollFactory) public onlyOwner {
     if (_pollFactory == address(0)) revert InvalidPollFactory();
 
-    pollFactory = PollFactory(_pollFactory);
+    factories.pollFactory = _pollFactory;
+  }
+
+  /**
+   * @dev set tally factory in MACI factory
+   * @param _tallyFactory tally factory
+   */
+  function setTallyFactory(address _tallyFactory) public onlyOwner {
+    if (_tallyFactory == address(0)) revert InvalidTallyFactory();
+
+    factories.tallyFactory = _tallyFactory;
+  }
+
+  /**
+   * @dev set message processor factory in MACI factory
+   * @param _messageProcessorFactory message processor factory
+   */
+  function setMessageProcessorFactory(address _messageProcessorFactory) public onlyOwner {
+    if (_messageProcessorFactory == address(0)) revert InvalidMessageProcessorFactory();
+
+    factories.messageProcessorFactory = _messageProcessorFactory;
+  }
+
+  /**
+   * @dev set verifier in MACI factory
+   * @param _verifier verifier contract
+   */
+  function setVerifier(address _verifier) public onlyOwner {
+    if (_verifier == address(0)) revert InvalidVerifier();
+
+    verifier = Verifier(_verifier);
   }
 
   /**
@@ -70,38 +119,32 @@ contract MACIFactory is Ownable, Params, SnarkCommon, IPubKey {
     uint8 _stateTreeDepth,
     TreeDepths calldata _treeDepths,
     MaxValues calldata _maxValues,
-    uint256 _messageBatchSize,
-    VerifyingKey calldata _processVk,
-    VerifyingKey calldata _tallyVk
+    uint256 _messageBatchSize
   )
     public
     onlyOwner
   {
+
     if (!vkRegistry.hasProcessVk(
-        _stateTreeDepth,
-        _treeDepths.messageTreeDepth,
-        _treeDepths.voteOptionTreeDepth,
-        _messageBatchSize) ||
-      !vkRegistry.hasTallyVk(
-        _stateTreeDepth,
-        _treeDepths.intStateTreeDepth,
-        _treeDepths.voteOptionTreeDepth
-      )
+      _stateTreeDepth,
+      _treeDepths.messageTreeDepth,
+      _treeDepths.voteOptionTreeDepth,
+      _messageBatchSize)
     ) {
-      vkRegistry.setVerifyingKeys(
-        _stateTreeDepth,
-        _treeDepths.intStateTreeDepth,
-        _treeDepths.messageTreeDepth,
-        _treeDepths.voteOptionTreeDepth,
-        _messageBatchSize,
-        _processVk,
-        _tallyVk
-      );
+      revert ProcessVkNotSet();
+    }
+
+    if (!vkRegistry.hasTallyVk(
+      _stateTreeDepth,
+      _treeDepths.intStateTreeDepth,
+      _treeDepths.voteOptionTreeDepth)
+    ) {
+      revert TallyVkNotSet();
     }
 
     stateTreeDepth = _stateTreeDepth;
-    maxValues = _maxValues;
     treeDepths = _treeDepths;
+    maxValues = _maxValues;
     messageBatchSize = _messageBatchSize;
 
     emit MaciParametersChanged();
@@ -116,10 +159,11 @@ contract MACIFactory is Ownable, Params, SnarkCommon, IPubKey {
     address topupCredit,
     uint256 duration,
     address coordinator,
-    PubKey calldata coordinatorPubKey
+    PubKey calldata coordinatorPubKey,
+    address maciOwner
   )
     external
-    returns (MACI _maci)
+    returns (MACI _maci, MACI.PollContracts memory _pollContracts)
   {
     if (!vkRegistry.hasProcessVk(
       stateTreeDepth,
@@ -139,14 +183,33 @@ contract MACIFactory is Ownable, Params, SnarkCommon, IPubKey {
     }
 
     _maci = new MACI(
-      pollFactory,
+      IPollFactory(factories.pollFactory),
+      IMessageProcessorFactory(factories.messageProcessorFactory),
+      ITallySubsidyFactory(factories.tallyFactory),
+      ITallySubsidyFactory(factories.subsidyFactory),
       signUpGatekeeper,
-      initialVoiceCreditProxy
+      initialVoiceCreditProxy,
+      TopupCredit(topupCredit),
+      stateTreeDepth
     );
 
-    _maci.init(vkRegistry, TopupCredit(topupCredit));
-    address poll = _maci.deployPoll(duration, maxValues, treeDepths, coordinatorPubKey);
-    Poll(poll).transferOwnership(coordinator);
+    _pollContracts = _maci.deployPoll(
+      duration,
+      maxValues,
+      treeDepths,
+      coordinatorPubKey,
+      address(verifier),
+      address(vkRegistry),
+      // pass false to not deploy the subsidy contract
+      false
+    );
+
+    // transfer ownership to coordinator to run the tally scripts
+    Ownable(_pollContracts.poll).transferOwnership(coordinator);
+    Ownable(_pollContracts.messageProcessor).transferOwnership(coordinator);
+    Ownable(_pollContracts.tally).transferOwnership(coordinator);
+
+    _maci.transferOwnership(maciOwner);
 
     emit MaciDeployed(address(_maci));
   }

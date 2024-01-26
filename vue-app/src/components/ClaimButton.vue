@@ -27,7 +27,6 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import type { BigNumber } from 'ethers'
 
 import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
 import type { Project } from '@/api/projects'
@@ -51,7 +50,7 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const allocatedAmount = ref<BigNumber | null>(null)
+const allocatedAmount = ref<BigInt | null>(null)
 const claimed = ref<boolean | null>(null)
 const isLoading = ref(true)
 
@@ -108,7 +107,7 @@ function hasClaimBtn(): boolean {
     props.project.index !== 0 &&
     !props.project.isHidden &&
     allocatedAmount.value !== null &&
-    !allocatedAmount.value.isZero() &&
+    allocatedAmount.value !== 0n &&
     claimed.value !== null
   )
 }
@@ -117,7 +116,7 @@ function canClaim(): boolean {
   return hasClaimBtn() && !!currentUser.value && !claimed.value
 }
 
-function formatAmount(value: BigNumber): string {
+function formatAmount(value: BigInt): string {
   const maxDecimals = 6
   const { nativeTokenDecimals } = currentRound.value!
   return _formatAmount(value, nativeTokenDecimals, null, maxDecimals)

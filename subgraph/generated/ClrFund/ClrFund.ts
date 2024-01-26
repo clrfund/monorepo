@@ -28,6 +28,24 @@ export class CoordinatorChanged__Params {
   }
 }
 
+export class FundingRoundFactoryChanged extends ethereum.Event {
+  get params(): FundingRoundFactoryChanged__Params {
+    return new FundingRoundFactoryChanged__Params(this);
+  }
+}
+
+export class FundingRoundFactoryChanged__Params {
+  _event: FundingRoundFactoryChanged;
+
+  constructor(event: FundingRoundFactoryChanged) {
+    this._event = event;
+  }
+
+  get _roundFactory(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+}
+
 export class FundingRoundTemplateChanged extends ethereum.Event {
   get params(): FundingRoundTemplateChanged__Params {
     return new FundingRoundTemplateChanged__Params(this);
@@ -39,6 +57,10 @@ export class FundingRoundTemplateChanged__Params {
 
   constructor(event: FundingRoundTemplateChanged) {
     this._event = event;
+  }
+
+  get _template(): Address {
+    return this._event.parameters[0].value.toAddress();
   }
 }
 
@@ -92,6 +114,24 @@ export class Initialized__Params {
   }
 }
 
+export class MaciFactoryChanged extends ethereum.Event {
+  get params(): MaciFactoryChanged__Params {
+    return new MaciFactoryChanged__Params(this);
+  }
+}
+
+export class MaciFactoryChanged__Params {
+  _event: MaciFactoryChanged;
+
+  constructor(event: MaciFactoryChanged) {
+    this._event = event;
+  }
+
+  get _maciFactory(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+}
+
 export class OwnershipTransferred extends ethereum.Event {
   get params(): OwnershipTransferred__Params {
     return new OwnershipTransferred__Params(this);
@@ -114,17 +154,21 @@ export class OwnershipTransferred__Params {
   }
 }
 
-export class RecipientRegistrySet extends ethereum.Event {
-  get params(): RecipientRegistrySet__Params {
-    return new RecipientRegistrySet__Params(this);
+export class RecipientRegistryChanged extends ethereum.Event {
+  get params(): RecipientRegistryChanged__Params {
+    return new RecipientRegistryChanged__Params(this);
   }
 }
 
-export class RecipientRegistrySet__Params {
-  _event: RecipientRegistrySet;
+export class RecipientRegistryChanged__Params {
+  _event: RecipientRegistryChanged;
 
-  constructor(event: RecipientRegistrySet) {
+  constructor(event: RecipientRegistryChanged) {
     this._event = event;
+  }
+
+  get _recipientRegistry(): Address {
+    return this._event.parameters[0].value.toAddress();
   }
 }
 
@@ -182,17 +226,21 @@ export class TokenChanged__Params {
   }
 }
 
-export class UserRegistrySet extends ethereum.Event {
-  get params(): UserRegistrySet__Params {
-    return new UserRegistrySet__Params(this);
+export class UserRegistryChanged extends ethereum.Event {
+  get params(): UserRegistryChanged__Params {
+    return new UserRegistryChanged__Params(this);
   }
 }
 
-export class UserRegistrySet__Params {
-  _event: UserRegistrySet;
+export class UserRegistryChanged__Params {
+  _event: UserRegistryChanged;
 
-  constructor(event: UserRegistrySet) {
+  constructor(event: UserRegistryChanged) {
     this._event = event;
+  }
+
+  get _userRegistry(): Address {
+    return this._event.parameters[0].value.toAddress();
   }
 }
 
@@ -224,6 +272,29 @@ export class ClrFund__coordinatorPubKeyResult {
 export class ClrFund extends ethereum.SmartContract {
   static bind(address: Address): ClrFund {
     return new ClrFund("ClrFund", address);
+  }
+
+  MESSAGE_DATA_LENGTH(): i32 {
+    let result = super.call(
+      "MESSAGE_DATA_LENGTH",
+      "MESSAGE_DATA_LENGTH():(uint8)",
+      []
+    );
+
+    return result[0].toI32();
+  }
+
+  try_MESSAGE_DATA_LENGTH(): ethereum.CallResult<i32> {
+    let result = super.tryCall(
+      "MESSAGE_DATA_LENGTH",
+      "MESSAGE_DATA_LENGTH():(uint8)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toI32());
   }
 
   coordinator(): Address {
@@ -318,6 +389,21 @@ export class ClrFund extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  isInit(): boolean {
+    let result = super.call("isInit", "isInit():(bool)", []);
+
+    return result[0].toBoolean();
+  }
+
+  try_isInit(): ethereum.CallResult<boolean> {
+    let result = super.tryCall("isInit", "isInit():(bool)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
   maciFactory(): Address {
@@ -664,6 +750,66 @@ export class SetCoordinatorCall_coordinatorPubKeyStruct extends ethereum.Tuple {
 
   get y(): BigInt {
     return this[1].toBigInt();
+  }
+}
+
+export class SetFundingRoundFactoryCall extends ethereum.Call {
+  get inputs(): SetFundingRoundFactoryCall__Inputs {
+    return new SetFundingRoundFactoryCall__Inputs(this);
+  }
+
+  get outputs(): SetFundingRoundFactoryCall__Outputs {
+    return new SetFundingRoundFactoryCall__Outputs(this);
+  }
+}
+
+export class SetFundingRoundFactoryCall__Inputs {
+  _call: SetFundingRoundFactoryCall;
+
+  constructor(call: SetFundingRoundFactoryCall) {
+    this._call = call;
+  }
+
+  get _roundFactory(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class SetFundingRoundFactoryCall__Outputs {
+  _call: SetFundingRoundFactoryCall;
+
+  constructor(call: SetFundingRoundFactoryCall) {
+    this._call = call;
+  }
+}
+
+export class SetMaciFactoryCall extends ethereum.Call {
+  get inputs(): SetMaciFactoryCall__Inputs {
+    return new SetMaciFactoryCall__Inputs(this);
+  }
+
+  get outputs(): SetMaciFactoryCall__Outputs {
+    return new SetMaciFactoryCall__Outputs(this);
+  }
+}
+
+export class SetMaciFactoryCall__Inputs {
+  _call: SetMaciFactoryCall;
+
+  constructor(call: SetMaciFactoryCall) {
+    this._call = call;
+  }
+
+  get _maciFactory(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class SetMaciFactoryCall__Outputs {
+  _call: SetMaciFactoryCall;
+
+  constructor(call: SetMaciFactoryCall) {
+    this._call = call;
   }
 }
 

@@ -1,6 +1,5 @@
-import { Contract, Signer, utils } from 'ethers'
-import type { TransactionResponse } from '@ethersproject/abstract-provider'
-import { formatBytes32String } from '@ethersproject/strings'
+import { Contract, encodeBytes32String, toUtf8Bytes, decodeBase64, encodeBase64 } from 'ethers'
+import type { TransactionResponse, Signer } from 'ethers'
 
 import { BrightIdUserRegistry } from './abi'
 import { brightIdSponsorKey, brightIdNodeUrl } from './core'
@@ -138,7 +137,7 @@ export async function registerUser(
 ): Promise<TransactionResponse> {
   const registry = new Contract(registryAddress, BrightIdUserRegistry, signer)
   const transaction = await registry.register(
-    formatBytes32String(CONTEXT),
+    encodeBytes32String(CONTEXT),
     verification.appUserId,
     '0x' + verification.verificationHash,
     verification.timestamp,
@@ -221,10 +220,10 @@ export async function brightIdSponsor(userAddress: string): Promise<SponsorData>
   }
 
   const message = JSON.stringify(op)
-  const arrayedMessage = utils.toUtf8Bytes(message)
-  const arrayedKey = utils.base64.decode(brightIdSponsorKey)
+  const arrayedMessage = toUtf8Bytes(message)
+  const arrayedKey = decodeBase64(brightIdSponsorKey)
   const signature = nacl.sign.detached(arrayedMessage, arrayedKey)
-  op.sig = utils.base64.encode(signature)
+  op.sig = encodeBase64(signature)
 
   const res = await fetch(endpoint, {
     method: 'POST',

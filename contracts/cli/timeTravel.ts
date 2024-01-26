@@ -5,7 +5,7 @@
  * HARDHAT_NETWORK=localhost yarn ts-node cli/timeTravel.ts <state file>
  */
 
-import { network } from 'hardhat'
+import { time } from '@nomicfoundation/hardhat-network-helpers'
 import { program } from 'commander'
 
 program
@@ -15,8 +15,7 @@ program
 
 async function main(args: any) {
   const seconds = Number(args[0])
-  await network.provider.send('evm_increaseTime', [seconds])
-  await network.provider.send('evm_mine')
+  await time.increase(seconds)
 }
 
 main(program.args)

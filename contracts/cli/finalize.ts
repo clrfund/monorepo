@@ -1,9 +1,13 @@
 /**
  * Finalize a funding round
  *
+ * Make sure to set the following environment variables in the .env file
+ * 1) WALLET_PRIVATE_KEY or WALLET_MNEMONIC
+ *   - clrfund owner's wallet private key to interact with the contract
+ *
  * Sample usage:
  *  HARDHAT_NETWORK=localhost yarn ts-node cli/finalize.ts \
- *    --funding-round <funding round address> \
+ *    --clrfund <clrfund address> \
  *    --tally-file <tally file>
  */
 
@@ -11,11 +15,16 @@ import { ethers } from 'hardhat'
 import { JSONFile } from '../utils/JSONFile'
 import { genTallyResultCommitment } from '@clrfund/common'
 import { program } from 'commander'
+import { getNumber } from 'ethers'
 
 program
   .description('Finalize a funding round')
   .requiredOption('-c --clrfund <clrfund>', 'The ClrFund contract address')
-  .requiredOption('-t --tally-file <file>', 'The tally file path')
+  .option(
+    '-t --tally-file <file>',
+    'The tally file path',
+    './proof_output/tally.json'
+  )
   .parse()
 
 async function main(args: any) {
@@ -33,7 +42,7 @@ async function main(args: any) {
     'FundingRound',
     currentRoundAddress
   )
-  console.log('Current round', fundingRound.address)
+  console.log('Current round', fundingRound.target)
 
   const pollAddress = await fundingRound.poll()
   const pollContract = await ethers.getContractAt('Poll', pollAddress)
@@ -42,19 +51,23 @@ async function main(args: any) {
   const treeDepths = await pollContract.treeDepths()
   console.log('voteOptionTreeDepth', treeDepths.voteOptionTreeDepth)
 
-  const totalSpent = parseInt(tally.totalSpentVoiceCredits.spent)
+  const totalSpent = tally.totalSpentVoiceCredits.spent
   const totalSpentSalt = tally.totalSpentVoiceCredits.salt
 
+  const voteOptionTreeDepth = getNumber(
+    treeDepths.voteOptionTreeDepth,
+    'voteOptionTreeDepth'
+  )
   const resultsCommitment = genTallyResultCommitment(
     tally.results.tally.map((x: string) => BigInt(x)),
-    tally.results.salt,
-    treeDepths.voteOptionTreeDepth
+    BigInt(tally.results.salt),
+    voteOptionTreeDepth
   )
 
   const perVOVoiceCreditCommitment = genTallyResultCommitment(
     tally.perVOSpentVoiceCredits.tally.map((x: string) => BigInt(x)),
-    tally.perVOSpentVoiceCredits.salt,
-    treeDepths.voteOptionTreeDepth
+    BigInt(tally.perVOSpentVoiceCredits.salt),
+    voteOptionTreeDepth
   )
 
   const tx = await clrfundContract.transferMatchingFunds(

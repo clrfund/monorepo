@@ -13,13 +13,15 @@ on:
         default: 'yuetloo/clrfund-dev'
 
 env:
-  NODE_VERSION: 16.x
+  NODE_VERSION: 18.x
   NETWORK: "arbitrum-goerli"
   COORDINATOR_ETH_PK: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_WALLET_PRIVATE_KEY }}
   COORDINATOR_PK: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_MACI_PRIVATE_KEY }}
   JSONRPC_HTTP_URL: ${{ secrets.JSONRPC_HTTP_URL }}
   ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY_ARBITRUM }}
   ETHERSCAN_URL: "https://api-goerli.arbiscan.io"
+  CIRCUIT_TYPE: micro
+  ZKEYS_DOWNLOAD_SCRIPT: "download-6-8-2-3.sh"
 
 jobs:
   finalize:
@@ -47,7 +49,7 @@ jobs:
     - name: Download batch 64 params
       run: |
         ls -la $GITHUB_WORKSPACE
-        $GITHUB_WORKSPACE/.github/scripts/download-batch64-params.sh
+        $GITHUB_WORKSPACE/monorepo/.github/scripts/${ZKEYS_DOWNLOAD_SCRIPT}
     - name: Build
       run: |
         # use https to avoid error: unable to connect to github.com

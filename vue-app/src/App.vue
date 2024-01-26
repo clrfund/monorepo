@@ -166,13 +166,18 @@ onMounted(async () => {
   }
 
   appReady.value = true
-  await appStore.loadClrFundInfo()
-  await appStore.loadMACIFactoryInfo()
-  await appStore.loadRoundInfo()
-  await recipientStore.loadRecipientRegistryInfo()
-  appStore.isAppReady = true
+  try {
+    await appStore.loadClrFundInfo()
+    await appStore.loadMACIFactoryInfo()
+    await appStore.loadRoundInfo()
+    await recipientStore.loadRecipientRegistryInfo()
+    appStore.isAppReady = true
 
-  setupLoadIntervals()
+    setupLoadIntervals()
+  } catch (err) {
+    /* eslint-disable-next-line no-console */
+    console.warn('Failed to load application data:', err)
+  }
 })
 
 onBeforeUnmount(() => {
