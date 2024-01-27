@@ -35,7 +35,7 @@ export class JSONFile {
     } catch {
       state = {}
     }
-    fs.writeFileSync(path, JSON.stringify({ ...state, ...data }, null, 2))
+    fs.writeFileSync(path, JSON.stringify({ ...state, ...data }, replacer, 2))
   }
 
   /**

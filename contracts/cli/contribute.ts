@@ -15,6 +15,7 @@ import { program } from 'commander'
 import { ethers } from 'hardhat'
 import { isPathExist } from '../utils/misc'
 import type { FundingRound, ERC20 } from '../typechain-types'
+import { BaseContract } from 'ethers'
 
 program
   .description('Contribute to a funding round')
@@ -36,7 +37,10 @@ async function main(args: any) {
     state.fundingRound
   )
   const tokenAddress = await fundingRound.nativeToken()
-  const token = await ethers.getContractAt('AnyOldERC20Token', tokenAddress)
+  const token = (await ethers.getContractAt(
+    'AnyOldERC20Token',
+    tokenAddress
+  )) as BaseContract as ERC20
   const maciAddress = await fundingRound.maci()
   const maci = await ethers.getContractAt('MACI', maciAddress)
 
@@ -47,11 +51,22 @@ async function main(args: any) {
     const contributorAddress = await contributor.getAddress()
 
     // transfer token to contributor first
-    await token.transfer(contributorAddress, contributionAmount)
+    const tx = await token.transfer(contributorAddress, contributionAmount)
+    const transferReciept = await tx.wait()
+    if (transferReciept?.status !== 1) {
+      throw new Error('Failed token.transfer()')
+    }
 
     const contributorKeypair = new Keypair()
     const tokenAsContributor = token.connect(contributor) as ERC20
-    await tokenAsContributor.approve(fundingRound.target, contributionAmount)
+    const approveTx = await tokenAsContributor.approve(
+      fundingRound.target,
+      contributionAmount
+    )
+    const approveReceipt = await approveTx.wait()
+    if (approveReceipt?.status !== 1) {
+      throw new Error('Failed token.approve()')
+    }
 
     const fundingRoundAsContributor = fundingRound.connect(
       contributor
@@ -60,27 +75,37 @@ async function main(args: any) {
       contributorKeypair.pubKey.asContractParam(),
       contributionAmount
     )
+    const receipt = await contributionTx.wait()
+    if (receipt?.status !== 1) {
+      throw new Error('Failed contribute()')
+    }
+
     const stateIndex = await getEventArg(
       contributionTx,
       maci,
       'SignUp',
       '_stateIndex'
     )
-    const voiceCredits = await getEventArg(
+    const amount = await getEventArg(
       contributionTx,
-      maci,
-      'SignUp',
-      '_voiceCreditBalance'
+      fundingRound,
+      'Contribution',
+      '_amount'
     )
-    console.log('saving states')
+
+    console.log('saving states with amount', amount)
     state.contributors[contributorAddress] = {
       privKey: contributorKeypair.privKey.serialize(),
       pubKey: contributorKeypair.pubKey.serialize(),
       stateIndex: parseInt(stateIndex),
-      voiceCredits: voiceCredits.toString(),
+      amount: amount.toString(),
     }
+
+    const totalGasUsed =
+      transferReciept.gasUsed + approveReceipt.gasUsed + receipt.gasUsed
     console.log(
-      `Contributor ${contributorAddress} registered. State index: ${stateIndex}. Voice credits: ${voiceCredits.toString()}.`
+      `Contributor ${contributorAddress} registered. State index: ${stateIndex}. Contribution: ${amount}}. ` +
+        `Gas used: ${totalGasUsed}`
     )
   }
 

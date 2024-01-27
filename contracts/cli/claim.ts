@@ -11,25 +11,26 @@ import { JSONFile } from '../utils/JSONFile'
 import { ethers } from 'hardhat'
 import { program } from 'commander'
 import { isPathExist } from '../utils/misc'
-import { Contract, getNumber } from 'ethers'
+import { getNumber } from 'ethers'
 
 program
   .description('Claim funnds for test recipients')
   .requiredOption(
-    '-f --funding-round <fundingRoundAddress>',
+    '-f, --funding-round <fundingRoundAddress>',
     'The funding round contract address'
   )
-  .requiredOption('-t --tally-file <file>', 'The tally file')
+  .requiredOption('-r, --recipient-index <index>', 'The recipient index')
+  .requiredOption('-t, --tally-file <file>', 'The tally file')
+  .option('-a, --amount <amount>', 'The expected claim amount to verify')
   .parse()
 
 async function main(args: any) {
-  const { fundingRound, tallyFile } = args
-  const [, , recipient0, recipient1, recipient2] = await ethers.getSigners()
+  const { fundingRound, tallyFile, recipientIndex, amount } = args
+  console.log('recipientIndex', recipientIndex)
 
   if (!isPathExist(tallyFile)) {
     throw new Error(`Path ${tallyFile} does not exist`)
   }
-
   const tally = JSONFile.read(tallyFile)
 
   const fundingRoundContract = await ethers.getContractAt(
@@ -47,26 +48,31 @@ async function main(args: any) {
   )
 
   // Claim funds
-  const recipients = [recipient0, recipient1, recipient2]
-  for (const recipientIndex of [1, 2]) {
-    const recipientClaimData = getRecipientClaimData(
-      recipientIndex,
-      recipientTreeDepth,
-      tally
-    )
-    const fundingRoundAsRecipient = fundingRoundContract.connect(
-      recipients[recipientIndex]
-    ) as Contract
-    const claimTx = await fundingRoundAsRecipient.claimFunds(
-      ...recipientClaimData
-    )
-    const claimedAmount = await getEventArg(
-      claimTx,
-      fundingRoundAsRecipient,
-      'FundsClaimed',
-      '_amount'
-    )
-    console.log(`Recipient ${recipientIndex} claimed ${claimedAmount} tokens.`)
+  const recipientClaimData = getRecipientClaimData(
+    getNumber(recipientIndex),
+    recipientTreeDepth,
+    tally
+  )
+  const claimTx = await fundingRoundContract.claimFunds(...recipientClaimData)
+  const receipt = await claimTx.wait()
+  if (receipt.status !== 1) {
+    throw new Error('Failed claimFunds()')
+  }
+  const claimedAmount = await getEventArg(
+    claimTx,
+    fundingRoundContract,
+    'FundsClaimed',
+    '_amount'
+  )
+
+  console.log(
+    `Recipient ${recipientIndex} claimed ${claimedAmount} tokens. Gas used: ${receipt.gasUsed}`
+  )
+
+  if (amount) {
+    if (BigInt(claimedAmount) !== BigInt(amount)) {
+      throw new Error(`Expected claim amount ${amount} got ${claimedAmount}`)
+    }
   }
 }
 

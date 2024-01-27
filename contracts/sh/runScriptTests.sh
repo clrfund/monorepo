@@ -53,6 +53,9 @@ yarn ts-node cli/addRecipients.ts "${CLRFUND}"
 yarn ts-node cli/contribute.ts ${STATE_FILE}
 yarn ts-node cli/vote.ts ${STATE_FILE}
 
+yarn ts-node cli/topup.ts ${STATE_FILE}
+yarn ts-node cli/vote.ts ${STATE_FILE}
+
 yarn ts-node cli/timeTravel.ts ${ROUND_DURATION}
 
 # run the tally script
@@ -72,5 +75,16 @@ yarn ts-node cli/finalize.ts --clrfund "${CLRFUND}" --tally-file ${TALLY_FILE}
  
 # claim funds
 FUNDING_ROUND=$(extract 'fundingRound')
-yarn ts-node cli/claim.ts --funding-round "${FUNDING_ROUND}" --tally-file ${TALLY_FILE}
+
+# amount should be 3200000000000000000 but there's rounding error in division by
+# voice credit factor and sqrt for the vote weight
+yarn ts-node cli/claim.ts --funding-round "${FUNDING_ROUND}" \
+  --recipient-index 1 \
+  --amount 3199999999999999999 \
+  --tally-file ${TALLY_FILE}
+
+yarn ts-node cli/claim.ts --funding-round "${FUNDING_ROUND}" \
+  --recipient-index 2 \
+  --amount 3199999999999999999 \
+  --tally-file ${TALLY_FILE}
 

@@ -20,9 +20,12 @@ import { ethers } from 'hardhat'
 import { program } from 'commander'
 import dotenv from 'dotenv'
 import { isPathExist } from '../utils/misc'
+import { AbiCoder } from 'ethers'
+import { FundingRound } from '../typechain-types'
 
 dotenv.config()
 
+const abiCoder = new AbiCoder()
 program
   .description('Cast votes for test users')
   .argument('stateFile', 'The file to store the state information')
@@ -45,10 +48,17 @@ async function main(args: any) {
   const state = JSONFile.read(stateFile)
   const coordinatorKeyPair = new Keypair(PrivKey.deserialize(coordinatorMacisk))
 
+  const fundingRound = await ethers.getContractAt(
+    'FundingRound',
+    state.fundingRound
+  )
+
   const pollId = state.pollId
   for (const contributor of [contributor1, contributor2]) {
-    const contributorAddress = await contributor.getAddress()
-    const contributorData = state.contributors[contributorAddress]
+    const address = await contributor.getAddress()
+    const contributorData = state.contributors[address]
+    const data = abiCoder.encode(['address'], [address])
+    const voiceCredits = await fundingRound.getVoiceCredits(address, data)
     const contributorKeyPair = new Keypair(
       PrivKey.deserialize(contributorData.privKey)
     )
@@ -71,9 +81,10 @@ async function main(args: any) {
     messages.push(message)
     encPubKeys.push(encPubKey)
     nonce += 1
+
     // Vote
     for (const recipientIndex of [1, 2]) {
-      const votes = BigInt(contributorData.voiceCredits) / BigInt(4)
+      const votes = voiceCredits / BigInt(2)
       const [message, encPubKey] = createMessage(
         contributorData.stateIndex,
         newContributorKeypair,
@@ -87,19 +98,33 @@ async function main(args: any) {
       messages.push(message)
       encPubKeys.push(encPubKey)
       nonce += 1
+      console.log(
+        `Contributor ${address} votes ${votes} for recipient ${recipientIndex}`
+      )
     }
 
-    const fundingRoundAsContributor = await ethers.getContractAt(
-      'FundingRound',
-      state.fundingRound,
+    const fundingRoundAsContributor = fundingRound.connect(
       contributor
-    )
-    await fundingRoundAsContributor.submitMessageBatch(
+    ) as FundingRound
+
+    const tx = await fundingRoundAsContributor.submitMessageBatch(
       messages.reverse().map((msg) => msg.asContractParam()),
       encPubKeys.reverse().map((key) => key.asContractParam())
     )
-    console.log(`Contributor ${contributorAddress} voted.`)
+    const receipt = await tx.wait()
+    if (receipt?.status !== 1) {
+      throw new Error('Failed submitMessageBatch()')
+    }
+    console.log('Gas used:', receipt.gasUsed)
+
+    state.contributors[address].privKey =
+      newContributorKeypair.privKey.serialize()
+    state.contributors[address].pubKey =
+      newContributorKeypair.pubKey.serialize()
   }
+
+  // Update state file with new key
+  JSONFile.update(stateFile, state)
 }
 
 main(program.args)

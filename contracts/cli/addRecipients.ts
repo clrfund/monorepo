@@ -6,6 +6,7 @@
  *  HARDHAT_NETWORK=localhost yarn ts-node clr/addRecipients.ts <ClrFund address>
  *
  */
+import { getEventArg } from '@clrfund/common'
 import { program } from 'commander'
 import { ethers } from 'hardhat'
 
@@ -29,7 +30,7 @@ async function main(args: any) {
   )
 
   let numAdded = 0
-  for (let i = 6; i < 10; i++) {
+  for (let i = 1; i < 3; i++) {
     const recipient = recipients[i]
     const recipientAddress = recipient?.address || signer.address
     const addRecipientTx = await recipientRegistry.addRecipient(
@@ -44,6 +45,14 @@ async function main(args: any) {
     const receipt = await addRecipientTx.wait()
     if (receipt.status === 1) {
       numAdded++
+
+      const recipientIndex = await getEventArg(
+        addRecipientTx,
+        recipientRegistry,
+        'RecipientAdded',
+        '_index'
+      )
+      console.log('Added recipient index', recipientIndex)
     } else {
       console.log('Failed to add recipient', i)
     }
