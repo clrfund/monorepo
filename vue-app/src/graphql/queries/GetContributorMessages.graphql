@@ -8,6 +8,7 @@ query GetContributorMessages(
         fundingRound: $fundingRoundAddress,
         publicKey: $pubKey,
         submittedBy: $contributorAddress
+        msgType: "1"
       },
       first: 1000
       orderBy: blockNumber, orderDirection: desc)
