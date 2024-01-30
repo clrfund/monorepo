@@ -21,7 +21,6 @@
     <div v-else class="cart-container">
       <div class="reallocation-message" v-if="canUserReallocate && hasUserVoted">
         {{ $t('cart.div1') }}
-        <links to="/about/maci" class="message-link"> {{ $t('cart.link1') }}</links>
       </div>
       <div class="reallocation-message" v-if="canUserReallocate && !hasUserVoted">
         {{ $t('cart.div2') }}
@@ -99,10 +98,10 @@
           <span>{{ $t('cart.span1') }}</span>
           {{ formatAmount(contribution) }} {{ tokenSymbol }}
         </div>
-        <div :class="isGreaterThanInitialContribution() ? 'reallocation-row-warning' : 'reallocation-row'">
+        <div class="reallocation-row">
           <span>{{ $t('cart.span2') }}</span>
           <div class="reallocation-warning">
-            <span v-if="isGreaterThanInitialContribution()">⚠️</span>{{ formatAmount(getCartTotal(cart)) }}
+            {{ formatAmount(getCartTotal(cart)) }}
             {{ tokenSymbol }}
           </div>
         </div>
@@ -116,11 +115,7 @@
           + {{ formatAmount(contribution - getTotal()) }}
           {{ tokenSymbol }}
         </div>
-        <div
-          @click="splitContributionsEvenly"
-          class="split-link"
-          v-if="isGreaterThanInitialContribution() || hasUnallocatedFunds()"
-        >
+        <div @click="splitContributionsEvenly" class="split-link" v-if="hasUnallocatedFunds()">
           <img src="@/assets/split.svg" />
           {{
             $t('cart.div10', {
@@ -213,11 +208,7 @@
       <div class="total-bar" v-if="isRoundContributionPhase || (hasUserContributed && hasContributionPhaseEnded)">
         <span class="total-label">{{ $t('cart.span5') }}</span>
         <div>
-          <span v-if="isGreaterThanInitialContribution() && hasUserContributed"
-            >{{ formatAmount(getCartTotal(cart)) }} /
-            <span class="total-reallocation">{{ formatAmount(contribution) }}</span>
-          </span>
-          <span v-else>{{ formatAmount(getTotal()) }}</span>
+          <span>{{ formatAmount(getCartTotal(cart)) }}</span>
           {{ tokenSymbol }}
         </div>
       </div>
@@ -443,6 +434,7 @@ function isFormValid(): boolean {
 }
 
 function getCartMatchingPoolTotal(): string {
+  console.log('contribution.value', contribution.value, getCartTotal(committedCart.value))
   return formatAmount(contribution.value - getCartTotal(committedCart.value))
 }
 
@@ -460,7 +452,7 @@ function getCartTotal(cart: Array<CartItem>): bigint {
 }
 
 function getTotal(): bigint {
-  return hasUserContributed.value ? contribution.value : getCartTotal(cart.value)
+  return getCartTotal(cart.value)
 }
 
 function isGreaterThanMax(): boolean {
@@ -536,11 +528,6 @@ const errorMessage = computed<string | null>(() => {
       // Reallocating funds
       if (!contributor.value) {
         return t('dynamic.cart.error.contributor_key_missing')
-      } else if (isGreaterThanInitialContribution()) {
-        return t('dynamic.cart.error.more_than_original_contribution', {
-          total: formatAmount(contribution.value),
-          tokenSymbol: tokenSymbol.value,
-        })
       } else {
         return null
       }
@@ -554,10 +541,10 @@ function hasUnallocatedFunds(): boolean {
 
 const votes = computed(() => {
   const { nativeTokenDecimals, voiceCreditFactor } = currentRound.value!
-  const formattedVotes: [number, bigint][] = cart.value.map((item: CartItem) => {
+  const formattedVotes: [number, bigint, bigint][] = cart.value.map((item: CartItem) => {
     const amount = parseUnits(item.amount, nativeTokenDecimals)
     const voiceCredits = amount / voiceCreditFactor
-    return [item.index, voiceCredits]
+    return [item.index, voiceCredits, amount]
   })
   return formattedVotes
 })
@@ -587,6 +574,7 @@ function submitCart(event: any) {
   const { open: openReallocationModal, close: closeReallocationModal } = useModal({
     component: ReallocationModal,
     attrs: {
+      contribution: contribution.value,
       votes: votes.value,
       onClose() {
         appStore.restoreCommittedCartToLocalCart()

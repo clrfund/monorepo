@@ -177,7 +177,7 @@
     },
     "reallocation": {
       "title": "Reallocation phase",
-      "paragraph": "During this phase, if you've contributed, you will have time to change   your mind. You can edit your contribution amounts or add/remove projects   but your total must equal that of your original contribution.",
+      "paragraph": "During this phase, if you've contributed, you will have time to change your mind. You can edit your contribution amounts or add/remove projects.",
       "need": {
         "title": "Need to know",
         "li-1": " This phase will last {reallocationPhaseDays} days after the end of the contribution phase.",
@@ -871,7 +871,7 @@
     "connect": "Connect",
     "sign_the_message_to_see_your_cart": "Please sign the message to see your cart",
     "h3_1": "Connect to see your cart",
-    "div1": "You’ve already contributed this round. You can edit your choices and add new projects, but your cart total must always equal your original contribution amount.",
+    "div1": "You’ve already contributed this round. You can edit your choices and add new projects.",
     "link1": "Why?",
     "div2": "Almost done! You must submit one more transaction to complete your contribution.",
     "h2_1": "Edit cart",
@@ -929,9 +929,9 @@
     "btn_cancel": "Cancel",
     "btn_continue": "Continue",
     "approve": "Approve {renderTotal} {nativeTokenSymbol}",
-    "permission": " This gives this app permission to withdraw {renderTotal} {nativeTokenSymbol} from your wallet for your contribution.",
-    "send_contribution": " Send {renderTotal} {nativeTokenSymbol} contribution",
-    "send_tx": " This transaction sends out your {renderTotal} {nativeTokenSymbol} contribution to your chosen projects.",
+    "permission": "This gives this app permission to withdraw {renderTotal} {nativeTokenSymbol} from your wallet for your contribution.",
+    "send_contribution": "Send {renderTotal} {nativeTokenSymbol} contribution",
+    "send_tx": "This transaction sends out your {renderTotal} {nativeTokenSymbol} contribution to your chosen projects.",
     "magic": "Matching pool magic ✨",
     "how_much": "This transaction lets the matching pool know how much {nativeTokenSymbol} to send to your favorite projects based on your contributions."
   },
@@ -1021,7 +1021,16 @@
     "h2_4": "Team: "
   },
   "reallocationModal": {
-    "h3": "Reallocate funds"
+    "confirm": "Boost your impact?",
+    "confirm_details": "Your cart total has exceeded your original contribution amount. Would you like to increase your contribution by {renderTopup} {nativeTokenSymbol}?",
+    "btn_cancel": "Cancel",
+    "btn_continue": "Continue",
+    "approve": "Approve {renderAmount} {nativeTokenSymbol}",
+    "permission": " This gives this app permission to withdraw {renderAmount} {nativeTokenSymbol} from your wallet for your additional contribution.",
+    "increase": " Increase contribution",
+    "increase_details": " This transaction will increase your contribution by {renderAmount} {nativeTokenSymbol}.",
+    "reallocate": "Reallocate funds",
+    "reallocate_details": "This transaction reallocates your contribution to your favorite projects."
   },
   "recipientSubmissionWidget": {
     "div1": "Waiting for transaction to be mined...",
@@ -1190,8 +1199,7 @@
         "not_enough_funds": "Not enough funds. Your balance is {balance} {nativeTokenSymbol}.",
         "too_generous": "Your contribution is too generous. The max contribution is {maxAmount} {nativeTokenSymbol}.",
         "need_gas_payment": "You need some ETH to pay for gas",
-        "contributor_key_missing": "Contributor key is not found. Refresh and try again and/or make sure you're using the same browser/machine as the one you contributed with.",
-        "more_than_original_contribution": "Your new total can't be more than your original {total} {tokenSymbol} contribution"
+        "contributor_key_missing": "Contributor key is not found. Refresh and try again and/or make sure you're using the same browser/machine as the one you contributed with."
       },
       "action": {
         "remove_all": "Remove all",

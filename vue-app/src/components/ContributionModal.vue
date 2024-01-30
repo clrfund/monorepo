@@ -121,7 +121,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
-import { BaseContract, Contract, toNumber } from 'ethers'
+import { Contract, toNumber } from 'ethers'
 import { Keypair, PubKey, Message, createMessage } from '@clrfund/common'
 
 import Transaction from '@/components/Transaction.vue'
@@ -144,7 +144,7 @@ const { currentUser } = storeToRefs(userStore)
 const emit = defineEmits(['close'])
 
 interface Props {
-  votes: [number, bigint][]
+  votes: [number, bigint, bigint][]
 }
 
 const props = defineProps<Props>()
@@ -224,9 +224,8 @@ async function getFundingRoundContract() {
 }
 
 const total = computed(() => {
-  const { voiceCreditFactor } = currentRound.value!
-  return props.votes.reduce((total: bigint, [, voiceCredits]) => {
-    return total + voiceCredits * voiceCreditFactor
+  return props.votes.reduce((total: bigint, [, , amount]) => {
+    return total + amount
   }, BigInt(0))
 })
 
@@ -238,7 +237,7 @@ const renderTotal = computed(() => {
 async function contribute() {
   try {
     step.value += 1
-    const { nativeTokenAddress, voiceCreditFactor, maciAddress, fundingRoundAddress } = currentRound.value!
+    const { nativeTokenAddress, maciAddress, fundingRoundAddress } = currentRound.value!
     const signer = await userStore.getSigner()
     const signerAddess = await signer.getAddress()
     const token = new Contract(nativeTokenAddress, ERC20, signer)

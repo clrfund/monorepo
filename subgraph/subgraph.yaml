@@ -118,6 +118,8 @@ templates:
           handler: handleTallyPublished
         - event: Voted(indexed address)
           handler: handleVoted
+        - event: Topup(indexed address,uint256)
+          handler: handleTopup
       file: ./src/FundingRoundMapping.ts
   - name: OptimisticRecipientRegistry
     kind: ethereum/contract

@@ -1,4 +1,4 @@
-import { BigInt, log, store } from '@graphprotocol/graph-ts'
+import { BigInt, log, store, ethereum } from '@graphprotocol/graph-ts'
 import {
   Contribution,
   ContributionWithdrawn,
@@ -7,6 +7,7 @@ import {
   TallyPublished,
   RegisterCall,
   Voted,
+  Topup,
   FundingRound as FundingRoundContract,
 } from '../generated/templates/FundingRound/FundingRound'
 import { OptimisticRecipientRegistry as RecipientRegistryContract } from '../generated/templates/FundingRound/OptimisticRecipientRegistry'
@@ -135,6 +136,7 @@ export function handleContributionWithdrawn(
     BigInt.fromI32(1)
   )
   fundingRound.lastUpdatedAt = timestamp
+  fundingRound.save()
 }
 
 export function handleFundsClaimed(event: FundsClaimed): void {
@@ -222,4 +224,26 @@ export function handleVoted(event: Voted): void {
     vote.secret = false
   }
   vote.save()
+}
+
+export function handleTopup(event: Topup): void {
+  log.info('handleTopup', [])
+  let timestamp = event.block.timestamp.toString()
+  let fundingRoundId = event.address.toHexString()
+  let fundingRoundContract = FundingRoundContract.bind(event.address)
+  let contributorAddress = event.params._sender
+  let contributorId = contributorAddress.toHexString()
+  let contributionId = fundingRoundId
+    .concat('-contribution-')
+    .concat(contributorId)
+  let contribution = new FundingRoundContribution(contributionId)
+  let contributor = fundingRoundContract.contributors(event.params._sender)
+  contribution.amount = contributor.getAmount()
+  let data = ethereum.encode(ethereum.Value.fromAddress(event.params._sender))!
+  contribution.voiceCredits = fundingRoundContract.getVoiceCredits(
+    event.params._sender,
+    data
+  )
+  contribution.lastUpdatedAt = timestamp
+  contribution.save()
 }

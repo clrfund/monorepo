@@ -93,7 +93,6 @@ async function main(args: any) {
       '_amount'
     )
 
-    console.log('saving states with amount', amount)
     state.contributors[contributorAddress] = {
       privKey: contributorKeypair.privKey.serialize(),
       pubKey: contributorKeypair.pubKey.serialize(),

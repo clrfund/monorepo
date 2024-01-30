@@ -172,6 +172,7 @@ type Contribution @entity {
   voiceCredits: BigInt
 
   createdAt: String
+  lastUpdatedAt: String
 }
 
 type Vote @entity {

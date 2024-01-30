@@ -31,7 +31,6 @@ export type Block_Height = {
 
 export type ClrFund = {
   __typename?: 'ClrFund';
-  batchUstVerifier: Maybe<Scalars['Bytes']>;
   contributorRegistry: Maybe<ContributorRegistry>;
   contributorRegistryAddress: Maybe<Scalars['Bytes']>;
   coordinator: Maybe<Scalars['Bytes']>;
@@ -50,14 +49,11 @@ export type ClrFund = {
   nativeToken: Maybe<Scalars['Bytes']>;
   nativeTokenInfo: Maybe<Token>;
   owner: Maybe<Scalars['Bytes']>;
-  qvtVerifier: Maybe<Scalars['Bytes']>;
   recipientRegistry: Maybe<RecipientRegistry>;
   recipientRegistryAddress: Maybe<Scalars['Bytes']>;
-  signUpDuration: Maybe<Scalars['BigInt']>;
   stateTreeDepth: Maybe<Scalars['BigInt']>;
   tallyBatchSize: Maybe<Scalars['BigInt']>;
   voteOptionTreeDepth: Maybe<Scalars['BigInt']>;
-  votingDuration: Maybe<Scalars['BigInt']>;
 };
 
 
@@ -73,16 +69,6 @@ export type ClrFund_Filter = {
   /** Filter for the block changed event. */
   _change_block: InputMaybe<BlockChangedFilter>;
   and: InputMaybe<Array<InputMaybe<ClrFund_Filter>>>;
-  batchUstVerifier: InputMaybe<Scalars['Bytes']>;
-  batchUstVerifier_contains: InputMaybe<Scalars['Bytes']>;
-  batchUstVerifier_gt: InputMaybe<Scalars['Bytes']>;
-  batchUstVerifier_gte: InputMaybe<Scalars['Bytes']>;
-  batchUstVerifier_in: InputMaybe<Array<Scalars['Bytes']>>;
-  batchUstVerifier_lt: InputMaybe<Scalars['Bytes']>;
-  batchUstVerifier_lte: InputMaybe<Scalars['Bytes']>;
-  batchUstVerifier_not: InputMaybe<Scalars['Bytes']>;
-  batchUstVerifier_not_contains: InputMaybe<Scalars['Bytes']>;
-  batchUstVerifier_not_in: InputMaybe<Array<Scalars['Bytes']>>;
   contributorRegistry: InputMaybe<Scalars['String']>;
   contributorRegistryAddress: InputMaybe<Scalars['Bytes']>;
   contributorRegistryAddress_contains: InputMaybe<Scalars['Bytes']>;
@@ -306,16 +292,6 @@ export type ClrFund_Filter = {
   owner_not: InputMaybe<Scalars['Bytes']>;
   owner_not_contains: InputMaybe<Scalars['Bytes']>;
   owner_not_in: InputMaybe<Array<Scalars['Bytes']>>;
-  qvtVerifier: InputMaybe<Scalars['Bytes']>;
-  qvtVerifier_contains: InputMaybe<Scalars['Bytes']>;
-  qvtVerifier_gt: InputMaybe<Scalars['Bytes']>;
-  qvtVerifier_gte: InputMaybe<Scalars['Bytes']>;
-  qvtVerifier_in: InputMaybe<Array<Scalars['Bytes']>>;
-  qvtVerifier_lt: InputMaybe<Scalars['Bytes']>;
-  qvtVerifier_lte: InputMaybe<Scalars['Bytes']>;
-  qvtVerifier_not: InputMaybe<Scalars['Bytes']>;
-  qvtVerifier_not_contains: InputMaybe<Scalars['Bytes']>;
-  qvtVerifier_not_in: InputMaybe<Array<Scalars['Bytes']>>;
   recipientRegistry: InputMaybe<Scalars['String']>;
   recipientRegistryAddress: InputMaybe<Scalars['Bytes']>;
   recipientRegistryAddress_contains: InputMaybe<Scalars['Bytes']>;
@@ -347,14 +323,6 @@ export type ClrFund_Filter = {
   recipientRegistry_not_starts_with_nocase: InputMaybe<Scalars['String']>;
   recipientRegistry_starts_with: InputMaybe<Scalars['String']>;
   recipientRegistry_starts_with_nocase: InputMaybe<Scalars['String']>;
-  signUpDuration: InputMaybe<Scalars['BigInt']>;
-  signUpDuration_gt: InputMaybe<Scalars['BigInt']>;
-  signUpDuration_gte: InputMaybe<Scalars['BigInt']>;
-  signUpDuration_in: InputMaybe<Array<Scalars['BigInt']>>;
-  signUpDuration_lt: InputMaybe<Scalars['BigInt']>;
-  signUpDuration_lte: InputMaybe<Scalars['BigInt']>;
-  signUpDuration_not: InputMaybe<Scalars['BigInt']>;
-  signUpDuration_not_in: InputMaybe<Array<Scalars['BigInt']>>;
   stateTreeDepth: InputMaybe<Scalars['BigInt']>;
   stateTreeDepth_gt: InputMaybe<Scalars['BigInt']>;
   stateTreeDepth_gte: InputMaybe<Scalars['BigInt']>;
@@ -379,18 +347,9 @@ export type ClrFund_Filter = {
   voteOptionTreeDepth_lte: InputMaybe<Scalars['BigInt']>;
   voteOptionTreeDepth_not: InputMaybe<Scalars['BigInt']>;
   voteOptionTreeDepth_not_in: InputMaybe<Array<Scalars['BigInt']>>;
-  votingDuration: InputMaybe<Scalars['BigInt']>;
-  votingDuration_gt: InputMaybe<Scalars['BigInt']>;
-  votingDuration_gte: InputMaybe<Scalars['BigInt']>;
-  votingDuration_in: InputMaybe<Array<Scalars['BigInt']>>;
-  votingDuration_lt: InputMaybe<Scalars['BigInt']>;
-  votingDuration_lte: InputMaybe<Scalars['BigInt']>;
-  votingDuration_not: InputMaybe<Scalars['BigInt']>;
-  votingDuration_not_in: InputMaybe<Array<Scalars['BigInt']>>;
 };
 
 export enum ClrFund_OrderBy {
-  BatchUstVerifier = 'batchUstVerifier',
   ContributorRegistry = 'contributorRegistry',
   ContributorRegistryAddress = 'contributorRegistryAddress',
   ContributorRegistryContext = 'contributorRegistry__context',
@@ -447,7 +406,6 @@ export enum ClrFund_OrderBy {
   NativeTokenInfoSymbol = 'nativeTokenInfo__symbol',
   NativeTokenInfoTokenAddress = 'nativeTokenInfo__tokenAddress',
   Owner = 'owner',
-  QvtVerifier = 'qvtVerifier',
   RecipientRegistry = 'recipientRegistry',
   RecipientRegistryAddress = 'recipientRegistryAddress',
   RecipientRegistryBaseDeposit = 'recipientRegistry__baseDeposit',
@@ -458,11 +416,9 @@ export enum ClrFund_OrderBy {
   RecipientRegistryLastUpdatedAt = 'recipientRegistry__lastUpdatedAt',
   RecipientRegistryMaxRecipients = 'recipientRegistry__maxRecipients',
   RecipientRegistryOwner = 'recipientRegistry__owner',
-  SignUpDuration = 'signUpDuration',
   StateTreeDepth = 'stateTreeDepth',
   TallyBatchSize = 'tallyBatchSize',
-  VoteOptionTreeDepth = 'voteOptionTreeDepth',
-  VotingDuration = 'votingDuration'
+  VoteOptionTreeDepth = 'voteOptionTreeDepth'
 }
 
 export type Contribution = {
@@ -778,7 +734,6 @@ export type ContributorRegistry_Filter = {
 
 export enum ContributorRegistry_OrderBy {
   ClrFund = 'clrFund',
-  ClrFundBatchUstVerifier = 'clrFund__batchUstVerifier',
   ClrFundContributorRegistryAddress = 'clrFund__contributorRegistryAddress',
   ClrFundCoordinator = 'clrFund__coordinator',
   ClrFundCoordinatorPubKey = 'clrFund__coordinatorPubKey',
@@ -793,13 +748,10 @@ export enum ContributorRegistry_OrderBy {
   ClrFundMessageTreeDepth = 'clrFund__messageTreeDepth',
   ClrFundNativeToken = 'clrFund__nativeToken',
   ClrFundOwner = 'clrFund__owner',
-  ClrFundQvtVerifier = 'clrFund__qvtVerifier',
   ClrFundRecipientRegistryAddress = 'clrFund__recipientRegistryAddress',
-  ClrFundSignUpDuration = 'clrFund__signUpDuration',
   ClrFundStateTreeDepth = 'clrFund__stateTreeDepth',
   ClrFundTallyBatchSize = 'clrFund__tallyBatchSize',
   ClrFundVoteOptionTreeDepth = 'clrFund__voteOptionTreeDepth',
-  ClrFundVotingDuration = 'clrFund__votingDuration',
   Context = 'context',
   Contributors = 'contributors',
   CreatedAt = 'createdAt',
@@ -1597,7 +1549,6 @@ export type FundingRound_Filter = {
 
 export enum FundingRound_OrderBy {
   ClrFund = 'clrFund',
-  ClrFundBatchUstVerifier = 'clrFund__batchUstVerifier',
   ClrFundContributorRegistryAddress = 'clrFund__contributorRegistryAddress',
   ClrFundCoordinator = 'clrFund__coordinator',
   ClrFundCoordinatorPubKey = 'clrFund__coordinatorPubKey',
@@ -1612,13 +1563,10 @@ export enum FundingRound_OrderBy {
   ClrFundMessageTreeDepth = 'clrFund__messageTreeDepth',
   ClrFundNativeToken = 'clrFund__nativeToken',
   ClrFundOwner = 'clrFund__owner',
-  ClrFundQvtVerifier = 'clrFund__qvtVerifier',
   ClrFundRecipientRegistryAddress = 'clrFund__recipientRegistryAddress',
-  ClrFundSignUpDuration = 'clrFund__signUpDuration',
   ClrFundStateTreeDepth = 'clrFund__stateTreeDepth',
   ClrFundTallyBatchSize = 'clrFund__tallyBatchSize',
   ClrFundVoteOptionTreeDepth = 'clrFund__voteOptionTreeDepth',
-  ClrFundVotingDuration = 'clrFund__votingDuration',
   Contributions = 'contributions',
   ContributorCount = 'contributorCount',
   ContributorRegistry = 'contributorRegistry',
@@ -2430,7 +2378,6 @@ export enum RecipientRegistry_OrderBy {
   BaseDeposit = 'baseDeposit',
   ChallengePeriodDuration = 'challengePeriodDuration',
   ClrFund = 'clrFund',
-  ClrFundBatchUstVerifier = 'clrFund__batchUstVerifier',
   ClrFundContributorRegistryAddress = 'clrFund__contributorRegistryAddress',
   ClrFundCoordinator = 'clrFund__coordinator',
   ClrFundCoordinatorPubKey = 'clrFund__coordinatorPubKey',
@@ -2445,13 +2392,10 @@ export enum RecipientRegistry_OrderBy {
   ClrFundMessageTreeDepth = 'clrFund__messageTreeDepth',
   ClrFundNativeToken = 'clrFund__nativeToken',
   ClrFundOwner = 'clrFund__owner',
-  ClrFundQvtVerifier = 'clrFund__qvtVerifier',
   ClrFundRecipientRegistryAddress = 'clrFund__recipientRegistryAddress',
-  ClrFundSignUpDuration = 'clrFund__signUpDuration',
   ClrFundStateTreeDepth = 'clrFund__stateTreeDepth',
   ClrFundTallyBatchSize = 'clrFund__tallyBatchSize',
   ClrFundVoteOptionTreeDepth = 'clrFund__voteOptionTreeDepth',
-  ClrFundVotingDuration = 'clrFund__votingDuration',
   Controller = 'controller',
   CreatedAt = 'createdAt',
   Id = 'id',
@@ -3416,7 +3360,7 @@ export const GetContributorIndexDocument = gql`
 export const GetContributorMessagesDocument = gql`
     query GetContributorMessages($fundingRoundAddress: String!, $pubKey: String!, $contributorAddress: Bytes!) {
   messages(
-    where: {fundingRound: $fundingRoundAddress, publicKey: $pubKey, submittedBy: $contributorAddress}
+    where: {fundingRound: $fundingRoundAddress, publicKey: $pubKey, submittedBy: $contributorAddress, msgType: "1"}
     first: 1000
     orderBy: blockNumber
     orderDirection: desc

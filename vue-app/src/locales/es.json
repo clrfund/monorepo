@@ -177,7 +177,7 @@
     },
     "reallocation": {
       "title": "Fase de reasignación",
-      "paragraph": "Durante esta fase, si has contribuido, tendrás tiempo para cambiar de opinión. Puedes editar los montos de tu contribución o agregar/eliminar proyectos, pero el total debe ser igual al de tu contribución original.",
+      "paragraph": "Durante esta fase, si has contribuido, tendrás tiempo para cambiar de opinión. Puedes editar los montos de tu contribución o agregar/eliminar proyectos.",
       "need": {
         "title": "Necesitas saber",
         "li-1": "Esta fase durará {reallocationPhaseDays} días después del final de la fase de contribución.",
@@ -871,7 +871,7 @@
     "connect": "Conéctate",
     "sign_the_message_to_see_your_cart": "Por favor, firmar el mesaje para ver tu carrito",
     "h3_1": "Conéctate para ver tu carrito",
-    "div1": "Ya has contribuido en esta ronda. Puedes editar tus elecciones y agregar nuevos proyectos, pero el total de tu carrito siempre debe ser igual a la cantidad original de tu contribución.",
+    "div1": "Ya has contribuido en esta ronda. Puedes editar tus elecciones y agregar nuevos proyectos.",
     "link1": "¿Por qué?",
     "div2": "¡Casi terminas! Debes enviar una transacción más para completar tu contribución.",
     "h2_1": "Editar carrito",
@@ -1021,7 +1021,16 @@
     "h2_4": "Equipo: "
   },
   "reallocationModal": {
-    "h3": "Reasignar fondos"
+    "confirm": "¿Potenciar tu impacto?",
+    "confirm_details": "El total de su carrito ha superado el monto original de su contribución. ¿Le gustaría aumentar su contribución en {renderTopup} {nativeTokenSymbol}?",
+    "btn_cancel": "Cancelar",
+    "btn_continue": "Continuar",
+    "approve": "Aprobar {renderTotal} {nativeTokenSymbol}",
+    "permission": "Esto le otorga a esta aplicación el permiso para retirar {renderTotal} {nativeTokenSymbol} de tu billetera para tu contribución.",
+    "increase": "Aumentar la contribución",
+    "increase_details": "Esta transacción aumentará su contribución en {renderAmount} {nativeTokenSymbol}.",
+    "reallocate": "Reasignar fondos",
+    "reallocate_details": "Esta transacción reubica tu contribución a tus proyectos favoritos."
   },
   "recipientSubmissionWidget": {
     "div1": "Esperando que se mine la transacción...",
@@ -1190,8 +1199,7 @@
         "not_enough_funds": "Fondos insuficientes. Tu saldo es de {balance} {nativeTokenSymbol}.",
         "too_generous": "Tu contribución es demasiado generosa. La contribución máxima es de {maxAmount} {nativeTokenSymbol}.",
         "need_gas_payment": "Necesitas tener ETH para pagar por el gas.",
-        "contributor_key_missing": "No se encontró la clave del colaborador. Actualiza la página e intenta de nuevo y/o asegúrate de estar utilizando el mismo navegador/máquina con la que hiciste la contribución.",
-        "more_than_original_contribution": "Tu nuevo total no puede ser mayor que tu contribución original de {total} {tokenSymbol}"
+        "contributor_key_missing": "No se encontró la clave del colaborador. Actualiza la página e intenta de nuevo y/o asegúrate de estar utilizando el mismo navegador/máquina con la que hiciste la contribución."
       },
       "action": {
         "remove_all": "Eliminar todo",

@@ -177,7 +177,7 @@
     },
     "reallocation": {
       "title": "调整阶段",
-      "paragraph": "在这个阶段，如果你已经捐赠了，你将有时间改变主意。你可以编辑你的捐赠金额或添加/删除项目，但你的总捐赠额必须等于你原来的捐赠额。",
+      "paragraph": "在这个阶段，如果你已经捐赠了，你将有时间改变主意。你可以编辑你的捐赠金额或添加/删除项目。",
       "need": {
         "title": "了解事项",
         "li-1": " 在捐赠阶段结束后，这个阶段将持续 {reallocationPhaseDays} 天。",
@@ -871,7 +871,7 @@
     "connect": "连接",
     "sign_the_message_to_see_your_cart": "请签个字以查看您的捐款车",
     "h3_1": "连接查看您的捐款车",
-    "div1": "您已经贡献过了。您可以更改您的选择并添加新的项目，但是您原本的总捐额必需一样。",
+    "div1": "您已经贡献过了。您可以更改您的选择并添加新的项目。",
     "link1": "为什么?",
     "div2": "几乎完成了！您必须再提交一笔交易才能完成您的贡献。",
     "h2_1": "编辑捐款车",
@@ -1021,7 +1021,16 @@
     "h2_4": "团队: "
   },
   "reallocationModal": {
-    "h3": "重新分配捐款"
+    "confirm": "提升您的影响力吗？",
+    "confirm_details": "您的购物车总额已超过您的原来贡献金额。您是否想增加{renderTopup} {nativeTokenSymbol}到您的总捐款金额？",
+    "btn_cancel": "取消",
+    "btn_continue": "继续",
+    "approve": "批准 {renderTotal} {nativeTokenSymbol}",
+    "permission": " 这会让这个 APP 有权从您的钱包中提取 {renderTotal} {nativeTokenSymbol} 作为您的贡献。",
+    "increase": "增加捐款",
+    "increase_details": "此交易将使您的贡献增加 {renderAmount} {nativeTokenSymbol}。",
+    "reallocate": "重新分配捐款",
+    "reallocate_details": "此交易将重新分配您的捐款到您喜爱的项目。"
   },
   "recipientSubmissionWidget": {
     "div1": "等待交易被挖掘...",
@@ -1190,8 +1199,7 @@
         "not_enough_funds": "资金不足. 您的余额是 {balance} {nativeTokenSymbol}.",
         "too_generous": "您的贡献太大了。最大贡献为 {maxAmount} {nativeTokenSymbol}.",
         "need_gas_payment": "您需要一些 ETH 来支付交易费",
-        "contributor_key_missing": "找不到贡献者密钥。请刷新并重试，并确保您使用的浏览器/机器与您进行贡献的浏览器/机器相同。",
-        "more_than_original_contribution": "您的新总额不能超过您原本的 {total} {tokenSymbol} 贡献."
+        "contributor_key_missing": "找不到贡献者密钥。请刷新并重试，并确保您使用的浏览器/机器与您进行贡献的浏览器/机器相同。"
       },
       "action": {
         "remove_all": "全部删除",

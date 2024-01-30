@@ -2123,6 +2123,23 @@ export class Contribution extends Entity {
       this.set("createdAt", Value.fromString(<string>value));
     }
   }
+
+  get lastUpdatedAt(): string | null {
+    let value = this.get("lastUpdatedAt");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set lastUpdatedAt(value: string | null) {
+    if (!value) {
+      this.unset("lastUpdatedAt");
+    } else {
+      this.set("lastUpdatedAt", Value.fromString(<string>value));
+    }
+  }
 }
 
 export class Vote extends Entity {
