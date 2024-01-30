@@ -1,4 +1,4 @@
-import { Contract, toNumber, isHexString } from 'ethers'
+import { Contract, toNumber, isHexString, ContractTransactionResponse } from 'ethers'
 import type { TransactionResponse, TransactionReceipt, Signer } from 'ethers'
 import { DateTime } from 'luxon'
 import { chain } from '@/api/core'
@@ -186,7 +186,7 @@ async function addRecipient(
   recipientApplicationData: RecipientApplicationData,
   deposit: bigint,
   signer: Signer,
-): Promise<TransactionResponse> {
+): Promise<ContractTransactionResponse> {
   const registry = new Contract(registryAddress, OptimisticRecipientRegistry, signer)
   const recipientData = formToRecipientData(recipientApplicationData)
   const { address, ...metadata } = recipientData

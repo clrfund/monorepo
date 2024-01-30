@@ -173,6 +173,20 @@ export async function getContributorIndex(fundingRoundAddress: string, pubKey: P
 }
 
 /**
+ * Convert to MACI Message object
+ * @param type message type, 1 for key change or vote, 2 for topup
+ * @param data message data
+ * @returns Message
+ */
+function getMaciMessage(type: any, data: any[] | null): Message {
+  const msgType = BigInt(type)
+  const rawData = data || []
+  const msgData = rawData.map((d: string) => BigInt(d))
+  const maciMessage = new Message(BigInt(msgType), msgData)
+  return maciMessage
+}
+
+/**
  * Get the latest set of vote messages submitted by contributor
  * @param fundingRoundAddress Funding round contract address
  * @param contributorKey Contributor key used to encrypt messages
@@ -210,28 +224,27 @@ export async function getContributorMessages({
   let latestTransaction: Transaction | null = null
   const latestMessages = result.messages
     .filter(message => {
-      const { msgType, data, blockNumber, transactionIndex } = message
-
       try {
-        const maciMessage = new Message(BigInt(msgType), data || [])
+        const maciMessage = getMaciMessage(message.msgType, message.data)
         const { command, signature } = Command.decrypt(maciMessage, sharedKey)
         if (!command.verifySignature(signature, contributorKey.pubKey)) {
           // Not signed by this user, filter it out
           return false
         }
-
-        const currentTx = new Transaction({
-          blockNumber: Number(blockNumber),
-          transactionIndex: Number(transactionIndex),
-        })
-
-        // save the latest transaction
-        if (!latestTransaction || currentTx.compare(latestTransaction) > 0) {
-          latestTransaction = currentTx
-        }
       } catch {
         // if we can't decrypt the message, filter it out
         return false
+      }
+
+      const { blockNumber, transactionIndex } = message
+      const currentTx = new Transaction({
+        blockNumber: Number(blockNumber),
+        transactionIndex: Number(transactionIndex),
+      })
+
+      // save the latest transaction
+      if (!latestTransaction || currentTx.compare(latestTransaction) > 0) {
+        latestTransaction = currentTx
       }
       return true
     })
@@ -243,8 +256,7 @@ export async function getContributorMessages({
       return latestTransaction && tx.compare(latestTransaction) === 0
     })
     .map(message => {
-      const { msgType, data } = message
-      return new Message(BigInt(msgType), data || [])
+      return getMaciMessage(message.msgType, message.data)
     })
 
   return latestMessages
