@@ -27,9 +27,9 @@ task(
       const pollFactoryContract = await deployPollFactory({
         signer,
         ethers,
-        artifactPath: config.paths.artifacts,
+        artifactsPath: config.paths.artifacts,
       })
-      pollFactoryAddress = pollFactoryContract.address
+      pollFactoryAddress = await pollFactoryContract.getAddress()
     }
 
     const tx = await maciFactoryContract.setPollFactory(pollFactoryAddress)
