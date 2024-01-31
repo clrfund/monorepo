@@ -80,7 +80,6 @@ contract FundingRound is
   uint256 private constant MAX_VOICE_CREDITS = 10 ** 9;  // MACI allows 2 ** 32 voice credits max
   uint256 private constant MAX_CONTRIBUTION_AMOUNT = 10 ** 4;  // In tokens
   uint256 private constant ALPHA_PRECISION = 10 ** 18; // to account for loss of precision in division
-  uint8   private constant LEAVES_PER_NODE = 5; // leaves per node of the tally result tree
 
   // Structs
   struct ContributorStatus {
@@ -181,7 +180,8 @@ contract FundingRound is
    */
   function isTallied() private view returns (bool) {
     (uint256 numSignUps, ) = poll.numSignUpsAndMessages();
-    (, uint256 tallyBatchSize, ) = poll.batchSizes();
+    (uint8 intStateTreeDepth, , , ) = poll.treeDepths();
+    uint256 tallyBatchSize = TREE_ARITY ** uint256(intStateTreeDepth);
     uint256 tallyBatchNum = tally.tallyBatchNum();
     uint256 totalTallied = tallyBatchNum * tallyBatchSize;
 
@@ -497,7 +497,7 @@ contract FundingRound is
 
     // make sure we have received all the tally results
     (,,, uint8 voteOptionTreeDepth) = poll.treeDepths();
-    uint256 totalResults = uint256(LEAVES_PER_NODE) ** uint256(voteOptionTreeDepth);
+    uint256 totalResults = uint256(TREE_ARITY) ** uint256(voteOptionTreeDepth);
     if ( totalTallyResults != totalResults ) {
       revert IncompleteTallyResults(totalResults, totalTallyResults);
     }

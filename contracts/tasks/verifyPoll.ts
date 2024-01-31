@@ -3,11 +3,10 @@ import { Contract } from 'ethers'
 
 async function getConstructorArguments(pollContract: Contract): Promise<any[]> {
   const [, duration] = await pollContract.getDeployTimeAndDuration()
-  const [maxValues, treeDepths, batchSizes, coordinatorPubKey, extContracts] =
+  const [maxValues, treeDepths, coordinatorPubKey, extContracts] =
     await Promise.all([
       pollContract.maxValues(),
       pollContract.treeDepths(),
-      pollContract.batchSizes(),
       pollContract.coordinatorPubKey(),
       pollContract.extContracts(),
     ])
@@ -23,11 +22,6 @@ async function getConstructorArguments(pollContract: Contract): Promise<any[]> {
       messageTreeSubDepth: treeDepths.messageTreeSubDepth,
       messageTreeDepth: treeDepths.messageTreeDepth,
       voteOptionTreeDepth: treeDepths.voteOptionTreeDepth,
-    },
-    {
-      messageBatchSize: batchSizes.messageBatchSize,
-      tallyBatchSize: batchSizes.tallyBatchSize,
-      subsidyBatchSize: batchSizes.subsidyBatchSize,
     },
     {
       x: coordinatorPubKey.x,

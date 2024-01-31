@@ -2,8 +2,23 @@
   {
     "inputs": [
       {
-        "internalType": "contract PollFactory",
+        "internalType": "contract IPollFactory",
         "name": "_pollFactory",
+        "type": "address"
+      },
+      {
+        "internalType": "contract IMessageProcessorFactory",
+        "name": "_messageProcessorFactory",
+        "type": "address"
+      },
+      {
+        "internalType": "contract ITallySubsidyFactory",
+        "name": "_tallyFactory",
+        "type": "address"
+      },
+      {
+        "internalType": "contract ITallySubsidyFactory",
+        "name": "_subsidyFactory",
         "type": "address"
       },
       {
@@ -15,15 +30,20 @@
         "internalType": "contract InitialVoiceCreditProxy",
         "name": "_initialVoiceCreditProxy",
         "type": "address"
+      },
+      {
+        "internalType": "contract TopupCredit",
+        "name": "_topupCredit",
+        "type": "address"
+      },
+      {
+        "internalType": "uint8",
+        "name": "_stateTreeDepth",
+        "type": "uint8"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "constructor"
-  },
-  {
-    "inputs": [],
-    "name": "AlreadyInitialized",
-    "type": "error"
   },
   {
     "inputs": [
@@ -38,7 +58,7 @@
   },
   {
     "inputs": [],
-    "name": "MaciNotInit",
+    "name": "InvalidMessage",
     "type": "error"
   },
   {
@@ -79,11 +99,6 @@
     "type": "error"
   },
   {
-    "inputs": [],
-    "name": "WrongVkRegistryOwner",
-    "type": "error"
-  },
-  {
     "anonymous": false,
     "inputs": [
       {
@@ -91,12 +106,6 @@
         "internalType": "uint256",
         "name": "_pollId",
         "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "_pollAddr",
-        "type": "address"
       },
       {
         "components": [
@@ -112,63 +121,40 @@
           }
         ],
         "indexed": false,
-        "internalType": "struct IPubKey.PubKey",
+        "internalType": "struct DomainObjs.PubKey",
         "name": "_pubKey",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "poll",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "messageProcessor",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "tally",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "subsidy",
+            "type": "address"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct MACI.PollContracts",
+        "name": "pollAddr",
         "type": "tuple"
       }
     ],
     "name": "DeployPoll",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "contract VkRegistry",
-        "name": "_vkRegistry",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "contract TopupCredit",
-        "name": "_topupCredit",
-        "type": "address"
-      }
-    ],
-    "name": "Init",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "_pollId",
-        "type": "uint256"
-      }
-    ],
-    "name": "MergeStateAq",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "_pollId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "_numSrQueueOps",
-        "type": "uint256"
-      }
-    ],
-    "name": "MergeStateAqSubRoots",
     "type": "event"
   },
   {
@@ -213,7 +199,7 @@
           }
         ],
         "indexed": false,
-        "internalType": "struct IPubKey.PubKey",
+        "internalType": "struct DomainObjs.PubKey",
         "name": "_userPubKey",
         "type": "tuple"
       },
@@ -234,28 +220,24 @@
     "type": "event"
   },
   {
+    "inputs": [],
+    "name": "MESSAGE_DATA_LENGTH",
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
         "name": "_duration",
         "type": "uint256"
-      },
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "maxMessages",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "maxVoteOptions",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct Params.MaxValues",
-        "name": "_maxValues",
-        "type": "tuple"
       },
       {
         "components": [
@@ -297,17 +279,54 @@
             "type": "uint256"
           }
         ],
-        "internalType": "struct IPubKey.PubKey",
+        "internalType": "struct DomainObjs.PubKey",
         "name": "_coordinatorPubKey",
         "type": "tuple"
+      },
+      {
+        "internalType": "address",
+        "name": "_verifier",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_vkRegistry",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "useSubsidy",
+        "type": "bool"
       }
     ],
     "name": "deployPoll",
     "outputs": [
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
+        "components": [
+          {
+            "internalType": "address",
+            "name": "poll",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "messageProcessor",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "tally",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "subsidy",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct MACI.PollContracts",
+        "name": "pollAddr",
+        "type": "tuple"
       }
     ],
     "stateMutability": "nonpayable",
@@ -324,8 +343,8 @@
     "name": "getPoll",
     "outputs": [
       {
-        "internalType": "contract Poll",
-        "name": "",
+        "internalType": "address",
+        "name": "poll",
         "type": "address"
       }
     ],
@@ -338,7 +357,7 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "root",
         "type": "uint256"
       }
     ],
@@ -357,7 +376,7 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "result",
         "type": "uint256"
       }
     ],
@@ -376,7 +395,7 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "result",
         "type": "uint256"
       }
     ],
@@ -395,7 +414,7 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "result",
         "type": "uint256"
       }
     ],
@@ -414,7 +433,7 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "result",
         "type": "uint256"
       }
     ],
@@ -425,12 +444,12 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_left",
+        "name": "left",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "_right",
+        "name": "right",
         "type": "uint256"
       }
     ],
@@ -438,7 +457,55 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "result",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "msgType",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256[10]",
+            "name": "data",
+            "type": "uint256[10]"
+          }
+        ],
+        "internalType": "struct DomainObjs.Message",
+        "name": "_message",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "x",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "y",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct DomainObjs.PubKey",
+        "name": "_encPubKey",
+        "type": "tuple"
+      }
+    ],
+    "name": "hashMessageAndEncPubKey",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "msgHash",
         "type": "uint256"
       }
     ],
@@ -462,7 +529,7 @@
                 "type": "uint256"
               }
             ],
-            "internalType": "struct IPubKey.PubKey",
+            "internalType": "struct DomainObjs.PubKey",
             "name": "pubKey",
             "type": "tuple"
           },
@@ -486,29 +553,11 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "ciphertext",
         "type": "uint256"
       }
     ],
     "stateMutability": "pure",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract VkRegistry",
-        "name": "_vkRegistry",
-        "type": "address"
-      },
-      {
-        "internalType": "contract TopupCredit",
-        "name": "_topupCredit",
-        "type": "address"
-      }
-    ],
-    "name": "init",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -519,19 +568,6 @@
         "internalType": "contract InitialVoiceCreditProxy",
         "name": "",
         "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "isInitialised",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -549,7 +585,7 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "root",
         "type": "uint256"
       }
     ],
@@ -572,6 +608,19 @@
     "name": "mergeStateAqSubRoots",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "messageProcessorFactory",
+    "outputs": [
+      {
+        "internalType": "contract IMessageProcessorFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -633,11 +682,69 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256[2]",
+        "name": "dataToPad",
+        "type": "uint256[2]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "msgType",
+        "type": "uint256"
+      }
+    ],
+    "name": "padAndHashMessage",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "msgType",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256[10]",
+            "name": "data",
+            "type": "uint256[10]"
+          }
+        ],
+        "internalType": "struct DomainObjs.Message",
+        "name": "message",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "x",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "y",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct DomainObjs.PubKey",
+        "name": "padKey",
+        "type": "tuple"
+      },
+      {
+        "internalType": "uint256",
+        "name": "msgHash",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "pollFactory",
     "outputs": [
       {
-        "internalType": "contract PollFactory",
+        "internalType": "contract IPollFactory",
         "name": "",
         "type": "address"
       }
@@ -656,7 +763,7 @@
     "name": "polls",
     "outputs": [
       {
-        "internalType": "contract Poll",
+        "internalType": "address",
         "name": "",
         "type": "address"
       }
@@ -683,7 +790,7 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "result",
         "type": "uint256"
       }
     ],
@@ -705,7 +812,7 @@
             "type": "uint256"
           }
         ],
-        "internalType": "struct IPubKey.PubKey",
+        "internalType": "struct DomainObjs.PubKey",
         "name": "_pubKey",
         "type": "tuple"
       },
@@ -740,19 +847,6 @@
   },
   {
     "inputs": [],
-    "name": "signUpTimestamp",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "stateAq",
     "outputs": [
       {
@@ -772,6 +866,32 @@
         "internalType": "uint8",
         "name": "",
         "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "subsidyFactory",
+    "outputs": [
+      {
+        "internalType": "contract ITallySubsidyFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "tallyFactory",
+    "outputs": [
+      {
+        "internalType": "contract ITallySubsidyFactory",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -801,19 +921,6 @@
     "name": "transferOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "vkRegistry",
-    "outputs": [
-      {
-        "internalType": "contract VkRegistry",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   }
 ]

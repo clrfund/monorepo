@@ -391,19 +391,27 @@ export class ClrFund extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  isInit(): boolean {
-    let result = super.call("isInit", "isInit():(bool)", []);
+  getMaxRecipients(): BigInt {
+    let result = super.call(
+      "getMaxRecipients",
+      "getMaxRecipients():(uint256)",
+      []
+    );
 
-    return result[0].toBoolean();
+    return result[0].toBigInt();
   }
 
-  try_isInit(): ethereum.CallResult<boolean> {
-    let result = super.tryCall("isInit", "isInit():(bool)", []);
+  try_getMaxRecipients(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getMaxRecipients",
+      "getMaxRecipients():(uint256)",
+      []
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBoolean());
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   maciFactory(): Address {

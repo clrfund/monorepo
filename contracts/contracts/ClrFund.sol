@@ -61,6 +61,7 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
   error InvalidMaciFactory();
   error RecipientRegistryNotSet();
   error NotInitialized();
+  error VoteOptionTreeDepthNotSet();
 
 
   /**
@@ -128,6 +129,20 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
   }
 
   /**
+   * @dev Get the maximum recipients allowed in the recipient registry
+   */
+  function getMaxRecipients() public view returns (uint256 _maxRecipients) {
+    TreeDepths memory treeDepths = maciFactory.treeDepths();
+    if (treeDepths.voteOptionTreeDepth == 0) revert VoteOptionTreeDepthNotSet();
+
+    uint256 maxVoteOption = maciFactory.TREE_ARITY() ** treeDepths.voteOptionTreeDepth;
+
+    // -1 because the first slot of the recipients array is not used
+    // and maxRecipients is used to generate 0 based index to the array
+    _maxRecipients = maxVoteOption - 1;
+  }
+
+  /**
     * @dev Set registry of verified users.
     * @param _userRegistry Address of a user registry.
     */
@@ -149,8 +164,8 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
     onlyOwner
   {
     recipientRegistry = _recipientRegistry;
-    MaxValues memory maxValues = maciFactory.maxValues();
-    recipientRegistry.setMaxRecipients(maxValues.maxVoteOptions);
+    uint256 maxRecipients = getMaxRecipients();
+    recipientRegistry.setMaxRecipients(maxRecipients);
 
     emit RecipientRegistryChanged(address(_recipientRegistry));
   }
@@ -214,8 +229,8 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
     if (address(recipientRegistry) == address(0)) revert RecipientRegistryNotSet();
 
     // Make sure that the max number of recipients is set correctly
-    MaxValues memory maxValues = maciFactory.maxValues();
-    recipientRegistry.setMaxRecipients(maxValues.maxVoteOptions);
+    uint256 maxRecipients = getMaxRecipients();
+    recipientRegistry.setMaxRecipients(maxRecipients);
 
     // Deploy funding round and MACI contracts
     address newRound = roundFactory.deploy(duration, address(this));

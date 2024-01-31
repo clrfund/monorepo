@@ -64,6 +64,52 @@ export class OwnershipTransferred__Params {
   }
 }
 
+export class MACIFactory__deployMaciResult_pollContractsStruct extends ethereum.Tuple {
+  get poll(): Address {
+    return this[0].toAddress();
+  }
+
+  get messageProcessor(): Address {
+    return this[1].toAddress();
+  }
+
+  get tally(): Address {
+    return this[2].toAddress();
+  }
+
+  get subsidy(): Address {
+    return this[3].toAddress();
+  }
+}
+
+export class MACIFactory__deployMaciResult {
+  value0: Address;
+  value1: MACIFactory__deployMaciResult_pollContractsStruct;
+
+  constructor(
+    value0: Address,
+    value1: MACIFactory__deployMaciResult_pollContractsStruct
+  ) {
+    this.value0 = value0;
+    this.value1 = value1;
+  }
+
+  toMap(): TypedMap<string, ethereum.Value> {
+    let map = new TypedMap<string, ethereum.Value>();
+    map.set("value0", ethereum.Value.fromAddress(this.value0));
+    map.set("value1", ethereum.Value.fromTuple(this.value1));
+    return map;
+  }
+
+  get_maci(): Address {
+    return this.value0;
+  }
+
+  get_pollContracts(): MACIFactory__deployMaciResult_pollContractsStruct {
+    return this.value1;
+  }
+}
+
 export class MACIFactory__deployMaciInputCoordinatorPubKeyStruct extends ethereum.Tuple {
   get x(): BigInt {
     return this[0].toBigInt();
@@ -74,28 +120,47 @@ export class MACIFactory__deployMaciInputCoordinatorPubKeyStruct extends ethereu
   }
 }
 
-export class MACIFactory__maxValuesResult {
-  value0: BigInt;
-  value1: BigInt;
+export class MACIFactory__factoriesResult {
+  value0: Address;
+  value1: Address;
+  value2: Address;
+  value3: Address;
 
-  constructor(value0: BigInt, value1: BigInt) {
+  constructor(
+    value0: Address,
+    value1: Address,
+    value2: Address,
+    value3: Address
+  ) {
     this.value0 = value0;
     this.value1 = value1;
+    this.value2 = value2;
+    this.value3 = value3;
   }
 
   toMap(): TypedMap<string, ethereum.Value> {
     let map = new TypedMap<string, ethereum.Value>();
-    map.set("value0", ethereum.Value.fromUnsignedBigInt(this.value0));
-    map.set("value1", ethereum.Value.fromUnsignedBigInt(this.value1));
+    map.set("value0", ethereum.Value.fromAddress(this.value0));
+    map.set("value1", ethereum.Value.fromAddress(this.value1));
+    map.set("value2", ethereum.Value.fromAddress(this.value2));
+    map.set("value3", ethereum.Value.fromAddress(this.value3));
     return map;
   }
 
-  getMaxMessages(): BigInt {
+  getPollFactory(): Address {
     return this.value0;
   }
 
-  getMaxVoteOptions(): BigInt {
+  getTallyFactory(): Address {
     return this.value1;
+  }
+
+  getSubsidyFactory(): Address {
+    return this.value2;
+  }
+
+  getMessageProcessorFactory(): Address {
+    return this.value3;
   }
 }
 
@@ -155,28 +220,73 @@ export class MACIFactory extends ethereum.SmartContract {
     return new MACIFactory("MACIFactory", address);
   }
 
+  MESSAGE_DATA_LENGTH(): i32 {
+    let result = super.call(
+      "MESSAGE_DATA_LENGTH",
+      "MESSAGE_DATA_LENGTH():(uint8)",
+      []
+    );
+
+    return result[0].toI32();
+  }
+
+  try_MESSAGE_DATA_LENGTH(): ethereum.CallResult<i32> {
+    let result = super.tryCall(
+      "MESSAGE_DATA_LENGTH",
+      "MESSAGE_DATA_LENGTH():(uint8)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toI32());
+  }
+
+  TREE_ARITY(): BigInt {
+    let result = super.call("TREE_ARITY", "TREE_ARITY():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_TREE_ARITY(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("TREE_ARITY", "TREE_ARITY():(uint256)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
   deployMaci(
     signUpGatekeeper: Address,
     initialVoiceCreditProxy: Address,
     topupCredit: Address,
     duration: BigInt,
     coordinator: Address,
-    coordinatorPubKey: MACIFactory__deployMaciInputCoordinatorPubKeyStruct
-  ): Address {
+    coordinatorPubKey: MACIFactory__deployMaciInputCoordinatorPubKeyStruct,
+    maciOwner: Address
+  ): MACIFactory__deployMaciResult {
     let result = super.call(
       "deployMaci",
-      "deployMaci(address,address,address,uint256,address,(uint256,uint256)):(address)",
+      "deployMaci(address,address,address,uint256,address,(uint256,uint256),address):(address,(address,address,address,address))",
       [
         ethereum.Value.fromAddress(signUpGatekeeper),
         ethereum.Value.fromAddress(initialVoiceCreditProxy),
         ethereum.Value.fromAddress(topupCredit),
         ethereum.Value.fromUnsignedBigInt(duration),
         ethereum.Value.fromAddress(coordinator),
-        ethereum.Value.fromTuple(coordinatorPubKey)
+        ethereum.Value.fromTuple(coordinatorPubKey),
+        ethereum.Value.fromAddress(maciOwner)
       ]
     );
 
-    return result[0].toAddress();
+    return new MACIFactory__deployMaciResult(
+      result[0].toAddress(),
+      changetype<MACIFactory__deployMaciResult_pollContractsStruct>(
+        result[1].toTuple()
+      )
+    );
   }
 
   try_deployMaci(
@@ -185,40 +295,55 @@ export class MACIFactory extends ethereum.SmartContract {
     topupCredit: Address,
     duration: BigInt,
     coordinator: Address,
-    coordinatorPubKey: MACIFactory__deployMaciInputCoordinatorPubKeyStruct
-  ): ethereum.CallResult<Address> {
+    coordinatorPubKey: MACIFactory__deployMaciInputCoordinatorPubKeyStruct,
+    maciOwner: Address
+  ): ethereum.CallResult<MACIFactory__deployMaciResult> {
     let result = super.tryCall(
       "deployMaci",
-      "deployMaci(address,address,address,uint256,address,(uint256,uint256)):(address)",
+      "deployMaci(address,address,address,uint256,address,(uint256,uint256),address):(address,(address,address,address,address))",
       [
         ethereum.Value.fromAddress(signUpGatekeeper),
         ethereum.Value.fromAddress(initialVoiceCreditProxy),
         ethereum.Value.fromAddress(topupCredit),
         ethereum.Value.fromUnsignedBigInt(duration),
         ethereum.Value.fromAddress(coordinator),
-        ethereum.Value.fromTuple(coordinatorPubKey)
+        ethereum.Value.fromTuple(coordinatorPubKey),
+        ethereum.Value.fromAddress(maciOwner)
       ]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
-  maxValues(): MACIFactory__maxValuesResult {
-    let result = super.call("maxValues", "maxValues():(uint256,uint256)", []);
-
-    return new MACIFactory__maxValuesResult(
-      result[0].toBigInt(),
-      result[1].toBigInt()
+    return ethereum.CallResult.fromValue(
+      new MACIFactory__deployMaciResult(
+        value[0].toAddress(),
+        changetype<MACIFactory__deployMaciResult_pollContractsStruct>(
+          value[1].toTuple()
+        )
+      )
     );
   }
 
-  try_maxValues(): ethereum.CallResult<MACIFactory__maxValuesResult> {
+  factories(): MACIFactory__factoriesResult {
+    let result = super.call(
+      "factories",
+      "factories():(address,address,address,address)",
+      []
+    );
+
+    return new MACIFactory__factoriesResult(
+      result[0].toAddress(),
+      result[1].toAddress(),
+      result[2].toAddress(),
+      result[3].toAddress()
+    );
+  }
+
+  try_factories(): ethereum.CallResult<MACIFactory__factoriesResult> {
     let result = super.tryCall(
-      "maxValues",
-      "maxValues():(uint256,uint256)",
+      "factories",
+      "factories():(address,address,address,address)",
       []
     );
     if (result.reverted) {
@@ -226,25 +351,32 @@ export class MACIFactory extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      new MACIFactory__maxValuesResult(value[0].toBigInt(), value[1].toBigInt())
+      new MACIFactory__factoriesResult(
+        value[0].toAddress(),
+        value[1].toAddress(),
+        value[2].toAddress(),
+        value[3].toAddress()
+      )
     );
   }
 
-  messageBatchSize(): BigInt {
+  getMessageBatchSize(messageTreeSubDepth: i32): BigInt {
     let result = super.call(
-      "messageBatchSize",
-      "messageBatchSize():(uint256)",
-      []
+      "getMessageBatchSize",
+      "getMessageBatchSize(uint8):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(messageTreeSubDepth))]
     );
 
     return result[0].toBigInt();
   }
 
-  try_messageBatchSize(): ethereum.CallResult<BigInt> {
+  try_getMessageBatchSize(
+    messageTreeSubDepth: i32
+  ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
-      "messageBatchSize",
-      "messageBatchSize():(uint256)",
-      []
+      "getMessageBatchSize",
+      "getMessageBatchSize(uint8):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(messageTreeSubDepth))]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -261,21 +393,6 @@ export class MACIFactory extends ethereum.SmartContract {
 
   try_owner(): ethereum.CallResult<Address> {
     let result = super.tryCall("owner", "owner():(address)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
-  pollFactory(): Address {
-    let result = super.call("pollFactory", "pollFactory():(address)", []);
-
-    return result[0].toAddress();
-  }
-
-  try_pollFactory(): ethereum.CallResult<Address> {
-    let result = super.tryCall("pollFactory", "pollFactory():(address)", []);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -337,6 +454,21 @@ export class MACIFactory extends ethereum.SmartContract {
     );
   }
 
+  verifier(): Address {
+    let result = super.call("verifier", "verifier():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_verifier(): ethereum.CallResult<Address> {
+    let result = super.tryCall("verifier", "verifier():(address)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
   vkRegistry(): Address {
     let result = super.call("vkRegistry", "vkRegistry():(address)", []);
 
@@ -374,8 +506,14 @@ export class ConstructorCall__Inputs {
     return this._call.inputValues[0].value.toAddress();
   }
 
-  get _pollFactory(): Address {
-    return this._call.inputValues[1].value.toAddress();
+  get _factories(): ConstructorCall_factoriesStruct {
+    return changetype<ConstructorCall_factoriesStruct>(
+      this._call.inputValues[1].value.toTuple()
+    );
+  }
+
+  get _verifier(): Address {
+    return this._call.inputValues[2].value.toAddress();
   }
 }
 
@@ -384,6 +522,24 @@ export class ConstructorCall__Outputs {
 
   constructor(call: ConstructorCall) {
     this._call = call;
+  }
+}
+
+export class ConstructorCall_factoriesStruct extends ethereum.Tuple {
+  get pollFactory(): Address {
+    return this[0].toAddress();
+  }
+
+  get tallyFactory(): Address {
+    return this[1].toAddress();
+  }
+
+  get subsidyFactory(): Address {
+    return this[2].toAddress();
+  }
+
+  get messageProcessorFactory(): Address {
+    return this[3].toAddress();
   }
 }
 
@@ -429,6 +585,10 @@ export class DeployMaciCall__Inputs {
       this._call.inputValues[5].value.toTuple()
     );
   }
+
+  get maciOwner(): Address {
+    return this._call.inputValues[6].value.toAddress();
+  }
 }
 
 export class DeployMaciCall__Outputs {
@@ -441,6 +601,12 @@ export class DeployMaciCall__Outputs {
   get _maci(): Address {
     return this._call.outputValues[0].value.toAddress();
   }
+
+  get _pollContracts(): DeployMaciCall_pollContractsStruct {
+    return changetype<DeployMaciCall_pollContractsStruct>(
+      this._call.outputValues[1].value.toTuple()
+    );
+  }
 }
 
 export class DeployMaciCallCoordinatorPubKeyStruct extends ethereum.Tuple {
@@ -450,6 +616,24 @@ export class DeployMaciCallCoordinatorPubKeyStruct extends ethereum.Tuple {
 
   get y(): BigInt {
     return this[1].toBigInt();
+  }
+}
+
+export class DeployMaciCall_pollContractsStruct extends ethereum.Tuple {
+  get poll(): Address {
+    return this[0].toAddress();
+  }
+
+  get messageProcessor(): Address {
+    return this[1].toAddress();
+  }
+
+  get tally(): Address {
+    return this[2].toAddress();
+  }
+
+  get subsidy(): Address {
+    return this[3].toAddress();
   }
 }
 
@@ -505,28 +689,6 @@ export class SetMaciParametersCall__Inputs {
       this._call.inputValues[1].value.toTuple()
     );
   }
-
-  get _maxValues(): SetMaciParametersCall_maxValuesStruct {
-    return changetype<SetMaciParametersCall_maxValuesStruct>(
-      this._call.inputValues[2].value.toTuple()
-    );
-  }
-
-  get _messageBatchSize(): BigInt {
-    return this._call.inputValues[3].value.toBigInt();
-  }
-
-  get _processVk(): SetMaciParametersCall_processVkStruct {
-    return changetype<SetMaciParametersCall_processVkStruct>(
-      this._call.inputValues[4].value.toTuple()
-    );
-  }
-
-  get _tallyVk(): SetMaciParametersCall_tallyVkStruct {
-    return changetype<SetMaciParametersCall_tallyVkStruct>(
-      this._call.inputValues[5].value.toTuple()
-    );
-  }
 }
 
 export class SetMaciParametersCall__Outputs {
@@ -555,173 +717,33 @@ export class SetMaciParametersCall_treeDepthsStruct extends ethereum.Tuple {
   }
 }
 
-export class SetMaciParametersCall_maxValuesStruct extends ethereum.Tuple {
-  get maxMessages(): BigInt {
-    return this[0].toBigInt();
+export class SetMessageProcessorFactoryCall extends ethereum.Call {
+  get inputs(): SetMessageProcessorFactoryCall__Inputs {
+    return new SetMessageProcessorFactoryCall__Inputs(this);
   }
 
-  get maxVoteOptions(): BigInt {
-    return this[1].toBigInt();
-  }
-}
-
-export class SetMaciParametersCall_processVkStruct extends ethereum.Tuple {
-  get alpha1(): SetMaciParametersCall_processVkAlpha1Struct {
-    return changetype<SetMaciParametersCall_processVkAlpha1Struct>(
-      this[0].toTuple()
-    );
-  }
-
-  get beta2(): SetMaciParametersCall_processVkBeta2Struct {
-    return changetype<SetMaciParametersCall_processVkBeta2Struct>(
-      this[1].toTuple()
-    );
-  }
-
-  get gamma2(): SetMaciParametersCall_processVkGamma2Struct {
-    return changetype<SetMaciParametersCall_processVkGamma2Struct>(
-      this[2].toTuple()
-    );
-  }
-
-  get delta2(): SetMaciParametersCall_processVkDelta2Struct {
-    return changetype<SetMaciParametersCall_processVkDelta2Struct>(
-      this[3].toTuple()
-    );
-  }
-
-  get ic(): Array<SetMaciParametersCall_processVkIcStruct> {
-    return this[4].toTupleArray<SetMaciParametersCall_processVkIcStruct>();
+  get outputs(): SetMessageProcessorFactoryCall__Outputs {
+    return new SetMessageProcessorFactoryCall__Outputs(this);
   }
 }
 
-export class SetMaciParametersCall_processVkAlpha1Struct extends ethereum.Tuple {
-  get x(): BigInt {
-    return this[0].toBigInt();
+export class SetMessageProcessorFactoryCall__Inputs {
+  _call: SetMessageProcessorFactoryCall;
+
+  constructor(call: SetMessageProcessorFactoryCall) {
+    this._call = call;
   }
 
-  get y(): BigInt {
-    return this[1].toBigInt();
-  }
-}
-
-export class SetMaciParametersCall_processVkBeta2Struct extends ethereum.Tuple {
-  get x(): Array<BigInt> {
-    return this[0].toBigIntArray();
-  }
-
-  get y(): Array<BigInt> {
-    return this[1].toBigIntArray();
+  get _messageProcessorFactory(): Address {
+    return this._call.inputValues[0].value.toAddress();
   }
 }
 
-export class SetMaciParametersCall_processVkGamma2Struct extends ethereum.Tuple {
-  get x(): Array<BigInt> {
-    return this[0].toBigIntArray();
-  }
+export class SetMessageProcessorFactoryCall__Outputs {
+  _call: SetMessageProcessorFactoryCall;
 
-  get y(): Array<BigInt> {
-    return this[1].toBigIntArray();
-  }
-}
-
-export class SetMaciParametersCall_processVkDelta2Struct extends ethereum.Tuple {
-  get x(): Array<BigInt> {
-    return this[0].toBigIntArray();
-  }
-
-  get y(): Array<BigInt> {
-    return this[1].toBigIntArray();
-  }
-}
-
-export class SetMaciParametersCall_processVkIcStruct extends ethereum.Tuple {
-  get x(): BigInt {
-    return this[0].toBigInt();
-  }
-
-  get y(): BigInt {
-    return this[1].toBigInt();
-  }
-}
-
-export class SetMaciParametersCall_tallyVkStruct extends ethereum.Tuple {
-  get alpha1(): SetMaciParametersCall_tallyVkAlpha1Struct {
-    return changetype<SetMaciParametersCall_tallyVkAlpha1Struct>(
-      this[0].toTuple()
-    );
-  }
-
-  get beta2(): SetMaciParametersCall_tallyVkBeta2Struct {
-    return changetype<SetMaciParametersCall_tallyVkBeta2Struct>(
-      this[1].toTuple()
-    );
-  }
-
-  get gamma2(): SetMaciParametersCall_tallyVkGamma2Struct {
-    return changetype<SetMaciParametersCall_tallyVkGamma2Struct>(
-      this[2].toTuple()
-    );
-  }
-
-  get delta2(): SetMaciParametersCall_tallyVkDelta2Struct {
-    return changetype<SetMaciParametersCall_tallyVkDelta2Struct>(
-      this[3].toTuple()
-    );
-  }
-
-  get ic(): Array<SetMaciParametersCall_tallyVkIcStruct> {
-    return this[4].toTupleArray<SetMaciParametersCall_tallyVkIcStruct>();
-  }
-}
-
-export class SetMaciParametersCall_tallyVkAlpha1Struct extends ethereum.Tuple {
-  get x(): BigInt {
-    return this[0].toBigInt();
-  }
-
-  get y(): BigInt {
-    return this[1].toBigInt();
-  }
-}
-
-export class SetMaciParametersCall_tallyVkBeta2Struct extends ethereum.Tuple {
-  get x(): Array<BigInt> {
-    return this[0].toBigIntArray();
-  }
-
-  get y(): Array<BigInt> {
-    return this[1].toBigIntArray();
-  }
-}
-
-export class SetMaciParametersCall_tallyVkGamma2Struct extends ethereum.Tuple {
-  get x(): Array<BigInt> {
-    return this[0].toBigIntArray();
-  }
-
-  get y(): Array<BigInt> {
-    return this[1].toBigIntArray();
-  }
-}
-
-export class SetMaciParametersCall_tallyVkDelta2Struct extends ethereum.Tuple {
-  get x(): Array<BigInt> {
-    return this[0].toBigIntArray();
-  }
-
-  get y(): Array<BigInt> {
-    return this[1].toBigIntArray();
-  }
-}
-
-export class SetMaciParametersCall_tallyVkIcStruct extends ethereum.Tuple {
-  get x(): BigInt {
-    return this[0].toBigInt();
-  }
-
-  get y(): BigInt {
-    return this[1].toBigInt();
+  constructor(call: SetMessageProcessorFactoryCall) {
+    this._call = call;
   }
 }
 
@@ -751,6 +773,66 @@ export class SetPollFactoryCall__Outputs {
   _call: SetPollFactoryCall;
 
   constructor(call: SetPollFactoryCall) {
+    this._call = call;
+  }
+}
+
+export class SetTallyFactoryCall extends ethereum.Call {
+  get inputs(): SetTallyFactoryCall__Inputs {
+    return new SetTallyFactoryCall__Inputs(this);
+  }
+
+  get outputs(): SetTallyFactoryCall__Outputs {
+    return new SetTallyFactoryCall__Outputs(this);
+  }
+}
+
+export class SetTallyFactoryCall__Inputs {
+  _call: SetTallyFactoryCall;
+
+  constructor(call: SetTallyFactoryCall) {
+    this._call = call;
+  }
+
+  get _tallyFactory(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class SetTallyFactoryCall__Outputs {
+  _call: SetTallyFactoryCall;
+
+  constructor(call: SetTallyFactoryCall) {
+    this._call = call;
+  }
+}
+
+export class SetVerifierCall extends ethereum.Call {
+  get inputs(): SetVerifierCall__Inputs {
+    return new SetVerifierCall__Inputs(this);
+  }
+
+  get outputs(): SetVerifierCall__Outputs {
+    return new SetVerifierCall__Outputs(this);
+  }
+}
+
+export class SetVerifierCall__Inputs {
+  _call: SetVerifierCall;
+
+  constructor(call: SetVerifierCall) {
+    this._call = call;
+  }
+
+  get _verifier(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class SetVerifierCall__Outputs {
+  _call: SetVerifierCall;
+
+  constructor(call: SetVerifierCall) {
     this._call = call;
   }
 }

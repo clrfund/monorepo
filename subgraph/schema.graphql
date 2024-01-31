@@ -15,12 +15,6 @@ type ClrFund @entity {
   stateTreeDepth: BigInt
   messageTreeDepth: BigInt
   voteOptionTreeDepth: BigInt
-  tallyBatchSize: BigInt
-  messageBatchSize: BigInt
-
-  maxUsers: BigInt
-  maxMessages: BigInt
-  maxVoteOptions: BigInt
 
   fundingRounds: [FundingRound!] @derivedFrom(field: "clrFund")
 

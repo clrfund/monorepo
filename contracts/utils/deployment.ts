@@ -454,12 +454,13 @@ export async function setVerifyingKeys(
   vkRegistry: VkRegistry,
   params: MaciParameters
 ): Promise<ContractTransactionResponse> {
+  const messageBatchSize = params.getMessageBatchSize()
   const tx = await vkRegistry.setVerifyingKeys(
     params.stateTreeDepth,
     params.treeDepths.intStateTreeDepth,
     params.treeDepths.messageTreeDepth,
     params.treeDepths.voteOptionTreeDepth,
-    params.messageBatchSize,
+    messageBatchSize,
     params.processVk.asContractParam() as IVerifyingKeyStruct,
     params.tallyVk.asContractParam() as IVerifyingKeyStruct
   )

@@ -111,7 +111,6 @@ export async function deployTestFundingRound(
 
   const deployPollTx = await maciInstance.deployPoll(
     roundDuration,
-    maciParameters.maxValues,
     maciParameters.treeDepths,
     coordinatorPubKey.asContractParam(),
     mockVerifier.target,

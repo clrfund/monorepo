@@ -65,11 +65,11 @@ describe('MACI factory', () => {
   })
 
   it('sets default MACI parameters', async () => {
-    const { maxMessages, maxVoteOptions } = await maciFactory.maxValues()
-    expect(maxMessages).to.be.greaterThan(BigInt(0))
-    expect(maxVoteOptions).to.be.greaterThan(BigInt(0))
-    expect(maxMessages).to.equal(maciParameters.maxValues.maxMessages)
-    expect(maxVoteOptions).to.equal(maciParameters.maxValues.maxVoteOptions)
+    const stateTreeDepth = await maciFactory.stateTreeDepth()
+    const treeDepths = await maciFactory.treeDepths()
+    expect(stateTreeDepth).to.be.greaterThan(BigInt(0))
+    expect(treeDepths.voteOptionTreeDepth).to.be.greaterThan(BigInt(0))
+    expect(treeDepths.messageTreeDepth).to.be.greaterThan(BigInt(0))
   })
 
   it('sets MACI parameters', async () => {
@@ -78,9 +78,6 @@ describe('MACI factory', () => {
     ).to.emit(maciFactory, 'MaciParametersChanged')
 
     const { messageTreeDepth } = await maciFactory.treeDepths()
-    const { maxMessages, maxVoteOptions } = await maciFactory.maxValues()
-    expect(maxMessages).to.equal(maciParameters.maxValues.maxMessages)
-    expect(maxVoteOptions).to.equal(maciParameters.maxValues.maxVoteOptions)
     expect(messageTreeDepth).to.equal(
       maciParameters.treeDepths.messageTreeDepth
     )

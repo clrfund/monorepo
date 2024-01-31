@@ -1,4 +1,4 @@
-import { ContractTransactionReceipt } from 'ethers'
+import { ContractTransactionReceipt, Signer } from 'ethers'
 import {
   bnSqrt,
   createMessage,
@@ -284,10 +284,12 @@ export async function mergeMaciSubtrees({
   maciAddress,
   pollId,
   numQueueOps,
+  signer,
   quiet,
 }: {
   maciAddress: string
   pollId: bigint
+  signer?: Signer
   numQueueOps?: string
   quiet?: boolean
 }) {
@@ -297,6 +299,7 @@ export async function mergeMaciSubtrees({
     pollId,
     maciContractAddress: maciAddress,
     numQueueOps,
+    signer,
     quiet,
   })
 
@@ -304,6 +307,7 @@ export async function mergeMaciSubtrees({
     pollId,
     maciContractAddress: maciAddress,
     numQueueOps,
+    signer,
     quiet,
   })
 }

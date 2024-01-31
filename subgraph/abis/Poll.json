@@ -53,28 +53,6 @@
       {
         "components": [
           {
-            "internalType": "uint24",
-            "name": "messageBatchSize",
-            "type": "uint24"
-          },
-          {
-            "internalType": "uint24",
-            "name": "tallyBatchSize",
-            "type": "uint24"
-          },
-          {
-            "internalType": "uint24",
-            "name": "subsidyBatchSize",
-            "type": "uint24"
-          }
-        ],
-        "internalType": "struct Params.BatchSizes",
-        "name": "_batchSizes",
-        "type": "tuple"
-      },
-      {
-        "components": [
-          {
             "internalType": "uint256",
             "name": "x",
             "type": "uint256"
@@ -85,17 +63,12 @@
             "type": "uint256"
           }
         ],
-        "internalType": "struct IPubKey.PubKey",
+        "internalType": "struct DomainObjs.PubKey",
         "name": "_coordinatorPubKey",
         "type": "tuple"
       },
       {
         "components": [
-          {
-            "internalType": "contract VkRegistry",
-            "name": "vkRegistry",
-            "type": "address"
-          },
           {
             "internalType": "contract IMACI",
             "name": "maci",
@@ -112,13 +85,18 @@
             "type": "address"
           }
         ],
-        "internalType": "struct PollDeploymentParams.ExtContracts",
+        "internalType": "struct Params.ExtContracts",
         "name": "_extContracts",
         "type": "tuple"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidMessage",
+    "type": "error"
   },
   {
     "inputs": [],
@@ -162,6 +140,12 @@
         "indexed": false,
         "internalType": "uint256",
         "name": "_stateRoot",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_numSignups",
         "type": "uint256"
       }
     ],
@@ -243,7 +227,7 @@
           }
         ],
         "indexed": false,
-        "internalType": "struct IMessage.Message",
+        "internalType": "struct DomainObjs.Message",
         "name": "_message",
         "type": "tuple"
       },
@@ -261,7 +245,7 @@
           }
         ],
         "indexed": false,
-        "internalType": "struct IPubKey.PubKey",
+        "internalType": "struct DomainObjs.PubKey",
         "name": "_encPubKey",
         "type": "tuple"
       }
@@ -286,7 +270,7 @@
           }
         ],
         "indexed": false,
-        "internalType": "struct IMessage.Message",
+        "internalType": "struct DomainObjs.Message",
         "name": "_message",
         "type": "tuple"
       }
@@ -296,22 +280,12 @@
   },
   {
     "inputs": [],
-    "name": "batchSizes",
+    "name": "MESSAGE_DATA_LENGTH",
     "outputs": [
       {
-        "internalType": "uint24",
-        "name": "messageBatchSize",
-        "type": "uint24"
-      },
-      {
-        "internalType": "uint24",
-        "name": "tallyBatchSize",
-        "type": "uint24"
-      },
-      {
-        "internalType": "uint24",
-        "name": "subsidyBatchSize",
-        "type": "uint24"
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
       }
     ],
     "stateMutability": "view",
@@ -366,11 +340,6 @@
     "name": "extContracts",
     "outputs": [
       {
-        "internalType": "contract VkRegistry",
-        "name": "vkRegistry",
-        "type": "address"
-      },
-      {
         "internalType": "contract IMACI",
         "name": "maci",
         "type": "address"
@@ -395,12 +364,12 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "pollDeployTime",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "pollDuration",
         "type": "uint256"
       }
     ],
@@ -419,7 +388,7 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "result",
         "type": "uint256"
       }
     ],
@@ -438,7 +407,7 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "result",
         "type": "uint256"
       }
     ],
@@ -457,7 +426,7 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "result",
         "type": "uint256"
       }
     ],
@@ -476,7 +445,7 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "result",
         "type": "uint256"
       }
     ],
@@ -487,12 +456,12 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_left",
+        "name": "left",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "_right",
+        "name": "right",
         "type": "uint256"
       }
     ],
@@ -500,7 +469,7 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "result",
         "type": "uint256"
       }
     ],
@@ -522,7 +491,7 @@
             "type": "uint256[10]"
           }
         ],
-        "internalType": "struct IMessage.Message",
+        "internalType": "struct DomainObjs.Message",
         "name": "_message",
         "type": "tuple"
       },
@@ -539,7 +508,7 @@
             "type": "uint256"
           }
         ],
-        "internalType": "struct IPubKey.PubKey",
+        "internalType": "struct DomainObjs.PubKey",
         "name": "_encPubKey",
         "type": "tuple"
       }
@@ -548,7 +517,55 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "msgHash",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "x",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "y",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct DomainObjs.PubKey",
+            "name": "pubKey",
+            "type": "tuple"
+          },
+          {
+            "internalType": "uint256",
+            "name": "voiceCreditBalance",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "timestamp",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct DomainObjs.StateLeaf",
+        "name": "_stateLeaf",
+        "type": "tuple"
+      }
+    ],
+    "name": "hashStateLeaf",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "ciphertext",
         "type": "uint256"
       }
     ],
@@ -646,13 +663,39 @@
   },
   {
     "inputs": [],
-    "name": "numSignUpsAndMessages",
+    "name": "numMessages",
     "outputs": [
       {
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "numSignUpsAndMessages",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "numSUps",
+        "type": "uint256"
       },
+      {
+        "internalType": "uint256",
+        "name": "numMsgs",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "numSignups",
+    "outputs": [
       {
         "internalType": "uint256",
         "name": "",
@@ -703,8 +746,8 @@
             "type": "uint256[10]"
           }
         ],
-        "internalType": "struct IMessage.Message",
-        "name": "",
+        "internalType": "struct DomainObjs.Message",
+        "name": "message",
         "type": "tuple"
       },
       {
@@ -720,13 +763,13 @@
             "type": "uint256"
           }
         ],
-        "internalType": "struct IPubKey.PubKey",
-        "name": "",
+        "internalType": "struct DomainObjs.PubKey",
+        "name": "padKey",
         "type": "tuple"
       },
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "msgHash",
         "type": "uint256"
       }
     ],
@@ -748,7 +791,7 @@
             "type": "uint256[10]"
           }
         ],
-        "internalType": "struct IMessage.Message",
+        "internalType": "struct DomainObjs.Message",
         "name": "_message",
         "type": "tuple"
       },
@@ -765,7 +808,7 @@
             "type": "uint256"
           }
         ],
-        "internalType": "struct IPubKey.PubKey",
+        "internalType": "struct DomainObjs.PubKey",
         "name": "_encPubKey",
         "type": "tuple"
       }
@@ -794,7 +837,7 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "result",
         "type": "uint256"
       }
     ],

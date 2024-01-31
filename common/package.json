@@ -23,8 +23,8 @@
   "dependencies": {
     "@openzeppelin/merkle-tree": "^1.0.5",
     "ethers": "^6.9.2",
-    "maci-crypto": "0.0.0-ci.45d1156",
-    "maci-domainobjs": "0.0.0-ci.45d1156"
+    "maci-crypto": "0.0.0-ci.354b9b6",
+    "maci-domainobjs": "0.0.0-ci.354b9b6"
   },
   "repository": {
     "type": "git",

@@ -41,7 +41,7 @@ async function verifyMaciFactory(clrfund: Contract, run: any): Promise<string> {
 
 async function verifyClrFund(clrfund: Contract, run: any): Promise<string> {
   try {
-    await run('verify', { address: clrfund.target })
+    await run('verify:verify', { address: clrfund.target })
     return SUCCESS
   } catch (error) {
     return (error as Error).message
@@ -202,7 +202,7 @@ task('verify-all', 'Verify all clrfund contracts')
 
     const results: Result[] = []
     let status = await verifyMaciFactory(clrfundContract, run)
-    results.push({ name: 'Maci factory', status })
+    results.push({ name: 'MACIFactory', status })
 
     await verifyContract(
       'VkRegistry',
@@ -224,22 +224,22 @@ task('verify-all', 'Verify all clrfund contracts')
     status = await verifyClrFund(clrfundContract, run)
     results.push({ name: 'ClrFund', status })
     status = await verifyRecipientRegistry(clrfundContract, run)
-    results.push({ name: 'Recipient registry', status })
+    results.push({ name: 'RecipientRegistry', status })
     status = await verifyUserRegistry(clrfundContract, run)
-    results.push({ name: 'User registry', status })
+    results.push({ name: 'UserRegistry', status })
     const sponsor = await getBrightIdSponsor(clrfundContract, ethers)
     if (sponsor) {
       await verifyContract('Sponsor', sponsor, run, results)
     }
     status = await verifyFundingRoundFactory(clrfundContract, run)
-    results.push({ name: 'Funding Round Factory', status })
+    results.push({ name: 'FundingRoundFactory', status })
 
     const roundAddress = await clrfundContract.getCurrentRound()
     if (roundAddress !== ZERO_ADDRESS) {
       const round = await ethers.getContractAt('FundingRound', roundAddress)
       const maciAddress = await round.maci()
       status = await verifyRound(roundAddress, run)
-      results.push({ name: 'Funding round', status })
+      results.push({ name: 'FundingRound', status })
       status = await verifyMaci(maciAddress, run)
       results.push({ name: 'MACI', status })
 

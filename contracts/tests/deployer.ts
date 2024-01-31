@@ -5,7 +5,7 @@ import { Contract } from 'ethers'
 import { genRandomSalt } from 'maci-crypto'
 import { Keypair } from '@clrfund/common'
 
-import { ZERO_ADDRESS, UNIT } from '../utils/constants'
+import { TREE_ARITY, ZERO_ADDRESS, UNIT } from '../utils/constants'
 import { getGasUsage, getEventArg } from '../utils/contracts'
 import {
   deployContract,
@@ -189,7 +189,8 @@ describe('Clr fund deployer', async () => {
       expect(await recipientRegistry.controller()).to.equal(clrfund.target)
       const params = MaciParameters.mock()
       expect(await recipientRegistry.maxRecipients()).to.equal(
-        BigInt(5) ** BigInt(params.treeDepths.voteOptionTreeDepth)
+        BigInt(TREE_ARITY) ** BigInt(params.treeDepths.voteOptionTreeDepth) -
+          BigInt(1)
       )
     })
 
