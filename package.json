@@ -45,7 +45,7 @@
     "test:format": "yarn prettier --check",
     "test:lint-i18n": "echo yarn workspace @clrfund/vue-app run test:lint-i18n --ci",
     "deploy:subgraph": "yarn workspace @clrfund/subgraph run deploy",
-    "deploy:local": "yarn workspace @clrfund/contracts run deploy-local",
+    "deploy:local": "yarn workspace @clrfund/contracts run deploy:local",
     "deploy:local-subgraph": "yarn workspace @clrfund/subgraph run create-local && yarn workspace @clrfund/subgraph run deploy-local",
     "lint": "yarn workspaces run lint",
     "lint:contracts": "yarn workspace @clrfund/contracts run lint",

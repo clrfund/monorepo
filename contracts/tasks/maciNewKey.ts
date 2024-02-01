@@ -3,7 +3,7 @@
  *
  * Sample usage:
  *
- *  yarn ts-node tasks/newMaciKey.ts
+ *  yarn ts-node tasks/maciNewKey.ts
  */
 
 import { newMaciPrivateKey } from '../utils/maci'

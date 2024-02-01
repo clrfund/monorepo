@@ -7,7 +7,7 @@
     "build": "hardhat compile",
     "node": "hardhat node --port 18545 --hostname 0.0.0.0",
     "test": "hardhat test",
-    "deploy-local": "./sh/deployLocal.sh",
+    "deploy:local": "./sh/deployLocal.sh",
     "e2e": "NODE_OPTIONS=--max-old-space-size=4096 hardhat test --network localhost e2e/index.ts",
     "lint:js": "eslint '{tests,e2e,scripts}/**/*.ts'",
     "lint:solidity": "solhint 'contracts/**/*.sol'",
