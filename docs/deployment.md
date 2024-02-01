@@ -73,19 +73,21 @@ Use the `-h` switch to print the command line help menu for all the scripts in t
 1. Deploy an instance of ClrFund
 
 ```
-HARDHAT_NETWORK=localhost yarn ts-node cli/newClrFund.ts \
+yarn hardhat new-clrfund \
    --directory <the params folder from previous step> \
    --token <native token address> \
    --coordinator <coordinator ETH address> \
    --user-registry-type <user registry type> \
-   --recipient-registry-type <recipient registry type>
+   --recipient-registry-type <recipient registry type> \
+   --network <network>
 ```
 
 2. deploy new funding round
 ```
-HARDHAT_NETWOR=localhost yarn ts-node cli/newRound.ts \
+yarn hardhat new-round \
    --clrfund <clrfund contract address> \
-   --duration <funding round duration in seconds>
+   --duration <funding round duration in seconds> \
+   --network <network>
 ```
 
 3. Make sure to save in a safe place the serializedCoordinatorPrivKey, you are going to need it for tallying the votes in future steps.
@@ -94,7 +96,7 @@ HARDHAT_NETWOR=localhost yarn ts-node cli/newRound.ts \
 4. To load a list of users into the simple user registry,
 
 ```
-yarn hardhat load-users --file-path addresses.txt --user-registry <address> --network <network>
+yarn hardhat clr-load-simple-users --file-path addresses.txt --user-registry <address> --network <network>
 ```
 
 
@@ -104,13 +106,13 @@ If using a snapshot user registry, run the `set-storage-root` task to set the st
 yarn hardhat --network {network} set-storage-root --registry 0x7113b39Eb26A6F0a4a5872E7F6b865c57EDB53E0 --slot 2 --token 0x65bc8dd04808d99cf8aa6749f128d55c2051edde --block 34677758 --network arbitrum-goerli
 ```
 
-Note: to get the storage slot '--slot' value, run the `find-storage-slot` task.
+Note: to get the storage slot '--slot' value, run the `clr-find-storage-slot` task.
 
 5. If using a merkle user registry, run the `load-merkle-users` task to set the merkle root for all the authorized users
 
 ```
 # for example:
-yarn hardhat load-merkle-users --address-file ./addresses.txt --user-registry 0x9E1c12Af45504e66D16D592cAF3B877ddc6fF643 --network arbitrum-goerli
+yarn hardhat clr-load-merkle-users --address-file ./addresses.txt --user-registry 0x9E1c12Af45504e66D16D592cAF3B877ddc6fF643 --network arbitrum-goerli
 ```
 
 Note: Make sure to upload generated merkle tree file to IPFS.

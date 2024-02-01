@@ -201,7 +201,7 @@ export async function deployRecipientRegistry({
   type: string
   controller: string
   deposit?: bigint
-  challengePeriod?: string
+  challengePeriod?: bigint
   ethers: HardhatEthersHelpers
   signer?: Signer
 }): Promise<Contract> {
