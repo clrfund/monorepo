@@ -411,7 +411,7 @@ contract FundingRound is
   }
 
   /**
-    * @dev Publish the IPFS hash of the vote tally and set the tally contract address. Only coordinator can publish.
+    * @dev Publish the IPFS hash of the vote tally. Only coordinator can publish.
     * @param _tallyHash IPFS hash of the vote tally.
     */
   function publishTallyHash(string calldata _tallyHash)
