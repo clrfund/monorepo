@@ -41,6 +41,7 @@ import { getMaciStateFilePath, getDirname } from '../utils/misc'
 import { DEFAULT_CIRCUIT } from '../utils/circuits'
 import { FundingRound, Poll, Tally } from '../typechain-types'
 import { HardhatEthersHelpers } from '@nomicfoundation/hardhat-ethers/types'
+import { EContracts } from '../utils/types'
 
 /**
  * Publish the tally IPFS hash on chain if it's not already published
@@ -105,14 +106,14 @@ async function getFundingRound(
   ethers: HardhatEthersHelpers
 ): Promise<FundingRound> {
   const clrfundContract = await ethers.getContractAt(
-    'ClrFund',
+    EContracts.ClrFund,
     clrfund,
     coordinator
   )
 
   const fundingRound = await clrfundContract.getCurrentRound()
   const fundingRoundContract = await ethers.getContractAt(
-    'FundingRound',
+    EContracts.FundingRound,
     fundingRound,
     coordinator
   )
@@ -131,7 +132,7 @@ async function getRecipientTreeDepth(
   ethers: HardhatEthersHelpers
 ): Promise<number> {
   const pollAddress = await fundingRoundContract.poll()
-  const pollContract = await ethers.getContractAt('Poll', pollAddress)
+  const pollContract = await ethers.getContractAt(EContracts.Poll, pollAddress)
   const treeDepths = await (pollContract as BaseContract as Poll).treeDepths()
   const voteOptionTreeDepth = treeDepths.voteOptionTreeDepth
   return getNumber(voteOptionTreeDepth)
@@ -148,7 +149,7 @@ async function getMessageProcessorAddress(
   ethers: HardhatEthersHelpers
 ): Promise<string> {
   const tallyContract = (await ethers.getContractAt(
-    'Tally',
+    EContracts.Tally,
     tallyAddress
   )) as BaseContract as Tally
 
