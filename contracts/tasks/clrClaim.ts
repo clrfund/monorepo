@@ -41,15 +41,18 @@ task('clr-claim', 'Claim funnds for test recipients')
       EContracts.FundingRound,
       fundingRound
     )
+
+    const recipientStatus = await fundingRoundContract.recipients(recipient)
+    if (recipientStatus.fundsClaimed) {
+      throw new Error(`Recipient already claimed funds`)
+    }
+
     const pollAddress = await fundingRoundContract.poll()
     console.log('pollAddress', pollAddress)
 
     const poll = await ethers.getContractAt(EContracts.Poll, pollAddress)
     const treeDepths = await poll.treeDepths()
-    const recipientTreeDepth = getNumber(
-      treeDepths.voteOptionTreeDepth,
-      'voteOptionTreeDepth'
-    )
+    const recipientTreeDepth = getNumber(treeDepths.voteOptionTreeDepth)
 
     // Claim funds
     const recipientClaimData = getRecipientClaimData(
