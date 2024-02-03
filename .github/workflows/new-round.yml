@@ -10,7 +10,7 @@ on:
 
 
 env:
-  NODE_VERSION: 18.x
+  NODE_VERSION: 20.x
   SUBGRPAH_URL: "https://api.thegraph.com/subgraphs/name/clrfund/clrfund-testnet"
   WALLET_PRIVATE_KEY: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_WALLET_PRIVATE_KEY }}
   NETWORK: arbitrum-sepolia
