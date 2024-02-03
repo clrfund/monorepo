@@ -41,6 +41,7 @@ export const handler: Handler = async event => {
   if (!event.body) {
     return {
       statusCode: 400, // Bad request
+      body: JSON.stringify({ error: 'Missing request body' }),
     }
   }
 
@@ -62,11 +63,13 @@ export const handler: Handler = async event => {
 
     return {
       statusCode: 200,
+      body: JSON.stringify({ status: 'success' }),
     }
   } catch (err) {
     console.log(err)
     return {
       statusCode: 500,
+      body: JSON.stringify({ error: err.message }),
     }
   }
 }
