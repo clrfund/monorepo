@@ -3,6 +3,7 @@
   "version": "4.3.1",
   "private": true,
   "license": "GPL-3.0",
+  "type": "module",
   "scripts": {
     "preview": "vite preview",
     "build": "rm -rf dist/ && vite build && yarn build:lambda",
