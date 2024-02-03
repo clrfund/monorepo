@@ -1,7 +1,7 @@
 import { GoogleSpreadsheet } from 'google-spreadsheet'
 import type { Handler } from '@netlify/functions'
 
-const GOOGLE_SHEET_NAME = process.env.GOOGLE_SHEET_NAME || 'Raw'
+const GOOGLE_SHEET_NAME = process.env.GOOGLE_SHEET_NAME || 'Sheet1'
 
 /**
  * Creates an object row from a RecipientApplicationData. A row is a key-value
