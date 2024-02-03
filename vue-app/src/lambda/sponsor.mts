@@ -4,6 +4,17 @@ import type { Handler } from '@netlify/functions'
 
 const NODE_URL = process.env.VITE_BRIGHTID_NODE_URL || 'https://app.brightid.org/node/v6'
 
+// these fields must be in alphabetical because
+// BrightID nodes use 'fast-json-stable-stringify' that sorts fields
+type BrightIDMessage = {
+  app: string
+  appUserId: string
+  name: string
+  sig?: string
+  timestamp: number
+  v: number
+}
+
 /**
  *  Returns an error object
  * @param errorMessage error message
@@ -69,15 +80,12 @@ async function handleSponsorRequest(userAddress: string) {
 
   const timestamp = Date.now()
 
-  // these fields must be in alphabetical because
-  // BrightID nodes use 'fast-json-stable-stringify' that sorts fields
-  const op = {
+  const op: BrightIDMessage = {
     app: CONTEXT,
     appUserId: userAddress,
     name: 'Sponsor',
     timestamp,
     v: 6,
-    sig: '',
   }
 
   const message = JSON.stringify(op)
