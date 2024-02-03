@@ -643,6 +643,23 @@ export class FundingRound extends Entity {
     }
   }
 
+  get maciTxHash(): Bytes | null {
+    let value = this.get("maciTxHash");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set maciTxHash(value: Bytes | null) {
+    if (!value) {
+      this.unset("maciTxHash");
+    } else {
+      this.set("maciTxHash", Value.fromBytes(<Bytes>value));
+    }
+  }
+
   get pollId(): BigInt | null {
     let value = this.get("pollId");
     if (!value || value.kind == ValueKind.NULL) {

@@ -48,6 +48,7 @@ type FundingRound @entity {
   id: ID!
   clrFund: ClrFund
   maci: Bytes
+  maciTxHash: Bytes
   pollId: BigInt
   pollAddress: Bytes
   messages: [Message!] @derivedFrom(field: "fundingRound")

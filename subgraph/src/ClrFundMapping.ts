@@ -232,6 +232,7 @@ export function handleRoundStarted(event: RoundStarted): void {
   fundingRound.nativeTokenInfo = nativeTokenId
   fundingRound.coordinator = coordinator
   fundingRound.maci = maci
+  fundingRound.maciTxHash = event.transaction.hash
   fundingRound.voiceCreditFactor = voiceCreditFactor
   fundingRound.contributorCount = contributorCount
   fundingRound.matchingPoolSize = matchingPoolSize
