@@ -1,5 +1,6 @@
-import { decodeBase64, encodeBase64 } from 'ethers'
+import { decodeBase64, encodeBase64, toUtf8Bytes } from 'ethers'
 import nacl from 'tweetnacl'
+import type { Handler } from '@netlify/functions'
 
 const NODE_URL = process.env.VITE_BRIGHTID_NODE_URL || 'https://app.brightid.org/node/v6'
 
@@ -8,7 +9,7 @@ const NODE_URL = process.env.VITE_BRIGHTID_NODE_URL || 'https://app.brightid.org
  * @param errorMessage error message
  * @returns error object
  */
-function makeError(errorMessage, errorNum) {
+function makeError(errorMessage: string, errorNum: number) {
   const body = JSON.stringify({ error: errorMessage, errorNum })
   return { statusCode: 400, body }
 }
@@ -18,7 +19,7 @@ function makeError(errorMessage, errorNum) {
  * @param result the result
  * @returns result object
  */
-function makeResult(result) {
+function makeResult(result: any) {
   const body = JSON.stringify(result)
   return { statusCode: 200, body }
 }
@@ -29,7 +30,7 @@ function makeResult(result) {
  *
  * @returns the number of sponsorships available to the specified `context`
  */
-async function unusedSponsorships(context) {
+async function unusedSponsorships(context: string) {
   const endpoint = `${NODE_URL}/apps/${context}`
   const response = await fetch(endpoint)
   const json = await response.json()
@@ -42,14 +43,20 @@ async function unusedSponsorships(context) {
   return data.unusedSponsorships || 0
 }
 
-async function handleSponsorRequest(userAddress) {
+async function handleSponsorRequest(userAddress: string) {
   const endpoint = process.env.VITE_BRIGHTID_SPONSOR_API_URL
+  if (!endpoint) {
+    throw new Error('Environment variable VITE_BRIGHTID_SPONSOR_API_URL not set')
+  }
+
   const brightIdSponsorKey = process.env.VITE_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY
-
-  const CONTEXT = process.env.VITE_BRIGHTID_CONTEXT
-
   if (!brightIdSponsorKey) {
     throw new Error('Environment variable VITE_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY not set')
+  }
+
+  const CONTEXT = process.env.VITE_BRIGHTID_CONTEXT
+  if (!CONTEXT) {
+    throw new Error('Environment variable VITE_BRIGHTID_CONTEXT not set')
   }
 
   const sponsorships = await unusedSponsorships(CONTEXT)
@@ -70,6 +77,7 @@ async function handleSponsorRequest(userAddress) {
     name: 'Sponsor',
     timestamp,
     v: 6,
+    sig: '',
   }
 
   const message = JSON.stringify(op)
@@ -95,7 +103,7 @@ async function handleSponsorRequest(userAddress) {
     return makeResult({ hash: json.data.hash })
   }
 
-  return makeError('Unexpected result from the BrightID sponsorship API.')
+  return makeError('Unexpected result from the BrightID sponsorship API.', 500)
 }
 
 /**
@@ -103,19 +111,19 @@ async function handleSponsorRequest(userAddress) {
  * @param event contains user address to sponsor
  * @returns sponsor data or error
  */
-exports.handler = async function (event) {
+export const handler: Handler = async event => {
   if (!event.body) {
-    return makeError('Missing request body')
+    return makeError('Missing request body', 400)
   }
 
   try {
     const jsonBody = JSON.parse(event.body)
     if (!jsonBody.userAddress) {
-      return makeError('Missing userAddress in request body: ' + event.body)
+      return makeError('Missing userAddress in request body: ' + event.body, 400)
     }
 
     return await handleSponsorRequest(jsonBody.userAddress)
   } catch (err) {
-    return makeError(err.message)
+    return makeError(err.message, 500)
   }
 }

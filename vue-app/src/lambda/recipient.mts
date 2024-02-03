@@ -1,4 +1,5 @@
 import { GoogleSpreadsheet } from 'google-spreadsheet'
+import type { Handler } from '@netlify/functions'
 
 const GOOGLE_SHEET_NAME = process.env.GOOGLE_SHEET_NAME || 'Raw'
 
@@ -36,7 +37,7 @@ function recipientToRow(recipient) {
   }, {})
 }
 
-exports.handler = async function (event) {
+export const handler: Handler = async event => {
   if (!event.body) {
     return {
       statusCode: 400, // Bad request
@@ -45,8 +46,12 @@ exports.handler = async function (event) {
 
   try {
     const recipient = JSON.parse(event.body)
+    const credential = process.env.GOOGLE_APPLICATION_CREDENTIALS
+    if (!credential) {
+      throw new Error('Environment variable GOOGLE_APPLICATION_CREDENTIALS not set')
+    }
+    const creds = JSON.parse(credential)
 
-    const creds = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS)
     const doc = new GoogleSpreadsheet(process.env.VITE_GOOGLE_SPREADSHEET_ID)
     await doc.useServiceAccountAuth(creds)
 
