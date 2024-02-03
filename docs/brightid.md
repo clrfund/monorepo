@@ -22,6 +22,7 @@ Available envs:
 | ----------- | ------- | ---------------- |
 | arbitrum | clrfund-arbitrum |0x669A55Dd17a2f9F4dacC37C7eeB5Ed3e13f474f9|
 | arbitrum rinkeby | clrfund-arbitrum-rinkeby | 0xC7c81634Dac2de4E7f2Ba407B638ff003ce4534C |
+| arbitrum sepolia | clrfund-arbitrum-goerli | 0xF1ef516dEa7e6Dd334996726D58029Ee9bAD081D |
 | goerli | clrfund-goerli | 0xF045234A776C87060DEEc5689056455A24a59c08 |
 | xdai | clrfund-gnosischain |0x669A55Dd17a2f9F4dacC37C7eeB5Ed3e13f474f9|
 
@@ -82,6 +83,9 @@ See the [deployment guide](./deploymnet.md) for special setup to use the sponsor
   ```
 4. check for sponsorship token balance
   - for clrfund-arbitrum context: https://brightid.clr.fund/brightid/v6/apps/clrfund-arbitrum
+### Signature is not valid
+1. Check that the verifier address is correct, it is the `ethSigningAddress` from https://brightid.clr.fund
+2. You can update the verifier address using `sponsorContract.setSettings()`
 
 
 ## Resources
