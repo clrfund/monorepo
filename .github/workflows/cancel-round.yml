@@ -27,5 +27,5 @@ jobs:
       run: |
         cd contracts
         export CLRFUND=$(curl -X POST -d '{"query":"{clrFunds {id}}"}' $SUBGRPAH_URL)
-        export CLRFUND_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.CLRFUND).data.clrfunds[0].id)')
-        yarn hardhat clr-cancel --clrfund ${CLRFUND_ADDRESS} --network ${NETWORK}
+        export CLRFUND_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.CLRFUND).data.clrFunds[0].id)')
+        yarn hardhat clr-cancel --clrfund "${CLRFUND_ADDRESS}" --network ${NETWORK}
