@@ -66,10 +66,12 @@ jobs:
         export ROUND_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.clrFunds[0].currentRound.id)')
         export MACI_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.clrFunds[0].currentRound.maci)')
         export MACI_TX_HASH=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.clrFunds[0].currentRound.maciTxHash)')
+        export RAPID_SNARK="$GITHUB_WORKSPACE/rapidsnark/package/bin/prover"
         # tally and finalize
         cd monorepo/contracts
         mkdir -p proof_output
         yarn hardhat clr-tally --clrfund "${CLRFUND_ADDRESS}" --network "${NETWORK}" \
+          --rapidsnark ${RAPID_SNARK} \
           --circuit-directory ~/params --maci-tx-hash "${MACI_TX_HASH}" --output-dir "./proof_output"
         curl --location --request POST 'https://api.pinata.cloud/pinning/pinFileToIPFS' \
           --header "Authorization: Bearer ${{ secrets.PINATA_JWT }}" \
