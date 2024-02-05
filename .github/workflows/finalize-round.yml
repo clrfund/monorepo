@@ -69,7 +69,7 @@ jobs:
         # tally and finalize
         cd monorepo/contracts
         yarn hardhat clr-tally --clrfund "${CLRFUND_ADDRESS}" --network "${NETWORK}" \
-          --directory ~/params --maci-tx-hash "${MACI_TX_HASH}" --output-dir "./proof_output"
+          --circuit-directory ~/params --maci-tx-hash "${MACI_TX_HASH}" --output-dir "./proof_output"
         curl --location --request POST 'https://api.pinata.cloud/pinning/pinFileToIPFS' \
           --header "Authorization: Bearer ${{ secrets.PINATA_JWT }}" \
           --form 'file=@"./proof_output/tally.json"'
