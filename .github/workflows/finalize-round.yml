@@ -68,6 +68,7 @@ jobs:
         export MACI_TX_HASH=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.clrFunds[0].currentRound.maciTxHash)')
         # tally and finalize
         cd monorepo/contracts
+        mkdir -p proof_output
         yarn hardhat clr-tally --clrfund "${CLRFUND_ADDRESS}" --network "${NETWORK}" \
           --circuit-directory ~/params --maci-tx-hash "${MACI_TX_HASH}" --output-dir "./proof_output"
         curl --location --request POST 'https://api.pinata.cloud/pinning/pinFileToIPFS' \
