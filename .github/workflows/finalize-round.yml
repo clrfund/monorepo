@@ -3,17 +3,13 @@ name: Finalize a test round
 on:
   workflow_dispatch:
     inputs:
-      branch_name:
-        description: 'Clrfund branch name'
-        required: true
-        default: 'develop'
       subgraph_name:
         description: 'Clrfund subgraph name'
         required: true
         default: 'clrfund/clrfund-testnet'
 
 env:
-  NODE_VERSION: 18.x
+  NODE_VERSION: 20.x
   NETWORK: "arbitrum-sepolia"
   COORDINATOR_ETH_PK: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_WALLET_PRIVATE_KEY }}
   COORDINATOR_PK: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_MACI_PRIVATE_KEY }}
@@ -50,7 +46,6 @@ jobs:
     - name: Checkout source code
       uses: actions/checkout@v3
       with:
-        ref: ${{ github.event.inputs.branch_name }}
         path: monorepo
     - name: Download batch 64 params
       run: |
@@ -66,11 +61,11 @@ jobs:
       run: |
         export SUBGRPAH_URL="https://api.thegraph.com/subgraphs/name/${{ github.event.inputs.subgraph_name }}"
         echo $SUBGRAPH_URL
-        export ROUND=$(curl -X POST -d '{"query":"{clrFund {id currentRound {id maci}}}"}' $SUBGRPAH_URL)
-        export CLRFUND_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.clrFund[0].id)')
-        export ROUND_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.clrFund[0].currentRound.id)')
-        export MACI_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.clrFund[0].currentRound.maci)')
-        export MACI_TX_HASH=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.clrFund[0].currentRound.maciTxHash)')
+        export ROUND=$(curl -X POST -d '{"query":"{clrFunds {id currentRound {id maci}}}"}' $SUBGRPAH_URL)
+        export CLRFUND_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.clrFunds[0].id)')
+        export ROUND_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.clrFunds[0].currentRound.id)')
+        export MACI_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.clrFunds[0].currentRound.maci)')
+        export MACI_TX_HASH=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.clrFunds[0].currentRound.maciTxHash)')
         # tally and finalize
         cd monorepo/contracts
         yarn hardhat clr-tally --clrfund "${CLRFUND_ADDRESS}" --network "${NETWORK}" \
