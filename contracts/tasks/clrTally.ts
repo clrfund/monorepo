@@ -213,7 +213,7 @@ task('clr-tally', 'Tally votes')
       console.log('Verbose logging disabled:', quiet)
 
       const [coordinator] = await ethers.getSigners()
-      console.log('Coordinator address: ', coordinator.address)
+      console.log('Coordinator address: ', await coordinator.getAddress())
 
       const coordinatorMacisk = process.env.COORDINATOR_MACISK
       if (!coordinatorMacisk) {
