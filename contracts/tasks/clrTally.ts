@@ -213,11 +213,14 @@ task('clr-tally', 'Tally votes')
       console.log('Verbose logging disabled:', quiet)
 
       const [coordinator] = await ethers.getSigners()
+      if (!coordinator) {
+        throw new Error('Env. variable WALLET_PRIVATE_KEY not set')
+      }
       console.log('Coordinator address: ', await coordinator.getAddress())
 
       const coordinatorMacisk = process.env.COORDINATOR_MACISK
       if (!coordinatorMacisk) {
-        throw Error('Env. variable COORDINATOR_MACISK not set')
+        throw new Error('Env. variable COORDINATOR_MACISK not set')
       }
 
       const fundingRoundContract = await getFundingRound(
