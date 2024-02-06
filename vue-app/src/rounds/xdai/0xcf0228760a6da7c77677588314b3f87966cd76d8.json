@@ -19,6 +19,7 @@
     "messages": 76,
     "maxMessages": 2047,
     "maxRecipients": 124,
+    "userRegistryAddress": "0x6D34A77094BB2958fcA2E3C1579cec4984282671",
     "recipientRegistryAddress": "0x7C2b7832363b6d0Bd0AEF764aA09b66F4da06D61",
     "blogUrl": "https://blog.clr.fund/round-0-review-round-1-launch"
   },

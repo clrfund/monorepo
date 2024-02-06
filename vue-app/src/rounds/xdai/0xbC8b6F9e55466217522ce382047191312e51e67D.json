@@ -19,6 +19,7 @@
     "messages": 79,
     "maxMessages": 2047,
     "maxRecipients": 124,
+    "userRegistryAddress": "0xe312E958c47b971C250bC1228A11Df1276643e5D",
     "recipientRegistryAddress": "0x98dC6e3B3E922d4b32EdC8fED899850F764EbEc9",
     "blogUrl": "https://blog.clr.fund/round-1-review-round-2-update"
   },
