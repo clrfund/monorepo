@@ -53,28 +53,6 @@
       {
         "components": [
           {
-            "internalType": "uint24",
-            "name": "messageBatchSize",
-            "type": "uint24"
-          },
-          {
-            "internalType": "uint24",
-            "name": "tallyBatchSize",
-            "type": "uint24"
-          },
-          {
-            "internalType": "uint24",
-            "name": "subsidyBatchSize",
-            "type": "uint24"
-          }
-        ],
-        "internalType": "struct Params.BatchSizes",
-        "name": "_batchSizes",
-        "type": "tuple"
-      },
-      {
-        "components": [
-          {
             "internalType": "uint256",
             "name": "x",
             "type": "uint256"
@@ -162,6 +140,12 @@
         "indexed": false,
         "internalType": "uint256",
         "name": "_stateRoot",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_numSignups",
         "type": "uint256"
       }
     ],
@@ -309,29 +293,6 @@
   },
   {
     "inputs": [],
-    "name": "batchSizes",
-    "outputs": [
-      {
-        "internalType": "uint24",
-        "name": "messageBatchSize",
-        "type": "uint24"
-      },
-      {
-        "internalType": "uint24",
-        "name": "tallyBatchSize",
-        "type": "uint24"
-      },
-      {
-        "internalType": "uint24",
-        "name": "subsidyBatchSize",
-        "type": "uint24"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "coordinatorPubKey",
     "outputs": [
       {
@@ -403,12 +364,12 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "_deployTime",
+        "name": "pollDeployTime",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "_duration",
+        "name": "pollDuration",
         "type": "uint256"
       }
     ],
@@ -719,12 +680,25 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "numSignups",
+        "name": "numSUps",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
         "name": "numMsgs",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "numSignups",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
         "type": "uint256"
       }
     ],

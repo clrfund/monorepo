@@ -2,7 +2,7 @@ import { ethers, config } from 'hardhat'
 import { HardhatEthersSigner } from '@nomicfoundation/hardhat-ethers/signers'
 import { time, mine } from '@nomicfoundation/hardhat-network-helpers'
 import { expect } from 'chai'
-import { Contract, toNumber } from 'ethers'
+import { BaseContract, Contract, toNumber } from 'ethers'
 import {
   Keypair,
   createMessage,
@@ -37,6 +37,7 @@ import { DEFAULT_CIRCUIT } from '../utils/circuits'
 import { MaciParameters } from '../utils/maciParameters'
 import { readFileSync, existsSync, mkdirSync } from 'fs'
 import path from 'path'
+import { FundingRound } from '../typechain-types'
 
 type VoteData = { recipientIndex: number; voiceCredits: bigint }
 
@@ -412,7 +413,7 @@ describe('End-to-end Tests', function () {
     const recipientTreeDepth = params.treeDepths.voteOptionTreeDepth
     console.log('Adding tally result on chain in batches of', tallyBatchSize)
     await addTallyResultsBatch(
-      fundingRound.connect(coordinator) as Contract,
+      fundingRound.connect(coordinator) as BaseContract as FundingRound,
       recipientTreeDepth,
       tally,
       tallyBatchSize

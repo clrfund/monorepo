@@ -299,6 +299,21 @@ export class FundingRound extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toI32());
   }
 
+  TREE_ARITY(): BigInt {
+    let result = super.call("TREE_ARITY", "TREE_ARITY():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_TREE_ARITY(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("TREE_ARITY", "TREE_ARITY():(uint256)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
   alpha(): BigInt {
     let result = super.call("alpha", "alpha():(uint256)", []);
 

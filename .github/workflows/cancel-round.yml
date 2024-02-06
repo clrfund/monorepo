@@ -3,9 +3,10 @@ name: Cancel current round
 on: workflow_dispatch
 
 env:
-  NODE_VERSION: 18.x
-  SUBGRPAH_URL: "https://api.thegraph.com/subgraphs/name/clrfund/clrfund-arbitrum-goerli"
+  NODE_VERSION: 20.x
+  SUBGRPAH_URL: "https://api.thegraph.com/subgraphs/name/clrfund/clrfund-testnet"
   WALLET_PRIVATE_KEY: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_WALLET_PRIVATE_KEY }}
+  NETWORK: "arbitrum-sepolia"
 
 jobs:
   cancel-round:
@@ -25,6 +26,6 @@ jobs:
     - name: Run the cancel round script
       run: |
         cd contracts
-        export FACTORY=$(curl -X POST -d '{"query":"{fundingRoundFactories {id}}"}' $SUBGRPAH_URL)
-        export FACTORY_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.FACTORY).data.fundingRoundFactories[0].id)')
-        yarn hardhat cancel-round --factory ${FACTORY_ADDRESS} --network arbitrum-goerli
+        export CLRFUND=$(curl -X POST -d '{"query":"{clrFunds {id}}"}' $SUBGRPAH_URL)
+        export CLRFUND_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.CLRFUND).data.clrFunds[0].id)')
+        yarn hardhat clr-cancel --clrfund "${CLRFUND_ADDRESS}" --network ${NETWORK}

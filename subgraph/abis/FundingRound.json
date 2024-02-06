@@ -433,6 +433,19 @@
   },
   {
     "inputs": [],
+    "name": "TREE_ARITY",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "alpha",
     "outputs": [
       {
@@ -935,7 +948,7 @@
   {
     "inputs": [
       {
-        "internalType": "contract MACI",
+        "internalType": "address",
         "name": "_maci",
         "type": "address"
       }

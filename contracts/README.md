@@ -48,5 +48,5 @@ yarn hardhat verify-all --clrfund <clrfund-address>  --network <network>
 If you want to genereate a single key to coordinate multiple rounds.
 
 ```
-yarn ts-node cli/newMaciKey.ts
+yarn ts-node tasks/maciNewKey.ts
 ```

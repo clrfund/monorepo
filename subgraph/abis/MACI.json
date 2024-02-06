@@ -242,23 +242,6 @@
       {
         "components": [
           {
-            "internalType": "uint256",
-            "name": "maxMessages",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "maxVoteOptions",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct Params.MaxValues",
-        "name": "_maxValues",
-        "type": "tuple"
-      },
-      {
-        "components": [
-          {
             "internalType": "uint8",
             "name": "intStateTreeDepth",
             "type": "uint8"

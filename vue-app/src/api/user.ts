@@ -1,5 +1,5 @@
 import makeBlockie from 'ethereum-blockies-base64'
-import { Contract, type ContractTransaction, type Signer, BrowserProvider } from 'ethers'
+import { Contract, type TransactionResponse, type Signer, BrowserProvider } from 'ethers'
 
 import { FundingRound, UserRegistry, ERC20 } from './abi'
 import { clrfundContractAddress, ipfsGatewayUrl, provider, operator } from './core'
@@ -78,7 +78,7 @@ export async function registerUserSnapshot(
   registryAddress: string,
   proofRlpBytes: string,
   signer: Signer,
-): Promise<ContractTransaction> {
+): Promise<TransactionResponse> {
   const registry = new Contract(registryAddress, SnapshotUserRegistry, signer)
   const walletAddress = await signer.getAddress()
   return registry.addUser(walletAddress, proofRlpBytes)
@@ -114,7 +114,7 @@ export async function registerUserMerkle(
   registryAddress: string,
   proof: string[],
   signer: Signer,
-): Promise<ContractTransaction> {
+): Promise<TransactionResponse> {
   const registry = new Contract(registryAddress, MerkleUserRegistry, signer)
   const walletAddress = await signer.getAddress()
   return registry.addUser(walletAddress, proof)

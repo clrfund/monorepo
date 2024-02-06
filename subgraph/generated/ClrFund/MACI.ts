@@ -150,16 +150,6 @@ export class MACI__deployPollResultPollAddrStruct extends ethereum.Tuple {
   }
 }
 
-export class MACI__deployPollInput_maxValuesStruct extends ethereum.Tuple {
-  get maxMessages(): BigInt {
-    return this[0].toBigInt();
-  }
-
-  get maxVoteOptions(): BigInt {
-    return this[1].toBigInt();
-  }
-}
-
 export class MACI__deployPollInput_treeDepthsStruct extends ethereum.Tuple {
   get intStateTreeDepth(): i32 {
     return this[0].toI32();
@@ -320,7 +310,6 @@ export class MACI extends ethereum.SmartContract {
 
   deployPoll(
     _duration: BigInt,
-    _maxValues: MACI__deployPollInput_maxValuesStruct,
     _treeDepths: MACI__deployPollInput_treeDepthsStruct,
     _coordinatorPubKey: MACI__deployPollInput_coordinatorPubKeyStruct,
     _verifier: Address,
@@ -329,10 +318,9 @@ export class MACI extends ethereum.SmartContract {
   ): MACI__deployPollResultPollAddrStruct {
     let result = super.call(
       "deployPoll",
-      "deployPoll(uint256,(uint256,uint256),(uint8,uint8,uint8,uint8),(uint256,uint256),address,address,bool):((address,address,address,address))",
+      "deployPoll(uint256,(uint8,uint8,uint8,uint8),(uint256,uint256),address,address,bool):((address,address,address,address))",
       [
         ethereum.Value.fromUnsignedBigInt(_duration),
-        ethereum.Value.fromTuple(_maxValues),
         ethereum.Value.fromTuple(_treeDepths),
         ethereum.Value.fromTuple(_coordinatorPubKey),
         ethereum.Value.fromAddress(_verifier),
@@ -348,7 +336,6 @@ export class MACI extends ethereum.SmartContract {
 
   try_deployPoll(
     _duration: BigInt,
-    _maxValues: MACI__deployPollInput_maxValuesStruct,
     _treeDepths: MACI__deployPollInput_treeDepthsStruct,
     _coordinatorPubKey: MACI__deployPollInput_coordinatorPubKeyStruct,
     _verifier: Address,
@@ -357,10 +344,9 @@ export class MACI extends ethereum.SmartContract {
   ): ethereum.CallResult<MACI__deployPollResultPollAddrStruct> {
     let result = super.tryCall(
       "deployPoll",
-      "deployPoll(uint256,(uint256,uint256),(uint8,uint8,uint8,uint8),(uint256,uint256),address,address,bool):((address,address,address,address))",
+      "deployPoll(uint256,(uint8,uint8,uint8,uint8),(uint256,uint256),address,address,bool):((address,address,address,address))",
       [
         ethereum.Value.fromUnsignedBigInt(_duration),
-        ethereum.Value.fromTuple(_maxValues),
         ethereum.Value.fromTuple(_treeDepths),
         ethereum.Value.fromTuple(_coordinatorPubKey),
         ethereum.Value.fromAddress(_verifier),
@@ -1007,34 +993,28 @@ export class DeployPollCall__Inputs {
     return this._call.inputValues[0].value.toBigInt();
   }
 
-  get _maxValues(): DeployPollCall_maxValuesStruct {
-    return changetype<DeployPollCall_maxValuesStruct>(
-      this._call.inputValues[1].value.toTuple()
-    );
-  }
-
   get _treeDepths(): DeployPollCall_treeDepthsStruct {
     return changetype<DeployPollCall_treeDepthsStruct>(
-      this._call.inputValues[2].value.toTuple()
+      this._call.inputValues[1].value.toTuple()
     );
   }
 
   get _coordinatorPubKey(): DeployPollCall_coordinatorPubKeyStruct {
     return changetype<DeployPollCall_coordinatorPubKeyStruct>(
-      this._call.inputValues[3].value.toTuple()
+      this._call.inputValues[2].value.toTuple()
     );
   }
 
   get _verifier(): Address {
-    return this._call.inputValues[4].value.toAddress();
+    return this._call.inputValues[3].value.toAddress();
   }
 
   get _vkRegistry(): Address {
-    return this._call.inputValues[5].value.toAddress();
+    return this._call.inputValues[4].value.toAddress();
   }
 
   get useSubsidy(): boolean {
-    return this._call.inputValues[6].value.toBoolean();
+    return this._call.inputValues[5].value.toBoolean();
   }
 }
 
@@ -1049,16 +1029,6 @@ export class DeployPollCall__Outputs {
     return changetype<DeployPollCallPollAddrStruct>(
       this._call.outputValues[0].value.toTuple()
     );
-  }
-}
-
-export class DeployPollCall_maxValuesStruct extends ethereum.Tuple {
-  get maxMessages(): BigInt {
-    return this[0].toBigInt();
-  }
-
-  get maxVoteOptions(): BigInt {
-    return this[1].toBigInt();
   }
 }
 

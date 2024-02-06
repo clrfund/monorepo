@@ -105,15 +105,11 @@ function createOrUpdateClrFund(
     let stateTreeDepth = maciFactoryContract.stateTreeDepth()
     let messageTreeDepth = maciFactoryContract.treeDepths().value2
     let voteOptionTreeDepth = maciFactoryContract.treeDepths().value3
-    let maxMessages = maciFactoryContract.maxValues().value0
-    let maxVoteOptions = maciFactoryContract.maxValues().value1
 
     clrFund.maciFactory = maciFactoryAddress
     clrFund.messageTreeDepth = BigInt.fromI32(messageTreeDepth)
     clrFund.stateTreeDepth = BigInt.fromI32(stateTreeDepth)
     clrFund.voteOptionTreeDepth = BigInt.fromI32(voteOptionTreeDepth)
-    clrFund.maxMessages = maxMessages
-    clrFund.maxVoteOptions = maxVoteOptions
 
     log.info('New maciFactoryAddress', [])
   }
@@ -234,6 +230,7 @@ export function handleRoundStarted(event: RoundStarted): void {
   fundingRound.nativeTokenInfo = nativeTokenId
   fundingRound.coordinator = coordinator
   fundingRound.maci = maci
+  fundingRound.maciTxHash = event.transaction.hash
   fundingRound.voiceCreditFactor = voiceCreditFactor
   fundingRound.contributorCount = contributorCount
   fundingRound.matchingPoolSize = matchingPoolSize

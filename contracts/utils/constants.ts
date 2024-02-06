@@ -5,6 +5,7 @@ export const VOICE_CREDIT_FACTOR = 10n ** BigInt(4 + 18 - 9)
 export const ALPHA_PRECISION = 10n ** 18n
 export const DEFAULT_SR_QUEUE_OPS = '4'
 export const DEFAULT_GET_LOG_BATCH_SIZE = 20000
+export const TREE_ARITY = 5
 
 // brightid.clr.fund node uses this to sign messages
 // see the ethSigningAddress in https://brightid.clr.fund

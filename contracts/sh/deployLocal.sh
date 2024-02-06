@@ -2,7 +2,7 @@
 set -e
 
 #
-# Run the hardhat scripts/tasks to simulate e2e testing
+# Run the hardhat tasks to deploy contracts to local network
 #
 
 # Local settings
@@ -31,21 +31,22 @@ function extract() {
 }
 
 # create a new maci key for the coordinator
-MACI_KEYPAIR=$(yarn ts-node cli/newMaciKey.ts)
+MACI_KEYPAIR=$(yarn ts-node tasks/maciNewKey.ts)
 export COORDINATOR_MACISK=$(echo "${MACI_KEYPAIR}" | grep -o "macisk.*$")
 
 # create a new instance of ClrFund
-DEPLOYER=$(extract 'deployer')
-yarn ts-node cli/newClrFund.ts \
+yarn hardhat new-clrfund \
   --circuit "${CIRCUIT}" \
   --directory "${CIRCUIT_DIRECTORY}" \
   --user-registry-type simple \
   --recipient-registry-type simple \
-  --state-file ${STATE_FILE}
+  --state-file ${STATE_FILE} \
+  --network ${HARDHAT_NETWORK}
  
 # deploy a new funding round
 CLRFUND=$(extract 'clrfund')
-yarn ts-node cli/newRound.ts \
+yarn hardhat new-round \
   --clrfund "${CLRFUND}" \
   --duration "${ROUND_DURATION}" \
-  --state-file ${STATE_FILE}
+  --state-file ${STATE_FILE} \
+  --network ${HARDHAT_NETWORK}

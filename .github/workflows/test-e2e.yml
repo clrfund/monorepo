@@ -7,7 +7,7 @@ on:
       - 'develop'
 
 env:
-  NODE_VERSION: 18.x
+  NODE_VERSION: 20.x
   CIRCUIT_TYPE: micro
   ZKEYS_DOWNLOAD_SCRIPT: "download-6-8-2-3.sh"
 

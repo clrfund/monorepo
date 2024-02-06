@@ -55,6 +55,11 @@ export function getRecipientClaimData(
   recipientTreeDepth: number,
   tally: Tally
 ): any[] {
+  const maxRecipients = tally.perVOSpentVoiceCredits.tally.length
+  if (recipientIndex >= maxRecipients) {
+    throw new Error(`Invalid recipient index ${recipientIndex}.`)
+  }
+
   // Create proof for total amount of spent voice credits
   const spent = tally.perVOSpentVoiceCredits.tally[recipientIndex]
   const spentSalt = tally.perVOSpentVoiceCredits.salt

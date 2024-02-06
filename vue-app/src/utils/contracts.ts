@@ -1,4 +1,3 @@
-import type { Contract } from 'ethers'
 import type { TransactionResponse, TransactionReceipt } from 'ethers'
 import { provider, MAX_WAIT_DEPTH } from '@/api/core'
 import { getEventArg } from '@clrfund/common'

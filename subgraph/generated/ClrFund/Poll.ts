@@ -26,6 +26,10 @@ export class MergeMaciStateAq__Params {
   get _stateRoot(): BigInt {
     return this._event.parameters[0].value.toBigInt();
   }
+
+  get _numSignups(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
 }
 
 export class MergeMaciStateAqSubRoots extends ethereum.Event {
@@ -180,47 +184,6 @@ export class TopupMessage_messageStruct extends ethereum.Tuple {
   }
 }
 
-export class Poll__batchSizesResult {
-  value0: i32;
-  value1: i32;
-  value2: i32;
-
-  constructor(value0: i32, value1: i32, value2: i32) {
-    this.value0 = value0;
-    this.value1 = value1;
-    this.value2 = value2;
-  }
-
-  toMap(): TypedMap<string, ethereum.Value> {
-    let map = new TypedMap<string, ethereum.Value>();
-    map.set(
-      "value0",
-      ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(this.value0))
-    );
-    map.set(
-      "value1",
-      ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(this.value1))
-    );
-    map.set(
-      "value2",
-      ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(this.value2))
-    );
-    return map;
-  }
-
-  getMessageBatchSize(): i32 {
-    return this.value0;
-  }
-
-  getTallyBatchSize(): i32 {
-    return this.value1;
-  }
-
-  getSubsidyBatchSize(): i32 {
-    return this.value2;
-  }
-}
-
 export class Poll__coordinatorPubKeyResult {
   value0: BigInt;
   value1: BigInt;
@@ -294,11 +257,11 @@ export class Poll__getDeployTimeAndDurationResult {
     return map;
   }
 
-  get_deployTime(): BigInt {
+  getPollDeployTime(): BigInt {
     return this.value0;
   }
 
-  get_duration(): BigInt {
+  getPollDuration(): BigInt {
     return this.value1;
   }
 }
@@ -390,7 +353,7 @@ export class Poll__numSignUpsAndMessagesResult {
     return map;
   }
 
-  getNumSignups(): BigInt {
+  getNumSUps(): BigInt {
     return this.value0;
   }
 
@@ -532,39 +495,6 @@ export class Poll extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toI32());
-  }
-
-  batchSizes(): Poll__batchSizesResult {
-    let result = super.call(
-      "batchSizes",
-      "batchSizes():(uint24,uint24,uint24)",
-      []
-    );
-
-    return new Poll__batchSizesResult(
-      result[0].toI32(),
-      result[1].toI32(),
-      result[2].toI32()
-    );
-  }
-
-  try_batchSizes(): ethereum.CallResult<Poll__batchSizesResult> {
-    let result = super.tryCall(
-      "batchSizes",
-      "batchSizes():(uint24,uint24,uint24)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(
-      new Poll__batchSizesResult(
-        value[0].toI32(),
-        value[1].toI32(),
-        value[2].toI32()
-      )
-    );
   }
 
   coordinatorPubKey(): Poll__coordinatorPubKeyResult {
@@ -964,6 +894,21 @@ export class Poll extends ethereum.SmartContract {
     );
   }
 
+  numSignups(): BigInt {
+    let result = super.call("numSignups", "numSignups():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_numSignups(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("numSignups", "numSignups():(uint256)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
   owner(): Address {
     let result = super.call("owner", "owner():(address)", []);
 
@@ -1141,21 +1086,15 @@ export class ConstructorCall__Inputs {
     );
   }
 
-  get _batchSizes(): ConstructorCall_batchSizesStruct {
-    return changetype<ConstructorCall_batchSizesStruct>(
-      this._call.inputValues[3].value.toTuple()
-    );
-  }
-
   get _coordinatorPubKey(): ConstructorCall_coordinatorPubKeyStruct {
     return changetype<ConstructorCall_coordinatorPubKeyStruct>(
-      this._call.inputValues[4].value.toTuple()
+      this._call.inputValues[3].value.toTuple()
     );
   }
 
   get _extContracts(): ConstructorCall_extContractsStruct {
     return changetype<ConstructorCall_extContractsStruct>(
-      this._call.inputValues[5].value.toTuple()
+      this._call.inputValues[4].value.toTuple()
     );
   }
 }
@@ -1193,20 +1132,6 @@ export class ConstructorCall_treeDepthsStruct extends ethereum.Tuple {
 
   get voteOptionTreeDepth(): i32 {
     return this[3].toI32();
-  }
-}
-
-export class ConstructorCall_batchSizesStruct extends ethereum.Tuple {
-  get messageBatchSize(): i32 {
-    return this[0].toI32();
-  }
-
-  get tallyBatchSize(): i32 {
-    return this[1].toI32();
-  }
-
-  get subsidyBatchSize(): i32 {
-    return this[2].toI32();
   }
 }
 

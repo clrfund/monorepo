@@ -29,48 +29,56 @@ function extract() {
 }
 
 # create a new maci key for the coordinator
-MACI_KEYPAIR=$(yarn ts-node cli/newMaciKey.ts)
+MACI_KEYPAIR=$(yarn ts-node tasks/maciNewKey.ts)
 export COORDINATOR_MACISK=$(echo "${MACI_KEYPAIR}" | grep -o "macisk.*$")
 
 # create a new instance of ClrFund
-yarn ts-node cli/newClrFund.ts \
+yarn hardhat new-clrfund \
   --circuit "${CIRCUIT}" \
   --directory "${CIRCUIT_DIRECTORY}" \
   --user-registry-type simple \
   --recipient-registry-type simple \
-  --state-file ${STATE_FILE}
+  --state-file ${STATE_FILE} \
+  --network ${HARDHAT_NETWORK}
  
 # # deploy a new funding round
 CLRFUND=$(extract 'clrfund')
-yarn ts-node cli/newRound.ts \
+yarn hardhat new-round \
   --clrfund "${CLRFUND}" \
   --duration "${ROUND_DURATION}" \
-  --state-file ${STATE_FILE}
+  --state-file ${STATE_FILE} \
+  --network ${HARDHAT_NETWORK}
 
-yarn ts-node cli/addContributors.ts "${CLRFUND}"
-yarn ts-node cli/addRecipients.ts "${CLRFUND}"
+yarn hardhat test-add-contributors --clrfund "${CLRFUND}" --network ${HARDHAT_NETWORK}
+yarn hardhat test-add-recipients --clrfund "${CLRFUND}" --network ${HARDHAT_NETWORK}
 
-yarn ts-node cli/contribute.ts ${STATE_FILE}
-yarn ts-node cli/vote.ts ${STATE_FILE}
+yarn hardhat test-contribute --state-file ${STATE_FILE} --network ${HARDHAT_NETWORK}
+yarn hardhat test-vote --state-file ${STATE_FILE} --network ${HARDHAT_NETWORK}
 
-yarn ts-node cli/timeTravel.ts ${ROUND_DURATION}
+yarn hardhat test-time-travel --seconds ${ROUND_DURATION} --network ${HARDHAT_NETWORK}
 
 # run the tally script
 MACI_TRANSACTION_HASH=$(extract 'maciTxHash')
 NODE_OPTIONS="--max-old-space-size=4096"
-yarn ts-node cli/tally.ts \
+yarn hardhat clr-tally \
   --clrfund ${CLRFUND} \
   --circuit-directory ${CIRCUIT_DIRECTORY} \
   --circuit "${CIRCUIT}" \
   --rapidsnark ${RAPID_SNARK} \
   --batch-size 8 \
   --output-dir ${OUTPUT_DIR} \
-  --maci-tx-hash "${MACI_TRANSACTION_HASH}"
+  --maci-tx-hash "${MACI_TRANSACTION_HASH}" \
+  --network "${HARDHAT_NETWORK}"
  
 # finalize the round
-yarn ts-node cli/finalize.ts --clrfund "${CLRFUND}" --tally-file ${TALLY_FILE}
+yarn hardhat clr-finalize --clrfund "${CLRFUND}" --tally-file ${TALLY_FILE}  --network ${HARDHAT_NETWORK}
  
 # claim funds
 FUNDING_ROUND=$(extract 'fundingRound')
-yarn ts-node cli/claim.ts --funding-round "${FUNDING_ROUND}" --tally-file ${TALLY_FILE}
+yarn hardhat clr-claim --funding-round "${FUNDING_ROUND}" --tally-file ${TALLY_FILE} \
+  --recipient 1 \
+  --network ${HARDHAT_NETWORK}
 
+yarn hardhat clr-claim --funding-round "${FUNDING_ROUND}" --tally-file ${TALLY_FILE} \
+  --recipient 2 \
+  --network ${HARDHAT_NETWORK}

@@ -27,8 +27,11 @@ interface IMACIFactory {
   // poll parameters
   function stateTreeDepth() external view returns (uint8);
   function treeDepths() external view returns (Params.TreeDepths memory);
-  function maxValues() external view returns (Params.MaxValues memory);
-  function messageBatchSize() external view returns (uint256);
+
+  function getMessageBatchSize(uint8 _messageTreeSubDepth) external pure
+    returns(uint256 _messageBatchSize);
+
+  function TREE_ARITY() external pure returns (uint256);
 
   function deployMaci(
     SignUpGatekeeper signUpGatekeeper,

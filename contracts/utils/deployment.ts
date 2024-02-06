@@ -201,7 +201,7 @@ export async function deployRecipientRegistry({
   type: string
   controller: string
   deposit?: bigint
-  challengePeriod?: string
+  challengePeriod?: bigint
   ethers: HardhatEthersHelpers
   signer?: Signer
 }): Promise<Contract> {
@@ -454,12 +454,13 @@ export async function setVerifyingKeys(
   vkRegistry: VkRegistry,
   params: MaciParameters
 ): Promise<ContractTransactionResponse> {
+  const messageBatchSize = params.getMessageBatchSize()
   const tx = await vkRegistry.setVerifyingKeys(
     params.stateTreeDepth,
     params.treeDepths.intStateTreeDepth,
     params.treeDepths.messageTreeDepth,
     params.treeDepths.voteOptionTreeDepth,
-    params.messageBatchSize,
+    messageBatchSize,
     params.processVk.asContractParam() as IVerifyingKeyStruct,
     params.tallyVk.asContractParam() as IVerifyingKeyStruct
   )
