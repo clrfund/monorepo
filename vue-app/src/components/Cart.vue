@@ -15,7 +15,7 @@
       <div class="empty-cart">
         <div class="moon-emoji">🌚</div>
         <h3>{{ $t('cart.sign_the_message_to_see_your_cart') }}</h3>
-        <button @click="promptSignagure" class="btn-action">{{ $t('cart.sign') }}</button>
+        <button @click="promptSignature" class="btn-action">{{ $t('cart.sign') }}</button>
       </div>
     </div>
     <div v-else class="cart-container">
@@ -312,7 +312,7 @@ function removeAll(): void {
 
 onMounted(() => {
   if (currentUser.value && !currentUser.value.encryptionKey) {
-    promptSignagure()
+    promptSignature()
   }
 })
 
@@ -323,7 +323,7 @@ function promptConnection(): void {
       onClose() {
         close().then(() => {
           if (currentUser.value?.walletAddress) {
-            promptSignagure()
+            promptSignature()
           }
         })
       },
@@ -332,7 +332,7 @@ function promptConnection(): void {
   open()
 }
 
-function promptSignagure(): void {
+function promptSignature(): void {
   const { open, close } = useModal({
     component: SignatureModal,
     attrs: {
