@@ -62,8 +62,9 @@ jobs:
         echo $SUBGRAPH_URL
         export SUBGRAPH_NAME=${{ github.event.inputs.subgraph_name }}
         export CHAIN_QUERY=$(node -e 'console.log(`{"query":"{indexingStatusForCurrentVersion(subgraphName: \\\"${process.env.SUBGRAPH_NAME}\\\") { chains { network }}}"}`)')
-        export CHAIN=$(curl -s -X POST -d '{"query":"{indexingStatusForCurrentVersion(subgraphName:) { chains { network }}}"}' https://api.thegraph.com/index-node/graphql)
+        export CHAIN=$(curl -s -X POST -d "$CHAIN_QUERY" https://api.thegraph.com/index-node/graphql)
         export NETWORK=$(node -e 'console.log(JSON.parse(process.env.CHAIN).data.indexingStatusForCurrentVersion.chains[0].network)')
+        echo $NETWORK
         export ROUND=$(curl -X POST -d '{"query":"{clrFunds {id currentRound {id maci maciTxHash}}}"}' $SUBGRPAH_URL)
         export CLRFUND_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.clrFunds[0].id)')
         export ROUND_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.clrFunds[0].currentRound.id)')
