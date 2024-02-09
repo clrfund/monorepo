@@ -103,7 +103,7 @@ function handleSubmit(): void {
     if (currentUser.value.encryptionKey) {
       contribute()
     } else {
-      promptSignagure()
+      promptSignature()
     }
     return
   }
@@ -111,7 +111,7 @@ function handleSubmit(): void {
   promptConnection()
 }
 
-function promptSignagure(): void {
+function promptSignature(): void {
   const { open, close } = useModal({
     component: SignatureModal,
     attrs: {
@@ -134,7 +134,7 @@ function promptConnection(): void {
       onClose() {
         close().then(() => {
           if (currentUser.value?.walletAddress) {
-            promptSignagure()
+            promptSignature()
           }
         })
       },
