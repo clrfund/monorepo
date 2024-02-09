@@ -14,8 +14,20 @@ import { formToRecipientData } from './recipient'
 
 async function getRegistryInfo(registryAddress: string): Promise<RegistryInfo> {
   const registry = new Contract(registryAddress, OptimisticRecipientRegistry, provider)
-  const deposit = await registry.baseDeposit()
-  const challengePeriodDuration = await registry.challengePeriodDuration()
+  let deposit = BigInt(0)
+  try {
+    deposit = await registry.baseDeposit()
+  } catch (err) {
+    console.error('Failed to get base deposit from', registryAddress, err)
+  }
+
+  let challengePeriodDuration = BigInt(0)
+  try {
+    challengePeriodDuration = await registry.challengePeriodDuration()
+  } catch (err) {
+    console.error('Failed to get challenge period from', registryAddress, err)
+  }
+
   let recipientCount
   try {
     recipientCount = await registry.getRecipientCount()

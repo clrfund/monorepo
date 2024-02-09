@@ -65,8 +65,8 @@ In a future version, we plan to address this by routing ETH and token contributi
 ### Install Node v18 with nvm
 
 ```sh
-nvm install 18
-nvm use 18
+nvm install 20
+nvm use 20
 ```
 
 ### Install the dependencies and build
