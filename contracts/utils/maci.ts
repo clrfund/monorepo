@@ -10,6 +10,7 @@ import {
   LEAVES_PER_NODE,
   genTallyResultCommitment,
   Keypair,
+  Tally as TallyData,
 } from '@clrfund/common'
 import * as os from 'os'
 import {
@@ -20,7 +21,6 @@ import {
   GenProofsArgs,
   genLocalState,
   verify,
-  TallyData,
 } from 'maci-cli'
 
 import { getTalyFilePath, isPathExist } from './misc'
@@ -183,6 +183,8 @@ type getGenProofArgsInput = {
   endBlock?: number
   // MACI state file
   maciStateFile?: string
+  // transaction signer
+  signer: Signer
   // flag to turn on verbose logging in MACI cli
   quiet?: boolean
 }
@@ -204,6 +206,7 @@ export function getGenProofArgs(args: getGenProofArgsInput): GenProofsArgs {
     startBlock,
     endBlock,
     maciStateFile,
+    signer,
     quiet,
   } = args
 
@@ -237,6 +240,7 @@ export function getGenProofArgs(args: getGenProofArgsInput): GenProofsArgs {
       startBlock,
       endBlock,
       stateFile: maciStateFile,
+      signer,
       quiet,
     }
   } else {
@@ -267,6 +271,7 @@ export function getGenProofArgs(args: getGenProofArgsInput): GenProofsArgs {
       startBlock,
       endBlock,
       stateFile: maciStateFile,
+      signer,
       quiet,
     }
   }
@@ -289,7 +294,7 @@ export async function mergeMaciSubtrees({
 }: {
   maciAddress: string
   pollId: bigint
-  signer?: Signer
+  signer: Signer
   numQueueOps?: string
   quiet?: boolean
 }) {

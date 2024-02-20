@@ -1,8 +1,7 @@
 import { ethers, config } from 'hardhat'
-import { HardhatEthersSigner } from '@nomicfoundation/hardhat-ethers/signers'
 import { time, mine } from '@nomicfoundation/hardhat-network-helpers'
 import { expect } from 'chai'
-import { BaseContract, Contract, toNumber } from 'ethers'
+import { BaseContract, Contract, toNumber, Signer } from 'ethers'
 import {
   Keypair,
   createMessage,
@@ -32,14 +31,17 @@ import {
   addTallyResultsBatch,
   getRecipientClaimData,
   getGenProofArgs,
+  TallyData,
 } from '../utils/maci'
 import { DEFAULT_CIRCUIT } from '../utils/circuits'
 import { MaciParameters } from '../utils/maciParameters'
-import { readFileSync, existsSync, mkdirSync } from 'fs'
+import { existsSync, mkdirSync } from 'fs'
 import path from 'path'
 import { FundingRound } from '../typechain-types'
+import { JSONFile } from '../utils/JSONFile'
 
 type VoteData = { recipientIndex: number; voiceCredits: bigint }
+type ClaimData = { [index: number]: bigint }
 
 const ZERO = BigInt(0)
 // funding round duration
@@ -115,14 +117,14 @@ describe('End-to-end Tests', function () {
 
   let maciTransactionHash: string
 
-  let deployer: HardhatEthersSigner
-  let coordinator: HardhatEthersSigner
-  let poolContributor1: HardhatEthersSigner
-  let poolContributor2: HardhatEthersSigner
-  let recipient1: HardhatEthersSigner
-  let recipient2: HardhatEthersSigner
-  let recipient3: HardhatEthersSigner
-  let contributors: HardhatEthersSigner[]
+  let deployer: Signer
+  let coordinator: Signer
+  let poolContributor1: Signer
+  let poolContributor2: Signer
+  let recipient1: Signer
+  let recipient2: Signer
+  let recipient3: Signer
+  let contributors: Signer[]
 
   let poseidonLibraries: { [key: string]: string }
   let userRegistry: Contract
@@ -207,8 +209,9 @@ describe('End-to-end Tests', function () {
     // Configure factory
     await clrfund.setToken(token.target)
     coordinatorKeypair = new Keypair()
+    const coordinatorAddress = await coordinator.getAddress()
     await clrfund.setCoordinator(
-      coordinator.address,
+      coordinatorAddress,
       coordinatorKeypair.pubKey.asContractParam()
     )
 
@@ -331,7 +334,9 @@ describe('End-to-end Tests', function () {
     return { tallyAddress, messageProcessorAddress }
   }
 
-  async function finalizeRound(testResetTally = false): Promise<any> {
+  async function finalizeRound(
+    testResetTally = false
+  ): Promise<{ tally: TallyData; claims: ClaimData }> {
     debugLog('Finalizing round')
     // Process messages and tally votes
     const maciAddress = await maci.getAddress()
@@ -339,6 +344,7 @@ describe('End-to-end Tests', function () {
       maciAddress,
       pollId,
       numQueueOps: DEFAULT_SR_QUEUE_OPS,
+      signer: coordinator,
     })
     debugLog('Merged MACI trees')
 
@@ -359,6 +365,7 @@ describe('End-to-end Tests', function () {
       outputDir,
       blocksPerBatch: DEFAULT_GET_LOG_BATCH_SIZE,
       maciTxHash: maciTransactionHash,
+      signer: coordinator,
       quiet,
     })
 
@@ -378,6 +385,7 @@ describe('End-to-end Tests', function () {
       maciAddress,
       messageProcessorAddress,
       tallyAddress,
+      signer: coordinator,
       quiet,
     })
 
@@ -397,12 +405,13 @@ describe('End-to-end Tests', function () {
         maciAddress,
         messageProcessorAddress,
         tallyAddress,
+        signer: coordinator,
         quiet,
       })
     }
     console.log('finished proveOnChain')
 
-    const tally = JSON.parse(readFileSync(genProofArgs.tallyFile).toString())
+    const tally = JSONFile.read(genProofArgs.tallyFile) as TallyData
     const tallyHash = await getIpfsHash(tally)
     await (fundingRound.connect(coordinator) as Contract).publishTallyHash(
       tallyHash
@@ -422,13 +431,13 @@ describe('End-to-end Tests', function () {
 
     const newResultCommitment = genTallyResultCommitment(
       tally.results.tally.map((x: string) => BigInt(x)),
-      tally.results.salt,
+      BigInt(tally.results.salt),
       recipientTreeDepth
     )
 
     const perVOSpentVoiceCreditsCommitment = genTallyResultCommitment(
       tally.perVOSpentVoiceCredits.tally.map((x: string) => BigInt(x)),
-      tally.perVOSpentVoiceCredits.salt,
+      BigInt(tally.perVOSpentVoiceCredits.salt),
       recipientTreeDepth
     )
 
@@ -442,7 +451,7 @@ describe('End-to-end Tests', function () {
     )
 
     // Claim funds
-    const claims: { [index: number]: bigint } = {}
+    const claims: ClaimData = {}
     for (const recipientIndex of [1, 2]) {
       const recipient = recipientIndex === 1 ? recipient1 : recipient2
 
@@ -460,7 +469,7 @@ describe('End-to-end Tests', function () {
         'FundsClaimed',
         '_amount'
       )
-      claims[recipientIndex] = claimedAmount
+      claims[recipientIndex] = BigInt(claimedAmount)
     }
     return { tally, claims }
   }
@@ -532,8 +541,8 @@ describe('End-to-end Tests', function () {
       )
     )
     console.log('expected claim', claims[1], expectedClaims[0])
-    expect(BigInt(claims[1])).to.equal(expectedClaims[0])
-    expect(BigInt(claims[2])).to.equal(expectedClaims[1])
+    expect(claims[1]).to.equal(expectedClaims[0])
+    expect(claims[2]).to.equal(expectedClaims[1])
   })
 
   it('should allocate funds correctly if not all voice credits are spent', async () => {
@@ -656,8 +665,8 @@ describe('End-to-end Tests', function () {
       [voiceCredits1, contribution2.voiceCredits],
     ]
     const expectedTally = tallyVotes(submittedVoiceCredits)
-    expect(tally.results.tally[1]).to.equal(expectedTally[0])
-    expect(tally.results.tally[2]).to.equal(expectedTally[1])
+    expect(BigInt(tally.results.tally[1])).to.equal(expectedTally[0])
+    expect(BigInt(tally.results.tally[2])).to.equal(expectedTally[1])
     const expectedClaims = await calculateClaims(
       fundingRound,
       submittedVoiceCredits
@@ -734,7 +743,7 @@ describe('End-to-end Tests', function () {
     ]
     const expectedTally = tallyVotes(submittedVoiceCredits)
     expect(tally.results.tally[1]).to.equal('0')
-    expect(tally.results.tally[2]).to.equal(expectedTally[0])
+    expect(BigInt(tally.results.tally[2])).to.equal(expectedTally[0])
     const expectedClaims = await calculateClaims(
       fundingRound,
       submittedVoiceCredits
@@ -821,8 +830,8 @@ describe('End-to-end Tests', function () {
     ]
     const expectedTally = tallyVotes(submittedVoiceCredits)
 
-    expect(tally.results.tally[1]).to.equal(expectedTally[0])
-    expect(tally.results.tally[2]).to.equal(expectedTally[1])
+    expect(BigInt(tally.results.tally[1])).to.equal(expectedTally[0])
+    expect(BigInt(tally.results.tally[2])).to.equal(expectedTally[1])
     expect(tally.results.tally[3]).to.equal('0')
 
     const expectedClaims = await calculateClaims(
@@ -1010,7 +1019,7 @@ describe('End-to-end Tests', function () {
       )
     )
     console.log('expected claim', claims[1], expectedClaims[0])
-    expect(BigInt(claims[1])).to.equal(expectedClaims[0])
-    expect(BigInt(claims[2])).to.equal(expectedClaims[1])
+    expect(claims[1]).to.equal(expectedClaims[0])
+    expect(claims[2]).to.equal(expectedClaims[1])
   })
 })

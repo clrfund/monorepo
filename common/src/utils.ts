@@ -1,4 +1,3 @@
-import { id } from 'ethers'
 import {
   genTreeCommitment as genTallyResultCommitment,
   genRandomSalt,

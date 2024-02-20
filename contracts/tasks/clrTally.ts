@@ -257,6 +257,7 @@ task('clr-tally', 'Tally votes')
         maciAddress,
         pollId,
         numQueueOps,
+        signer: coordinator,
         quiet,
       })
 
@@ -272,6 +273,7 @@ task('clr-tally', 'Tally votes')
             ethereumProvider: providerUrl,
             transactionHash: maciTxHash,
             blockPerBatch: blocksPerBatch,
+            signer: coordinator,
             sleep,
           })
         }
@@ -287,6 +289,7 @@ task('clr-tally', 'Tally votes')
           blocksPerBatch: getNumber(blocksPerBatch),
           maciTxHash,
           maciStateFile: outputPath,
+          signer: coordinator,
           quiet,
         })
         await genProofs(genProofArgs)
@@ -305,6 +308,7 @@ task('clr-tally', 'Tally votes')
         maciAddress,
         messageProcessorAddress,
         tallyAddress,
+        signer: coordinator,
         quiet,
       })
 

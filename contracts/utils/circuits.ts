@@ -38,10 +38,10 @@ export type CircuitInfo = {
 
 export const CIRCUITS: { [name: string]: CircuitInfo } = {
   micro: {
-    processMessagesZkey: 'processmessages_6-8-2-3_final.zkey',
-    processWitness: 'processMessages_6-8-2-3_test',
-    processWasm: 'processmessages_6-8-2-3.wasm',
-    processDatFile: 'processMessages_6-8-2-3_test.dat',
+    processMessagesZkey: 'ProcessMessages_6-8-2-3_test.0.zkey',
+    processWitness: 'ProcessMessages_6-8-2-3_test',
+    processWasm: 'ProcessMessages_6-8-2-3_test.wasm',
+    processDatFile: 'ProcessMessages_6-8-2-3_test.dat',
     tallyVotesZkey: 'tallyvotes_6-2-3_final.zkey',
     tallyWitness: 'tallyVotes_6-2-3_test',
     tallyWasm: 'tallyvotes_6-2-3.wasm',

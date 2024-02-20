@@ -17,7 +17,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "4.9.0",
     "dotenv": "^8.2.0",
-    "maci-contracts": "0.0.0-ci.da1e442",
+    "maci-contracts": "0.0.0-ci.09b7fe7",
     "solidity-rlp": "2.0.8"
   },
   "devDependencies": {
@@ -33,14 +33,14 @@
     "@typechain/ethers-v6": "^0.5.1",
     "@typechain/hardhat": "^9.1.0",
     "@types/mocha": "^10.0.6",
-    "ethers": "^6.10.0",
+    "ethers": "^6.11.1",
     "hardhat": "^2.19.4",
     "hardhat-contract-sizer": "^2.10.0",
     "hardhat-gas-reporter": "^1.0.8",
     "ipfs-only-hash": "^2.0.1",
-    "maci-circuits": "0.0.0-ci.da1e442",
-    "maci-cli": "0.0.0-ci.da1e442",
-    "maci-domainobjs": "0.0.0-ci.da1e442",
+    "maci-circuits": "0.0.0-ci.09b7fe7",
+    "maci-cli": "0.0.0-ci.09b7fe7",
+    "maci-domainobjs": "0.0.0-ci.09b7fe7",
     "mocha": "^10.2.0",
     "solidity-coverage": "^0.8.1",
     "ts-node": "^10.9.2",
