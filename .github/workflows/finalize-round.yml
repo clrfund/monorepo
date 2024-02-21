@@ -3,10 +3,14 @@ name: Finalize a test round
 on:
   workflow_dispatch:
     inputs:
-      subgraph_id:
-        description: 'Clrfund subgraph id'
+      subgraph_url:
+        description: 'Clrfund subgraph url'
         required: true
-        default: 'QmfPjzSRsm7Lt665KaEEq6Tnr5QHLZt1SE3pxr2nix5pU2'
+        default: 'https://api.studio.thegraph.com/query/66324/clrfund-dev/version/latest'
+      network:
+        description: 'Network'
+        required: true
+        default: 'optimism-sepolia'
 
 env:
   NODE_VERSION: 20.x
@@ -58,12 +62,8 @@ jobs:
         yarn && yarn build
     - name: Run finalize scripts
       run: |
-        export SUBGRPAH_ID="${{ github.event.inputs.subgraph_id }}"
-        export SUBGRAPH_QUERY=$(node -e 'console.log(`{"query":"{indexingStatuses(subgraphs: [\\\"${process.env.SUBGRAPH_ID}\\\"]) { chains { network }}}"}`)')
-        export SUBGRAPH_STATUS=$(curl -s -X POST -d "$SUBGRAPH_QUERY" https://api.thegraph.com/index-node/graphql)
-        echo SUBGRAPH_STATUS=$SUBGRAPH_STATUS
-        export NETWORK=$(node -e 'console.log(JSON.parse(process.env.SUBGRAPH_STATUS).data.indexingStatuses[0].chains[0].network)')
-        echo $NETWORK
+        export SUBGRPAH_URL=${{ github.event.inputs.subgraph_url }}
+        export NETWORK=${{ github.event.inputs.network }}
         export ROUND=$(curl -X POST -d '{"query":"{clrFunds {id currentRound {id maci maciTxHash}}}"}' $SUBGRPAH_URL)
         export CLRFUND_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.clrFunds[0].id)')
         export ROUND_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.clrFunds[0].currentRound.id)')
