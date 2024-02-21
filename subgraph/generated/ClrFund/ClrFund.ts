@@ -7,7 +7,7 @@ import {
   Entity,
   Bytes,
   Address,
-  BigInt
+  BigInt,
 } from "@graphprotocol/graph-ts";
 
 export class CoordinatorChanged extends ethereum.Event {
@@ -278,7 +278,7 @@ export class ClrFund extends ethereum.SmartContract {
     let result = super.call(
       "MESSAGE_DATA_LENGTH",
       "MESSAGE_DATA_LENGTH():(uint8)",
-      []
+      [],
     );
 
     return result[0].toI32();
@@ -288,7 +288,7 @@ export class ClrFund extends ethereum.SmartContract {
     let result = super.tryCall(
       "MESSAGE_DATA_LENGTH",
       "MESSAGE_DATA_LENGTH():(uint8)",
-      []
+      [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -316,22 +316,20 @@ export class ClrFund extends ethereum.SmartContract {
     let result = super.call(
       "coordinatorPubKey",
       "coordinatorPubKey():(uint256,uint256)",
-      []
+      [],
     );
 
     return new ClrFund__coordinatorPubKeyResult(
       result[0].toBigInt(),
-      result[1].toBigInt()
+      result[1].toBigInt(),
     );
   }
 
-  try_coordinatorPubKey(): ethereum.CallResult<
-    ClrFund__coordinatorPubKeyResult
-  > {
+  try_coordinatorPubKey(): ethereum.CallResult<ClrFund__coordinatorPubKeyResult> {
     let result = super.tryCall(
       "coordinatorPubKey",
       "coordinatorPubKey():(uint256,uint256)",
-      []
+      [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -340,8 +338,8 @@ export class ClrFund extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(
       new ClrFund__coordinatorPubKeyResult(
         value[0].toBigInt(),
-        value[1].toBigInt()
-      )
+        value[1].toBigInt(),
+      ),
     );
   }
 
@@ -349,7 +347,7 @@ export class ClrFund extends ethereum.SmartContract {
     let result = super.call(
       "getCurrentRound",
       "getCurrentRound():(address)",
-      []
+      [],
     );
 
     return result[0].toAddress();
@@ -359,7 +357,7 @@ export class ClrFund extends ethereum.SmartContract {
     let result = super.tryCall(
       "getCurrentRound",
       "getCurrentRound():(address)",
-      []
+      [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -372,7 +370,7 @@ export class ClrFund extends ethereum.SmartContract {
     let result = super.call(
       "getMatchingFunds",
       "getMatchingFunds(address):(uint256)",
-      [ethereum.Value.fromAddress(token)]
+      [ethereum.Value.fromAddress(token)],
     );
 
     return result[0].toBigInt();
@@ -382,7 +380,7 @@ export class ClrFund extends ethereum.SmartContract {
     let result = super.tryCall(
       "getMatchingFunds",
       "getMatchingFunds(address):(uint256)",
-      [ethereum.Value.fromAddress(token)]
+      [ethereum.Value.fromAddress(token)],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -395,7 +393,7 @@ export class ClrFund extends ethereum.SmartContract {
     let result = super.call(
       "getMaxRecipients",
       "getMaxRecipients():(uint256)",
-      []
+      [],
     );
 
     return result[0].toBigInt();
@@ -405,7 +403,7 @@ export class ClrFund extends ethereum.SmartContract {
     let result = super.tryCall(
       "getMaxRecipients",
       "getMaxRecipients():(uint256)",
-      []
+      [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -463,7 +461,7 @@ export class ClrFund extends ethereum.SmartContract {
     let result = super.call(
       "recipientRegistry",
       "recipientRegistry():(address)",
-      []
+      [],
     );
 
     return result[0].toAddress();
@@ -473,7 +471,7 @@ export class ClrFund extends ethereum.SmartContract {
     let result = super.tryCall(
       "recipientRegistry",
       "recipientRegistry():(address)",
-      []
+      [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -738,7 +736,7 @@ export class SetCoordinatorCall__Inputs {
 
   get _coordinatorPubKey(): SetCoordinatorCall_coordinatorPubKeyStruct {
     return changetype<SetCoordinatorCall_coordinatorPubKeyStruct>(
-      this._call.inputValues[1].value.toTuple()
+      this._call.inputValues[1].value.toTuple(),
     );
   }
 }

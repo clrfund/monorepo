@@ -7,7 +7,7 @@ import {
   Entity,
   Bytes,
   Address,
-  BigInt
+  BigInt,
 } from "@graphprotocol/graph-ts";
 
 export class MaciDeployed extends ethereum.Event {
@@ -88,7 +88,7 @@ export class MACIFactory__deployMaciResult {
 
   constructor(
     value0: Address,
-    value1: MACIFactory__deployMaciResult_pollContractsStruct
+    value1: MACIFactory__deployMaciResult_pollContractsStruct,
   ) {
     this.value0 = value0;
     this.value1 = value1;
@@ -130,7 +130,7 @@ export class MACIFactory__factoriesResult {
     value0: Address,
     value1: Address,
     value2: Address,
-    value3: Address
+    value3: Address,
   ) {
     this.value0 = value0;
     this.value1 = value1;
@@ -181,19 +181,19 @@ export class MACIFactory__treeDepthsResult {
     let map = new TypedMap<string, ethereum.Value>();
     map.set(
       "value0",
-      ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(this.value0))
+      ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(this.value0)),
     );
     map.set(
       "value1",
-      ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(this.value1))
+      ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(this.value1)),
     );
     map.set(
       "value2",
-      ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(this.value2))
+      ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(this.value2)),
     );
     map.set(
       "value3",
-      ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(this.value3))
+      ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(this.value3)),
     );
     return map;
   }
@@ -224,7 +224,7 @@ export class MACIFactory extends ethereum.SmartContract {
     let result = super.call(
       "MESSAGE_DATA_LENGTH",
       "MESSAGE_DATA_LENGTH():(uint8)",
-      []
+      [],
     );
 
     return result[0].toI32();
@@ -234,7 +234,7 @@ export class MACIFactory extends ethereum.SmartContract {
     let result = super.tryCall(
       "MESSAGE_DATA_LENGTH",
       "MESSAGE_DATA_LENGTH():(uint8)",
-      []
+      [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -265,7 +265,7 @@ export class MACIFactory extends ethereum.SmartContract {
     duration: BigInt,
     coordinator: Address,
     coordinatorPubKey: MACIFactory__deployMaciInputCoordinatorPubKeyStruct,
-    maciOwner: Address
+    maciOwner: Address,
   ): MACIFactory__deployMaciResult {
     let result = super.call(
       "deployMaci",
@@ -277,15 +277,15 @@ export class MACIFactory extends ethereum.SmartContract {
         ethereum.Value.fromUnsignedBigInt(duration),
         ethereum.Value.fromAddress(coordinator),
         ethereum.Value.fromTuple(coordinatorPubKey),
-        ethereum.Value.fromAddress(maciOwner)
-      ]
+        ethereum.Value.fromAddress(maciOwner),
+      ],
     );
 
     return new MACIFactory__deployMaciResult(
       result[0].toAddress(),
       changetype<MACIFactory__deployMaciResult_pollContractsStruct>(
-        result[1].toTuple()
-      )
+        result[1].toTuple(),
+      ),
     );
   }
 
@@ -296,7 +296,7 @@ export class MACIFactory extends ethereum.SmartContract {
     duration: BigInt,
     coordinator: Address,
     coordinatorPubKey: MACIFactory__deployMaciInputCoordinatorPubKeyStruct,
-    maciOwner: Address
+    maciOwner: Address,
   ): ethereum.CallResult<MACIFactory__deployMaciResult> {
     let result = super.tryCall(
       "deployMaci",
@@ -308,8 +308,8 @@ export class MACIFactory extends ethereum.SmartContract {
         ethereum.Value.fromUnsignedBigInt(duration),
         ethereum.Value.fromAddress(coordinator),
         ethereum.Value.fromTuple(coordinatorPubKey),
-        ethereum.Value.fromAddress(maciOwner)
-      ]
+        ethereum.Value.fromAddress(maciOwner),
+      ],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -319,9 +319,9 @@ export class MACIFactory extends ethereum.SmartContract {
       new MACIFactory__deployMaciResult(
         value[0].toAddress(),
         changetype<MACIFactory__deployMaciResult_pollContractsStruct>(
-          value[1].toTuple()
-        )
-      )
+          value[1].toTuple(),
+        ),
+      ),
     );
   }
 
@@ -329,14 +329,14 @@ export class MACIFactory extends ethereum.SmartContract {
     let result = super.call(
       "factories",
       "factories():(address,address,address,address)",
-      []
+      [],
     );
 
     return new MACIFactory__factoriesResult(
       result[0].toAddress(),
       result[1].toAddress(),
       result[2].toAddress(),
-      result[3].toAddress()
+      result[3].toAddress(),
     );
   }
 
@@ -344,7 +344,7 @@ export class MACIFactory extends ethereum.SmartContract {
     let result = super.tryCall(
       "factories",
       "factories():(address,address,address,address)",
-      []
+      [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -355,8 +355,8 @@ export class MACIFactory extends ethereum.SmartContract {
         value[0].toAddress(),
         value[1].toAddress(),
         value[2].toAddress(),
-        value[3].toAddress()
-      )
+        value[3].toAddress(),
+      ),
     );
   }
 
@@ -364,19 +364,19 @@ export class MACIFactory extends ethereum.SmartContract {
     let result = super.call(
       "getMessageBatchSize",
       "getMessageBatchSize(uint8):(uint256)",
-      [ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(messageTreeSubDepth))]
+      [ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(messageTreeSubDepth))],
     );
 
     return result[0].toBigInt();
   }
 
   try_getMessageBatchSize(
-    messageTreeSubDepth: i32
+    messageTreeSubDepth: i32,
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "getMessageBatchSize",
       "getMessageBatchSize(uint8):(uint256)",
-      [ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(messageTreeSubDepth))]
+      [ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(messageTreeSubDepth))],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -410,7 +410,7 @@ export class MACIFactory extends ethereum.SmartContract {
     let result = super.tryCall(
       "stateTreeDepth",
       "stateTreeDepth():(uint8)",
-      []
+      [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -423,14 +423,14 @@ export class MACIFactory extends ethereum.SmartContract {
     let result = super.call(
       "treeDepths",
       "treeDepths():(uint8,uint8,uint8,uint8)",
-      []
+      [],
     );
 
     return new MACIFactory__treeDepthsResult(
       result[0].toI32(),
       result[1].toI32(),
       result[2].toI32(),
-      result[3].toI32()
+      result[3].toI32(),
     );
   }
 
@@ -438,7 +438,7 @@ export class MACIFactory extends ethereum.SmartContract {
     let result = super.tryCall(
       "treeDepths",
       "treeDepths():(uint8,uint8,uint8,uint8)",
-      []
+      [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -449,8 +449,8 @@ export class MACIFactory extends ethereum.SmartContract {
         value[0].toI32(),
         value[1].toI32(),
         value[2].toI32(),
-        value[3].toI32()
-      )
+        value[3].toI32(),
+      ),
     );
   }
 
@@ -508,7 +508,7 @@ export class ConstructorCall__Inputs {
 
   get _factories(): ConstructorCall_factoriesStruct {
     return changetype<ConstructorCall_factoriesStruct>(
-      this._call.inputValues[1].value.toTuple()
+      this._call.inputValues[1].value.toTuple(),
     );
   }
 
@@ -582,7 +582,7 @@ export class DeployMaciCall__Inputs {
 
   get coordinatorPubKey(): DeployMaciCallCoordinatorPubKeyStruct {
     return changetype<DeployMaciCallCoordinatorPubKeyStruct>(
-      this._call.inputValues[5].value.toTuple()
+      this._call.inputValues[5].value.toTuple(),
     );
   }
 
@@ -604,7 +604,7 @@ export class DeployMaciCall__Outputs {
 
   get _pollContracts(): DeployMaciCall_pollContractsStruct {
     return changetype<DeployMaciCall_pollContractsStruct>(
-      this._call.outputValues[1].value.toTuple()
+      this._call.outputValues[1].value.toTuple(),
     );
   }
 }
@@ -686,7 +686,7 @@ export class SetMaciParametersCall__Inputs {
 
   get _treeDepths(): SetMaciParametersCall_treeDepthsStruct {
     return changetype<SetMaciParametersCall_treeDepthsStruct>(
-      this._call.inputValues[1].value.toTuple()
+      this._call.inputValues[1].value.toTuple(),
     );
   }
 }

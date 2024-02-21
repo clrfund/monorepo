@@ -7,6 +7,7 @@ export enum ChainId {
   ARBITRUM_GOERLI = 421613,
   ARBITRUM_SEPOLIA = 421614,
   OPTIMISM = 10,
+  OPTIMISM_SEPOLIA = 11155420,
   XDAI = 100,
   POLYGON = 137,
 }
@@ -108,6 +109,17 @@ export const CHAIN_INFO: ChainInfo = {
     explorerLogo: 'optimism.svg',
     explorerLabel: 'Etherscan',
     rpcUrl: 'https://mainnet.optimism.io',
+    bridge: 'https://gateway.optimism.io',
+  },
+  [ChainId.OPTIMISM_SEPOLIA]: {
+    label: 'Optimism Sepolia',
+    currency: 'OETH',
+    logo: 'optimism.svg',
+    isLayer2: true,
+    explorer: 'https://sepolia-optimism.etherscan.io',
+    explorerLogo: 'optimism.svg',
+    explorerLabel: 'Etherscan',
+    rpcUrl: 'https://sepolia.optimism.io',
     bridge: 'https://gateway.optimism.io',
   },
   [ChainId.XDAI]: {

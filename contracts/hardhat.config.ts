@@ -60,6 +60,14 @@ export default {
         'https://sepolia-rollup.arbitrum.io/rpc',
       accounts,
     },
+    optimism: {
+      url: process.env.JSONRPC_HTTP_URL || 'https://mainnet.optimism.io',
+      accounts,
+    },
+    'optimism-sepolia': {
+      url: process.env.JSONRPC_HTTP_URL || 'https://sepolia.optimism.io',
+      accounts,
+    },
     sepolia: {
       url: process.env.JSONRPC_HTTP_URL || 'http://127.0.0.1:8545',
       accounts,
@@ -78,6 +86,8 @@ export default {
       arbitrum: process.env.ARBISCAN_API_KEY || 'YOUR_ARBISCAN_API_KEY',
       'arbitrum-sepolia':
         process.env.ARBISCAN_API_KEY || 'YOUR_ARBISCAN_API_KEY',
+      'optimism-sepolia':
+        process.env.OPTIMISMSCAN_API_KEY || 'YOUR_ARBISCAN_API_KEY',
     },
     customChains: [
       {
@@ -86,6 +96,14 @@ export default {
         urls: {
           apiURL: 'https://api-sepolia.arbiscan.io/api',
           browserURL: 'https://sepolia.arbiscan.io',
+        },
+      },
+      {
+        network: 'optimism-sepolia',
+        chainId: 11155420,
+        urls: {
+          apiURL: 'https://api-sepolia-optimistic.etherscan.io/api',
+          browserURL: 'https://sepolia-optimism.etherscan.io',
         },
       },
     ],
@@ -129,26 +147,8 @@ export default {
           },
         },
       },
-      'contracts/snarkVerifiers/BatchUpdateStateTreeVerifier32.sol': {
-        version: '0.6.12',
-        settings: {
-          optimizer: {
-            enabled: true,
-            runs: 10000000,
-          },
-        },
-      },
-      'contracts/snarkVerifiers/QuadVoteTallyVerifier32.sol': {
-        version: '0.6.12',
-        settings: {
-          optimizer: {
-            enabled: true,
-            runs: 10000000,
-          },
-        },
-      },
       'contracts/recipientRegistry/OptimisticRecipientRegistry.sol': {
-        version: '0.6.12',
+        version: '0.8.10',
         settings: {
           optimizer: {
             enabled: true,
@@ -157,7 +157,7 @@ export default {
         },
       },
       'contracts/userRegistry/SimpleUserRegistry.sol': {
-        version: '0.6.12',
+        version: '0.8.10',
         settings: {
           optimizer: {
             enabled: true,
@@ -166,7 +166,7 @@ export default {
         },
       },
       'contracts/userRegistry/BrightIdUserRegistry.sol': {
-        version: '0.6.12',
+        version: '0.8.10',
         settings: {
           optimizer: {
             enabled: true,

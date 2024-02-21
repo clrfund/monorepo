@@ -7,7 +7,7 @@ import {
   Entity,
   Bytes,
   Address,
-  BigInt
+  BigInt,
 } from "@graphprotocol/graph-ts";
 
 export class Contribution extends ethereum.Event {
@@ -258,7 +258,7 @@ export class FundingRound extends ethereum.SmartContract {
     let result = super.call(
       "MESSAGE_DATA_LENGTH",
       "MESSAGE_DATA_LENGTH():(uint8)",
-      []
+      [],
     );
 
     return result[0].toI32();
@@ -268,7 +268,7 @@ export class FundingRound extends ethereum.SmartContract {
     let result = super.tryCall(
       "MESSAGE_DATA_LENGTH",
       "MESSAGE_DATA_LENGTH():(uint8)",
-      []
+      [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -310,7 +310,7 @@ export class FundingRound extends ethereum.SmartContract {
   calcAlpha(
     _budget: BigInt,
     _totalVotesSquares: BigInt,
-    _totalSpent: BigInt
+    _totalSpent: BigInt,
   ): BigInt {
     let result = super.call(
       "calcAlpha",
@@ -318,8 +318,8 @@ export class FundingRound extends ethereum.SmartContract {
       [
         ethereum.Value.fromUnsignedBigInt(_budget),
         ethereum.Value.fromUnsignedBigInt(_totalVotesSquares),
-        ethereum.Value.fromUnsignedBigInt(_totalSpent)
-      ]
+        ethereum.Value.fromUnsignedBigInt(_totalSpent),
+      ],
     );
 
     return result[0].toBigInt();
@@ -328,7 +328,7 @@ export class FundingRound extends ethereum.SmartContract {
   try_calcAlpha(
     _budget: BigInt,
     _totalVotesSquares: BigInt,
-    _totalSpent: BigInt
+    _totalSpent: BigInt,
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "calcAlpha",
@@ -336,8 +336,8 @@ export class FundingRound extends ethereum.SmartContract {
       [
         ethereum.Value.fromUnsignedBigInt(_budget),
         ethereum.Value.fromUnsignedBigInt(_totalVotesSquares),
-        ethereum.Value.fromUnsignedBigInt(_totalSpent)
-      ]
+        ethereum.Value.fromUnsignedBigInt(_totalSpent),
+      ],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -350,7 +350,7 @@ export class FundingRound extends ethereum.SmartContract {
     let result = super.call(
       "contributorCount",
       "contributorCount():(uint256)",
-      []
+      [],
     );
 
     return result[0].toBigInt();
@@ -360,7 +360,7 @@ export class FundingRound extends ethereum.SmartContract {
     let result = super.tryCall(
       "contributorCount",
       "contributorCount():(uint256)",
-      []
+      [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -373,22 +373,22 @@ export class FundingRound extends ethereum.SmartContract {
     let result = super.call(
       "contributors",
       "contributors(address):(uint256,bool)",
-      [ethereum.Value.fromAddress(param0)]
+      [ethereum.Value.fromAddress(param0)],
     );
 
     return new FundingRound__contributorsResult(
       result[0].toBigInt(),
-      result[1].toBoolean()
+      result[1].toBoolean(),
     );
   }
 
   try_contributors(
-    param0: Address
+    param0: Address,
   ): ethereum.CallResult<FundingRound__contributorsResult> {
     let result = super.tryCall(
       "contributors",
       "contributors(address):(uint256,bool)",
-      [ethereum.Value.fromAddress(param0)]
+      [ethereum.Value.fromAddress(param0)],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -397,8 +397,8 @@ export class FundingRound extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(
       new FundingRound__contributorsResult(
         value[0].toBigInt(),
-        value[1].toBoolean()
-      )
+        value[1].toBoolean(),
+      ),
     );
   }
 
@@ -423,8 +423,8 @@ export class FundingRound extends ethereum.SmartContract {
       "getAllocatedAmount(uint256,uint256):(uint256)",
       [
         ethereum.Value.fromUnsignedBigInt(_tallyResult),
-        ethereum.Value.fromUnsignedBigInt(_spent)
-      ]
+        ethereum.Value.fromUnsignedBigInt(_spent),
+      ],
     );
 
     return result[0].toBigInt();
@@ -432,15 +432,15 @@ export class FundingRound extends ethereum.SmartContract {
 
   try_getAllocatedAmount(
     _tallyResult: BigInt,
-    _spent: BigInt
+    _spent: BigInt,
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "getAllocatedAmount",
       "getAllocatedAmount(uint256,uint256):(uint256)",
       [
         ethereum.Value.fromUnsignedBigInt(_tallyResult),
-        ethereum.Value.fromUnsignedBigInt(_spent)
-      ]
+        ethereum.Value.fromUnsignedBigInt(_spent),
+      ],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -453,7 +453,7 @@ export class FundingRound extends ethereum.SmartContract {
     let result = super.call(
       "getVoiceCredits",
       "getVoiceCredits(address,bytes):(uint256)",
-      [ethereum.Value.fromAddress(param0), ethereum.Value.fromBytes(_data)]
+      [ethereum.Value.fromAddress(param0), ethereum.Value.fromBytes(_data)],
     );
 
     return result[0].toBigInt();
@@ -461,12 +461,12 @@ export class FundingRound extends ethereum.SmartContract {
 
   try_getVoiceCredits(
     param0: Address,
-    _data: Bytes
+    _data: Bytes,
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "getVoiceCredits",
       "getVoiceCredits(address,bytes):(uint256)",
-      [ethereum.Value.fromAddress(param0), ethereum.Value.fromBytes(_data)]
+      [ethereum.Value.fromAddress(param0), ethereum.Value.fromBytes(_data)],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -477,7 +477,7 @@ export class FundingRound extends ethereum.SmartContract {
 
   isAddressZero(addressValue: Address): boolean {
     let result = super.call("isAddressZero", "isAddressZero(address):(bool)", [
-      ethereum.Value.fromAddress(addressValue)
+      ethereum.Value.fromAddress(addressValue),
     ]);
 
     return result[0].toBoolean();
@@ -487,7 +487,7 @@ export class FundingRound extends ethereum.SmartContract {
     let result = super.tryCall(
       "isAddressZero",
       "isAddressZero(address):(bool)",
-      [ethereum.Value.fromAddress(addressValue)]
+      [ethereum.Value.fromAddress(addressValue)],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -545,7 +545,7 @@ export class FundingRound extends ethereum.SmartContract {
     let result = super.call(
       "matchingPoolSize",
       "matchingPoolSize():(uint256)",
-      []
+      [],
     );
 
     return result[0].toBigInt();
@@ -555,7 +555,7 @@ export class FundingRound extends ethereum.SmartContract {
     let result = super.tryCall(
       "matchingPoolSize",
       "matchingPoolSize():(uint256)",
-      []
+      [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -628,7 +628,7 @@ export class FundingRound extends ethereum.SmartContract {
     let result = super.call(
       "recipientRegistry",
       "recipientRegistry():(address)",
-      []
+      [],
     );
 
     return result[0].toAddress();
@@ -638,7 +638,7 @@ export class FundingRound extends ethereum.SmartContract {
     let result = super.tryCall(
       "recipientRegistry",
       "recipientRegistry():(address)",
-      []
+      [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -651,23 +651,23 @@ export class FundingRound extends ethereum.SmartContract {
     let result = super.call(
       "recipients",
       "recipients(uint256):(bool,bool,uint256)",
-      [ethereum.Value.fromUnsignedBigInt(param0)]
+      [ethereum.Value.fromUnsignedBigInt(param0)],
     );
 
     return new FundingRound__recipientsResult(
       result[0].toBoolean(),
       result[1].toBoolean(),
-      result[2].toBigInt()
+      result[2].toBigInt(),
     );
   }
 
   try_recipients(
-    param0: BigInt
+    param0: BigInt,
   ): ethereum.CallResult<FundingRound__recipientsResult> {
     let result = super.tryCall(
       "recipients",
       "recipients(uint256):(bool,bool,uint256)",
-      [ethereum.Value.fromUnsignedBigInt(param0)]
+      [ethereum.Value.fromUnsignedBigInt(param0)],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -677,8 +677,8 @@ export class FundingRound extends ethereum.SmartContract {
       new FundingRound__recipientsResult(
         value[0].toBoolean(),
         value[1].toBoolean(),
-        value[2].toBigInt()
-      )
+        value[2].toBigInt(),
+      ),
     );
   }
 
@@ -746,7 +746,7 @@ export class FundingRound extends ethereum.SmartContract {
     let result = super.call(
       "totalTallyResults",
       "totalTallyResults():(uint256)",
-      []
+      [],
     );
 
     return result[0].toBigInt();
@@ -756,7 +756,7 @@ export class FundingRound extends ethereum.SmartContract {
     let result = super.tryCall(
       "totalTallyResults",
       "totalTallyResults():(uint256)",
-      []
+      [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -784,7 +784,7 @@ export class FundingRound extends ethereum.SmartContract {
     let result = super.call(
       "totalVotesSquares",
       "totalVotesSquares():(uint256)",
-      []
+      [],
     );
 
     return result[0].toBigInt();
@@ -794,7 +794,7 @@ export class FundingRound extends ethereum.SmartContract {
     let result = super.tryCall(
       "totalVotesSquares",
       "totalVotesSquares():(uint256)",
-      []
+      [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -822,7 +822,7 @@ export class FundingRound extends ethereum.SmartContract {
     let result = super.call(
       "voiceCreditFactor",
       "voiceCreditFactor():(uint256)",
-      []
+      [],
     );
 
     return result[0].toBigInt();
@@ -832,7 +832,7 @@ export class FundingRound extends ethereum.SmartContract {
     let result = super.tryCall(
       "voiceCreditFactor",
       "voiceCreditFactor():(uint256)",
-      []
+      [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -845,19 +845,19 @@ export class FundingRound extends ethereum.SmartContract {
     let result = super.call(
       "withdrawContributions",
       "withdrawContributions(address[]):(bool[])",
-      [ethereum.Value.fromAddressArray(_contributors)]
+      [ethereum.Value.fromAddressArray(_contributors)],
     );
 
     return result[0].toBooleanArray();
   }
 
   try_withdrawContributions(
-    _contributors: Array<Address>
+    _contributors: Array<Address>,
   ): ethereum.CallResult<Array<boolean>> {
     let result = super.tryCall(
       "withdrawContributions",
       "withdrawContributions(address[]):(bool[])",
-      [ethereum.Value.fromAddressArray(_contributors)]
+      [ethereum.Value.fromAddressArray(_contributors)],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -1004,7 +1004,7 @@ export class ContributeCall__Inputs {
 
   get pubKey(): ContributeCallPubKeyStruct {
     return changetype<ContributeCallPubKeyStruct>(
-      this._call.inputValues[0].value.toTuple()
+      this._call.inputValues[0].value.toTuple(),
     );
   }
 
@@ -1212,7 +1212,7 @@ export class SetMaciCall__Inputs {
 
   get _pollContracts(): SetMaciCall_pollContractsStruct {
     return changetype<SetMaciCall_pollContractsStruct>(
-      this._call.inputValues[1].value.toTuple()
+      this._call.inputValues[1].value.toTuple(),
     );
   }
 }
@@ -1291,15 +1291,11 @@ export class SubmitMessageBatchCall__Inputs {
   }
 
   get _messages(): Array<SubmitMessageBatchCall_messagesStruct> {
-    return this._call.inputValues[0].value.toTupleArray<
-      SubmitMessageBatchCall_messagesStruct
-    >();
+    return this._call.inputValues[0].value.toTupleArray<SubmitMessageBatchCall_messagesStruct>();
   }
 
   get _encPubKeys(): Array<SubmitMessageBatchCall_encPubKeysStruct> {
-    return this._call.inputValues[1].value.toTupleArray<
-      SubmitMessageBatchCall_encPubKeysStruct
-    >();
+    return this._call.inputValues[1].value.toTupleArray<SubmitMessageBatchCall_encPubKeysStruct>();
   }
 }
 

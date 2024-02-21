@@ -1,0 +1,6 @@
+{
+  "network": "optimism-sepolia",
+  "address": "0x87790498127fF044f43b9230506833Ca89113757",
+  "clrFundStartBlock": 8344520,
+  "recipientRegistryStartBlock": 8344520
+}

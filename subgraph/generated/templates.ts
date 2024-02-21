@@ -3,7 +3,7 @@
 import {
   Address,
   DataSourceTemplate,
-  DataSourceContext
+  DataSourceContext,
 } from "@graphprotocol/graph-ts";
 
 export class FundingRound extends DataSourceTemplate {
@@ -15,7 +15,7 @@ export class FundingRound extends DataSourceTemplate {
     DataSourceTemplate.createWithContext(
       "FundingRound",
       [address.toHex()],
-      context
+      context,
     );
   }
 }
@@ -29,7 +29,7 @@ export class OptimisticRecipientRegistry extends DataSourceTemplate {
     DataSourceTemplate.createWithContext(
       "OptimisticRecipientRegistry",
       [address.toHex()],
-      context
+      context,
     );
   }
 }
@@ -43,7 +43,7 @@ export class BrightIdUserRegistry extends DataSourceTemplate {
     DataSourceTemplate.createWithContext(
       "BrightIdUserRegistry",
       [address.toHex()],
-      context
+      context,
     );
   }
 }

@@ -7,7 +7,7 @@ import {
   Entity,
   Bytes,
   Address,
-  BigInt
+  BigInt,
 } from "@graphprotocol/graph-ts";
 
 export class DeployPoll extends ethereum.Event {
@@ -29,13 +29,13 @@ export class DeployPoll__Params {
 
   get _pubKey(): DeployPoll_pubKeyStruct {
     return changetype<DeployPoll_pubKeyStruct>(
-      this._event.parameters[1].value.toTuple()
+      this._event.parameters[1].value.toTuple(),
     );
   }
 
   get pollAddr(): DeployPollPollAddrStruct {
     return changetype<DeployPollPollAddrStruct>(
-      this._event.parameters[2].value.toTuple()
+      this._event.parameters[2].value.toTuple(),
     );
   }
 }
@@ -109,7 +109,7 @@ export class SignUp__Params {
 
   get _userPubKey(): SignUp_userPubKeyStruct {
     return changetype<SignUp_userPubKeyStruct>(
-      this._event.parameters[1].value.toTuple()
+      this._event.parameters[1].value.toTuple(),
     );
   }
 
@@ -201,7 +201,7 @@ export class MACI__hashMessageAndEncPubKeyInput_encPubKeyStruct extends ethereum
 export class MACI__hashStateLeafInput_stateLeafStruct extends ethereum.Tuple {
   get pubKey(): MACI__hashStateLeafInput_stateLeafPubKeyStruct {
     return changetype<MACI__hashStateLeafInput_stateLeafPubKeyStruct>(
-      this[0].toTuple()
+      this[0].toTuple(),
     );
   }
 
@@ -252,7 +252,7 @@ export class MACI__padAndHashMessageResult {
   constructor(
     value0: MACI__padAndHashMessageResultMessageStruct,
     value1: MACI__padAndHashMessageResultPadKeyStruct,
-    value2: BigInt
+    value2: BigInt,
   ) {
     this.value0 = value0;
     this.value1 = value1;
@@ -289,7 +289,7 @@ export class MACI extends ethereum.SmartContract {
     let result = super.call(
       "MESSAGE_DATA_LENGTH",
       "MESSAGE_DATA_LENGTH():(uint8)",
-      []
+      [],
     );
 
     return result[0].toI32();
@@ -299,7 +299,7 @@ export class MACI extends ethereum.SmartContract {
     let result = super.tryCall(
       "MESSAGE_DATA_LENGTH",
       "MESSAGE_DATA_LENGTH():(uint8)",
-      []
+      [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -314,7 +314,7 @@ export class MACI extends ethereum.SmartContract {
     _coordinatorPubKey: MACI__deployPollInput_coordinatorPubKeyStruct,
     _verifier: Address,
     _vkRegistry: Address,
-    useSubsidy: boolean
+    useSubsidy: boolean,
   ): MACI__deployPollResultPollAddrStruct {
     let result = super.call(
       "deployPoll",
@@ -325,12 +325,12 @@ export class MACI extends ethereum.SmartContract {
         ethereum.Value.fromTuple(_coordinatorPubKey),
         ethereum.Value.fromAddress(_verifier),
         ethereum.Value.fromAddress(_vkRegistry),
-        ethereum.Value.fromBoolean(useSubsidy)
-      ]
+        ethereum.Value.fromBoolean(useSubsidy),
+      ],
     );
 
     return changetype<MACI__deployPollResultPollAddrStruct>(
-      result[0].toTuple()
+      result[0].toTuple(),
     );
   }
 
@@ -340,7 +340,7 @@ export class MACI extends ethereum.SmartContract {
     _coordinatorPubKey: MACI__deployPollInput_coordinatorPubKeyStruct,
     _verifier: Address,
     _vkRegistry: Address,
-    useSubsidy: boolean
+    useSubsidy: boolean,
   ): ethereum.CallResult<MACI__deployPollResultPollAddrStruct> {
     let result = super.tryCall(
       "deployPoll",
@@ -351,21 +351,21 @@ export class MACI extends ethereum.SmartContract {
         ethereum.Value.fromTuple(_coordinatorPubKey),
         ethereum.Value.fromAddress(_verifier),
         ethereum.Value.fromAddress(_vkRegistry),
-        ethereum.Value.fromBoolean(useSubsidy)
-      ]
+        ethereum.Value.fromBoolean(useSubsidy),
+      ],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      changetype<MACI__deployPollResultPollAddrStruct>(value[0].toTuple())
+      changetype<MACI__deployPollResultPollAddrStruct>(value[0].toTuple()),
     );
   }
 
   getPoll(_pollId: BigInt): Address {
     let result = super.call("getPoll", "getPoll(uint256):(address)", [
-      ethereum.Value.fromUnsignedBigInt(_pollId)
+      ethereum.Value.fromUnsignedBigInt(_pollId),
     ]);
 
     return result[0].toAddress();
@@ -373,7 +373,7 @@ export class MACI extends ethereum.SmartContract {
 
   try_getPoll(_pollId: BigInt): ethereum.CallResult<Address> {
     let result = super.tryCall("getPoll", "getPoll(uint256):(address)", [
-      ethereum.Value.fromUnsignedBigInt(_pollId)
+      ethereum.Value.fromUnsignedBigInt(_pollId),
     ]);
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -392,7 +392,7 @@ export class MACI extends ethereum.SmartContract {
     let result = super.tryCall(
       "getStateAqRoot",
       "getStateAqRoot():(uint256)",
-      []
+      [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -403,7 +403,7 @@ export class MACI extends ethereum.SmartContract {
 
   hash2(array: Array<BigInt>): BigInt {
     let result = super.call("hash2", "hash2(uint256[2]):(uint256)", [
-      ethereum.Value.fromUnsignedBigIntArray(array)
+      ethereum.Value.fromUnsignedBigIntArray(array),
     ]);
 
     return result[0].toBigInt();
@@ -411,7 +411,7 @@ export class MACI extends ethereum.SmartContract {
 
   try_hash2(array: Array<BigInt>): ethereum.CallResult<BigInt> {
     let result = super.tryCall("hash2", "hash2(uint256[2]):(uint256)", [
-      ethereum.Value.fromUnsignedBigIntArray(array)
+      ethereum.Value.fromUnsignedBigIntArray(array),
     ]);
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -422,7 +422,7 @@ export class MACI extends ethereum.SmartContract {
 
   hash3(array: Array<BigInt>): BigInt {
     let result = super.call("hash3", "hash3(uint256[3]):(uint256)", [
-      ethereum.Value.fromUnsignedBigIntArray(array)
+      ethereum.Value.fromUnsignedBigIntArray(array),
     ]);
 
     return result[0].toBigInt();
@@ -430,7 +430,7 @@ export class MACI extends ethereum.SmartContract {
 
   try_hash3(array: Array<BigInt>): ethereum.CallResult<BigInt> {
     let result = super.tryCall("hash3", "hash3(uint256[3]):(uint256)", [
-      ethereum.Value.fromUnsignedBigIntArray(array)
+      ethereum.Value.fromUnsignedBigIntArray(array),
     ]);
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -441,7 +441,7 @@ export class MACI extends ethereum.SmartContract {
 
   hash4(array: Array<BigInt>): BigInt {
     let result = super.call("hash4", "hash4(uint256[4]):(uint256)", [
-      ethereum.Value.fromUnsignedBigIntArray(array)
+      ethereum.Value.fromUnsignedBigIntArray(array),
     ]);
 
     return result[0].toBigInt();
@@ -449,7 +449,7 @@ export class MACI extends ethereum.SmartContract {
 
   try_hash4(array: Array<BigInt>): ethereum.CallResult<BigInt> {
     let result = super.tryCall("hash4", "hash4(uint256[4]):(uint256)", [
-      ethereum.Value.fromUnsignedBigIntArray(array)
+      ethereum.Value.fromUnsignedBigIntArray(array),
     ]);
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -460,7 +460,7 @@ export class MACI extends ethereum.SmartContract {
 
   hash5(array: Array<BigInt>): BigInt {
     let result = super.call("hash5", "hash5(uint256[5]):(uint256)", [
-      ethereum.Value.fromUnsignedBigIntArray(array)
+      ethereum.Value.fromUnsignedBigIntArray(array),
     ]);
 
     return result[0].toBigInt();
@@ -468,7 +468,7 @@ export class MACI extends ethereum.SmartContract {
 
   try_hash5(array: Array<BigInt>): ethereum.CallResult<BigInt> {
     let result = super.tryCall("hash5", "hash5(uint256[5]):(uint256)", [
-      ethereum.Value.fromUnsignedBigIntArray(array)
+      ethereum.Value.fromUnsignedBigIntArray(array),
     ]);
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -483,8 +483,8 @@ export class MACI extends ethereum.SmartContract {
       "hashLeftRight(uint256,uint256):(uint256)",
       [
         ethereum.Value.fromUnsignedBigInt(left),
-        ethereum.Value.fromUnsignedBigInt(right)
-      ]
+        ethereum.Value.fromUnsignedBigInt(right),
+      ],
     );
 
     return result[0].toBigInt();
@@ -496,8 +496,8 @@ export class MACI extends ethereum.SmartContract {
       "hashLeftRight(uint256,uint256):(uint256)",
       [
         ethereum.Value.fromUnsignedBigInt(left),
-        ethereum.Value.fromUnsignedBigInt(right)
-      ]
+        ethereum.Value.fromUnsignedBigInt(right),
+      ],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -508,12 +508,15 @@ export class MACI extends ethereum.SmartContract {
 
   hashMessageAndEncPubKey(
     _message: MACI__hashMessageAndEncPubKeyInput_messageStruct,
-    _encPubKey: MACI__hashMessageAndEncPubKeyInput_encPubKeyStruct
+    _encPubKey: MACI__hashMessageAndEncPubKeyInput_encPubKeyStruct,
   ): BigInt {
     let result = super.call(
       "hashMessageAndEncPubKey",
       "hashMessageAndEncPubKey((uint256,uint256[10]),(uint256,uint256)):(uint256)",
-      [ethereum.Value.fromTuple(_message), ethereum.Value.fromTuple(_encPubKey)]
+      [
+        ethereum.Value.fromTuple(_message),
+        ethereum.Value.fromTuple(_encPubKey),
+      ],
     );
 
     return result[0].toBigInt();
@@ -521,12 +524,15 @@ export class MACI extends ethereum.SmartContract {
 
   try_hashMessageAndEncPubKey(
     _message: MACI__hashMessageAndEncPubKeyInput_messageStruct,
-    _encPubKey: MACI__hashMessageAndEncPubKeyInput_encPubKeyStruct
+    _encPubKey: MACI__hashMessageAndEncPubKeyInput_encPubKeyStruct,
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "hashMessageAndEncPubKey",
       "hashMessageAndEncPubKey((uint256,uint256[10]),(uint256,uint256)):(uint256)",
-      [ethereum.Value.fromTuple(_message), ethereum.Value.fromTuple(_encPubKey)]
+      [
+        ethereum.Value.fromTuple(_message),
+        ethereum.Value.fromTuple(_encPubKey),
+      ],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -539,19 +545,19 @@ export class MACI extends ethereum.SmartContract {
     let result = super.call(
       "hashStateLeaf",
       "hashStateLeaf(((uint256,uint256),uint256,uint256)):(uint256)",
-      [ethereum.Value.fromTuple(_stateLeaf)]
+      [ethereum.Value.fromTuple(_stateLeaf)],
     );
 
     return result[0].toBigInt();
   }
 
   try_hashStateLeaf(
-    _stateLeaf: MACI__hashStateLeafInput_stateLeafStruct
+    _stateLeaf: MACI__hashStateLeafInput_stateLeafStruct,
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "hashStateLeaf",
       "hashStateLeaf(((uint256,uint256),uint256,uint256)):(uint256)",
-      [ethereum.Value.fromTuple(_stateLeaf)]
+      [ethereum.Value.fromTuple(_stateLeaf)],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -564,7 +570,7 @@ export class MACI extends ethereum.SmartContract {
     let result = super.call(
       "initialVoiceCreditProxy",
       "initialVoiceCreditProxy():(address)",
-      []
+      [],
     );
 
     return result[0].toAddress();
@@ -574,7 +580,7 @@ export class MACI extends ethereum.SmartContract {
     let result = super.tryCall(
       "initialVoiceCreditProxy",
       "initialVoiceCreditProxy():(address)",
-      []
+      [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -585,7 +591,7 @@ export class MACI extends ethereum.SmartContract {
 
   mergeStateAq(_pollId: BigInt): BigInt {
     let result = super.call("mergeStateAq", "mergeStateAq(uint256):(uint256)", [
-      ethereum.Value.fromUnsignedBigInt(_pollId)
+      ethereum.Value.fromUnsignedBigInt(_pollId),
     ]);
 
     return result[0].toBigInt();
@@ -595,7 +601,7 @@ export class MACI extends ethereum.SmartContract {
     let result = super.tryCall(
       "mergeStateAq",
       "mergeStateAq(uint256):(uint256)",
-      [ethereum.Value.fromUnsignedBigInt(_pollId)]
+      [ethereum.Value.fromUnsignedBigInt(_pollId)],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -608,7 +614,7 @@ export class MACI extends ethereum.SmartContract {
     let result = super.call(
       "messageProcessorFactory",
       "messageProcessorFactory():(address)",
-      []
+      [],
     );
 
     return result[0].toAddress();
@@ -618,7 +624,7 @@ export class MACI extends ethereum.SmartContract {
     let result = super.tryCall(
       "messageProcessorFactory",
       "messageProcessorFactory():(address)",
-      []
+      [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -661,7 +667,7 @@ export class MACI extends ethereum.SmartContract {
     let result = super.call(
       "numStateLeaves",
       "numStateLeaves(uint256):(uint256)",
-      [ethereum.Value.fromUnsignedBigInt(param0)]
+      [ethereum.Value.fromUnsignedBigInt(param0)],
     );
 
     return result[0].toBigInt();
@@ -671,7 +677,7 @@ export class MACI extends ethereum.SmartContract {
     let result = super.tryCall(
       "numStateLeaves",
       "numStateLeaves(uint256):(uint256)",
-      [ethereum.Value.fromUnsignedBigInt(param0)]
+      [ethereum.Value.fromUnsignedBigInt(param0)],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -697,41 +703,41 @@ export class MACI extends ethereum.SmartContract {
 
   padAndHashMessage(
     dataToPad: Array<BigInt>,
-    msgType: BigInt
+    msgType: BigInt,
   ): MACI__padAndHashMessageResult {
     let result = super.call(
       "padAndHashMessage",
       "padAndHashMessage(uint256[2],uint256):((uint256,uint256[10]),(uint256,uint256),uint256)",
       [
         ethereum.Value.fromUnsignedBigIntArray(dataToPad),
-        ethereum.Value.fromUnsignedBigInt(msgType)
-      ]
+        ethereum.Value.fromUnsignedBigInt(msgType),
+      ],
     );
 
     return changetype<MACI__padAndHashMessageResult>(
       new MACI__padAndHashMessageResult(
         changetype<MACI__padAndHashMessageResultMessageStruct>(
-          result[0].toTuple()
+          result[0].toTuple(),
         ),
         changetype<MACI__padAndHashMessageResultPadKeyStruct>(
-          result[1].toTuple()
+          result[1].toTuple(),
         ),
-        result[2].toBigInt()
-      )
+        result[2].toBigInt(),
+      ),
     );
   }
 
   try_padAndHashMessage(
     dataToPad: Array<BigInt>,
-    msgType: BigInt
+    msgType: BigInt,
   ): ethereum.CallResult<MACI__padAndHashMessageResult> {
     let result = super.tryCall(
       "padAndHashMessage",
       "padAndHashMessage(uint256[2],uint256):((uint256,uint256[10]),(uint256,uint256),uint256)",
       [
         ethereum.Value.fromUnsignedBigIntArray(dataToPad),
-        ethereum.Value.fromUnsignedBigInt(msgType)
-      ]
+        ethereum.Value.fromUnsignedBigInt(msgType),
+      ],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -741,14 +747,14 @@ export class MACI extends ethereum.SmartContract {
       changetype<MACI__padAndHashMessageResult>(
         new MACI__padAndHashMessageResult(
           changetype<MACI__padAndHashMessageResultMessageStruct>(
-            value[0].toTuple()
+            value[0].toTuple(),
           ),
           changetype<MACI__padAndHashMessageResultPadKeyStruct>(
-            value[1].toTuple()
+            value[1].toTuple(),
           ),
-          value[2].toBigInt()
-        )
-      )
+          value[2].toBigInt(),
+        ),
+      ),
     );
   }
 
@@ -769,7 +775,7 @@ export class MACI extends ethereum.SmartContract {
 
   polls(param0: BigInt): Address {
     let result = super.call("polls", "polls(uint256):(address)", [
-      ethereum.Value.fromUnsignedBigInt(param0)
+      ethereum.Value.fromUnsignedBigInt(param0),
     ]);
 
     return result[0].toAddress();
@@ -777,7 +783,7 @@ export class MACI extends ethereum.SmartContract {
 
   try_polls(param0: BigInt): ethereum.CallResult<Address> {
     let result = super.tryCall("polls", "polls(uint256):(address)", [
-      ethereum.Value.fromUnsignedBigInt(param0)
+      ethereum.Value.fromUnsignedBigInt(param0),
     ]);
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -788,7 +794,7 @@ export class MACI extends ethereum.SmartContract {
 
   sha256Hash(array: Array<BigInt>): BigInt {
     let result = super.call("sha256Hash", "sha256Hash(uint256[]):(uint256)", [
-      ethereum.Value.fromUnsignedBigIntArray(array)
+      ethereum.Value.fromUnsignedBigIntArray(array),
     ]);
 
     return result[0].toBigInt();
@@ -798,7 +804,7 @@ export class MACI extends ethereum.SmartContract {
     let result = super.tryCall(
       "sha256Hash",
       "sha256Hash(uint256[]):(uint256)",
-      [ethereum.Value.fromUnsignedBigIntArray(array)]
+      [ethereum.Value.fromUnsignedBigIntArray(array)],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -811,7 +817,7 @@ export class MACI extends ethereum.SmartContract {
     let result = super.call(
       "signUpGatekeeper",
       "signUpGatekeeper():(address)",
-      []
+      [],
     );
 
     return result[0].toAddress();
@@ -821,7 +827,7 @@ export class MACI extends ethereum.SmartContract {
     let result = super.tryCall(
       "signUpGatekeeper",
       "signUpGatekeeper():(address)",
-      []
+      [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -855,7 +861,7 @@ export class MACI extends ethereum.SmartContract {
     let result = super.tryCall(
       "stateTreeDepth",
       "stateTreeDepth():(uint8)",
-      []
+      [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -874,7 +880,7 @@ export class MACI extends ethereum.SmartContract {
     let result = super.tryCall(
       "subsidyFactory",
       "subsidyFactory():(address)",
-      []
+      [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -995,13 +1001,13 @@ export class DeployPollCall__Inputs {
 
   get _treeDepths(): DeployPollCall_treeDepthsStruct {
     return changetype<DeployPollCall_treeDepthsStruct>(
-      this._call.inputValues[1].value.toTuple()
+      this._call.inputValues[1].value.toTuple(),
     );
   }
 
   get _coordinatorPubKey(): DeployPollCall_coordinatorPubKeyStruct {
     return changetype<DeployPollCall_coordinatorPubKeyStruct>(
-      this._call.inputValues[2].value.toTuple()
+      this._call.inputValues[2].value.toTuple(),
     );
   }
 
@@ -1027,7 +1033,7 @@ export class DeployPollCall__Outputs {
 
   get pollAddr(): DeployPollCallPollAddrStruct {
     return changetype<DeployPollCallPollAddrStruct>(
-      this._call.outputValues[0].value.toTuple()
+      this._call.outputValues[0].value.toTuple(),
     );
   }
 }
@@ -1191,7 +1197,7 @@ export class SignUpCall__Inputs {
 
   get _pubKey(): SignUpCall_pubKeyStruct {
     return changetype<SignUpCall_pubKeyStruct>(
-      this._call.inputValues[0].value.toTuple()
+      this._call.inputValues[0].value.toTuple(),
     );
   }
 
