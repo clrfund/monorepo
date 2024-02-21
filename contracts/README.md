@@ -36,6 +36,8 @@ Download the circuit zkeys:
 ../.github/scripts/download-6-8-2-3.sh
 ```
 
+If you have previously downloaded the zkeys, you can export the environment variable CIRCUIT_DIRECTORY to point to the directory.
+
 Run the script, the github action test-script.yml uses this script.
 
 ```
