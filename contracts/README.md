@@ -29,6 +29,13 @@ yarn deploy:local
 
 ### Run test round
 
+Download the circuit zkeys:
+
+```
+# this script will download the zkeys in the params folder where the script is run
+../.github/scripts/download-6-8-2-3.sh
+```
+
 Run the script, the github action test-script.yml uses this script.
 
 ```
