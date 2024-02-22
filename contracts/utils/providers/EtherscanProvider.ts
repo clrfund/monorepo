@@ -6,6 +6,8 @@ const EtherscanApiUrl: Record<string, string> = {
   arbitrum: 'https://api.arbiscan.io',
   'arbitrum-goerli': 'https://api-goerli.arbiscan.io',
   'arbitrum-sepolia': 'https://api-sepolia.arbiscan.io',
+  optimism: 'https://api-optimistic.etherscan.io',
+  'optimism-sepolia': 'https://api-sepolia-optimistic.etherscan.io',
 }
 
 export class EtherscanProvider extends BaseProvider {
