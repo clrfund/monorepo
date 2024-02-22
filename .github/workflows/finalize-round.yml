@@ -11,6 +11,10 @@ on:
         description: 'MACI creation transaction hash'
         required: true
         default: '0x1280527bdb23cbd4906c94e152722792fc59400bfccfc89709beb2531fc55365'
+      blocks_per_batch:
+        description: 'Blocks of logs to fetch per batch'
+        required: true
+        default: '9000'
       network:
         description: 'Network'
         required: true
@@ -69,6 +73,7 @@ jobs:
         export CLRFUND_ADDRESS=${{ github.event.inputs.clrfund_address }}
         export MACI_TX_HASH=${{ github.event.inputs.maci_tx_hash }}
         export NETWORK=${{ github.event.inputs.network }}
+        export BLOCKS_PER_BATCH=${{ github.event.inputs.blocks_per_batch }}
         export RAPID_SNARK="$GITHUB_WORKSPACE/rapidsnark/package/bin/prover"
         export CIRCUIT_DIRECTORY=$GITHUB_WORKSPACE/params
         # tally and finalize
@@ -77,6 +82,7 @@ jobs:
         yarn hardhat clr-tally --clrfund "${CLRFUND_ADDRESS}" --network "${NETWORK}" \
           --rapidsnark ${RAPID_SNARK} \
           --circuit-directory ${CIRCUIT_DIRECTORY} \
+          --blocks-per-batch ${BLOCKS_PER_BATCH} \
           --maci-tx-hash "${MACI_TX_HASH}" --output-dir "./proof_output"
         curl --location --request POST 'https://api.pinata.cloud/pinning/pinFileToIPFS' \
           --header "Authorization: Bearer ${{ secrets.PINATA_JWT }}" \
