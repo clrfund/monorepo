@@ -3,10 +3,14 @@ name: Finalize a test round
 on:
   workflow_dispatch:
     inputs:
-      subgraph_url:
-        description: 'Clrfund subgraph url'
+      clrfund_address:
+        description: 'Clrfund contract address'
         required: true
-        default: 'https://api.studio.thegraph.com/query/66324/clrfund-dev/version/latest'
+        default: '0x87790498127ff044f43b9230506833ca89113757'
+      maci_tx_hash:
+        description: 'MACI creation transaction hash'
+        required: true
+        default: '0x1280527bdb23cbd4906c94e152722792fc59400bfccfc89709beb2531fc55365'
       network:
         description: 'Network'
         required: true
@@ -62,13 +66,9 @@ jobs:
         yarn && yarn build
     - name: Run finalize scripts
       run: |
-        export SUBGRPAH_URL=${{ github.event.inputs.subgraph_url }}
+        export CLRFUND_ADDRESS=${{ github.event.inputs.clrfund_address }}
+        export MACI_TX_HASH=${{ github.event.inputs.maci_tx_hash }}
         export NETWORK=${{ github.event.inputs.network }}
-        export ROUND=$(curl -X POST -d '{"query":"{clrFunds {id currentRound {id maci maciTxHash}}}"}' $SUBGRPAH_URL)
-        export CLRFUND_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.clrFunds[0].id)')
-        export ROUND_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.clrFunds[0].currentRound.id)')
-        export MACI_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.clrFunds[0].currentRound.maci)')
-        export MACI_TX_HASH=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.clrFunds[0].currentRound.maciTxHash)')
         export RAPID_SNARK="$GITHUB_WORKSPACE/rapidsnark/package/bin/prover"
         export CIRCUIT_DIRECTORY=$GITHUB_WORKSPACE/params
         # tally and finalize
