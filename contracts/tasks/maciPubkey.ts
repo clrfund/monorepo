@@ -14,8 +14,11 @@ task('maci-pubkey', 'Get the serialized MACI public key')
   .addOptionalParam('macisk', 'MACI secret key')
   .setAction(async ({ x, y, macisk }) => {
     if (macisk) {
+      const isValid = PrivKey.isValidSerializedPrivKey(macisk)
+      console.log('isValid', isValid)
       const keypair = new Keypair(PrivKey.deserialize(macisk))
       console.log(`Public Key: ${keypair.pubKey.serialize()}`)
+      console.log(keypair.pubKey.asContractParam())
     } else {
       if (!x || !y) {
         console.error('Must provide either macisk or x y values')
