@@ -79,7 +79,7 @@
     <h2>{{ $t('quadratic_funding.resources.h2') }}</h2>
     <ul>
       <li>
-        <links to="https://vitalik.ca/general/2019/12/07/quadratic.html">{{
+        <links to="https://vitalik.eth.limo/general/2019/12/07/quadratic.html">{{
           $t('quadratic_funding.resources.li1')
         }}</links>
       </li>
