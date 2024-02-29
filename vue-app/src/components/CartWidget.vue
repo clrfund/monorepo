@@ -46,7 +46,7 @@ const isCartBadgeShown = computed(() => {
   return (canUserReallocate.value || isRoundContributionPhase.value) && !!cart.value.length
 })
 
-async function promptSignagure() {
+async function promptSignature() {
   const { open, close } = useModal({
     component: SignatureModal,
     attrs: {
@@ -69,7 +69,7 @@ function toggleCart(): void {
   if (currentUser.value.encryptionKey) {
     appStore.toggleShowCartPanel()
   } else {
-    promptSignagure()
+    promptSignature()
   }
 }
 </script>
