@@ -27,8 +27,9 @@ contract ZupassUserRegistry is Ownable, IUserRegistry {
     onlyOwner
   {
     require(_user != address(0), 'UserRegistry: User address is zero');
+    require(_semaphoreId != 0, 'UserRegistry: Semaphore Id is zero');
     require(!users[_user], 'UserRegistry: User already verified');
-    require(!semaphoreIds[_semaphoreId], 'UserRegistry: Semaphore Id already registred' );
+    require(!semaphoreIds[_semaphoreId], 'UserRegistry: Semaphore Id already registered' );
     users[_user] = true;
     semaphoreIds[_semaphoreId] = true;
     userTosemaphoreId[_user] = _semaphoreId;
