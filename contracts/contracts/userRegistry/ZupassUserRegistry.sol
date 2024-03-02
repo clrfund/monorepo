@@ -65,7 +65,6 @@ contract ZupassUserRegistry is Ownable, IUserRegistry {
     * @dev Check if the semaphore Id is verified.
     */
   function isVerifiedSemaphoreId(uint256 _semaphoreId)
-    override
     external
     view
     returns (bool)
