@@ -87,12 +87,18 @@ async function main({ stateFile, ethers }: Args) {
       nonce += 1
     }
 
-    const fundingRoundAsContributor = await ethers.getContractAt(
+    const fundingRound = await ethers.getContractAt(
       'FundingRound',
       state.fundingRound,
       contributor
     )
-    await fundingRoundAsContributor.submitMessageBatch(
+    const pollAddress = await fundingRound.poll()
+    const pollContract = await ethers.getContractAt(
+      'Poll',
+      pollAddress,
+      contributor
+    )
+    await pollContract.publishMessageBatch(
       messages.reverse().map((msg) => msg.asContractParam()),
       encPubKeys.reverse().map((key) => key.asContractParam())
     )

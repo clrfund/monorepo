@@ -1273,60 +1273,6 @@ export class SetMaciInstanceCall__Outputs {
   }
 }
 
-export class SubmitMessageBatchCall extends ethereum.Call {
-  get inputs(): SubmitMessageBatchCall__Inputs {
-    return new SubmitMessageBatchCall__Inputs(this);
-  }
-
-  get outputs(): SubmitMessageBatchCall__Outputs {
-    return new SubmitMessageBatchCall__Outputs(this);
-  }
-}
-
-export class SubmitMessageBatchCall__Inputs {
-  _call: SubmitMessageBatchCall;
-
-  constructor(call: SubmitMessageBatchCall) {
-    this._call = call;
-  }
-
-  get _messages(): Array<SubmitMessageBatchCall_messagesStruct> {
-    return this._call.inputValues[0].value.toTupleArray<SubmitMessageBatchCall_messagesStruct>();
-  }
-
-  get _encPubKeys(): Array<SubmitMessageBatchCall_encPubKeysStruct> {
-    return this._call.inputValues[1].value.toTupleArray<SubmitMessageBatchCall_encPubKeysStruct>();
-  }
-}
-
-export class SubmitMessageBatchCall__Outputs {
-  _call: SubmitMessageBatchCall;
-
-  constructor(call: SubmitMessageBatchCall) {
-    this._call = call;
-  }
-}
-
-export class SubmitMessageBatchCall_messagesStruct extends ethereum.Tuple {
-  get msgType(): BigInt {
-    return this[0].toBigInt();
-  }
-
-  get data(): Array<BigInt> {
-    return this[1].toBigIntArray();
-  }
-}
-
-export class SubmitMessageBatchCall_encPubKeysStruct extends ethereum.Tuple {
-  get x(): BigInt {
-    return this[0].toBigInt();
-  }
-
-  get y(): BigInt {
-    return this[1].toBigInt();
-  }
-}
-
 export class TransferOwnershipCall extends ethereum.Call {
   get inputs(): TransferOwnershipCall__Inputs {
     return new TransferOwnershipCall__Inputs(this);

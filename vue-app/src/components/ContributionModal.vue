@@ -121,12 +121,12 @@
 
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
-import { BaseContract, Contract, toNumber } from 'ethers'
+import { Contract, toNumber } from 'ethers'
 import { Keypair, PubKey, Message, createMessage } from '@clrfund/common'
 
 import Transaction from '@/components/Transaction.vue'
 import { formatAmount } from '@/utils/amounts'
-import { waitForTransaction, getEventArg } from '@/utils/contracts'
+import { waitForTransaction, getEventArg, getPollContract } from '@/utils/contracts'
 import ProgressBar from '@/components/ProgressBar.vue'
 // @ts-ignore
 import { VueFinalModal } from 'vue-final-modal'
@@ -168,7 +168,7 @@ onMounted(() => {
 })
 
 async function sendVotes() {
-  const { coordinatorPubKey, pollId } = currentRound.value!
+  const { coordinatorPubKey, fundingRoundAddress, pollId } = currentRound.value!
 
   const contributor = appStore.contributor
   const messages: Message[] = []
@@ -191,9 +191,10 @@ async function sendVotes() {
   }
 
   try {
-    const fundingRoundContract = await getFundingRoundContract()
+    const signer = await userStore.getSigner()
+    const pollContract = await getPollContract(fundingRoundAddress, signer)
     await waitForTransaction(
-      fundingRoundContract.submitMessageBatch(
+      pollContract.publishMessageBatch(
         messages.reverse().map(msg => msg.asContractParam()),
         encPubKeys.reverse().map(key => key.asContractParam()),
       ),

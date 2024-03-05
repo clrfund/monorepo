@@ -132,6 +132,7 @@ describe('End-to-end Tests', function () {
   let clrfund: Contract
   let token: Contract
   let fundingRound: Contract
+  let pollContract: Contract
   let maci: Contract
   let pollId: bigint
   let coordinatorKeypair: Keypair
@@ -268,6 +269,8 @@ describe('End-to-end Tests', function () {
     maci = await ethers.getContractAt('MACI', maciAddress)
 
     pollId = await fundingRound.pollId()
+    const pollAddress = await fundingRound.poll()
+    pollContract = await ethers.getContractAt('Poll', pollAddress)
 
     await mine()
   })
@@ -520,7 +523,7 @@ describe('End-to-end Tests', function () {
         nonce += 1
       }
 
-      await (fundingRound.connect(contributor) as Contract).submitMessageBatch(
+      await (pollContract.connect(contributor) as Contract).publishMessageBatch(
         messages.reverse().map((msg) => msg.asContractParam()),
         encPubKeys.reverse().map((key) => key.asContractParam())
       )
@@ -574,7 +577,7 @@ describe('End-to-end Tests', function () {
         encPubKeys.push(encPubKey)
         nonce += 1
       }
-      await (fundingRound.connect(contributor) as Contract).submitMessageBatch(
+      await (pollContract.connect(contributor) as Contract).publishMessageBatch(
         messages.reverse().map((msg) => msg.asContractParam()),
         encPubKeys.reverse().map((key) => key.asContractParam())
       )
@@ -628,7 +631,7 @@ describe('End-to-end Tests', function () {
       messages.push(message)
       encPubKeys.push(encPubKey)
     }
-    await (fundingRound.connect(contributor) as Contract).submitMessageBatch(
+    await (pollContract.connect(contributor) as Contract).publishMessageBatch(
       messages.reverse().map((msg) => msg.asContractParam()),
       encPubKeys.reverse().map((key) => key.asContractParam())
     )
@@ -643,8 +646,8 @@ describe('End-to-end Tests', function () {
       pollId
     )
     await (
-      fundingRound.connect(contribution2.signer) as Contract
-    ).submitMessageBatch(
+      pollContract.connect(contribution2.signer) as Contract
+    ).publishMessageBatch(
       [message.asContractParam()],
       [encPubKey.asContractParam()]
     )
@@ -705,7 +708,7 @@ describe('End-to-end Tests', function () {
       messages.push(message)
       encPubKeys.push(encPubKey)
     }
-    await (fundingRound.connect(contributor) as Contract).submitMessageBatch(
+    await (pollContract.connect(contributor) as Contract).publishMessageBatch(
       messages.reverse().map((msg) => msg.asContractParam()),
       encPubKeys.reverse().map((key) => key.asContractParam())
     )
@@ -722,8 +725,8 @@ describe('End-to-end Tests', function () {
       pollId
     )
     await (
-      fundingRound.connect(contribution2.signer) as Contract
-    ).submitMessageBatch(
+      pollContract.connect(contribution2.signer) as Contract
+    ).publishMessageBatch(
       [message.asContractParam()],
       [encPubKey.asContractParam()]
     )
@@ -789,7 +792,7 @@ describe('End-to-end Tests', function () {
         messages.push(message)
         encPubKeys.push(encPubKey)
       }
-      await (fundingRound.connect(contributor) as Contract).submitMessageBatch(
+      await (pollContract.connect(contributor) as Contract).publishMessageBatch(
         messages.reverse().map((msg) => msg.asContractParam()),
         encPubKeys.reverse().map((key) => key.asContractParam())
       )
@@ -807,8 +810,8 @@ describe('End-to-end Tests', function () {
       pollId
     )
     await (
-      fundingRound.connect(contribution2.signer) as Contract
-    ).submitMessageBatch(
+      pollContract.connect(contribution2.signer) as Contract
+    ).publishMessageBatch(
       [message.asContractParam()],
       [encPubKey.asContractParam()]
     )
@@ -879,7 +882,7 @@ describe('End-to-end Tests', function () {
     )
     messageBatch1.push(message)
     encPubKeyBatch1.push(encPubKey)
-    await (fundingRound.connect(contributor) as Contract).submitMessageBatch(
+    await (pollContract.connect(contributor) as Contract).publishMessageBatch(
       messageBatch1.reverse().map((msg) => msg.asContractParam()),
       encPubKeyBatch1.reverse().map((key) => key.asContractParam())
     )
@@ -927,7 +930,7 @@ describe('End-to-end Tests', function () {
     )
     messageBatch2.push(message)
     encPubKeyBatch2.push(encPubKey)
-    await (fundingRound.connect(contributor) as Contract).submitMessageBatch(
+    await (pollContract.connect(contributor) as Contract).publishMessageBatch(
       messageBatch2.reverse().map((msg) => msg.asContractParam()),
       encPubKeyBatch2.reverse().map((key) => key.asContractParam())
     )
@@ -944,8 +947,8 @@ describe('End-to-end Tests', function () {
       pollId
     )
     await (
-      fundingRound.connect(contribution2.signer) as Contract
-    ).submitMessageBatch(
+      pollContract.connect(contribution2.signer) as Contract
+    ).publishMessageBatch(
       [message.asContractParam()],
       [encPubKey.asContractParam()]
     )
@@ -997,7 +1000,7 @@ describe('End-to-end Tests', function () {
         nonce += 1
       }
 
-      await (fundingRound.connect(contributor) as Contract).submitMessageBatch(
+      await (pollContract.connect(contributor) as Contract).publishMessageBatch(
         messages.reverse().map((msg) => msg.asContractParam()),
         encPubKeys.reverse().map((key) => key.asContractParam())
       )

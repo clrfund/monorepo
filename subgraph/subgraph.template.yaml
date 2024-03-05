@@ -116,8 +116,6 @@ templates:
           handler: handleOwnershipTransferred
         - event: TallyPublished(string)
           handler: handleTallyPublished
-        - event: Voted(indexed address)
-          handler: handleVoted
       file: ./src/FundingRoundMapping.ts
   - name: OptimisticRecipientRegistry
     kind: ethereum/contract

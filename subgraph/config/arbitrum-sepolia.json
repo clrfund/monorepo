@@ -1,6 +1,6 @@
 {
   "network": "arbitrum-sepolia",
-  "address": "0x8461DF39EabC3dd4A0eb2C8101Fa906b94d6e6ad",
-  "clrFundStartBlock": 18158680,
-  "recipientRegistryStartBlock": 18158680
+  "address": "0x9E43d48513FDe2701288bDCEd1057109E592f048",
+  "clrFundStartBlock": 20200250,
+  "recipientRegistryStartBlock": 20200250
 }

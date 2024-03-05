@@ -922,48 +922,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "msgType",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256[10]",
-            "name": "data",
-            "type": "uint256[10]"
-          }
-        ],
-        "internalType": "struct DomainObjs.Message[]",
-        "name": "_messages",
-        "type": "tuple[]"
-      },
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "x",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "y",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct DomainObjs.PubKey[]",
-        "name": "_encPubKeys",
-        "type": "tuple[]"
-      }
-    ],
-    "name": "submitMessageBatch",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "tally",
     "outputs": [

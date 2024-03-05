@@ -1365,6 +1365,60 @@ export class PublishMessageCall_encPubKeyStruct extends ethereum.Tuple {
   }
 }
 
+export class PublishMessageBatchCall extends ethereum.Call {
+  get inputs(): PublishMessageBatchCall__Inputs {
+    return new PublishMessageBatchCall__Inputs(this);
+  }
+
+  get outputs(): PublishMessageBatchCall__Outputs {
+    return new PublishMessageBatchCall__Outputs(this);
+  }
+}
+
+export class PublishMessageBatchCall__Inputs {
+  _call: PublishMessageBatchCall;
+
+  constructor(call: PublishMessageBatchCall) {
+    this._call = call;
+  }
+
+  get _messages(): Array<PublishMessageBatchCall_messagesStruct> {
+    return this._call.inputValues[0].value.toTupleArray<PublishMessageBatchCall_messagesStruct>();
+  }
+
+  get _encPubKeys(): Array<PublishMessageBatchCall_encPubKeysStruct> {
+    return this._call.inputValues[1].value.toTupleArray<PublishMessageBatchCall_encPubKeysStruct>();
+  }
+}
+
+export class PublishMessageBatchCall__Outputs {
+  _call: PublishMessageBatchCall;
+
+  constructor(call: PublishMessageBatchCall) {
+    this._call = call;
+  }
+}
+
+export class PublishMessageBatchCall_messagesStruct extends ethereum.Tuple {
+  get msgType(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get data(): Array<BigInt> {
+    return this[1].toBigIntArray();
+  }
+}
+
+export class PublishMessageBatchCall_encPubKeysStruct extends ethereum.Tuple {
+  get x(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get y(): BigInt {
+    return this[1].toBigInt();
+  }
+}
+
 export class RenounceOwnershipCall extends ethereum.Call {
   get inputs(): RenounceOwnershipCall__Inputs {
     return new RenounceOwnershipCall__Inputs(this);

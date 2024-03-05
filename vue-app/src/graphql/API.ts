@@ -19,6 +19,11 @@ export type Scalars = {
   Int8: any;
 };
 
+export enum Aggregation_Interval {
+  Day = 'day',
+  Hour = 'hour'
+}
+
 export type BlockChangedFilter = {
   number_gte: Scalars['Int'];
 };
@@ -31,7 +36,6 @@ export type Block_Height = {
 
 export type ClrFund = {
   __typename?: 'ClrFund';
-  batchUstVerifier: Maybe<Scalars['Bytes']>;
   contributorRegistry: Maybe<ContributorRegistry>;
   contributorRegistryAddress: Maybe<Scalars['Bytes']>;
   coordinator: Maybe<Scalars['Bytes']>;
@@ -42,22 +46,14 @@ export type ClrFund = {
   id: Scalars['ID'];
   lastUpdatedAt: Maybe<Scalars['String']>;
   maciFactory: Maybe<Scalars['Bytes']>;
-  maxMessages: Maybe<Scalars['BigInt']>;
-  maxUsers: Maybe<Scalars['BigInt']>;
-  maxVoteOptions: Maybe<Scalars['BigInt']>;
-  messageBatchSize: Maybe<Scalars['BigInt']>;
   messageTreeDepth: Maybe<Scalars['BigInt']>;
   nativeToken: Maybe<Scalars['Bytes']>;
   nativeTokenInfo: Maybe<Token>;
   owner: Maybe<Scalars['Bytes']>;
-  qvtVerifier: Maybe<Scalars['Bytes']>;
   recipientRegistry: Maybe<RecipientRegistry>;
   recipientRegistryAddress: Maybe<Scalars['Bytes']>;
-  signUpDuration: Maybe<Scalars['BigInt']>;
   stateTreeDepth: Maybe<Scalars['BigInt']>;
-  tallyBatchSize: Maybe<Scalars['BigInt']>;
   voteOptionTreeDepth: Maybe<Scalars['BigInt']>;
-  votingDuration: Maybe<Scalars['BigInt']>;
 };
 
 
@@ -73,16 +69,6 @@ export type ClrFund_Filter = {
   /** Filter for the block changed event. */
   _change_block: InputMaybe<BlockChangedFilter>;
   and: InputMaybe<Array<InputMaybe<ClrFund_Filter>>>;
-  batchUstVerifier: InputMaybe<Scalars['Bytes']>;
-  batchUstVerifier_contains: InputMaybe<Scalars['Bytes']>;
-  batchUstVerifier_gt: InputMaybe<Scalars['Bytes']>;
-  batchUstVerifier_gte: InputMaybe<Scalars['Bytes']>;
-  batchUstVerifier_in: InputMaybe<Array<Scalars['Bytes']>>;
-  batchUstVerifier_lt: InputMaybe<Scalars['Bytes']>;
-  batchUstVerifier_lte: InputMaybe<Scalars['Bytes']>;
-  batchUstVerifier_not: InputMaybe<Scalars['Bytes']>;
-  batchUstVerifier_not_contains: InputMaybe<Scalars['Bytes']>;
-  batchUstVerifier_not_in: InputMaybe<Array<Scalars['Bytes']>>;
   contributorRegistry: InputMaybe<Scalars['String']>;
   contributorRegistryAddress: InputMaybe<Scalars['Bytes']>;
   contributorRegistryAddress_contains: InputMaybe<Scalars['Bytes']>;
@@ -224,38 +210,6 @@ export type ClrFund_Filter = {
   maciFactory_not: InputMaybe<Scalars['Bytes']>;
   maciFactory_not_contains: InputMaybe<Scalars['Bytes']>;
   maciFactory_not_in: InputMaybe<Array<Scalars['Bytes']>>;
-  maxMessages: InputMaybe<Scalars['BigInt']>;
-  maxMessages_gt: InputMaybe<Scalars['BigInt']>;
-  maxMessages_gte: InputMaybe<Scalars['BigInt']>;
-  maxMessages_in: InputMaybe<Array<Scalars['BigInt']>>;
-  maxMessages_lt: InputMaybe<Scalars['BigInt']>;
-  maxMessages_lte: InputMaybe<Scalars['BigInt']>;
-  maxMessages_not: InputMaybe<Scalars['BigInt']>;
-  maxMessages_not_in: InputMaybe<Array<Scalars['BigInt']>>;
-  maxUsers: InputMaybe<Scalars['BigInt']>;
-  maxUsers_gt: InputMaybe<Scalars['BigInt']>;
-  maxUsers_gte: InputMaybe<Scalars['BigInt']>;
-  maxUsers_in: InputMaybe<Array<Scalars['BigInt']>>;
-  maxUsers_lt: InputMaybe<Scalars['BigInt']>;
-  maxUsers_lte: InputMaybe<Scalars['BigInt']>;
-  maxUsers_not: InputMaybe<Scalars['BigInt']>;
-  maxUsers_not_in: InputMaybe<Array<Scalars['BigInt']>>;
-  maxVoteOptions: InputMaybe<Scalars['BigInt']>;
-  maxVoteOptions_gt: InputMaybe<Scalars['BigInt']>;
-  maxVoteOptions_gte: InputMaybe<Scalars['BigInt']>;
-  maxVoteOptions_in: InputMaybe<Array<Scalars['BigInt']>>;
-  maxVoteOptions_lt: InputMaybe<Scalars['BigInt']>;
-  maxVoteOptions_lte: InputMaybe<Scalars['BigInt']>;
-  maxVoteOptions_not: InputMaybe<Scalars['BigInt']>;
-  maxVoteOptions_not_in: InputMaybe<Array<Scalars['BigInt']>>;
-  messageBatchSize: InputMaybe<Scalars['BigInt']>;
-  messageBatchSize_gt: InputMaybe<Scalars['BigInt']>;
-  messageBatchSize_gte: InputMaybe<Scalars['BigInt']>;
-  messageBatchSize_in: InputMaybe<Array<Scalars['BigInt']>>;
-  messageBatchSize_lt: InputMaybe<Scalars['BigInt']>;
-  messageBatchSize_lte: InputMaybe<Scalars['BigInt']>;
-  messageBatchSize_not: InputMaybe<Scalars['BigInt']>;
-  messageBatchSize_not_in: InputMaybe<Array<Scalars['BigInt']>>;
   messageTreeDepth: InputMaybe<Scalars['BigInt']>;
   messageTreeDepth_gt: InputMaybe<Scalars['BigInt']>;
   messageTreeDepth_gte: InputMaybe<Scalars['BigInt']>;
@@ -306,16 +260,6 @@ export type ClrFund_Filter = {
   owner_not: InputMaybe<Scalars['Bytes']>;
   owner_not_contains: InputMaybe<Scalars['Bytes']>;
   owner_not_in: InputMaybe<Array<Scalars['Bytes']>>;
-  qvtVerifier: InputMaybe<Scalars['Bytes']>;
-  qvtVerifier_contains: InputMaybe<Scalars['Bytes']>;
-  qvtVerifier_gt: InputMaybe<Scalars['Bytes']>;
-  qvtVerifier_gte: InputMaybe<Scalars['Bytes']>;
-  qvtVerifier_in: InputMaybe<Array<Scalars['Bytes']>>;
-  qvtVerifier_lt: InputMaybe<Scalars['Bytes']>;
-  qvtVerifier_lte: InputMaybe<Scalars['Bytes']>;
-  qvtVerifier_not: InputMaybe<Scalars['Bytes']>;
-  qvtVerifier_not_contains: InputMaybe<Scalars['Bytes']>;
-  qvtVerifier_not_in: InputMaybe<Array<Scalars['Bytes']>>;
   recipientRegistry: InputMaybe<Scalars['String']>;
   recipientRegistryAddress: InputMaybe<Scalars['Bytes']>;
   recipientRegistryAddress_contains: InputMaybe<Scalars['Bytes']>;
@@ -347,14 +291,6 @@ export type ClrFund_Filter = {
   recipientRegistry_not_starts_with_nocase: InputMaybe<Scalars['String']>;
   recipientRegistry_starts_with: InputMaybe<Scalars['String']>;
   recipientRegistry_starts_with_nocase: InputMaybe<Scalars['String']>;
-  signUpDuration: InputMaybe<Scalars['BigInt']>;
-  signUpDuration_gt: InputMaybe<Scalars['BigInt']>;
-  signUpDuration_gte: InputMaybe<Scalars['BigInt']>;
-  signUpDuration_in: InputMaybe<Array<Scalars['BigInt']>>;
-  signUpDuration_lt: InputMaybe<Scalars['BigInt']>;
-  signUpDuration_lte: InputMaybe<Scalars['BigInt']>;
-  signUpDuration_not: InputMaybe<Scalars['BigInt']>;
-  signUpDuration_not_in: InputMaybe<Array<Scalars['BigInt']>>;
   stateTreeDepth: InputMaybe<Scalars['BigInt']>;
   stateTreeDepth_gt: InputMaybe<Scalars['BigInt']>;
   stateTreeDepth_gte: InputMaybe<Scalars['BigInt']>;
@@ -363,14 +299,6 @@ export type ClrFund_Filter = {
   stateTreeDepth_lte: InputMaybe<Scalars['BigInt']>;
   stateTreeDepth_not: InputMaybe<Scalars['BigInt']>;
   stateTreeDepth_not_in: InputMaybe<Array<Scalars['BigInt']>>;
-  tallyBatchSize: InputMaybe<Scalars['BigInt']>;
-  tallyBatchSize_gt: InputMaybe<Scalars['BigInt']>;
-  tallyBatchSize_gte: InputMaybe<Scalars['BigInt']>;
-  tallyBatchSize_in: InputMaybe<Array<Scalars['BigInt']>>;
-  tallyBatchSize_lt: InputMaybe<Scalars['BigInt']>;
-  tallyBatchSize_lte: InputMaybe<Scalars['BigInt']>;
-  tallyBatchSize_not: InputMaybe<Scalars['BigInt']>;
-  tallyBatchSize_not_in: InputMaybe<Array<Scalars['BigInt']>>;
   voteOptionTreeDepth: InputMaybe<Scalars['BigInt']>;
   voteOptionTreeDepth_gt: InputMaybe<Scalars['BigInt']>;
   voteOptionTreeDepth_gte: InputMaybe<Scalars['BigInt']>;
@@ -379,18 +307,9 @@ export type ClrFund_Filter = {
   voteOptionTreeDepth_lte: InputMaybe<Scalars['BigInt']>;
   voteOptionTreeDepth_not: InputMaybe<Scalars['BigInt']>;
   voteOptionTreeDepth_not_in: InputMaybe<Array<Scalars['BigInt']>>;
-  votingDuration: InputMaybe<Scalars['BigInt']>;
-  votingDuration_gt: InputMaybe<Scalars['BigInt']>;
-  votingDuration_gte: InputMaybe<Scalars['BigInt']>;
-  votingDuration_in: InputMaybe<Array<Scalars['BigInt']>>;
-  votingDuration_lt: InputMaybe<Scalars['BigInt']>;
-  votingDuration_lte: InputMaybe<Scalars['BigInt']>;
-  votingDuration_not: InputMaybe<Scalars['BigInt']>;
-  votingDuration_not_in: InputMaybe<Array<Scalars['BigInt']>>;
 };
 
 export enum ClrFund_OrderBy {
-  BatchUstVerifier = 'batchUstVerifier',
   ContributorRegistry = 'contributorRegistry',
   ContributorRegistryAddress = 'contributorRegistryAddress',
   ContributorRegistryContext = 'contributorRegistry__context',
@@ -413,6 +332,7 @@ export enum ClrFund_OrderBy {
   CurrentRoundIsFinalized = 'currentRound__isFinalized',
   CurrentRoundLastUpdatedAt = 'currentRound__lastUpdatedAt',
   CurrentRoundMaci = 'currentRound__maci',
+  CurrentRoundMaciTxHash = 'currentRound__maciTxHash',
   CurrentRoundMatchingPoolSize = 'currentRound__matchingPoolSize',
   CurrentRoundMessageTreeDepth = 'currentRound__messageTreeDepth',
   CurrentRoundNativeToken = 'currentRound__nativeToken',
@@ -433,10 +353,6 @@ export enum ClrFund_OrderBy {
   Id = 'id',
   LastUpdatedAt = 'lastUpdatedAt',
   MaciFactory = 'maciFactory',
-  MaxMessages = 'maxMessages',
-  MaxUsers = 'maxUsers',
-  MaxVoteOptions = 'maxVoteOptions',
-  MessageBatchSize = 'messageBatchSize',
   MessageTreeDepth = 'messageTreeDepth',
   NativeToken = 'nativeToken',
   NativeTokenInfo = 'nativeTokenInfo',
@@ -447,7 +363,6 @@ export enum ClrFund_OrderBy {
   NativeTokenInfoSymbol = 'nativeTokenInfo__symbol',
   NativeTokenInfoTokenAddress = 'nativeTokenInfo__tokenAddress',
   Owner = 'owner',
-  QvtVerifier = 'qvtVerifier',
   RecipientRegistry = 'recipientRegistry',
   RecipientRegistryAddress = 'recipientRegistryAddress',
   RecipientRegistryBaseDeposit = 'recipientRegistry__baseDeposit',
@@ -458,11 +373,8 @@ export enum ClrFund_OrderBy {
   RecipientRegistryLastUpdatedAt = 'recipientRegistry__lastUpdatedAt',
   RecipientRegistryMaxRecipients = 'recipientRegistry__maxRecipients',
   RecipientRegistryOwner = 'recipientRegistry__owner',
-  SignUpDuration = 'signUpDuration',
   StateTreeDepth = 'stateTreeDepth',
-  TallyBatchSize = 'tallyBatchSize',
-  VoteOptionTreeDepth = 'voteOptionTreeDepth',
-  VotingDuration = 'votingDuration'
+  VoteOptionTreeDepth = 'voteOptionTreeDepth'
 }
 
 export type Contribution = {
@@ -589,6 +501,7 @@ export enum Contribution_OrderBy {
   FundingRoundIsFinalized = 'fundingRound__isFinalized',
   FundingRoundLastUpdatedAt = 'fundingRound__lastUpdatedAt',
   FundingRoundMaci = 'fundingRound__maci',
+  FundingRoundMaciTxHash = 'fundingRound__maciTxHash',
   FundingRoundMatchingPoolSize = 'fundingRound__matchingPoolSize',
   FundingRoundMessageTreeDepth = 'fundingRound__messageTreeDepth',
   FundingRoundNativeToken = 'fundingRound__nativeToken',
@@ -778,7 +691,6 @@ export type ContributorRegistry_Filter = {
 
 export enum ContributorRegistry_OrderBy {
   ClrFund = 'clrFund',
-  ClrFundBatchUstVerifier = 'clrFund__batchUstVerifier',
   ClrFundContributorRegistryAddress = 'clrFund__contributorRegistryAddress',
   ClrFundCoordinator = 'clrFund__coordinator',
   ClrFundCoordinatorPubKey = 'clrFund__coordinatorPubKey',
@@ -786,20 +698,12 @@ export enum ContributorRegistry_OrderBy {
   ClrFundId = 'clrFund__id',
   ClrFundLastUpdatedAt = 'clrFund__lastUpdatedAt',
   ClrFundMaciFactory = 'clrFund__maciFactory',
-  ClrFundMaxMessages = 'clrFund__maxMessages',
-  ClrFundMaxUsers = 'clrFund__maxUsers',
-  ClrFundMaxVoteOptions = 'clrFund__maxVoteOptions',
-  ClrFundMessageBatchSize = 'clrFund__messageBatchSize',
   ClrFundMessageTreeDepth = 'clrFund__messageTreeDepth',
   ClrFundNativeToken = 'clrFund__nativeToken',
   ClrFundOwner = 'clrFund__owner',
-  ClrFundQvtVerifier = 'clrFund__qvtVerifier',
   ClrFundRecipientRegistryAddress = 'clrFund__recipientRegistryAddress',
-  ClrFundSignUpDuration = 'clrFund__signUpDuration',
   ClrFundStateTreeDepth = 'clrFund__stateTreeDepth',
-  ClrFundTallyBatchSize = 'clrFund__tallyBatchSize',
   ClrFundVoteOptionTreeDepth = 'clrFund__voteOptionTreeDepth',
-  ClrFundVotingDuration = 'clrFund__votingDuration',
   Context = 'context',
   Contributors = 'contributors',
   CreatedAt = 'createdAt',
@@ -1137,6 +1041,7 @@ export enum Donation_OrderBy {
   FundingRoundIsFinalized = 'fundingRound__isFinalized',
   FundingRoundLastUpdatedAt = 'fundingRound__lastUpdatedAt',
   FundingRoundMaci = 'fundingRound__maci',
+  FundingRoundMaciTxHash = 'fundingRound__maciTxHash',
   FundingRoundMatchingPoolSize = 'fundingRound__matchingPoolSize',
   FundingRoundMessageTreeDepth = 'fundingRound__messageTreeDepth',
   FundingRoundNativeToken = 'fundingRound__nativeToken',
@@ -1175,6 +1080,7 @@ export type FundingRound = {
   isFinalized: Maybe<Scalars['Boolean']>;
   lastUpdatedAt: Maybe<Scalars['String']>;
   maci: Maybe<Scalars['Bytes']>;
+  maciTxHash: Maybe<Scalars['Bytes']>;
   matchingPoolSize: Maybe<Scalars['BigInt']>;
   messageTreeDepth: Maybe<Scalars['Int']>;
   messages: Maybe<Array<Message>>;
@@ -1392,6 +1298,16 @@ export type FundingRound_Filter = {
   lastUpdatedAt_starts_with: InputMaybe<Scalars['String']>;
   lastUpdatedAt_starts_with_nocase: InputMaybe<Scalars['String']>;
   maci: InputMaybe<Scalars['Bytes']>;
+  maciTxHash: InputMaybe<Scalars['Bytes']>;
+  maciTxHash_contains: InputMaybe<Scalars['Bytes']>;
+  maciTxHash_gt: InputMaybe<Scalars['Bytes']>;
+  maciTxHash_gte: InputMaybe<Scalars['Bytes']>;
+  maciTxHash_in: InputMaybe<Array<Scalars['Bytes']>>;
+  maciTxHash_lt: InputMaybe<Scalars['Bytes']>;
+  maciTxHash_lte: InputMaybe<Scalars['Bytes']>;
+  maciTxHash_not: InputMaybe<Scalars['Bytes']>;
+  maciTxHash_not_contains: InputMaybe<Scalars['Bytes']>;
+  maciTxHash_not_in: InputMaybe<Array<Scalars['Bytes']>>;
   maci_contains: InputMaybe<Scalars['Bytes']>;
   maci_gt: InputMaybe<Scalars['Bytes']>;
   maci_gte: InputMaybe<Scalars['Bytes']>;
@@ -1597,7 +1513,6 @@ export type FundingRound_Filter = {
 
 export enum FundingRound_OrderBy {
   ClrFund = 'clrFund',
-  ClrFundBatchUstVerifier = 'clrFund__batchUstVerifier',
   ClrFundContributorRegistryAddress = 'clrFund__contributorRegistryAddress',
   ClrFundCoordinator = 'clrFund__coordinator',
   ClrFundCoordinatorPubKey = 'clrFund__coordinatorPubKey',
@@ -1605,20 +1520,12 @@ export enum FundingRound_OrderBy {
   ClrFundId = 'clrFund__id',
   ClrFundLastUpdatedAt = 'clrFund__lastUpdatedAt',
   ClrFundMaciFactory = 'clrFund__maciFactory',
-  ClrFundMaxMessages = 'clrFund__maxMessages',
-  ClrFundMaxUsers = 'clrFund__maxUsers',
-  ClrFundMaxVoteOptions = 'clrFund__maxVoteOptions',
-  ClrFundMessageBatchSize = 'clrFund__messageBatchSize',
   ClrFundMessageTreeDepth = 'clrFund__messageTreeDepth',
   ClrFundNativeToken = 'clrFund__nativeToken',
   ClrFundOwner = 'clrFund__owner',
-  ClrFundQvtVerifier = 'clrFund__qvtVerifier',
   ClrFundRecipientRegistryAddress = 'clrFund__recipientRegistryAddress',
-  ClrFundSignUpDuration = 'clrFund__signUpDuration',
   ClrFundStateTreeDepth = 'clrFund__stateTreeDepth',
-  ClrFundTallyBatchSize = 'clrFund__tallyBatchSize',
   ClrFundVoteOptionTreeDepth = 'clrFund__voteOptionTreeDepth',
-  ClrFundVotingDuration = 'clrFund__votingDuration',
   Contributions = 'contributions',
   ContributorCount = 'contributorCount',
   ContributorRegistry = 'contributorRegistry',
@@ -1638,6 +1545,7 @@ export enum FundingRound_OrderBy {
   IsFinalized = 'isFinalized',
   LastUpdatedAt = 'lastUpdatedAt',
   Maci = 'maci',
+  MaciTxHash = 'maciTxHash',
   MatchingPoolSize = 'matchingPoolSize',
   MessageTreeDepth = 'messageTreeDepth',
   Messages = 'messages',
@@ -1820,6 +1728,7 @@ export enum Message_OrderBy {
   FundingRoundIsFinalized = 'fundingRound__isFinalized',
   FundingRoundLastUpdatedAt = 'fundingRound__lastUpdatedAt',
   FundingRoundMaci = 'fundingRound__maci',
+  FundingRoundMaciTxHash = 'fundingRound__maciTxHash',
   FundingRoundMatchingPoolSize = 'fundingRound__matchingPoolSize',
   FundingRoundMessageTreeDepth = 'fundingRound__messageTreeDepth',
   FundingRoundNativeToken = 'fundingRound__nativeToken',
@@ -1957,6 +1866,7 @@ export enum PublicKey_OrderBy {
   FundingRoundIsFinalized = 'fundingRound__isFinalized',
   FundingRoundLastUpdatedAt = 'fundingRound__lastUpdatedAt',
   FundingRoundMaci = 'fundingRound__maci',
+  FundingRoundMaciTxHash = 'fundingRound__maciTxHash',
   FundingRoundMatchingPoolSize = 'fundingRound__matchingPoolSize',
   FundingRoundMessageTreeDepth = 'fundingRound__messageTreeDepth',
   FundingRoundNativeToken = 'fundingRound__nativeToken',
@@ -2430,7 +2340,6 @@ export enum RecipientRegistry_OrderBy {
   BaseDeposit = 'baseDeposit',
   ChallengePeriodDuration = 'challengePeriodDuration',
   ClrFund = 'clrFund',
-  ClrFundBatchUstVerifier = 'clrFund__batchUstVerifier',
   ClrFundContributorRegistryAddress = 'clrFund__contributorRegistryAddress',
   ClrFundCoordinator = 'clrFund__coordinator',
   ClrFundCoordinatorPubKey = 'clrFund__coordinatorPubKey',
@@ -2438,20 +2347,12 @@ export enum RecipientRegistry_OrderBy {
   ClrFundId = 'clrFund__id',
   ClrFundLastUpdatedAt = 'clrFund__lastUpdatedAt',
   ClrFundMaciFactory = 'clrFund__maciFactory',
-  ClrFundMaxMessages = 'clrFund__maxMessages',
-  ClrFundMaxUsers = 'clrFund__maxUsers',
-  ClrFundMaxVoteOptions = 'clrFund__maxVoteOptions',
-  ClrFundMessageBatchSize = 'clrFund__messageBatchSize',
   ClrFundMessageTreeDepth = 'clrFund__messageTreeDepth',
   ClrFundNativeToken = 'clrFund__nativeToken',
   ClrFundOwner = 'clrFund__owner',
-  ClrFundQvtVerifier = 'clrFund__qvtVerifier',
   ClrFundRecipientRegistryAddress = 'clrFund__recipientRegistryAddress',
-  ClrFundSignUpDuration = 'clrFund__signUpDuration',
   ClrFundStateTreeDepth = 'clrFund__stateTreeDepth',
-  ClrFundTallyBatchSize = 'clrFund__tallyBatchSize',
   ClrFundVoteOptionTreeDepth = 'clrFund__voteOptionTreeDepth',
-  ClrFundVotingDuration = 'clrFund__votingDuration',
   Controller = 'controller',
   CreatedAt = 'createdAt',
   Id = 'id',
@@ -3196,6 +3097,7 @@ export enum Vote_OrderBy {
   FundingRoundIsFinalized = 'fundingRound__isFinalized',
   FundingRoundLastUpdatedAt = 'fundingRound__lastUpdatedAt',
   FundingRoundMaci = 'fundingRound__maci',
+  FundingRoundMaciTxHash = 'fundingRound__maciTxHash',
   FundingRoundMatchingPoolSize = 'fundingRound__matchingPoolSize',
   FundingRoundMessageTreeDepth = 'fundingRound__messageTreeDepth',
   FundingRoundNativeToken = 'fundingRound__nativeToken',
@@ -3223,6 +3125,8 @@ export type _Block_ = {
   hash: Maybe<Scalars['Bytes']>;
   /** The block number */
   number: Scalars['Int'];
+  /** The hash of the parent block */
+  parentHash: Maybe<Scalars['Bytes']>;
   /** Integer representation of the timestamp stored in blocks for the chain */
   timestamp: Maybe<Scalars['Int']>;
 };
@@ -3282,14 +3186,6 @@ export type GetContributorMessagesQueryVariables = Exact<{
 
 
 export type GetContributorMessagesQuery = { __typename?: 'Query', messages: Array<{ __typename?: 'Message', id: string, data: Array<any> | null, msgType: any, timestamp: string | null, blockNumber: any, transactionIndex: any }> };
-
-export type GetContributorVotesQueryVariables = Exact<{
-  fundingRoundAddress: Scalars['ID'];
-  contributorAddress: Scalars['ID'];
-}>;
-
-
-export type GetContributorVotesQuery = { __typename?: 'Query', fundingRound: { __typename?: 'FundingRound', id: string, contributors: Array<{ __typename?: 'Contributor', votes: Array<{ __typename?: 'Vote', id: string }> | null }> | null } | null };
 
 export type GetCurrentRoundQueryVariables = Exact<{
   clrFundAddress: Scalars['ID'];
@@ -3427,18 +3323,6 @@ export const GetContributorMessagesDocument = gql`
     timestamp
     blockNumber
     transactionIndex
-  }
-}
-    `;
-export const GetContributorVotesDocument = gql`
-    query GetContributorVotes($fundingRoundAddress: ID!, $contributorAddress: ID!) {
-  fundingRound(id: $fundingRoundAddress) {
-    id
-    contributors(where: {id: $contributorAddress}) {
-      votes {
-        id
-      }
-    }
   }
 }
     `;
@@ -3638,9 +3522,6 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     GetContributorMessages(variables: GetContributorMessagesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetContributorMessagesQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetContributorMessagesQuery>(GetContributorMessagesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetContributorMessages', 'query');
-    },
-    GetContributorVotes(variables: GetContributorVotesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetContributorVotesQuery> {
-      return withWrapper((wrappedRequestHeaders) => client.request<GetContributorVotesQuery>(GetContributorVotesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetContributorVotes', 'query');
     },
     GetCurrentRound(variables: GetCurrentRoundQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetCurrentRoundQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetCurrentRoundQuery>(GetCurrentRoundDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetCurrentRound', 'query');

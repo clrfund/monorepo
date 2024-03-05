@@ -434,7 +434,7 @@ describe('Funding Round', () => {
         messages.push(message.asContractParam())
         encPubKeys.push(encPubKey.asContractParam())
       }
-      const messageBatchSubmitted = await fundingRound.submitMessageBatch(
+      const messageBatchSubmitted = await poll.publishMessageBatch(
         messages,
         encPubKeys
       )

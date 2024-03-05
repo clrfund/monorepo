@@ -117,17 +117,6 @@ export async function withdrawContribution(roundAddress: string, signer: Signer)
   return transaction
 }
 
-export async function hasContributorVoted(fundingRoundAddress: string, contributorAddress: string): Promise<boolean> {
-  if (!fundingRoundAddress) {
-    return false
-  }
-  const data = await sdk.GetContributorVotes({
-    fundingRoundAddress: fundingRoundAddress.toLowerCase(),
-    contributorAddress: contributorAddress.toLowerCase(),
-  })
-  return !!data.fundingRound?.contributors?.[0]?.votes?.length
-}
-
 export function isContributionAmountValid(value: string, currentRound: RoundInfo): boolean {
   // if (!currentRound) {
   // 	// Skip validation

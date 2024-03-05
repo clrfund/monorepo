@@ -2,7 +2,7 @@ import { getEtherBalance, getTokenBalance, isVerifiedUser, isRegisteredUser, typ
 import { defineStore } from 'pinia'
 import { useAppStore } from '@/stores'
 import type { WalletUser } from '@/stores'
-import { getContributionAmount, hasContributorVoted } from '@/api/contributions'
+import { getContributionAmount } from '@/api/contributions'
 import { ensLookup, isValidSignature } from '@/utils/accounts'
 import { UserRegistryType, userRegistryType } from '@/api/core'
 import { getBrightId, type BrightId } from '@/api/bright-id'
@@ -77,10 +77,7 @@ export const useUserStore = defineStore('user', {
         let contribution = appStore.contribution
         if (!contribution || contribution === BigInt(0)) {
           contribution = await getContributionAmount(appStore.currentRound.fundingRoundAddress, walletAddress)
-          const hasVoted = await hasContributorVoted(appStore.currentRound.fundingRoundAddress, walletAddress)
-
           appStore.contribution = contribution
-          appStore.hasVoted = hasVoted
         }
 
         isRegistered = await isRegisteredUser(appStore.currentRound.fundingRoundAddress, walletAddress)

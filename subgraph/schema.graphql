@@ -83,7 +83,6 @@ type FundingRound @entity {
   recipients: [Recipient!] @derivedFrom(field: "fundingRounds")
   contributors: [Contributor!] @derivedFrom(field: "fundingRounds")
   contributions: [Contribution!] @derivedFrom(field: "fundingRound")
-  votes: [Vote!] @derivedFrom(field: "fundingRound")
   createdAt: String
   lastUpdatedAt: String
 }
@@ -138,7 +137,6 @@ type ContributorRegistry @entity {
 type Contributor @entity {
   id: ID!
   contributorRegistry: ContributorRegistry!
-  votes: [Vote!] @derivedFrom(field: "contributor")
 
   verifiedTimeStamp: String
   # sponsors: [Bytes]
@@ -167,15 +165,6 @@ type Contribution @entity {
   voiceCredits: BigInt
 
   createdAt: String
-}
-
-type Vote @entity {
-  id: ID!
-  contributor: Contributor
-  fundingRound: FundingRound 
-  voterAddress: Bytes
-  secret: Boolean
-
 }
 
 type Donation @entity {

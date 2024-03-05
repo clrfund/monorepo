@@ -1158,10 +1158,6 @@ export class FundingRound extends Entity {
     );
   }
 
-  get votes(): VoteLoader {
-    return new VoteLoader("FundingRound", this.get("id")!.toString(), "votes");
-  }
-
   get createdAt(): string | null {
     let value = this.get("createdAt");
     if (!value || value.kind == ValueKind.NULL) {
@@ -1876,10 +1872,6 @@ export class Contributor extends Entity {
     this.set("contributorRegistry", Value.fromString(value));
   }
 
-  get votes(): VoteLoader {
-    return new VoteLoader("Contributor", this.get("id")!.toString(), "votes");
-  }
-
   get verifiedTimeStamp(): string | null {
     let value = this.get("verifiedTimeStamp");
     if (!value || value.kind == ValueKind.NULL) {
@@ -2191,110 +2183,6 @@ export class Contribution extends Entity {
     } else {
       this.set("createdAt", Value.fromString(<string>value));
     }
-  }
-}
-
-export class Vote extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(id != null, "Cannot save Vote entity without an ID");
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        `Entities of type Vote must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`,
-      );
-      store.set("Vote", id.toString(), this);
-    }
-  }
-
-  static loadInBlock(id: string): Vote | null {
-    return changetype<Vote | null>(store.get_in_block("Vote", id));
-  }
-
-  static load(id: string): Vote | null {
-    return changetype<Vote | null>(store.get("Vote", id));
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    if (!value || value.kind == ValueKind.NULL) {
-      throw new Error("Cannot return null for a required field.");
-    } else {
-      return value.toString();
-    }
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get contributor(): string | null {
-    let value = this.get("contributor");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toString();
-    }
-  }
-
-  set contributor(value: string | null) {
-    if (!value) {
-      this.unset("contributor");
-    } else {
-      this.set("contributor", Value.fromString(<string>value));
-    }
-  }
-
-  get fundingRound(): string | null {
-    let value = this.get("fundingRound");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toString();
-    }
-  }
-
-  set fundingRound(value: string | null) {
-    if (!value) {
-      this.unset("fundingRound");
-    } else {
-      this.set("fundingRound", Value.fromString(<string>value));
-    }
-  }
-
-  get voterAddress(): Bytes | null {
-    let value = this.get("voterAddress");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBytes();
-    }
-  }
-
-  set voterAddress(value: Bytes | null) {
-    if (!value) {
-      this.unset("voterAddress");
-    } else {
-      this.set("voterAddress", Value.fromBytes(<Bytes>value));
-    }
-  }
-
-  get secret(): boolean {
-    let value = this.get("secret");
-    if (!value || value.kind == ValueKind.NULL) {
-      return false;
-    } else {
-      return value.toBoolean();
-    }
-  }
-
-  set secret(value: boolean) {
-    this.set("secret", Value.fromBoolean(value));
   }
 }
 
@@ -2635,23 +2523,5 @@ export class ContributionLoader extends Entity {
   load(): Contribution[] {
     let value = store.loadRelated(this._entity, this._id, this._field);
     return changetype<Contribution[]>(value);
-  }
-}
-
-export class VoteLoader extends Entity {
-  _entity: string;
-  _field: string;
-  _id: string;
-
-  constructor(entity: string, id: string, field: string) {
-    super();
-    this._entity = entity;
-    this._id = id;
-    this._field = field;
-  }
-
-  load(): Vote[] {
-    let value = store.loadRelated(this._entity, this._id, this._field);
-    return changetype<Vote[]>(value);
   }
 }

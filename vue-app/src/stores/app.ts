@@ -432,6 +432,7 @@ export const useAppStore = defineStore('app', {
       if (this.committedCart.length > 0) {
         // only overwrite the uncommitted cart if there's committed cart
         this.restoreCommittedCartToLocalCart()
+        this.setHasVote(true)
       }
     },
     setContributor(contributor: Contributor | null) {

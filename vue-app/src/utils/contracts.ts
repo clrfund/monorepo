@@ -1,6 +1,20 @@
-import type { TransactionResponse, TransactionReceipt } from 'ethers'
+import type { TransactionResponse, TransactionReceipt, Signer } from 'ethers'
+import { Contract } from 'ethers'
+import { FundingRound, Poll } from '@/api/abi'
 import { provider, MAX_WAIT_DEPTH } from '@/api/core'
 import { getEventArg } from '@clrfund/common'
+
+/**
+ * Return the handle to the Poll contract
+ * @param fundingRoundAddress The funding round contract address
+ * @param signer The signer handle
+ * @returns The Poll contract handle
+ */
+export async function getPollContract(fundingRoundAddress: string, signer: Signer): Promise<Contract> {
+  const fundingRound = new Contract(fundingRoundAddress, FundingRound, signer)
+  const pollAddress = await fundingRound.poll()
+  return new Contract(pollAddress, Poll, signer)
+}
 
 export async function waitForTransaction(
   pendingTransaction: Promise<TransactionResponse>,

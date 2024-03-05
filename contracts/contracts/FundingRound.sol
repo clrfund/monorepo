@@ -351,24 +351,6 @@ contract FundingRound is
   }
 
   /**
-    * @dev Submit a batch of messages along with corresponding ephemeral public keys.
-    */
-  function submitMessageBatch(
-    Message[] calldata _messages,
-    PubKey[] calldata _encPubKeys
-  )
-    external
-  {
-    if (isAddressZero(address(poll))) revert PollNotSet();
-
-    uint256 batchSize = _messages.length;
-    for (uint8 i = 0; i < batchSize; i++) {
-      poll.publishMessage(_messages[i], _encPubKeys[i]);
-    }
-    emit Voted(msg.sender);
-  }
-
-  /**
     * @dev Withdraw contributed funds for a list of contributors if the round has been cancelled.
     */
   function withdrawContributions(address[] memory _contributors)

@@ -24,11 +24,10 @@
 import { Contract } from 'ethers'
 import type { PubKey, Message } from '@clrfund/common'
 import Transaction from '@/components/Transaction.vue'
-import { waitForTransaction } from '@/utils/contracts'
+import { waitForTransaction, getPollContract } from '@/utils/contracts'
 import { createMessage } from '@clrfund/common'
 import { VueFinalModal } from 'vue-final-modal'
 
-import { FundingRound } from '@/api/abi'
 import { useAppStore, useUserStore } from '@/stores'
 import { useRouter } from 'vue-router'
 
@@ -54,8 +53,6 @@ onMounted(() => {
 async function vote() {
   const contributor = appStore.contributor
   const { coordinatorPubKey, fundingRoundAddress, pollId } = appStore.currentRound!
-  const signer = await userStore.getSigner()
-  const fundingRound = new Contract(fundingRoundAddress, FundingRound, signer)
   const messages: Message[] = []
   const encPubKeys: PubKey[] = []
   let nonce = 1
@@ -75,8 +72,10 @@ async function vote() {
     nonce += 1
   }
   try {
+    const signer = await userStore.getSigner()
+    const pollContract = await getPollContract(fundingRoundAddress, signer)
     await waitForTransaction(
-      fundingRound.submitMessageBatch(
+      pollContract.publishMessageBatch(
         messages.reverse().map(msg => msg.asContractParam()),
         encPubKeys.reverse().map(key => key.asContractParam()),
       ),
