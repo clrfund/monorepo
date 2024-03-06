@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 
-# TODO: replace this with params from public ceremony
 BASE_URL="https://maci-develop-fra.s3.eu-central-1.amazonaws.com/v1.2.0"
 PKGS="maci_artifacts_6-9-2-3_prod.tar.gz"
 
