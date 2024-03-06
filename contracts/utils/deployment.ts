@@ -28,6 +28,7 @@ const userRegistryNames: Record<string, string> = {
   brightid: 'BrightIdUserRegistry',
   snapshot: 'SnapshotUserRegistry',
   merkle: 'MerkleUserRegistry',
+  semaphore: 'SemaphoreUserRegistry',
 }
 
 // Mapping of recipient registry type to the contract name
@@ -93,7 +94,9 @@ export async function deployPoseidon({
     signer
   )
 
-  return Poseidon.deploy()
+  const poseidonContract = await Poseidon.deploy()
+
+  return await poseidonContract.waitForDeployment()
 }
 
 export type deployContractOptions = {
