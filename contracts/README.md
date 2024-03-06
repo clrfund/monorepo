@@ -33,7 +33,7 @@ Download the circuit zkeys:
 
 ```
 # this script will download the zkeys in the params folder where the script is run
-../.github/scripts/download-6-8-2-3.sh
+../.github/scripts/download-6-9-2-3.sh
 ```
 
 If you have previously downloaded the zkeys, you can export the environment variable CIRCUIT_DIRECTORY to point to the directory.

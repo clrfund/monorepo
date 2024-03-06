@@ -15,8 +15,8 @@ export HARDHAT_NETWORK=localhost
 export STATE_FILE=${CONTRACTS_DIRECTORY}/local-state.json
 
 # download the circuit params if not exists
-if ! [ -f "${CIRCUIT_DIRECTORY}/processMessages_6-8-2-3_test" ]; then
-  ${CLRFUND_ROOT}/.github/scripts/download-6-8-2-3.sh
+if ! [ -f "${CIRCUIT_DIRECTORY}/ProcessMessages_6-9-2-3/ProcessMessages_6-9-2-3.zkey" ]; then
+  ${CLRFUND_ROOT}/.github/scripts/download-6-9-2-3.sh
 fi
 
 # 20 mins

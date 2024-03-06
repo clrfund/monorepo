@@ -7,7 +7,7 @@ Only a funding round coordinator can tally votes.
 
 Install MACI dependencies (see the github action, `.github/workflows/test-scripts.yml` for all the dependencies to install)
 
-Run the script monorepo/.github/scripts/download-6-8-2-3.sh to download the parameter files.
+Run the script monorepo/.github/scripts/download-6-9-2-3.sh to download the parameter files.
 
 Set the following env vars in `.env`:
 

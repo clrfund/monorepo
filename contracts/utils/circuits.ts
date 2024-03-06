@@ -1,6 +1,6 @@
 // custom configuration for MACI parameters
 // See https://github.com/privacy-scaling-explorations/maci/wiki/Precompiled-v1.1.1 for parameter definition
-// NOTE: currently the version of MACI used in clrfund only supports circuit 6-8-2-3 because
+// NOTE: currently the version of MACI used in clrfund only supports circuit 6-9-2-3 because
 // the EmptyBallotRoots.sol published in MACI npm package is hardcoded for stateTreeDepth = 6
 
 import path from 'path'

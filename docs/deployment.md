@@ -18,7 +18,7 @@ sudo apt-get install libgmp-dev nlohmann-json3-dev nasm g++
 The following script will download the files in the params folder under the current folder where the script is run
 
 ```
-monorepo/.github/scripts/download-6-8-2-3.sh
+monorepo/.github/scripts/download-6-9-2-3.sh
 ```
 
 Make a note of this `params` folder as you'll need it to run the tally script.
