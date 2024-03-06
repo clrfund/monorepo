@@ -82,7 +82,7 @@ task('new-clrfund', 'Deploy a new ClrFund instance')
   .addOptionalParam('userRegistryAddress', 'The user registry address')
   .addOptionalParam(
     'userRegistryType',
-    'The user registry type: simple, brightid, merkle, storage',
+    'The user registry type: simple, semaphore, brightid, merkle, storage',
     'simple'
   )
   .addOptionalParam('brightidContext', 'The brightid context')

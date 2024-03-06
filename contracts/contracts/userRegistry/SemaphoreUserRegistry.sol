@@ -7,13 +7,13 @@ import '@openzeppelin/contracts/access/Ownable.sol';
 import './IUserRegistry.sol';
 
 /**
- * @dev A simple user registry managed by a trusted entity.
+ * @dev A simple semaphore user registry managed by a trusted entity.
  */
-contract ZupassUserRegistry is Ownable, IUserRegistry {
+contract SemaphoreUserRegistry is Ownable, IUserRegistry {
 
   mapping(address => bool) private users;
   mapping(uint256 => bool) private semaphoreIds;
-  mapping(address => uint256) private userTosemaphoreId;
+  mapping(address => uint256) private userToSemaphoreId;
 
   // Events
   event UserAdded(address indexed _user, uint256 _semaphoreId);
@@ -32,7 +32,7 @@ contract ZupassUserRegistry is Ownable, IUserRegistry {
     require(!semaphoreIds[_semaphoreId], 'UserRegistry: Semaphore Id already registered' );
     users[_user] = true;
     semaphoreIds[_semaphoreId] = true;
-    userTosemaphoreId[_user] = _semaphoreId;
+    userToSemaphoreId[_user] = _semaphoreId;
     emit UserAdded(_user, _semaphoreId);
   }
 
@@ -44,10 +44,10 @@ contract ZupassUserRegistry is Ownable, IUserRegistry {
     onlyOwner
   {
     require(users[_user], 'UserRegistry: User is not in the registry');
-    uint256 _semaphoreId = userTosemaphoreId[_user];
+    uint256 _semaphoreId = userToSemaphoreId[_user];
     delete users[_user];
     delete semaphoreIds[_semaphoreId];
-    delete userTosemaphoreId[_user];
+    delete userToSemaphoreId[_user];
     emit UserRemoved(_user);
   }
 

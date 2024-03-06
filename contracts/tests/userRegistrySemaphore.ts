@@ -5,7 +5,7 @@ import { Contract, Wallet } from 'ethers'
 import { ZERO_ADDRESS } from '../utils/constants'
 import { HardhatEthersSigner } from '@nomicfoundation/hardhat-ethers/signers'
 
-describe('Zupass User Registry', () => {
+describe('Semaphore User Registry', () => {
   let registry: Contract
   let user: HardhatEthersSigner
 
@@ -13,11 +13,11 @@ describe('Zupass User Registry', () => {
     let deployer: HardhatEthersSigner
     ;[, deployer, user] = await ethers.getSigners()
 
-    const ZupassUserRegistry = await ethers.getContractFactory(
-      'ZupassUserRegistry',
+    const SemaphoreUserRegistry = await ethers.getContractFactory(
+      'SemaphoreUserRegistry',
       deployer
     )
-    registry = await ZupassUserRegistry.deploy()
+    registry = await SemaphoreUserRegistry.deploy()
   })
 
   describe('managing verified users', () => {

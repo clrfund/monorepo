@@ -23,6 +23,7 @@ export enum EContracts {
   OptimisticRecipientRegistry = 'OptimisticRecipientRegistry',
   KlerosGTCRAdapter = 'KlerosGTCRAdapter',
   SimpleUserRegistry = 'SimpleUserRegistry',
+  SemaphoreUserRegistry = 'SemaphoreUserRegistry',
   BrightIdUserRegistry = 'BrightIdUserRegistry',
   AnyOldERC20Token = 'AnyOldERC20Token',
   BrightIdSponsor = 'BrightIdSponsor',
