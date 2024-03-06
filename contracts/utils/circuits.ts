@@ -38,22 +38,25 @@ export type CircuitInfo = {
 
 export const CIRCUITS: { [name: string]: CircuitInfo } = {
   micro: {
-    processMessagesZkey: 'ProcessMessages_6-8-2-3_test.0.zkey',
-    processWitness: 'ProcessMessages_6-8-2-3_test',
-    processWasm: 'ProcessMessages_6-8-2-3_test.wasm',
-    processDatFile: 'ProcessMessages_6-8-2-3_test.dat',
-    tallyVotesZkey: 'tallyvotes_6-2-3_final.zkey',
-    tallyWitness: 'tallyVotes_6-2-3_test',
-    tallyWasm: 'tallyvotes_6-2-3.wasm',
-    tallyDatFile: 'tallyVotes_6-2-3_test.dat',
-    // 1st param in processmessages_6-8-2-3
+    processMessagesZkey: 'ProcessMessages_6-9-2-3/processMessages_6-9-2-3.zkey',
+    processWitness:
+      'ProcessMessages_6-9-2-3/ProcessMessages_6-9-2-3_cpp/ProcessMessages_6-9-2-3',
+    processWasm:
+      'ProcessMessages_6-9-2-3/ProcessMessages_6-9-2-3_js/ProcessMessages_6-9-2-3.wasm',
+    processDatFile:
+      'ProcessMessages_6-9-2-3/ProcessMessages_6-9-2-3_cpp/ProcessMessages_6-9-2-3.dat',
+    tallyVotesZkey: 'TallyVotes_6-2-3/tallyVotes_6-2-3.zkey',
+    tallyWitness: 'TallyVotes_6-2-3/TallyVotes_6-2-3_cpp/TallyVotes_6-2-3',
+    tallyWasm: 'TallyVotes_6-2-3/TallyVotes_6-2-3_js/TallyVotes_6-2-3.wasm',
+    tallyDatFile: 'TallyVotes_6-2-3/TallyVotes_6-2-3_cpp/TallyVotes_6-2-3.dat',
+    // 1st param in processmessages_6-9-2-3
     stateTreeDepth: 6,
     treeDepths: {
-      // 2nd param in processmessages_6-8-2-3
-      messageTreeDepth: 8,
-      // 3rd param in processmessages_6-8-2-3
+      // 2nd param in processmessages_6-9-2-3
+      messageTreeDepth: 9,
+      // 3rd param in processmessages_6-9-2-3
       messageTreeSubDepth: 2,
-      // last param of processMessages_6-8-2-3 and tallyvotes_6-2-3
+      // last param of processMessages_6-9-2-3 and tallyvotes_6-2-3
       voteOptionTreeDepth: 3,
       // 2nd param in tallyvotes_6-2-3
       intStateTreeDepth: 2,
@@ -62,7 +65,7 @@ export const CIRCUITS: { [name: string]: CircuitInfo } = {
       // maxMessages and maxVoteOptions are calculated using treeArity = 5 as seen in the following code:
       // https://github.com/privacy-scaling-explorations/maci/blob/master/contracts/contracts/Poll.sol#L115
       // treeArity ** messageTreeDepth
-      maxMessages: BigInt(TREE_ARITY ** 8),
+      maxMessages: BigInt(TREE_ARITY ** 9),
       // treeArity ** voteOptionTreeDepth
       maxVoteOptions: BigInt(TREE_ARITY ** 3),
     },

@@ -9,7 +9,7 @@ on:
 
 env:
   NODE_VERSION: 20.x
-  ZKEYS_DOWNLOAD_SCRIPT: "download-6-8-2-3.sh"
+  ZKEYS_DOWNLOAD_SCRIPT: "download-6-9-2-3.sh"
 
 jobs:
   script-tests:

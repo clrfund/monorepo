@@ -28,7 +28,7 @@ env:
   COORDINATOR_MACISK: ${{ secrets.COORDINATOR_MACI_PRIVATE_KEY }}
   WALLET_PRIVATE_KEY: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_WALLET_PRIVATE_KEY }}
   CIRCUIT_TYPE: micro
-  ZKEYS_DOWNLOAD_SCRIPT: "download-6-8-2-3.sh"
+  ZKEYS_DOWNLOAD_SCRIPT: "download-6-9-2-3.sh"
   JSONRPC_HTTP_URL: ${{ github.event.inputs.jsonrpc_url }}
 
 jobs:

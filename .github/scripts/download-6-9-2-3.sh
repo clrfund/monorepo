@@ -2,8 +2,8 @@
 set -e
 
 # TODO: replace this with params from public ceremony
-BASE_URL="https://maci-zkeys.s3.amazonaws.com/v1.1.2/6-8-2-3"
-PKGS="maci-zkeys-6-8-2-3.tar.gz"
+BASE_URL="https://maci-develop-fra.s3.eu-central-1.amazonaws.com/v1.2.0"
+PKGS="maci_artifacts_6-9-2-3_prod.tar.gz"
 
 for p in $PKGS
 do
@@ -16,3 +16,5 @@ do
     tar -zxvf $p
   fi
 done
+
+mv zkeys params
