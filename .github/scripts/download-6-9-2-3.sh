@@ -18,3 +18,4 @@ do
 done
 
 mv zkeys params
+rm maci_artifacts_6-9-2-3_prod.tar.gz
