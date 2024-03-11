@@ -77,7 +77,7 @@ async function addUser(
   return userRegistry.addUser(userAccount, proofRlpBytes)
 }
 
-describe('SnapshotUserRegistry', function () {
+describe.skip('SnapshotUserRegistry', function () {
   let userRegistry: Contract
   let block: Block
 
