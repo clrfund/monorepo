@@ -22,11 +22,13 @@ WALLET_PRIVATE_KEY
 
 Decrypt messages and tally the votes:
 
-```
-HARDHAT_NETWORK=<network> yarn ts-node cli/tally.ts --clrfund <clrfund-address> --start-block <maci-start-block>
+```sh
+HARDHAT_NETWORK=<network> yarn hardhat clr-tally --clrfund <clrfund-address> --maci-tx-hash <maci creation transaction hash> --rapidsnark <rapidsnark path> --circuit-directory <circuit zkeys directory> --network <network>
 ```
 
-If there's error and the tally task was stopped prematurely, it can be resumed by passing 2 additional parameters, '--maci-logs' and/or '--maci-state-file', if the files were generated.
+The `--rapidsnark` option is required if run on x86 architecture.
+
+If there's error and the tally task was stopped prematurely, it can be resumed by passing 2 additional parameters, '--tally-file' and/or '--maci-state-file', if the files were generated.
 
 Result will be saved to `tally.json` file, which must then be published via IPFS.
 
@@ -52,7 +54,7 @@ WALLET_PRIVATE_KEY=
 
 Once you have the `tally.json` from the tally script, run:
 
-```
+```sh
 yarn hardhat clr-finalize --clrfund <clrfund address> --tally-file <tally file> --network <network>
 ```
 
@@ -62,7 +64,7 @@ Anyone can verify the tally results in the tally.json.
 
 From the clrfund contracts folder, run the following command to verify the result:
 
-```
+```sh
 yarn hardhat verify-tally-file --tally-file <tally file> --tally-address <tally contract address> --network <network>
 ```
 
@@ -90,3 +92,5 @@ Also, lack of memory can also cause `core dump`, try to work around it by settin
 ```
 export NODE_OPTIONS=--max-old-space-size=4096
 ```
+
+If you notice `Error at message index 0 - failed decryption due to either wrong encryption public key or corrupted ciphertext` while running the tally script, don't worry, it's just a warning. This issue is tracked [here](https://github.com/privacy-scaling-explorations/maci/issues/1134)
