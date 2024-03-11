@@ -23,7 +23,7 @@ WALLET_PRIVATE_KEY
 Decrypt messages and tally the votes:
 
 ```sh
-HARDHAT_NETWORK=<network> yarn hardhat clr-tally --clrfund <clrfund-address> --maci-tx-hash <maci creation transaction hash> --rapidsnark <rapidsnark path> --circuit-directory <circuit zkeys directory> --network <network>
+yarn hardhat clr-tally --clrfund <clrfund-address> --maci-tx-hash <maci creation transaction hash> --rapidsnark <rapidsnark path> --circuit-directory <circuit zkeys directory> --network <network>
 ```
 
 The `--rapidsnark` option is required if run on x86 architecture.
