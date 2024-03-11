@@ -13,16 +13,6 @@ Check the MACI doc, https://maci.pse.dev/docs/installation#install-rapidsnark-if
 sudo apt-get install libgmp-dev nlohmann-json3-dev nasm g++
 ```
 
-### Download MACI circuit files
-
-The following script will download the files in the params folder under the current folder where the script is run
-
-```
-monorepo/.github/scripts/download-6-9-2-3.sh
-```
-
-Make a note of this `params` folder as you'll need it to run the tally script.
-
 ## Setup BrightID
 If using BrightID as the user registry type:
 
@@ -45,26 +35,41 @@ Once the app is registered, you will get an appId which will be set to `BRIGHTID
 
 Goto the `contracts` folder.
 
-### Deploy the BrightID sponsor contract (if using BrightID)
-
-1. Deploy the BrightID sponsor contract
+### Generate the coordinator MACI private key
 
 ```
-HARDHAT_NETWORK={network} yarn ts-node cli/deploySponsor.ts
+yarn hardhat new-maci-key
 ```
 
-2. Verify the contract by running `yarn hardhat --network {network} verify {contract address}`
-3. Set `BRIGHTID_SPONSOR` to the contract address in the next step
-
-### Edit the `/contracts/.env` file
+### Edit the `contracts/.env` file
 
 E.g.
 
 ```
 JSONRPC_HTTP_URL=https://NETWORK.alchemyapi.io/v2/ADD_API_KEY
 WALLET_PRIVATE_KEY=
+COORDINATOR_MACISK=The coordinator's private key from previous step which starts with `macisk.`
+# API keys for verifying contracts, update hardhat.config for additional keys if needed
 ARBISCAN_API_KEY=
 ```
+
+### Download MACI circuit files
+
+The following script will download the files in the params folder under the current folder where the script is run
+
+```
+monorepo/.github/scripts/download-6-9-2-3.sh
+```
+
+
+### Edit the `contracts/deploy-config.json` file
+
+```
+cp deploy-config-example.json deploy-config.json
+```
+
+Update the `VkRegistry.paramsDirectory` with the circuit parameter folder. If you ran the `monorepo/.github/scripts/download-6-9-2-3.sh` in the `contracts` folder, it should be `./params`.
+
 
 ### Run the deploy script
 Use the `-h` switch to print the command line help menu for all the scripts in the `cli` folder. For hardhat help, use `yarn hardhat help`.
@@ -73,30 +78,18 @@ Use the `-h` switch to print the command line help menu for all the scripts in t
 1. Deploy an instance of ClrFund
 
 ```
-yarn hardhat new-clrfund \
-   --directory <the params folder from previous step> \
-   --token <native token address> \
-   --coordinator <coordinator ETH address> \
-   --user-registry-type <user registry type> \
-   --recipient-registry-type <recipient registry type> \
-   --network <network>
+yarn hardhat new-clrfund --network <network>
 ```
 
 2. deploy new funding round
 ```
-yarn hardhat new-round \
-   --clrfund <clrfund contract address> \
-   --duration <funding round duration in seconds> \
-   --network <network>
+yarn hardhat new-round --network <network>
 ```
 
-3. Make sure to save in a safe place the serializedCoordinatorPrivKey, you are going to need it for tallying the votes in future steps.
-
-
-4. To load a list of users into the simple user registry,
+3. To load a list of users into the simple user registry,
 
 ```
-yarn hardhat clr-load-simple-users --file-path addresses.txt --user-registry <address> --network <network>
+yarn hardhat load-simple-users --file-path addresses.txt --user-registry <address> --network <network>
 ```
 
 
@@ -106,22 +99,23 @@ If using a snapshot user registry, run the `set-storage-root` task to set the st
 yarn hardhat --network {network} set-storage-root --registry 0x7113b39Eb26A6F0a4a5872E7F6b865c57EDB53E0 --slot 2 --token 0x65bc8dd04808d99cf8aa6749f128d55c2051edde --block 34677758 --network arbitrum-goerli
 ```
 
-Note: to get the storage slot '--slot' value, run the `clr-find-storage-slot` task.
+Note: to get the storage slot '--slot' value, run the `find-storage-slot` task.
 
 5. If using a merkle user registry, run the `load-merkle-users` task to set the merkle root for all the authorized users
 
 ```
 # for example:
-yarn hardhat clr-load-merkle-users --address-file ./addresses.txt --user-registry 0x9E1c12Af45504e66D16D592cAF3B877ddc6fF643 --network arbitrum-goerli
+yarn hardhat load-merkle-users --address-file ./addresses.txt --user-registry 0x9E1c12Af45504e66D16D592cAF3B877ddc6fF643 --network arbitrum-goerli
 ```
 
 Note: Make sure to upload generated merkle tree file to IPFS.
 
 
 8. Verify all deployed contracts:
+Make sure the `deployed-contracts.json` file is present as it stores contract constructor arguments used by the verify-all script.
 
 ```
-yarn hardhat verify-all --clrfund {clrfund-address} --network {network}
+yarn hardhat verify-all --network {network}
 ```
 
 ### Deploy the subgraph

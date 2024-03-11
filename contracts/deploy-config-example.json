@@ -1,0 +1,58 @@
+{
+  "localhost": {
+    "VkRegistry": {
+      "circuit": "micro",
+      "paramsDirectory": "./params"
+    },
+    "ClrFund": {
+      "template": false,
+      "coordinator": "",
+      "token": "",
+      "userRegistry": "SimpleUserRegistry",
+      "recipientRegistry": "SimpleRecipientRegistry"
+    },
+    "FundingRound": {
+      "duration": 900
+    },
+    "AnyOldERC20Token": {
+      "initialSupply": "10000000000000000000000"
+    },
+    "OptimisticRecipientRegistry": {
+      "challengePeriodSeconds": 9007199254740990,
+      "deposit": "0.001"
+    },
+    "BrightIdUserRegistry": {
+      "deploy": false,
+      "context": "clrfund-arbitrum-goerli",
+      "verifier": "0xdbf0b2ee9887fe11934789644096028ed3febe9c"
+    }
+  },
+  "optimism-sepolia": {
+    "VkRegistry": {
+      "circuit": "micro",
+      "paramsDirectory": "./params"
+    },
+    "ClrFund": {
+      "template": false,
+      "coordinator": "",
+      "token": "0x65bc8dd04808d99cf8aa6749f128d55c2051edde",
+      "userRegistry": "SemaphoreUserRegistry",
+      "recipientRegistry": "OptimisticRecipientRegistry"
+    },
+    "FundingRound": {
+      "duration": 900
+    },
+    "AnyOldERC20Token": {
+      "initialSupply": "10000000000000000000000"
+    },
+    "OptimisticRecipientRegistry": {
+      "challengePeriodSeconds": 9007199254740990,
+      "deposit": "0.001"
+    },
+    "BrightIdUserRegistry": {
+      "context": "clrfund-arbitrum-goerli",
+      "verifier": "0xdbf0b2ee9887fe11934789644096028ed3febe9c",
+      "sponsor": "0xC7c81634Dac2de4E7f2Ba407B638ff003ce4534C"
+    }
+  }
+}

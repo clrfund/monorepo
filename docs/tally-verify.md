@@ -23,10 +23,15 @@ WALLET_PRIVATE_KEY
 Decrypt messages and tally the votes:
 
 ```
-HARDHAT_NETWORK=<network> yarn ts-node cli/tally.ts --clrfund <clrfund-address> --start-block <maci-start-block>
+yarn hardhat tally --rapidsnark ${RAPID_SNARK} --output-dir ${OUTPUT_DIR} --network <network>
 ```
 
-If there's error and the tally task was stopped prematurely, it can be resumed by passing 2 additional parameters, '--maci-logs' and/or '--maci-state-file', if the files were generated.
+If there's error and the tally task was stopped prematurely, it can be resumed by passing 2 additional parameters, '--tally-file' and/or '--maci-state-file', if the files were generated.
+
+```
+# for rerun
+yarn hardhat tally --maci-state-file <file> --tally-file <tally.json> --network <network>
+```
 
 Result will be saved to `tally.json` file, which must then be published via IPFS.
 
@@ -53,7 +58,7 @@ WALLET_PRIVATE_KEY=
 Once you have the `tally.json` from the tally script, run:
 
 ```
-yarn hardhat clr-finalize --clrfund <clrfund address> --tally-file <tally file> --network <network>
+yarn hardhat finalize --tally-file <tally file> --network <network>
 ```
 
 # How to verify the tally results
@@ -63,7 +68,7 @@ Anyone can verify the tally results in the tally.json.
 From the clrfund contracts folder, run the following command to verify the result:
 
 ```
-yarn hardhat verify-tally-file --tally-file <tally file> --tally-address <tally contract address> --network <network>
+yarn hardhat verify-tally-file --tally-file <tally file> --network <network>
 ```
 
 # How to enable the leaderboard view
@@ -76,7 +81,7 @@ After finalizing the round, enable the leaderboard view in the vue-app by export
 ```sh
 cd contracts
 
-yarn hardhat clr-export-round --output-dir ../vue-app/src/rounds --network <network> --round-address <round address> --operator <operator> --start-block <recipient-registry-start-block> --ipfs <ipfs-gateway-url>
+yarn hardhat export-round --output-dir ../vue-app/src/rounds --network <network> --round-address <round address> --operator <operator> --start-block <recipient-registry-start-block> --ipfs <ipfs-gateway-url>
 
 ```
 3) Build and deploy the app
@@ -90,3 +95,5 @@ Also, lack of memory can also cause `core dump`, try to work around it by settin
 ```
 export NODE_OPTIONS=--max-old-space-size=4096
 ```
+
+The following tally script error, `Error at message index 0 - failed decryption due to either wrong encryption public key or corrupted ciphertext`, can be ignored.

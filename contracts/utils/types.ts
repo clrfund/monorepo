@@ -8,6 +8,7 @@ export enum EContracts {
   MACIFactory = 'MACIFactory',
   MACI = 'MACI',
   Verifier = 'Verifier',
+  VkRegistry = 'VkRegistry',
   TopupCredit = 'TopupCredit',
   PollFactory = 'PollFactory',
   Poll = 'Poll',
@@ -30,12 +31,6 @@ export enum EContracts {
   ClrFundDeployer = 'ClrFundDeployer',
   ERC20 = 'ERC20',
   TopupToken = 'TopupToken',
-}
-
-export enum recipientRegistryType {
-  simple = 0,
-  kleros = 1,
-  optimistic = 2,
 }
 
 export interface Project {

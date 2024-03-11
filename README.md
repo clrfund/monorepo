@@ -78,10 +78,24 @@ yarn && yarn build
 husky - Git hooks installed
 ```
 
+### Copy configuration for contract deployment
+
+```sh
+# adjust the configuration for localhost if necessary
+cp contracts/deploy-config-example.json contracts/deploy-config.json
+```
+
+### Generate coordinator MACI key
+```sh
+yarn hardhat new-maci-key
+```
+
 ### Copy env for contracts
 
 ```sh
-cp contracts/.env.example contracts/.env    # adjust if necessary
+# update COORDINATOR_MACISK with the MACI key from previous step
+# adjust other configuration if necessary
+cp contracts/.env.example contracts/.env
 ```
 
 ### Copy env for the webapp
