@@ -44,7 +44,8 @@ jobs:
         path: monorepo
     - name: Download micro zk circuit params
       run: |
-        $GITHUB_WORKSPACE/monorepo/.github/scripts/${ZKEYS_DOWNLOAD_SCRIPT}
+        cd monorepo/contracts
+        ../.github/scripts/${ZKEYS_DOWNLOAD_SCRIPT}
     - name: Build Clrfund
       run: |
         # use https to avoid error: unable to connect to github.com
@@ -57,7 +58,7 @@ jobs:
         yarn start:node &
     - name: Run tests
       run: |
-        export CIRCUIT_DIRECTORY="$GITHUB_WORKSPACE/params"
+        export CIRCUIT_DIRECTORY="$GITHUB_WORKSPACE/monorepo/contracts/params"
         export RAPID_SNARK="$GITHUB_WORKSPACE/rapidsnark/package/bin/prover"
         cd monorepo
         yarn test:e2e
