@@ -3,7 +3,7 @@ import { expect } from 'chai'
 import {
   Contract,
   ContractTransaction,
-  InfuraProvider,
+  JsonRpcProvider,
   ZeroAddress,
   ZeroHash,
 } from 'ethers'
@@ -15,35 +15,23 @@ import {
   rlpEncodeProof,
 } from '@clrfund/common'
 
-// Accounts from arbitrum-goerli to call eth_getProof as hardhat network
+// use optimism-sepolia as hardhat network
 // does not support eth_getProof
-const provider = new InfuraProvider('arbitrum-goerli')
+const provider = new JsonRpcProvider('https://sepolia.optimism.io')
 
 const tokens = [
   {
     address: '0x65bc8dd04808d99cf8aa6749f128d55c2051edde',
-    type: 'ERC20',
     // get proof with this block number
-    snapshotBlock: 35904051,
-    // storage slot for balances in the token (0x65bc8dd04808d99cf8aa6749f128d55c2051edde) on arbitrum goerli
+    snapshotBlock: 8388839,
+    // storage slot for balances in the token (0x65bc8dd04808d99cf8aa6749f128d55c2051edde)
     storageSlot: 2,
+    type: 'ERC20',
     holders: {
-      currentAndSnapshotHolder: '0x0B0Fe9D858F7e3751A3dcC7ffd0B9236be5E4bf5',
-      snapshotHolder: '0xBa8aC318F2dd829AF3D0D93882b4F1a9F3307bFD',
+      currentAndSnapshotHolder: '0xb5BdAa442BB34F27e793861C456CD5bDC527Ac8C',
+      snapshotHolder: '0xf8C6704E6b595B4B72085fACdf83b7FaDF767Ae3',
       currentHolderOnly: '0x5Fd5b076F6Ba8E8195cffb38A028afe5694b3d27',
       zeroBalance: '0xfb96F12fDD64D674631DB7B40bC35cFE74E98aF7',
-    },
-  },
-  {
-    address: '0x7E8206276F8FE511bfa44c9135B222DEe75e58f4',
-    type: 'ERC721',
-    snapshotBlock: 35904824,
-    storageSlot: 3,
-    holders: {
-      currentAndSnapshotHolder: '0x980825655805509f47EbDE41515966aeD5Df883D',
-      snapshotHolder: '0x326850D078c34cBF6996756523b00f0f1731dF12',
-      currentHolderOnly: '0x8D4EFdF0891DC38AC3DA2C3C5E683C982D3F7426',
-      zeroBalance: '0x99c68BFfF94d70f736491E9824caeDd19307167B',
     },
   },
 ]
