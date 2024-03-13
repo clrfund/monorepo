@@ -27,26 +27,18 @@ export class DeployPoll__Params {
     return this._event.parameters[0].value.toBigInt();
   }
 
-  get _pubKey(): DeployPoll_pubKeyStruct {
-    return changetype<DeployPoll_pubKeyStruct>(
-      this._event.parameters[1].value.toTuple(),
-    );
+  get _coordinatorPubKeyX(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+
+  get _coordinatorPubKeyY(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
   }
 
   get pollAddr(): DeployPollPollAddrStruct {
     return changetype<DeployPollPollAddrStruct>(
-      this._event.parameters[2].value.toTuple(),
+      this._event.parameters[3].value.toTuple(),
     );
-  }
-}
-
-export class DeployPoll_pubKeyStruct extends ethereum.Tuple {
-  get x(): BigInt {
-    return this[0].toBigInt();
-  }
-
-  get y(): BigInt {
-    return this[1].toBigInt();
   }
 }
 
@@ -107,28 +99,20 @@ export class SignUp__Params {
     return this._event.parameters[0].value.toBigInt();
   }
 
-  get _userPubKey(): SignUp_userPubKeyStruct {
-    return changetype<SignUp_userPubKeyStruct>(
-      this._event.parameters[1].value.toTuple(),
-    );
+  get _userPubKeyX(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
   }
 
-  get _voiceCreditBalance(): BigInt {
+  get _userPubKeyY(): BigInt {
     return this._event.parameters[2].value.toBigInt();
   }
 
-  get _timestamp(): BigInt {
+  get _voiceCreditBalance(): BigInt {
     return this._event.parameters[3].value.toBigInt();
   }
-}
 
-export class SignUp_userPubKeyStruct extends ethereum.Tuple {
-  get x(): BigInt {
-    return this[0].toBigInt();
-  }
-
-  get y(): BigInt {
-    return this[1].toBigInt();
+  get _timestamp(): BigInt {
+    return this._event.parameters[4].value.toBigInt();
   }
 }
 
@@ -663,29 +647,6 @@ export class MACI extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  numStateLeaves(param0: BigInt): BigInt {
-    let result = super.call(
-      "numStateLeaves",
-      "numStateLeaves(uint256):(uint256)",
-      [ethereum.Value.fromUnsignedBigInt(param0)],
-    );
-
-    return result[0].toBigInt();
-  }
-
-  try_numStateLeaves(param0: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "numStateLeaves",
-      "numStateLeaves(uint256):(uint256)",
-      [ethereum.Value.fromUnsignedBigInt(param0)],
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
   owner(): Address {
     let result = super.call("owner", "owner():(address)", []);
 
@@ -887,6 +848,21 @@ export class MACI extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  subtreesMerged(): boolean {
+    let result = super.call("subtreesMerged", "subtreesMerged():(bool)", []);
+
+    return result[0].toBoolean();
+  }
+
+  try_subtreesMerged(): ethereum.CallResult<boolean> {
+    let result = super.tryCall("subtreesMerged", "subtreesMerged():(bool)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
   tallyFactory(): Address {

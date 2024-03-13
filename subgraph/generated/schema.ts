@@ -434,6 +434,23 @@ export class Message extends Entity {
     }
   }
 
+  get poll(): string | null {
+    let value = this.get("poll");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set poll(value: string | null) {
+    if (!value) {
+      this.unset("poll");
+    } else {
+      this.set("poll", Value.fromString(<string>value));
+    }
+  }
+
   get submittedBy(): Bytes | null {
     let value = this.get("submittedBy");
     if (!value || value.kind == ValueKind.NULL) {
@@ -617,6 +634,63 @@ export class PublicKey extends Entity {
     } else {
       this.set("voiceCreditBalance", Value.fromBigInt(<BigInt>value));
     }
+  }
+}
+
+export class Poll extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Poll entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Poll must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`,
+      );
+      store.set("Poll", id.toString(), this);
+    }
+  }
+
+  static loadInBlock(id: string): Poll | null {
+    return changetype<Poll | null>(store.get_in_block("Poll", id));
+  }
+
+  static load(id: string): Poll | null {
+    return changetype<Poll | null>(store.get("Poll", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get fundingRound(): string {
+    let value = this.get("fundingRound");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set fundingRound(value: string) {
+    this.set("fundingRound", Value.fromString(value));
+  }
+
+  get messages(): MessageLoader {
+    return new MessageLoader("Poll", this.get("id")!.toString(), "messages");
   }
 }
 

@@ -94,3 +94,5 @@ export NODE_OPTIONS=--max-old-space-size=4096
 ```
 
 If you notice `Error at message index 0 - failed decryption due to either wrong encryption public key or corrupted ciphertext` while running the tally script, don't worry, it's just a warning. This issue is tracked [here](https://github.com/privacy-scaling-explorations/maci/issues/1134)
+
+`Error at message index n - invalid nonce` is also a warning, not an error. This error occurs when users reallocated their contribution.
