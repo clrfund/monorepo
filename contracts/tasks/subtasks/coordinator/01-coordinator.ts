@@ -4,7 +4,6 @@
  */
 import { Subtask } from '../../helpers/Subtask'
 import { EContracts } from '../../../utils/types'
-import { setCoordinator } from '../../../utils/deployment'
 import { Contract, getAddress } from 'ethers'
 import { Keypair, PrivKey, PubKey } from '@clrfund/common'
 
@@ -62,11 +61,10 @@ subtask
       return
     }
 
-    const tx = await setCoordinator({
-      clrfundContract,
-      coordinatorAddress: normalizedNewCoordinator,
-      coordinatorMacisk,
-    })
+    const tx = await clrfundContract.setCoordinator(
+      normalizedNewCoordinator,
+      newKeypair.pubKey.asContractParam()
+    )
 
     const receipt = await tx.wait()
     if (receipt?.status !== 1) {

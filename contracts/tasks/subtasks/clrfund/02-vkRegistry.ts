@@ -2,7 +2,7 @@ import type { VkRegistry } from '../../../typechain-types'
 
 import { ContractStorage } from '../../helpers/ContractStorage'
 import { Subtask } from '../../helpers/Subtask'
-import { setVerifyingKeys } from '../../../utils/deployment'
+import { setVerifyingKeys } from '../../../utils/contracts'
 import { MaciParameters } from '../../../utils/maciParameters'
 import { EContracts, type ISubtaskParams } from '../../helpers/types'
 

@@ -37,7 +37,7 @@ task('set-recipient-registry', 'Set recipient registry in ClrFund')
     let success: boolean
     try {
       await subtask.logStart()
-      const steps = await subtask.getDeploySteps(['recipientRegistry'], params)
+      const steps = await subtask.getDeploySteps(['recipient'], params)
 
       const skip = params.skip || 0
       await subtask.runSteps(steps, skip)

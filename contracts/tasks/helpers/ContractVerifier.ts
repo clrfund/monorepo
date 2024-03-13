@@ -32,11 +32,13 @@ export class ContractVerifier {
   async verify(
     address: string,
     constructorArguments: string,
-    libraries?: string
+    libraries?: string,
+    contract?: string
   ): Promise<[boolean, string]> {
     const params: IVerificationSubtaskArgs = {
       address,
       constructorArguments: JSON.parse(constructorArguments) as unknown[],
+      contract,
     }
 
     if (libraries) {

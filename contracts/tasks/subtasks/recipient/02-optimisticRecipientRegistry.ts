@@ -23,7 +23,7 @@ const storage = ContractStorage.getInstance()
  */
 async function getTokenDecimals(clrfundContract: ClrFund): Promise<bigint> {
   const nativeTokenAddress = await clrfundContract.nativeToken()
-  const tokenContract = await task.getContract<AnyOldERC20Token>({
+  const tokenContract = await subtask.getContract<AnyOldERC20Token>({
     name: EContracts.AnyOldERC20Token,
     address: nativeTokenAddress,
   })

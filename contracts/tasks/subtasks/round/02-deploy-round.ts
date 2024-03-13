@@ -18,6 +18,34 @@ const subtask = Subtask.getInstance()
 const storage = ContractStorage.getInstance()
 
 /**
+ * Register the FundingRound contract in the contract storage for verification
+ *
+ * @param fundingRoundContract The funding round contract
+ * @param network The network
+ * @param tx The funding round deployment transaction
+ */
+async function registerFundingRound(
+  fundingRoundContract: FundingRound,
+  network: string,
+  tx: ContractTransactionResponse
+) {
+  const args = await Promise.all([
+    fundingRoundContract.nativeToken(),
+    fundingRoundContract.userRegistry(),
+    fundingRoundContract.recipientRegistry(),
+    fundingRoundContract.coordinator(),
+  ])
+
+  await storage.register({
+    id: EContracts.FundingRound,
+    contract: fundingRoundContract,
+    network,
+    args,
+    tx,
+  })
+}
+
+/**
  * Register MACI contract in the contract storage for verification
  *
  * @param fundingRoundContract The funding round contract
@@ -85,28 +113,26 @@ async function registerPoll(
     ])
 
   const args = [
-    [
-      duration,
-      {
-        maxMessages: maxValues.maxMessages,
-        maxVoteOptions: maxValues.maxVoteOptions,
-      },
-      {
-        intStateTreeDepth: treeDepths.intStateTreeDepth,
-        messageTreeSubDepth: treeDepths.messageTreeSubDepth,
-        messageTreeDepth: treeDepths.messageTreeDepth,
-        voteOptionTreeDepth: treeDepths.voteOptionTreeDepth,
-      },
-      {
-        x: coordinatorPubKey.x,
-        y: coordinatorPubKey.y,
-      },
-      {
-        maci: extContracts.maci,
-        messageAq: extContracts.messageAq,
-        topupCredit: extContracts.topupCredit,
-      },
-    ],
+    duration,
+    {
+      maxMessages: maxValues.maxMessages,
+      maxVoteOptions: maxValues.maxVoteOptions,
+    },
+    {
+      intStateTreeDepth: treeDepths.intStateTreeDepth,
+      messageTreeSubDepth: treeDepths.messageTreeSubDepth,
+      messageTreeDepth: treeDepths.messageTreeDepth,
+      voteOptionTreeDepth: treeDepths.voteOptionTreeDepth,
+    },
+    {
+      x: coordinatorPubKey.x,
+      y: coordinatorPubKey.y,
+    },
+    {
+      maci: extContracts.maci,
+      messageAq: extContracts.messageAq,
+      topupCredit: extContracts.topupCredit,
+    },
   ]
 
   await storage.register({
@@ -203,14 +229,7 @@ subtask
       address: fundingRoundContractAddress,
     })
 
-    await storage.register({
-      id: EContracts.FundingRound,
-      contract: fundingRoundContract,
-      args: [duration],
-      network,
-      tx,
-    })
-
+    await registerFundingRound(fundingRoundContract, network, tx)
     await registerMaci(fundingRoundContract, network, tx)
     await registerPoll(duration, fundingRoundContract, network, tx)
     await registerTallyAndMessageProcessor(fundingRoundContract, network, tx)

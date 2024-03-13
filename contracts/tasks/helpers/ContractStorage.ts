@@ -7,7 +7,7 @@ import {
 
 import { EContracts } from '../../utils/types'
 import { JSONFile } from '../../utils/JSONFile'
-import { Libraries } from '../../utils/deployment'
+import { Libraries } from 'hardhat/types'
 
 const DEPLOYED_CONTRACTS = './deployed-contracts.json'
 

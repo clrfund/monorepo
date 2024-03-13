@@ -60,4 +60,6 @@ subtask
         `Failed to se user registry ${userRegistryContractAddress}`
       )
     }
+
+    subtask.logTransaction(tx)
   })

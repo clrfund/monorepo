@@ -71,8 +71,18 @@ task('verify-all', 'Verify contracts listed in storage')
       if (!force && verifiedEntity) {
         console.log('Already verified')
       } else {
+        let contract: string | undefined
+        let libraries: string | undefined
+        if (entry.id === 'AnyOldERC20Token') {
+          contract = 'contracts/AnyOldERC20Token.sol:AnyOldERC20Token'
+        }
         // eslint-disable-next-line no-await-in-loop
-        const [ok, err] = await verifier.verify(address, params?.args ?? '')
+        const [ok, err] = await verifier.verify(
+          address,
+          params?.args ?? '',
+          libraries,
+          contract
+        )
 
         if (ok) {
           storage.setVerified(address, hre.network.name, true)

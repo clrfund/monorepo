@@ -18,8 +18,10 @@ subtask
     subtask.setHre(hre)
     const deployer = await subtask.getDeployer()
 
-    let brightidSponsorContractAddress: string | undefined =
-      subtask.getConfigField<string>(EContracts.BrightIdUserRegistry, 'sponsor')
+    let brightidSponsorContractAddress = subtask.tryGetConfigField<string>(
+      EContracts.BrightIdUserRegistry,
+      'sponsor'
+    )
 
     if (brightidSponsorContractAddress) {
       console.log(

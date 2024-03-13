@@ -7,7 +7,7 @@ import {
   ContractTransactionResponse,
   formatUnits,
 } from 'ethers'
-import { task } from 'hardhat/config'
+import { subtask as HardhatSubtask } from 'hardhat/config'
 
 import { exit } from 'process'
 
@@ -18,6 +18,7 @@ import type {
   HardhatRuntimeEnvironment,
 } from 'hardhat/types'
 
+import { deployContract } from '../../utils/contracts'
 import { EContracts } from '../../utils/types'
 import { ContractStorage } from './ContractStorage'
 import {
@@ -87,7 +88,7 @@ export class Subtask {
     try {
       this.config = JSONFile.read(DEPLOY_CONFIG) as TConfig
     } catch (e) {
-      console.log('eror =======================', e)
+      //console.log('eror =======================', e)
       this.config = {} as TConfig
     }
 
@@ -350,7 +351,7 @@ export class Subtask {
       paramsFn: paramsFn || this.getDefaultParams,
     })
 
-    return task(taskName, stepName)
+    return HardhatSubtask(taskName, stepName)
   }
 
   /**
@@ -438,10 +439,8 @@ export class Subtask {
     const args = options?.args || []
     const libraries = options?.libraries
 
-    const qualifiedName = contractName.includes('Poseidon')
-      ? ':' + contractName
-      : contractName
-    const contract = await this.hre.ethers.deployContract(qualifiedName, args, {
+    const contract = await deployContract(contractName, this.hre.ethers, {
+      args,
       signer: deployer,
       libraries,
     })
@@ -455,19 +454,46 @@ export class Subtask {
    *
    * @param id - contract name
    * @param field - config field key
-   * @returns config field value or null
+   * @returns config field value
    */
   getConfigField<T = string | number | boolean>(
     id: EContracts,
-    field: string,
-    mustGet = false
+    field: string
   ): T {
     this.checkHre(this.hre)
 
-    const value = this.config[this.hre.network.name][id][field] as T
+    let value: T | null | undefined
+    try {
+      value = this.config[this.hre.network.name][id][field] as T
+    } catch {
+      value = undefined
+    }
 
-    if (mustGet && (value === null || value === undefined)) {
-      throw new Error(`Can't find ${this.hre.network.name}.${id}.${field}`)
+    if (value === null || value === undefined) {
+      throw new Error(
+        `Can't find ${this.hre.network.name}.${id}.${field} in ${DEPLOY_CONFIG}`
+      )
+    }
+
+    return value
+  }
+
+  /**
+   * Try to get deploy config field (see deploy-config.json)
+   *
+   * @param id - contract name
+   * @param field - config field key
+   * @returns config field value or undefined
+   */
+  tryGetConfigField<T = string | number | boolean>(
+    id: EContracts,
+    field: string
+  ): T | undefined {
+    let value: T | undefined
+    try {
+      value = this.getConfigField<T>(id, field)
+    } catch {
+      value = undefined
     }
 
     return value

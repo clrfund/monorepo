@@ -21,6 +21,10 @@ task('cancel', 'Cancel the current round')
     )
 
     const cancelTx = await clrfundContract.cancelCurrentRound()
-    await cancelTx.wait()
+    const receipt = await cancelTx.wait()
+    if (receipt.status !== 1) {
+      throw new Error('Failed to cancel current round')
+    }
+
     console.log('Cancel transaction hash: ', cancelTx.hash)
   })

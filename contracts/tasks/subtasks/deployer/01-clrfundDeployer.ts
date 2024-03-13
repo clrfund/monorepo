@@ -9,13 +9,10 @@ import { EContracts } from '../../../utils/types'
 const subtask = Subtask.getInstance()
 const storage = ContractStorage.getInstance()
 
-/**
- * Deploy step registration and task itself
- */
 subtask
   .addTask(
-    'brightid:deploy-brightid-sponsor',
-    'Deploy BrightID sponsor contracts'
+    'deployer:deploy-clrfund-deployer',
+    'Deploy ClrFundDeployer contract'
   )
   .setAction(async ({ incremental }: ISubtaskParams, hre) => {
     subtask.setHre(hre)

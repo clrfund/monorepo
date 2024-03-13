@@ -29,12 +29,12 @@ subtask
       return
     }
 
-    const shouldDeploy = subtask.getConfigField<boolean>(
+    const shouldDeploy = subtask.tryGetConfigField<boolean>(
       EContracts.BrightIdUserRegistry,
       'deploy'
     )
 
-    if (!shouldDeploy) {
+    if (shouldDeploy === false) {
       // for testing, we don't deploy for every round
       return
     }

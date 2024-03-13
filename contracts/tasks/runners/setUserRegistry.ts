@@ -45,7 +45,7 @@ task('set-user-registry', 'Set the user registry in ClrFund')
     let success: boolean
     try {
       await subtask.logStart()
-      const steps = await subtask.getDeploySteps(['userRegistry'], params)
+      const steps = await subtask.getDeploySteps(['user'], params)
 
       const skip = params.skip || 0
 

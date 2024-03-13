@@ -1,7 +1,7 @@
 /**
  * Deploy a new recipient registry
  */
-
+import { encodeBytes32String } from 'ethers'
 import { ContractStorage } from '../../helpers/ContractStorage'
 import { Subtask } from '../../helpers/Subtask'
 import { ISubtaskParams } from '../../helpers/types'
@@ -33,7 +33,7 @@ subtask
     }
 
     const brightidUserRegistryContractAddress = storage.getAddress(
-      EContracts.SimpleRecipientRegistry,
+      EContracts.BrightIdUserRegistry,
       network
     )
 
@@ -41,16 +41,24 @@ subtask
       return
     }
 
-    const context = subtask.getConfigField(
+    const shouldDeploy = subtask.tryGetConfigField<boolean>(
+      EContracts.BrightIdUserRegistry,
+      'deploy'
+    )
+    if (shouldDeploy === false) {
+      return
+    }
+
+    const context = subtask.getConfigField<string>(
       EContracts.BrightIdUserRegistry,
       'context'
     )
-    const verifier = subtask.getConfigField(
+    const verifier = subtask.getConfigField<string>(
       EContracts.BrightIdUserRegistry,
       'verifier'
     )
 
-    let sponsor = subtask.getConfigField(
+    let sponsor = subtask.tryGetConfigField<string>(
       EContracts.BrightIdUserRegistry,
       'sponsor'
     )
@@ -58,7 +66,7 @@ subtask
       sponsor = storage.mustGetAddress(EContracts.BrightIdSponsor, network)
     }
 
-    const args = [context, verifier, sponsor]
+    const args = [encodeBytes32String(context), verifier, sponsor]
     const brightidUserRegistryContract = await subtask.deployContract(
       EContracts.BrightIdUserRegistry,
       { signer: deployer, args }

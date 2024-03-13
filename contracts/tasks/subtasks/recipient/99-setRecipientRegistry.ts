@@ -47,6 +47,7 @@ subtask
         getAddress(recipientRegistryContractAddress)
       ) {
         // already set
+        console.log('Recipient registry already set, skipping..')
         return
       }
     }
@@ -61,4 +62,6 @@ subtask
         `Failed to set recipient registry ${recipientRegistryContractAddress}`
       )
     }
+
+    subtask.logTransaction(tx)
   })

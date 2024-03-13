@@ -6,8 +6,9 @@ import { time } from '@nomicfoundation/hardhat-network-helpers'
 
 import { UNIT, ZERO_ADDRESS } from '../utils/constants'
 import { getTxFee, getEventArg } from '../utils/contracts'
-import { deployContract } from '../utils/deployment'
+import { deployContract } from '../utils/contracts'
 import { HardhatEthersSigner } from '@nomicfoundation/hardhat-ethers/signers'
+import { EContracts } from '../utils/types'
 
 const MAX_RECIPIENTS = 15
 
@@ -587,12 +588,14 @@ describe('Optimistic recipient registry', () => {
     ;[, deployer, controller, recipient, requester] = await ethers.getSigners()
   })
   beforeEach(async () => {
-    registry = await deployContract({
-      name: 'OptimisticRecipientRegistry',
-      contractArgs: [baseDeposit, challengePeriodDuration, controller.address],
+    registry = await deployContract(
+      EContracts.OptimisticRecipientRegistry,
       ethers,
-      signer: deployer,
-    })
+      {
+        args: [baseDeposit, challengePeriodDuration, controller.address],
+        signer: deployer,
+      }
+    )
     registryAddress = await registry.getAddress()
   })
 
@@ -1042,16 +1045,13 @@ describe('Optimistic recipient registry', () => {
         '_recipientId'
       )
 
-      const anotherRegistry = await deployContract({
-        name: 'OptimisticRecipientRegistry',
-        contractArgs: [
-          baseDeposit,
-          challengePeriodDuration,
-          controller.address,
-        ],
-        ethers,
-        signer: deployer,
-      })
+      const anotherRegistry = await ethers.deployContract(
+        EContracts.OptimisticRecipientRegistry,
+        [baseDeposit, challengePeriodDuration, controller.address],
+        {
+          signer: deployer,
+        }
+      )
       const txTwo = await anotherRegistry.addRecipient(
         recipientAddress,
         metadata,

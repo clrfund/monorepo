@@ -1,9 +1,10 @@
-import { Contract } from 'ethers'
+import { Contract, BigNumberish } from 'ethers'
 
 import { VerifyingKey } from 'maci-domainobjs'
 import { extractVk } from 'maci-circuits'
 import { CIRCUITS, getCircuitFiles } from './circuits'
 import { TREE_ARITY } from './constants'
+import { Params } from '../typechain-types/contracts/MACIFactory'
 
 type TreeDepths = {
   intStateTreeDepth: number
@@ -38,7 +39,10 @@ export class MaciParameters {
     return TREE_ARITY ** this.treeDepths.messageTreeSubDepth
   }
 
-  asContractParam(): any[] {
+  asContractParam(): [
+    _stateTreeDepth: BigNumberish,
+    _treeDepths: Params.TreeDepthsStruct,
+  ] {
     return [
       this.stateTreeDepth,
       {
