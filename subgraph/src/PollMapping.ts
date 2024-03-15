@@ -1,7 +1,7 @@
 import { log } from '@graphprotocol/graph-ts'
 import { PublishMessage } from '../generated/templates/Poll/Poll'
 
-import { FundingRound, Message, PublicKey } from '../generated/schema'
+import { FundingRound, Poll, Message, PublicKey } from '../generated/schema'
 import { makePublicKeyId } from './PublicKey'
 
 export function handlePublishMessage(event: PublishMessage): void {
@@ -13,12 +13,20 @@ export function handlePublishMessage(event: PublishMessage): void {
     return
   }
 
-  let fundingRoundId = event.transaction.to!.toHex()
-  let fundingRound = FundingRound.load(fundingRoundId)
-  if (fundingRound == null) {
+  let pollEntityId = event.transaction.to!.toHex()
+  let poll = Poll.load(pollEntityId)
+  if (poll == null) {
+    log.error('Error: handlePublishMessage failed poll not found {}', [
+      pollEntityId,
+    ])
+    return
+  }
+
+  let fundingRoundId = poll.fundingRound
+  if (!fundingRoundId) {
     log.error(
-      'Error: handlePublishMessage failed fundingRound not registered',
-      []
+      'Error: handlePublishMessage failed poll {} missing funding round',
+      [pollEntityId]
     )
     return
   }
@@ -55,6 +63,8 @@ export function handlePublishMessage(event: PublishMessage): void {
 
   message.publicKey = publicKeyId
   message.timestamp = timestamp
+
+  message.poll = pollEntityId
   message.fundingRound = fundingRoundId
   message.save()
   log.info('handlePublishMessage', [])

@@ -26,8 +26,8 @@ export function handleSignUp(event: SignUp): void {
 
   let publicKeyId = makePublicKeyId(
     fundingRoundId,
-    event.params._userPubKey.x,
-    event.params._userPubKey.y
+    event.params._userPubKeyX,
+    event.params._userPubKeyY
   )
   let publicKey = PublicKey.load(publicKeyId)
 
@@ -35,8 +35,8 @@ export function handleSignUp(event: SignUp): void {
   if (publicKey == null) {
     publicKey = new PublicKey(publicKeyId)
   }
-  publicKey.x = event.params._userPubKey.x
-  publicKey.y = event.params._userPubKey.y
+  publicKey.x = event.params._userPubKeyX
+  publicKey.y = event.params._userPubKeyY
   publicKey.stateIndex = event.params._stateIndex
   publicKey.voiceCreditBalance = event.params._voiceCreditBalance
 

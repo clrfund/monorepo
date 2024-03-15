@@ -35,6 +35,7 @@ import {
   RecipientRegistry,
   ContributorRegistry,
   Token,
+  Poll,
 } from '../generated/schema'
 
 function createContributorRegistry(
@@ -263,6 +264,11 @@ export function handleRoundStarted(event: RoundStarted): void {
     let pollAddress = pollAddressCall.value
     fundingRound.pollAddress = pollAddress
     PollTemplate.create(pollAddress)
+
+    let pollEntityId = pollAddress.toHexString()
+    let pollEntity = new Poll(pollEntityId)
+    pollEntity.fundingRound = fundingRoundId
+    pollEntity.save()
 
     let pollContract = PollContract.bind(pollAddress)
     let deployTimeAndDuration = pollContract.try_getDeployTimeAndDuration()

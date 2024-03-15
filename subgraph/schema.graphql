@@ -27,7 +27,8 @@ type Message @entity {
   data: [BigInt!]
   msgType: BigInt!
   publicKey: PublicKey
-  fundingRound: FundingRound 
+  fundingRound: FundingRound
+  poll: Poll
   submittedBy: Bytes
   timestamp: String
   blockNumber: BigInt!
@@ -42,6 +43,12 @@ type PublicKey @entity {
   y: BigInt!
   stateIndex: BigInt
   voiceCreditBalance: BigInt
+}
+
+type Poll @entity {
+  id: ID!
+  fundingRound: FundingRound!
+  messages: [Message!] @derivedFrom(field: "poll")
 }
 
 type FundingRound @entity {

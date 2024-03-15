@@ -15,7 +15,7 @@ export type RecipientState = {
 
 export const useRecipientStore = defineStore('recipient', {
   state: (): RecipientState => ({
-    recipient: defaultRecipientApplicationData,
+    recipient: newRecipientApplicationData(),
     recipientRegistryAddress: null,
     recipientRegistryInfo: null,
   }),
@@ -37,7 +37,7 @@ export const useRecipientStore = defineStore('recipient', {
       }
     },
     resetRecipientData() {
-      this.recipient = defaultRecipientApplicationData
+      this.recipient = newRecipientApplicationData()
     },
     async loadRecipientRegistryInfo() {
       const appStore = useAppStore()
@@ -56,35 +56,41 @@ export const useRecipientStore = defineStore('recipient', {
   },
 })
 
-const defaultRecipientApplicationData: RecipientApplicationData = {
-  project: {
-    name: '',
-    tagline: '',
-    description: '',
-    category: '',
-    problemSpace: '',
-  },
-  fund: {
-    addressName: '',
-    resolvedAddress: '',
-    plans: '',
-  },
-  team: {
-    name: '',
-    description: '',
-    email: '',
-  },
-  links: {
-    github: '',
-    radicle: '',
-    website: '',
-    twitter: '',
-    discord: '',
-  },
-  image: {
-    bannerHash: '',
-    thumbnailHash: '',
-  },
-  furthestStep: 0,
-  hasEns: false,
+/**
+ * Create a new copy of recipient application data
+ * @returns A new copy of an empty recipient application data
+ */
+function newRecipientApplicationData(): RecipientApplicationData {
+  return {
+    project: {
+      name: '',
+      tagline: '',
+      description: '',
+      category: '',
+      problemSpace: '',
+    },
+    fund: {
+      addressName: '',
+      resolvedAddress: '',
+      plans: '',
+    },
+    team: {
+      name: '',
+      description: '',
+      email: '',
+    },
+    links: {
+      github: '',
+      radicle: '',
+      website: '',
+      twitter: '',
+      discord: '',
+    },
+    image: {
+      bannerHash: '',
+      thumbnailHash: '',
+    },
+    furthestStep: 0,
+    hasEns: false,
+  }
 }

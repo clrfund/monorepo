@@ -74,19 +74,26 @@ Update the `VkRegistry.paramsDirectory` with the circuit parameter folder. If yo
 ### Run the deploy script
 Use the `-h` switch to print the command line help menu for all the scripts in the `cli` folder. For hardhat help, use `yarn hardhat help`.
 
+1. Generate coordinator MACI key
 
-1. Deploy an instance of ClrFund
+```
+yarn ts-node tasks/maciNewKey.ts
+```
+
+Update the `/contracts/.env` and set the `COORDINATOR_MACISK` environment variable value to the `SecretKey` value.
+
+2. Deploy an instance of ClrFund
 
 ```
 yarn hardhat new-clrfund --network <network>
 ```
 
-2. deploy new funding round
+3. deploy new funding round
 ```
 yarn hardhat new-round --network <network>
 ```
 
-3. To load a list of users into the simple user registry,
+4. To load a list of users into the simple user registry,
 
 ```
 yarn hardhat load-simple-users --file-path addresses.txt --user-registry <address> --network <network>
