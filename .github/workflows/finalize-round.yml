@@ -9,8 +9,7 @@ on:
         default: '0x87790498127ff044f43b9230506833ca89113757'
       maci_tx_hash:
         description: 'MACI creation transaction hash'
-        required: true
-        default: '0x1280527bdb23cbd4906c94e152722792fc59400bfccfc89709beb2531fc55365'
+        required: false
       blocks_per_batch:
         description: 'Blocks of logs to fetch per batch'
         required: true
@@ -18,7 +17,7 @@ on:
       network:
         description: 'Network'
         required: true
-        default: 'optimism-sepolia'
+        default: 'arbitrum-sepolia'
       jsonrpc_url:
         description: jsonrpc url to node
         required: false
@@ -83,7 +82,7 @@ jobs:
         # tally and finalize
         cd monorepo/contracts
         mkdir -p proof_output
-        yarn hardhat clr-tally --clrfund "${CLRFUND_ADDRESS}" --network "${NETWORK}" \
+        yarn hardhat tally --clrfund "${CLRFUND_ADDRESS}" --network "${NETWORK}" \
           --rapidsnark ${RAPID_SNARK} \
           --circuit-directory ${CIRCUIT_DIRECTORY} \
           --blocks-per-batch ${BLOCKS_PER_BATCH} \
@@ -91,4 +90,4 @@ jobs:
         curl --location --request POST 'https://api.pinata.cloud/pinning/pinFileToIPFS' \
           --header "Authorization: Bearer ${{ secrets.PINATA_JWT }}" \
           --form 'file=@"./proof_output/tally.json"'
-        yarn hardhat --network "${NETWORK}" clr-finalize --clrfund "${CLRFUND_ADDRESS}"
+        yarn hardhat --network "${NETWORK}" finalize --clrfund "${CLRFUND_ADDRESS}"

@@ -14,7 +14,7 @@ import { getIpfsHash } from '../../utils/ipfs'
  *
  * Sample usage:
  *
- *  yarn hardhat load-merkle-users --address-file addresses.txt --user-registry <address> --network goerli
+ *  yarn hardhat load-merkle-users --address-file addresses.txt --user-registry <address> --network <network>
  */
 
 const MAX_ADDRESSES_SUPPORTED = 10000

@@ -1,5 +1,6 @@
 /**
- * Script for tallying votes
+ * Script for tallying votes which involves fetching MACI logs, generating proofs,
+ * and proving on chain
  *
  * This script can be rerun by passing in --maci-state-file and --tally-file
  * If the --maci-state-file is passed, it will skip MACI log fetching

@@ -73,6 +73,17 @@ export interface ISubtaskParams {
    * Skip steps with less or equal index
    */
   skip?: number
+
+  /**
+   * The duration of a new funding round. This is only used when starting
+   * a new round
+   */
+  roundDuration?: number
+
+  /**
+   * The ClrFund contract address
+   */
+  clrfund?: string
 }
 
 /**
@@ -132,11 +143,6 @@ export interface ISubtaskStepCatalog {
  * Interface that represents subtask step
  */
 export interface ISubtaskStep {
-  /**
-   * Sequence step id
-   */
-  id: number
-
   /**
    * Step name
    */

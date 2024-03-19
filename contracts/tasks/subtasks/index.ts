@@ -1,17 +1,11 @@
 import fs from 'fs'
 import path from 'path'
 
-export const SUBTASK_CATALOGS = [
-  'brightid',
-  'clrfund',
-  'coordinator',
-  'deployer',
-  'maci',
-  'recipient',
-  'round',
-  'user',
-  'token',
-]
+// get the names of the directories under subtasks
+export const SUBTASK_CATALOGS = fs
+  .readdirSync(__dirname, { withFileTypes: true })
+  .filter((p) => p.isDirectory())
+  .map((p) => p.name)
 
 /**
  * The same as individual imports but doesn't require to add new import line every time

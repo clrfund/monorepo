@@ -179,9 +179,10 @@ export class Subtask {
   async runSteps(steps: ISubtaskStep[], skip: number): Promise<void> {
     this.checkHre(this.hre)
 
+    let stepNumber = 1
     // eslint-disable-next-line no-restricted-syntax
     for (const step of steps) {
-      const stepId = `0${step.id}`
+      const stepId = `0${stepNumber}`
       console.log(
         '\n======================================================================'
       )
@@ -190,12 +191,13 @@ export class Subtask {
         '======================================================================\n'
       )
 
-      if (step.id <= skip) {
-        console.log(`STEP ${step.id} WAS SKIPPED`)
+      if (stepNumber <= skip) {
+        console.log(`STEP ${stepNumber} WAS SKIPPED`)
       } else {
         // eslint-disable-next-line no-await-in-loop
         await this.hre.run(step.taskName, step.args)
       }
+      stepNumber++
     }
   }
 
@@ -396,8 +398,8 @@ export class Subtask {
     deployTypes: string[],
     params: ISubtaskParams
   ): Promise<ISubtaskStep[]> {
-    const catalogSteps = await Promise.all(
-      deployTypes.map((deployType) => this.stepCatalog.get(deployType))
+    const catalogSteps = deployTypes.map((deployType) =>
+      this.stepCatalog.get(deployType)
     )
 
     let stepList: ISubtaskStepCatalog[] = []
@@ -413,7 +415,6 @@ export class Subtask {
     return Promise.all(stepList.map(({ paramsFn }) => paramsFn(params))).then(
       (stepArgs) =>
         stepArgs.map((args, index) => ({
-          id: index + 1,
           name: stepList[index].name,
           taskName: stepList[index].taskName,
           args: args as unknown,
@@ -531,5 +532,6 @@ export class Subtask {
     console.log(`deployer address: ${tx.from}`)
     console.log(`gas price: ${tx.gasPrice}`)
     console.log(`gas used: ${tx.gasLimit}`)
+    console.log()
   }
 }

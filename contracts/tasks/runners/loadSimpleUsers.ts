@@ -9,7 +9,7 @@ import fs from 'fs'
  *
  * Sample usage:
  *
- *  yarn hardhat load-simple-users --file-path addresses.txt --user-registry <address> --network goerli
+ *  yarn hardhat load-simple-users --file-path addresses.txt --user-registry <address> --network <network>
  */
 
 /**

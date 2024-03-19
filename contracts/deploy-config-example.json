@@ -11,9 +11,6 @@
       "userRegistry": "SimpleUserRegistry",
       "recipientRegistry": "SimpleRecipientRegistry"
     },
-    "FundingRound": {
-      "duration": 900
-    },
     "AnyOldERC20Token": {
       "initialSupply": "10000000000000000000000"
     },
@@ -27,7 +24,7 @@
       "verifier": "0xdbf0b2ee9887fe11934789644096028ed3febe9c"
     }
   },
-  "optimism-sepolia": {
+  "arbitrum-sepolia": {
     "VkRegistry": {
       "circuit": "micro",
       "paramsDirectory": "./params"
@@ -36,11 +33,8 @@
       "template": false,
       "coordinator": "",
       "token": "0x65bc8dd04808d99cf8aa6749f128d55c2051edde",
-      "userRegistry": "SemaphoreUserRegistry",
+      "userRegistry": "BrightIdUserRegistry",
       "recipientRegistry": "OptimisticRecipientRegistry"
-    },
-    "FundingRound": {
-      "duration": 900
     },
     "AnyOldERC20Token": {
       "initialSupply": "10000000000000000000000"

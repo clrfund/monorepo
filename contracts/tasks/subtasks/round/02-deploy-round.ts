@@ -2,6 +2,7 @@
  * Deploy a funding round
  */
 
+import { TaskArguments } from 'hardhat/types'
 import { ContractStorage } from '../../helpers/ContractStorage'
 import { Subtask } from '../../helpers/Subtask'
 import { EContracts } from '../../../utils/types'
@@ -13,6 +14,7 @@ import {
   Tally,
 } from '../../../typechain-types'
 import { ContractTransactionResponse } from 'ethers'
+import { ISubtaskParams } from '../../helpers/types'
 
 const subtask = Subtask.getInstance()
 const storage = ContractStorage.getInstance()
@@ -198,24 +200,39 @@ async function registerTallyAndMessageProcessor(
 }
 
 /**
+ * Get the hardhat task params
+ *
+ * @param {ISubtaskParams} params - hardhat task arguments
+ * @returns {Promise<TaskArguments>} params for deploy workflow
+ */
+async function getParams({
+  verify,
+  incremental,
+  roundDuration,
+  clrfund,
+}: ISubtaskParams): Promise<TaskArguments> {
+  return Promise.resolve({ verify, incremental, clrfund, roundDuration })
+}
+
+/**
  * Deploy step registration and task itself
  */
 subtask
-  .addTask('round:deploy-round', 'Deploy a funding round')
-  .setAction(async (_, hre) => {
+  .addTask('round:deploy-round', 'Deploy a funding round', getParams)
+  .setAction(async ({ roundDuration, clrfund }, hre) => {
     subtask.setHre(hre)
     const network = hre.network.name
 
-    const duration = subtask.getConfigField<number>(
-      EContracts.FundingRound,
-      'duration'
-    )
+    if (!roundDuration) {
+      throw new Error('Missing the roundDuration subtask parameter')
+    }
 
     const clrfundContract = await subtask.getContract<ClrFund>({
       name: EContracts.ClrFund,
+      address: clrfund,
     })
 
-    const tx = await clrfundContract.deployNewRound(duration)
+    const tx = await clrfundContract.deployNewRound(roundDuration)
     const receipt = await tx.wait()
     if (receipt?.status !== 1) {
       throw new Error('Failed to deploy funding round')
@@ -231,6 +248,6 @@ subtask
 
     await registerFundingRound(fundingRoundContract, network, tx)
     await registerMaci(fundingRoundContract, network, tx)
-    await registerPoll(duration, fundingRoundContract, network, tx)
+    await registerPoll(roundDuration, fundingRoundContract, network, tx)
     await registerTallyAndMessageProcessor(fundingRoundContract, network, tx)
   })

@@ -24,34 +24,10 @@ subtask
       return
     }
 
-    const template = subtask.getConfigField<boolean>(
-      EContracts.ClrFund,
-      'template'
-    )
-    const maciFactoryAddress = storage.mustGetAddress(
-      EContracts.MACIFactory,
-      hre.network.name
-    )
-    const fundingRoundFactoryContractAddress = storage.mustGetAddress(
-      EContracts.FundingRoundFactory,
-      hre.network.name
-    )
-
     const clrfundContract = await subtask.deployContract<ClrFund>(
       EContracts.ClrFund,
       { signer: deployer }
     )
-
-    if (!template) {
-      const tx = await clrfundContract.init(
-        maciFactoryAddress,
-        fundingRoundFactoryContractAddress
-      )
-      const receipt = await tx.wait()
-      if (receipt?.status !== 1) {
-        throw new Error('Failed to initialize ClrFund')
-      }
-    }
 
     await storage.register({
       id: EContracts.ClrFund,

@@ -3,17 +3,25 @@ name: Create new round
 on:
   workflow_dispatch:
     inputs:
+      clrfund_address:
+        description: 'Clrfund contract address'
+        required: true
+        default: '0x87790498127ff044f43b9230506833ca89113757'
       duration:
         description: 'Round duration'
         required: true
         default: 3600
-
+      network:
+        description: 'Network'
+        required: true
+        default: 'arbitrum-sepolia'
+      jsonrpc_url:
+        description: jsonrpc url to node
+        required: false
 
 env:
   NODE_VERSION: 20.x
-  SUBGRPAH_URL: "https://api.thegraph.com/subgraphs/name/clrfund/clrfund-testnet"
   WALLET_PRIVATE_KEY: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_WALLET_PRIVATE_KEY }}
-  NETWORK: arbitrum-sepolia
 
 jobs:
   create-new-round:
@@ -33,8 +41,7 @@ jobs:
     - name: Run create new round script
       run: |
         cd contracts
-        export CLRFUND=$(curl -X POST -d '{"query":"{clrFunds {id}}"}' $SUBGRPAH_URL)
-        export CLRFUND_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.CLRFUND).data.clrFunds[0].id)')
-        yarn hardhat new-round --network "${NETWORK}" \
+        yarn hardhat new-round \
+          --network ${{ github.event.inputs.network }} \
           --duration ${{ github.event.inputs.duration }} \
-          --clrfund ${CLRFUND_ADDRESS}
+          --clrfund ${{ github.event.inputs.clrfund_address }}

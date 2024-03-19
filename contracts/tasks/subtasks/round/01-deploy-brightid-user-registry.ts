@@ -19,7 +19,7 @@ subtask
   .setAction(async (params: ISubtaskParams, hre) => {
     subtask.setHre(hre)
 
-    const userRegistryName = subtask.getConfigField<string>(
+    const userRegistryName = subtask.tryGetConfigField<string>(
       EContracts.ClrFund,
       'userRegistry'
     )

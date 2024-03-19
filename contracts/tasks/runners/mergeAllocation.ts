@@ -4,14 +4,14 @@
  * data into the output file of the export-round task
  *
  * Sample usage:
- * yarn hardhat clr-merge-allocations --allocation-file /tmp/downloads/clr.fund-round8.tsv --round-file ../vue-app/src/rounds/xdai/0xd07aa7faeba14efde87f2538699c0d6c9a566c20.json
+ * yarn hardhat merge-allocations --allocation-file /tmp/downloads/clr.fund-round8.tsv --round-file ../vue-app/src/rounds/xdai/0xd07aa7faeba14efde87f2538699c0d6c9a566c20.json
  */
 
 import { task, types } from 'hardhat/config'
 import { formatUnits, parseUnits } from 'ethers'
 import fs from 'fs'
-import { Project, RoundFileContent, Tally } from '../utils/types'
-import { JSONFile } from '../utils/JSONFile'
+import { Project, RoundFileContent } from '../../utils/types'
+import { JSONFile } from '../../utils/JSONFile'
 
 const COLUMN_PROJECT_NAME = 0
 const COLUMN_RECIPIENT_ADDRESS = 1
@@ -23,6 +23,16 @@ type Allocation = {
   recipientAddress: string
   votes: string
   payoutAmount: string
+}
+
+// legacy Tally file format
+interface Tally {
+  results: {
+    tally: string[]
+  }
+  totalVoiceCreditsPerVoteOption: {
+    tally: string[]
+  }
 }
 
 /**
@@ -113,10 +123,7 @@ function readAllocationFile(
   return allocations
 }
 
-task(
-  'clr-merge-allocations',
-  'Merge the allocations data into the round JSON file'
-)
+task('merge-allocations', 'Merge the allocations data into the round JSON file')
   .addParam('roundFile', 'The JSON file exported from the export-round task')
   .addParam('allocationFile', 'The allocation file in tab separated format')
   .addOptionalParam(

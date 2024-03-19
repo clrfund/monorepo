@@ -1,22 +1,23 @@
+/* eslint-disable no-console */
 /**
- * Set the user registry in the ClrFund contract.
+ * Deploy a new ClrFundDeployer contract
  *
  * Sample usage:
- *
- *  yarn hardhat set-user-registry --network <network>
+ * yarn hardhat new-deployer --verify --network <network>
  *
  * Note:
  * 1) Make sure you have deploy-config.json (see deploy-config-example.json).
- * 2) Make sure you have deployed-contracts.json created from the new-clrfund task
- *
+ * 2) Make sure you set environment variable COORDINATOR_MACISK with the coordinator MACI private key
+ * 3) use --incremental to resume a deployment stopped due to a failure
+ * 4) use --manage-nonce to manually set nonce; useful on optimism-sepolia
+ *    where `nonce too low` errors occur occasionally
  */
-
 import { task, types } from 'hardhat/config'
 
 import { Subtask } from '../helpers/Subtask'
 import { type ISubtaskParams } from '../helpers/types'
 
-task('set-user-registry', 'Set the user registry in ClrFund')
+task('new-deployer', 'Deploy a new instance of ClrFund')
   .addFlag('incremental', 'Incremental deployment')
   .addFlag('strict', 'Fail on warnings')
   .addFlag('verify', 'Verify contracts at Etherscan')
@@ -35,12 +36,19 @@ task('set-user-registry', 'Set the user registry in ClrFund')
 
     let success: boolean
     try {
-      await subtask.logStart()
-      const steps = await subtask.getDeploySteps(['user'], params)
+      await subtask.start(params)
+      const steps = await subtask.getDeploySteps(
+        ['clrfund', 'deployer', 'maci'],
+        params
+      )
 
       const skip = params.skip || 0
 
-      await subtask.runSteps(steps, skip)
+      // run all the steps except for the init-clrfund step
+      await subtask.runSteps(
+        steps.filter((step) => step.taskName !== 'clrfund:init-clrfund'),
+        skip
+      )
       await subtask.checkResults(params.strict)
       success = true
     } catch (err) {

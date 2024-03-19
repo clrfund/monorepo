@@ -7,7 +7,7 @@
  * https://github.com/vocdoni/storage-proofs-eth-js/blob/main/src/erc20.ts#L62
  *
  *
- * Usage: hardhat find-storage-slot --token <token-address> --holder <account-address> --network arbitrum
+ * Usage: hardhat find-storage-slot --token <token-address> --holder <account-address> --network <network>
  */
 
 import { task, types } from 'hardhat/config'

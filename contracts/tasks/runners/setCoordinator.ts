@@ -1,11 +1,12 @@
 /**
  * Set the coordinator in clrfund
  * Usage:
- * hardhat set-coordinator \
- *   --clrfund <clrfund address> \
- *   --coordinator <coordinator wallet address> \
- *   --pubkey <coordinator MACI serialized public key, e.g. macipk.*> \
- *   --network <network>
+ * hardhat set-coordinator --network <network>
+ *
+ * Note:
+ * 1) Make sure you have deploy-config.json (see deploy-config-example.json).
+ * 2) Make sure you have deployed-contracts.json created from the new-clrfund task
+ * 3) Make sure that the COORDINATOR_MACISK (coordinator's MACI private key) is set in the .env file
  */
 import { task } from 'hardhat/config'
 import { Subtask } from '../helpers/Subtask'
@@ -24,7 +25,7 @@ task('set-coordinator', 'Set the Clrfund coordinator').setAction(
       const params: ISubtaskParams = { verify: false, incremental: false }
       const steps = await subtask.getDeploySteps(['coordinator'], params)
 
-      const skip = params.skip || 0
+      const skip = 0
       await subtask.runSteps(steps, skip)
       success = true
     } catch (err) {
