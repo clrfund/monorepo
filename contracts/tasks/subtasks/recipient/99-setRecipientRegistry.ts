@@ -20,7 +20,7 @@ subtask
     'recipient:set-recipient-registry',
     'Set recipient registry in the ClrFund contract'
   )
-  .setAction(async ({ incremental }: ISubtaskParams, hre) => {
+  .setAction(async ({ incremental, clrfund }: ISubtaskParams, hre) => {
     subtask.setHre(hre)
     const network = hre.network.name
 
@@ -36,6 +36,7 @@ subtask
 
     const clrfundContract = await subtask.getContract<ClrFund>({
       name: EContracts.ClrFund,
+      address: clrfund,
     })
 
     if (incremental) {

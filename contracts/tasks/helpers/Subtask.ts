@@ -88,8 +88,9 @@ export class Subtask {
     try {
       this.config = JSONFile.read(DEPLOY_CONFIG) as TConfig
     } catch (e) {
-      //console.log('eror =======================', e)
-      this.config = {} as TConfig
+      console.log('=======================')
+      console.log('Failed to read', DEPLOY_CONFIG)
+      throw e
     }
 
     this.storage = ContractStorage.getInstance()
@@ -384,8 +385,10 @@ export class Subtask {
   private getDefaultParams = ({
     verify,
     incremental,
+    clrfund,
+    roundDuration,
   }: ISubtaskParams): Promise<TaskArguments> =>
-    Promise.resolve({ verify, incremental })
+    Promise.resolve({ verify, incremental, clrfund, roundDuration })
 
   /**
    * Get deploy step sequence

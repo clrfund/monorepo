@@ -20,16 +20,11 @@ subtask
     subtask.setHre(hre)
     const deployer = await subtask.getDeployer()
 
-    const token = subtask.getConfigField<boolean>(EContracts.ClrFund, 'token')
-    if (isAddress(token)) {
+    const token = subtask.tryGetConfigField<string>(EContracts.ClrFund, 'token')
+    if (token && isAddress(token)) {
       // using an existing token, no need to deploy
       return
     }
-
-    const initialSupply = subtask.getConfigField<string>(
-      EContracts.AnyOldERC20Token,
-      'initialSupply'
-    )
 
     const anyOldERC20TokenContractAddress = storage.getAddress(
       EContracts.AnyOldERC20Token,
@@ -40,6 +35,10 @@ subtask
       return
     }
 
+    const initialSupply = subtask.getConfigField<string>(
+      EContracts.AnyOldERC20Token,
+      'initialSupply'
+    )
     const args = [initialSupply]
     const anyOldERC20TokenContract = await subtask.deployContract(
       EContracts.AnyOldERC20Token,

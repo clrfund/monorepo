@@ -18,6 +18,15 @@ subtask
     subtask.setHre(hre)
     const deployer = await subtask.getDeployer()
 
+    const userRegistryName = subtask.getConfigField<string>(
+      EContracts.ClrFund,
+      'userRegistry'
+    )
+
+    if (userRegistryName !== EContracts.BrightIdUserRegistry) {
+      return
+    }
+
     let brightidSponsorContractAddress = subtask.tryGetConfigField<string>(
       EContracts.BrightIdUserRegistry,
       'sponsor'

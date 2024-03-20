@@ -1,16 +1,18 @@
 /* eslint-disable no-console */
 /**
- * Deploy a new instance of ClrFund
- *
- * Make sure you have deploy-config.json (see deploy-config-example.json).
+ * Set the recipient registry in the ClrFund contract. It will create
+ * the recipient registry contract if it is not deployed and recorded in the
+ * deployed-contract.json file
  *
  * Sample usage:
- * yarn hardhat new-clrfund --verify --network <network>
+ * yarn hardhat set-recipient-registry --verify --network <network>
  *
  * Note:
- * 1) use --incremental to resume a deployment stopped due to a failure
- * 2) use --manage-nonce to manually set nonce, useful on optimism-sepolia
- *    where `nonce too low` errors occur occasionally
+ * 1) use --incremental to resume a previously interrupted deployment
+ * 2) use --manage-nonce to manually set the nonce. This is useful on the optimism-sepolia
+ *    public node where `nonce too low` errors occur occasionally
+ * 3) use --clrfund to provide the clrfund address if you do not have the deployed-contracts.json file
+ * 4) Make sure you have the deploy-config.json file (see deploy-config-example.json).
  */
 import { task, types } from 'hardhat/config'
 
@@ -22,7 +24,7 @@ task('set-recipient-registry', 'Set recipient registry in ClrFund')
   .addFlag('strict', 'Fail on warnings')
   .addFlag('verify', 'Verify contracts at Etherscan')
   .addFlag('manageNonce', 'Manually increment nonce for each transaction')
-  .addOptionalParam('skip', 'Skip steps with less or equal index', 0, types.int)
+  .addOptionalParam('clrfund', 'The ClrFund contract address')
   .setAction(async (params: ISubtaskParams, hre) => {
     const { verify, manageNonce } = params
     const subtask = Subtask.getInstance(hre)

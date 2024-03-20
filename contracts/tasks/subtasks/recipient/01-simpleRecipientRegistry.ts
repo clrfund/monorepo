@@ -18,7 +18,7 @@ subtask
     'recipient:deploy-simple-recipient-registry',
     'Deploy a simple recipient regsitry'
   )
-  .setAction(async ({ incremental }: ISubtaskParams, hre) => {
+  .setAction(async ({ incremental, clrfund }: ISubtaskParams, hre) => {
     subtask.setHre(hre)
     const deployer = await subtask.getDeployer()
 
@@ -40,11 +40,12 @@ subtask
       return
     }
 
-    const clrfundContractAddress = storage.mustGetAddress(
-      EContracts.ClrFund,
-      hre.network.name
-    )
+    const clrfundContract = await subtask.getContract({
+      name: EContracts.ClrFund,
+      address: clrfund,
+    })
 
+    const clrfundContractAddress = await clrfundContract.getAddress()
     const args = [clrfundContractAddress]
     const simpleRecipientRegistryContract = await subtask.deployContract(
       EContracts.SimpleRecipientRegistry,

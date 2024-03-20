@@ -1,13 +1,14 @@
 /**
- * Set the user registry in the ClrFund contract.
+ * Set the user registry in the ClrFund contract. It will create the user registry
+ * contract if it is not deployed and found in the deployed-contracts.json file.
  *
  * Sample usage:
  *
- *  yarn hardhat set-user-registry --network <network>
+ *  yarn hardhat set-user-registry --verify --network <network>
  *
  * Note:
- * 1) Make sure you have deploy-config.json (see deploy-config-example.json).
- * 2) Make sure you have deployed-contracts.json created from the new-clrfund task
+ * 1) Make sure you have the deploy-config.json (see deploy-config-example.json).
+ * 2) Use --clrfund to specify clrfund address if you don't have the deployed-contracts.json
  *
  */
 
@@ -22,6 +23,7 @@ task('set-user-registry', 'Set the user registry in ClrFund')
   .addFlag('verify', 'Verify contracts at Etherscan')
   .addFlag('manageNonce', 'Manually increment nonce for each transaction')
   .addOptionalParam('skip', 'Skip steps with less or equal index', 0, types.int)
+  .addOptionalParam('clrfund', 'The ClrFund contract address')
   .setAction(async (params: ISubtaskParams, hre) => {
     const { verify, manageNonce } = params
     const subtask = Subtask.getInstance(hre)
@@ -39,7 +41,6 @@ task('set-user-registry', 'Set the user registry in ClrFund')
       const steps = await subtask.getDeploySteps(['user'], params)
 
       const skip = params.skip || 0
-
       await subtask.runSteps(steps, skip)
       await subtask.checkResults(params.strict)
       success = true
