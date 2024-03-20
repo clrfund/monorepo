@@ -2,8 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import dotenv from 'dotenv'
 
-import { TASK_COMPILE_SOLIDITY_GET_SOURCE_PATHS } from 'hardhat/builtin-tasks/task-names'
-import { subtask, task } from 'hardhat/config'
+import { task } from 'hardhat/config'
 import '@nomicfoundation/hardhat-toolbox'
 import '@nomiclabs/hardhat-ganache'
 import 'hardhat-contract-sizer'
@@ -177,15 +176,6 @@ export default {
     },
   },
 }
-
-// filter out files that we don't want to compile
-subtask(TASK_COMPILE_SOLIDITY_GET_SOURCE_PATHS, async (_, __, runSuper) => {
-  const paths = await runSuper()
-
-  return paths.filter((filePath: string) => {
-    return !filePath.includes('snarkVerifiers')
-  })
-})
 
 task(
   'compile',
