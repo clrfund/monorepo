@@ -24,7 +24,7 @@ subtask
 
     const coordinator = await subtask.getConfigField<string>(
       EContracts.ClrFund,
-      'coordinaotor'
+      'coordinator'
     )
     const coordinatorAddress = coordinator || (await deployer.getAddress())
 
