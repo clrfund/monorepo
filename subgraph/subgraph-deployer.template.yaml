@@ -1,0 +1,226 @@
+specVersion: 0.0.4
+description: clr.fund
+repository: https://github.com/clrfund/monorepo
+schema:
+  file: ./schema-deployer.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: ClrFundDeployer
+    network: {{network}}
+    source:
+      address: '{{address}}'
+      abi: ClrFundDeployer
+      startBlock: {{startBlock}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ClrFundDeployer
+        - ClrFund
+      abis:
+        - name: ClrFund
+          file: ./abis/ClrFund.json
+        - name: ClrFundDeployer
+          file: ./abis/ClrFundDeployer.json
+      eventHandlers:
+        - event: NewInstance(indexed address)
+          handler: handleNewInstance
+      file: ./src/ClrFundDeployerMapping.ts
+  - kind: ethereum/contract
+    name: OptimisticRecipientRegistry
+    network: {{network}}
+    source:
+      abi: OptimisticRecipientRegistry
+      startBlock: {{startBlock}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - RecipientRegistry
+        - Recipient
+      abis:
+        - name: OptimisticRecipientRegistry
+          file: ./abis/OptimisticRecipientRegistry.json
+      eventHandlers:
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: RequestResolved(indexed bytes32,indexed uint8,indexed bool,uint256,uint256)
+          handler: handleRequestResolved
+        - event: RequestSubmitted(indexed bytes32,indexed uint8,address,string,uint256)
+          handler: handleRequestSubmitted
+      file: ./src/OptimisticRecipientRegistryMapping.ts
+templates:
+  - name: ClrFund
+    kind: ethereum/contract
+    network: {{network}}
+    source:
+      abi: ClrFund
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ClrFund
+        - RecipientRegistry
+        - ContributorRegistry
+        - FundingRound
+        - Token
+      abis:
+        - name: ClrFund
+          file: ./abis/ClrFund.json
+        - name: FundingRound
+          file: ./abis/FundingRound.json
+        - name: MACIFactory
+          file: ./abis/MACIFactory.json
+        - name: OptimisticRecipientRegistry
+          file: ./abis/OptimisticRecipientRegistry.json
+        - name: BrightIdUserRegistry
+          file: ./abis/BrightIdUserRegistry.json
+        - name: Token
+          file: ./abis/Token.json
+        - name: Poll
+          file: ./abis/Poll.json
+        - name: MACI
+          file: ./abis/MACI.json
+      eventHandlers:
+        - event: CoordinatorChanged(address)
+          handler: handleCoordinatorChanged
+        - event: FundingSourceAdded(address)
+          handler: handleFundingSourceAdded
+        - event: FundingSourceRemoved(address)
+          handler: handleFundingSourceRemoved
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: RoundFinalized(address)
+          handler: handleRoundFinalized
+        - event: RoundStarted(address)
+          handler: handleRoundStarted
+        - event: TokenChanged(address)
+          handler: handleTokenChanged
+        - event: UserRegistryChanged(address)
+          handler: handleUserRegistryChanged
+        - event: RecipientRegistryChanged(address)
+          handler: handleRecipientRegistryChanged
+      file: ./src/ClrFundMapping.ts
+  - name: FundingRound
+    kind: ethereum/contract
+    network: {{network}}
+    source:
+      abi: FundingRound
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - FundingRound
+        - Contribution
+        - Donation
+        - Recipient
+        - Contributor
+      abis:
+        - name: FundingRound
+          file: ./abis/FundingRound.json
+        - name: OptimisticRecipientRegistry
+          file: ./abis/OptimisticRecipientRegistry.json
+        - name: BrightIdUserRegistry
+          file: ./abis/BrightIdUserRegistry.json
+      eventHandlers:
+        - event: Contribution(indexed address,uint256)
+          handler: handleContribution
+        - event: ContributionWithdrawn(indexed address)
+          handler: handleContributionWithdrawn
+        - event: FundsClaimed(indexed uint256,indexed address,uint256)
+          handler: handleFundsClaimed
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: TallyPublished(string)
+          handler: handleTallyPublished
+      file: ./src/FundingRoundMapping.ts
+  - name: OptimisticRecipientRegistry
+    kind: ethereum/contract
+    network: {{network}}
+    source:
+      abi: OptimisticRecipientRegistry
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - RecipientRegistry
+        - Recipient
+      abis:
+        - name: OptimisticRecipientRegistry
+          file: ./abis/OptimisticRecipientRegistry.json
+      eventHandlers:
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: RequestResolved(indexed bytes32,indexed uint8,indexed bool,uint256,uint256)
+          handler: handleRequestResolved
+        - event: RequestSubmitted(indexed bytes32,indexed uint8,address,string,uint256)
+          handler: handleRequestSubmitted
+      file: ./src/OptimisticRecipientRegistryMapping.ts
+  - name: BrightIdUserRegistry
+    kind: ethereum/contract
+    network: {{network}}
+    source:
+      abi: BrightIdUserRegistry
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ContributorRegistry
+        - Contributor
+      abis:
+        - name: BrightIdUserRegistry
+          file: ./abis/BrightIdUserRegistry.json
+      eventHandlers:
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: SetBrightIdSettings(bytes32,address)
+          handler: handleSetBrightIdSettings
+      file: ./src/BrightIdUserRegistryMapping.ts
+  - name: MACI
+    kind: ethereum/contract
+    network: {{network}}
+    source:
+      abi: MACI
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - MACI
+        - FundingRound
+      abis:
+        - name: MACI
+          file: ./abis/MACI.json
+        - name: FundingRound
+          file: ./abis/FundingRound.json
+      eventHandlers:
+        - event: SignUp(uint256,indexed uint256,indexed uint256,uint256,uint256)
+          handler: handleSignUp
+      file: ./src/MACIMapping.ts
+  - name: Poll
+    kind: ethereum/contract
+    network: {{network}}
+    source:
+      abi: Poll
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Poll
+        - FundingRound
+      abis:
+        - name: Poll
+          file: ./abis/Poll.json
+        - name: FundingRound
+          file: ./abis/FundingRound.json
+      eventHandlers:
+        - event: PublishMessage((uint256,uint256[10]),(uint256,uint256))
+          handler: handlePublishMessage
+      file: ./src/PollMapping.ts
