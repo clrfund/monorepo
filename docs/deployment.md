@@ -50,11 +50,19 @@ Goto the `contracts` folder.
 1. Deploy the BrightID sponsor contract
 
 ```
-HARDHAT_NETWORK={network} yarn ts-node cli/deploySponsor.ts
+yarn hardhat new-sponsor --network <network>
 ```
 
 2. Verify the contract by running `yarn hardhat --network {network} verify {contract address}`
 3. Set `BRIGHTID_SPONSOR` to the contract address in the next step
+
+### Generate the coordinator's MACI key
+
+```
+yarn ts-node tasks/maciNewKey.ts
+```
+
+Make a note of the `SecretKey` value from the output to set the `COORDINATOR_MACISK` in the `/contracts/.env` file in the following step.
 
 ### Edit the `/contracts/.env` file
 
@@ -64,20 +72,14 @@ E.g.
 JSONRPC_HTTP_URL=https://NETWORK.alchemyapi.io/v2/ADD_API_KEY
 WALLET_PRIVATE_KEY=
 ARBISCAN_API_KEY=
+COORDINATOR_MACISK=SecretKey from previous step
 ```
 
 ### Run the deploy script
 Use the `-h` switch to print the command line help menu for all the scripts in the `cli` folder. For hardhat help, use `yarn hardhat help`.
 
-1. Generate coordinator MACI key
 
-```
-yarn ts-node tasks/maciNewKey.ts
-```
-
-Update the `/contracts/.env` and set the `COORDINATOR_MACISK` environment variable value to the `SecretKey` value.
-
-2. Deploy an instance of ClrFund
+1. Deploy an instance of ClrFund
 
 ```
 yarn hardhat new-clrfund \
@@ -89,7 +91,7 @@ yarn hardhat new-clrfund \
    --network <network>
 ```
 
-3. deploy new funding round
+2. deploy new funding round
 ```
 yarn hardhat new-round \
    --clrfund <clrfund contract address> \
@@ -98,7 +100,7 @@ yarn hardhat new-round \
 ```
 
 
-4. To load a list of users into the simple user registry,
+2. To load a list of users into the simple user registry,
 
 ```
 yarn hardhat clr-load-simple-users --file-path addresses.txt --user-registry <address> --network <network>
@@ -108,7 +110,7 @@ yarn hardhat clr-load-simple-users --file-path addresses.txt --user-registry <ad
 If using a snapshot user registry, run the `set-storage-root` task to set the storage root for the block snapshot for user account verification
 
 ```
-yarn hardhat --network {network} set-storage-root --registry 0x7113b39Eb26A6F0a4a5872E7F6b865c57EDB53E0 --slot 2 --token 0x65bc8dd04808d99cf8aa6749f128d55c2051edde --block 34677758 --network arbitrum-goerli
+yarn hardhat --network {network} set-storage-root --registry {user-registry-address} --slot 2 --token {token-address} --block 34677758 --network {network}
 ```
 
 Note: to get the storage slot '--slot' value, run the `clr-find-storage-slot` task.
@@ -117,7 +119,7 @@ Note: to get the storage slot '--slot' value, run the `clr-find-storage-slot` ta
 
 ```
 # for example:
-yarn hardhat clr-load-merkle-users --address-file ./addresses.txt --user-registry 0x9E1c12Af45504e66D16D592cAF3B877ddc6fF643 --network arbitrum-goerli
+yarn hardhat clr-load-merkle-users --address-file ./addresses.txt --user-registry {user-registry-address} --network {network}
 ```
 
 Note: Make sure to upload generated merkle tree file to IPFS.
@@ -137,7 +139,7 @@ Inside `/subgraph`:
 
 1. Prepare the `subgraph.yaml` with the correct network data
    - Update or create a new JSON file which you want to use, under `/config`
-   - Run `yarn prepare:{network}`
+   - Run `npx mustache <your-config-file> subgraph.template.yaml > subgraph.yaml`
 2. Build:
    - `yarn codegen`
    - `yarn build`
