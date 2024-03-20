@@ -2,7 +2,7 @@
 . "$(dirname "$0")/_/husky.sh"
 
 # set these params so git push will work without .env
-export VITE_CLRFUND_FACTORY_ADDRESS=0x5FC8d32690cc91D4c39d9d3abcBD16989F875707
+export VITE_CLRFUND_ADDRESS=0x5FC8d32690cc91D4c39d9d3abcBD16989F875707
 export VITE_ETHEREUM_API_CHAINID=1
 export VITE_ETHEREUM_API_URL=x
 export VITE_IPFS_PINNING_JWT=x
