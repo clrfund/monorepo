@@ -83,6 +83,8 @@ Use the `-h` switch to print the command line help menu for all the scripts in t
 yarn hardhat new-clrfund --network <network>
 ```
 
+Notice that the file `deployed-contracts.json` is created or updated (if already exists). Make a copy of this file now in case you run the `new-clrfund` command without the --incremental flag, this file will be overwritten. You'll need this file for the `new-round` and `verify-all` commands.
+
 2. deploy new funding round
 ```
 yarn hardhat new-round --network <network>
@@ -98,7 +100,7 @@ yarn hardhat load-simple-users --file-path addresses.txt --user-registry <addres
 If using a snapshot user registry, run the `set-storage-root` task to set the storage root for the block snapshot for user account verification
 
 ```
-yarn hardhat --network {network} set-storage-root --registry {user-registry-address} --slot 2 --token {token-address} --block 34677758 --network {network}
+yarn hardhat set-storage-root --registry {user-registry-address} --slot 2 --token {token-address} --block 34677758 --network {network}
 ```
 
 Note: to get the storage slot '--slot' value, run the `find-storage-slot` task.
