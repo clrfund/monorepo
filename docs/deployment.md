@@ -41,6 +41,8 @@ Goto the `contracts` folder.
 yarn hardhat new-maci-key
 ```
 
+Make a note of MACI private key to setup the `contracts/.env` file. 
+
 ### Edit the `contracts/.env` file
 
 E.g.
@@ -74,21 +76,14 @@ Update the `VkRegistry.paramsDirectory` with the circuit parameter folder. If yo
 ### Run the deploy script
 Use the `-h` switch to print the command line help menu for all the scripts in the `cli` folder. For hardhat help, use `yarn hardhat help`.
 
-1. Generate coordinator MACI key
 
-```
-yarn ts-node tasks/maciNewKey.ts
-```
-
-Update the `/contracts/.env` and set the `COORDINATOR_MACISK` environment variable value to the `SecretKey` value.
-
-2. Deploy an instance of ClrFund
+1. Deploy an instance of ClrFund
 
 ```
 yarn hardhat new-clrfund --network <network>
 ```
 
-3. deploy new funding round
+2. deploy new funding round
 ```
 yarn hardhat new-round --network <network>
 ```
@@ -103,7 +98,7 @@ yarn hardhat load-simple-users --file-path addresses.txt --user-registry <addres
 If using a snapshot user registry, run the `set-storage-root` task to set the storage root for the block snapshot for user account verification
 
 ```
-yarn hardhat --network {network} set-storage-root --registry 0x7113b39Eb26A6F0a4a5872E7F6b865c57EDB53E0 --slot 2 --token 0x65bc8dd04808d99cf8aa6749f128d55c2051edde --block 34677758 --network arbitrum-goerli
+yarn hardhat --network {network} set-storage-root --registry {user-registry-address} --slot 2 --token {token-address} --block 34677758 --network {network}
 ```
 
 Note: to get the storage slot '--slot' value, run the `find-storage-slot` task.
@@ -133,7 +128,7 @@ Inside `/subgraph`:
 
 1. Prepare the `subgraph.yaml` with the correct network data
    - Update or create a new JSON file which you want to use, under `/config`
-   - Run `yarn prepare:{network}`
+   - Run `npx mustache <your-config-file> subgraph.template.yaml > subgraph.yaml`
 2. Build:
    - `yarn codegen`
    - `yarn build`

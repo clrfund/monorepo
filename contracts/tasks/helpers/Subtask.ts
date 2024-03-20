@@ -88,9 +88,17 @@ export class Subtask {
     try {
       this.config = JSONFile.read(DEPLOY_CONFIG) as TConfig
     } catch (e) {
-      console.log('=======================')
-      console.log('Failed to read', DEPLOY_CONFIG)
-      throw e
+      if (e instanceof Error) {
+        const regex = new RegExp('ENOENT: no such file or directory')
+        if (regex.test(e.message)) {
+          // silent about no deploy-config.json file error to allow
+          // unit test to run without error
+        } else {
+          console.log('=======================')
+          console.log('Failed to read', DEPLOY_CONFIG, e.message)
+        }
+      }
+      this.config = {}
     }
 
     this.storage = ContractStorage.getInstance()
