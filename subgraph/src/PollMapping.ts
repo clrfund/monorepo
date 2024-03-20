@@ -16,10 +16,9 @@ export function handlePublishMessage(event: PublishMessage): void {
   let pollEntityId = event.transaction.to!.toHex()
   let poll = Poll.load(pollEntityId)
   if (poll == null) {
-    log.error(
-      'Error: handlePublishMessage failed poll not found {}',
-      [pollEntityId]
-    )
+    log.error('Error: handlePublishMessage failed poll not found {}', [
+      pollEntityId,
+    ])
     return
   }
 
