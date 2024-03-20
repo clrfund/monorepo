@@ -1,15 +1,18 @@
-import { ethers, waffle } from 'hardhat'
-import { use, expect } from 'chai'
-import { solidity } from 'ethereum-waffle'
-import { Contract, providers, utils } from 'ethers'
+import { ethers } from 'hardhat'
+import { expect } from 'chai'
+import {
+  Wallet,
+  Contract,
+  SigningKey,
+  encodeBytes32String,
+  solidityPackedKeccak256,
+} from 'ethers'
 import { ZERO_ADDRESS } from '../utils/constants'
+import { time } from '@nomicfoundation/hardhat-network-helpers'
+import { HardhatEthersSigner } from '@nomicfoundation/hardhat-ethers/signers'
 
-use(solidity)
-
-const verifier = ethers.Wallet.createRandom()
-const signingKey = new utils.SigningKey(verifier.privateKey)
-
-const context = utils.formatBytes32String('clrfund-goerli')
+const verifier = Wallet.createRandom()
+const context = encodeBytes32String('clrfund-goerli')
 const verificationHash =
   '0xc99d46ae8baaa7ed2766cbf34e566de43decc2ff7d8e3da5cb80e72f3b5e20de'
 
@@ -24,26 +27,18 @@ type Verification = {
   verificationHash: string
 }
 
-async function getBlockTimestamp(
-  provider: providers.Provider
-): Promise<number> {
-  const blockNumber = await provider.getBlockNumber()
-  const block = await provider.getBlock(blockNumber)
-  return block.timestamp
-}
-
-function generateVerification(
+async function generateVerification(
   appUserId: string,
   timestamp: number,
-  anotherSigner?: utils.SigningKey
-): Verification {
-  const message = utils.solidityKeccak256(
+  anotherSigner?: SigningKey
+): Promise<Verification> {
+  const message = solidityPackedKeccak256(
     ['bytes32', 'address', 'bytes32', 'uint256'],
     [context, appUserId, verificationHash, timestamp]
   )
-  const sig = anotherSigner
-    ? anotherSigner.signDigest(message)
-    : signingKey.signDigest(message)
+
+  const signer = anotherSigner ?? verifier.signingKey
+  const sig = await signer.sign(message)
 
   return {
     appUserId,
@@ -65,19 +60,24 @@ function register(registry: Contract, verification: Verification) {
   )
 }
 
-describe('BrightId User Registry', () => {
-  const provider = waffle.provider
-  const [, deployer, user] = provider.getWallets()
-
+describe('BrightId User Registry', async () => {
   let registry: Contract
   let sponsor: Contract
+  let user: HardhatEthersSigner
+  let sponsorAddress: string
+
+  before(async () => {
+    ;[, , user] = await ethers.getSigners()
+  })
 
   beforeEach(async () => {
+    const [, deployer] = await ethers.getSigners()
     const BrightIdSponsor = await ethers.getContractFactory(
       'BrightIdSponsor',
       deployer
     )
     sponsor = await BrightIdSponsor.deploy()
+    sponsorAddress = await sponsor.getAddress()
 
     const BrightIdUserRegistry = await ethers.getContractFactory(
       'BrightIdUserRegistry',
@@ -86,7 +86,7 @@ describe('BrightId User Registry', () => {
     registry = await BrightIdUserRegistry.deploy(
       context,
       verifier.address,
-      sponsor.address
+      sponsorAddress
     )
   })
 
@@ -108,19 +108,22 @@ describe('BrightId User Registry', () => {
   })
 
   it('allows valid sponsor', async () => {
-    await expect(registry.setSponsor(sponsor.address))
+    await expect(registry.setSponsor(sponsorAddress))
       .to.emit(registry, 'SponsorChanged')
-      .withArgs(sponsor.address)
+      .withArgs(sponsorAddress)
   })
 
   describe('registration', () => {
     let blockTimestamp: number
     beforeEach(async () => {
-      blockTimestamp = await getBlockTimestamp(provider)
+      blockTimestamp = await time.latest()
     })
 
     it('allows valid verified user to register', async () => {
-      const verification = generateVerification(user.address, blockTimestamp)
+      const verification = await generateVerification(
+        user.address,
+        blockTimestamp
+      )
       expect(await registry.isVerifiedUser(user.address)).to.equal(false)
       await expect(register(registry, verification))
         .to.emit(registry, 'Registered')
@@ -130,7 +133,7 @@ describe('BrightId User Registry', () => {
     })
 
     it('rejects verifications with 0 timestamp', async () => {
-      const verification = generateVerification(user.address, 0)
+      const verification = await generateVerification(user.address, 0)
       await expect(register(registry, verification)).to.be.revertedWith(
         'NEWER VERIFICATION REGISTERED BEFORE'
       )
@@ -140,8 +143,8 @@ describe('BrightId User Registry', () => {
       expect(await registry.isVerifiedUser(user.address)).to.equal(false)
       const oldTime = blockTimestamp
       const newTime = blockTimestamp + 1
-      const oldVerification = generateVerification(user.address, oldTime)
-      const newVerification = generateVerification(user.address, newTime)
+      const oldVerification = await generateVerification(user.address, oldTime)
+      const newVerification = await generateVerification(user.address, newTime)
       await expect(register(registry, newVerification))
         .to.emit(registry, 'Registered')
         .withArgs(user.address, newVerification.timestamp)
@@ -155,17 +158,25 @@ describe('BrightId User Registry', () => {
 
     it('rejects invalid verifications', async () => {
       const timestamp = blockTimestamp
-      const signer = new utils.SigningKey(user.privateKey)
-      const verification = generateVerification(user.address, timestamp, signer)
+      const anotherSigner = Wallet.createRandom()
+
+      const verification = await generateVerification(
+        user.address,
+        timestamp,
+        anotherSigner.signingKey
+      )
       await expect(register(registry, verification)).to.be.revertedWith(
         'NOT AUTHORIZED'
       )
     })
 
     it('rejects invalid context', async () => {
-      const verification = generateVerification(user.address, blockTimestamp)
+      const verification = await generateVerification(
+        user.address,
+        blockTimestamp
+      )
       const tx = await registry.setSettings(
-        utils.formatBytes32String('invalid'),
+        encodeBytes32String('invalid'),
         verifier.address
       )
       await tx.wait()

@@ -2,11 +2,10 @@ import fs from 'fs'
 import path from 'path'
 import dotenv from 'dotenv'
 
-import { HardhatUserConfig, task } from 'hardhat/config'
-import '@nomiclabs/hardhat-waffle'
+import { task } from 'hardhat/config'
+import '@nomicfoundation/hardhat-toolbox'
 import '@nomiclabs/hardhat-ganache'
 import 'hardhat-contract-sizer'
-import '@nomiclabs/hardhat-etherscan'
 import './tasks'
 
 dotenv.config()
@@ -14,7 +13,6 @@ dotenv.config()
 const GAS_LIMIT = 20000000
 const WALLET_MNEMONIC = process.env.WALLET_MNEMONIC
 const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY
-const WALLET_PRIVATE_KEY_2 = process.env.WALLET_PRIVATE_KEY_2
 
 let accounts
 if (WALLET_MNEMONIC) {
@@ -24,11 +22,7 @@ if (WALLET_PRIVATE_KEY) {
   accounts = [WALLET_PRIVATE_KEY]
 }
 
-if (WALLET_PRIVATE_KEY_2) {
-  accounts = [...accounts, WALLET_PRIVATE_KEY_2]
-}
-
-const config: HardhatUserConfig = {
+export default {
   networks: {
     hardhat: {
       gas: GAS_LIMIT,
@@ -59,12 +53,26 @@ const config: HardhatUserConfig = {
         process.env.JSONRPC_HTTP_URL || 'https://goerli-rollup.arbitrum.io/rpc',
       accounts,
     },
-    'mantle-testnet': {
-      url: process.env.JSONRPC_HTTP_URL || 'https://rpc.testnet.mantle.xyz',
+    'arbitrum-sepolia': {
+      url:
+        process.env.JSONRPC_HTTP_URL ||
+        'https://sepolia-rollup.arbitrum.io/rpc',
       accounts,
     },
-    rinkarby: {
-      url: process.env.JSONRPC_HTTP_URL || 'https://rinkeby.arbitrum.io/rpc',
+    optimism: {
+      url: process.env.JSONRPC_HTTP_URL || 'https://mainnet.optimism.io',
+      accounts,
+    },
+    'optimism-sepolia': {
+      url: process.env.JSONRPC_HTTP_URL || 'https://sepolia.optimism.io',
+      accounts,
+    },
+    sepolia: {
+      url: process.env.JSONRPC_HTTP_URL || 'http://127.0.0.1:8545',
+      accounts,
+    },
+    'mantle-testnet': {
+      url: process.env.JSONRPC_HTTP_URL || 'https://rpc.testnet.mantle.xyz',
       accounts,
     },
     arbitrum: {
@@ -73,7 +81,34 @@ const config: HardhatUserConfig = {
     },
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY || 'YOUR_ETHERSCAN_API_KEY',
+    apiKey: {
+      arbitrum: process.env.ARBISCAN_API_KEY || 'YOUR_ARBISCAN_API_KEY',
+      'arbitrum-sepolia':
+        process.env.ARBISCAN_API_KEY || 'YOUR_ARBISCAN_API_KEY',
+      'optimism-sepolia':
+        process.env.OPTIMISMSCAN_API_KEY || 'YOUR_ARBISCAN_API_KEY',
+    },
+    customChains: [
+      {
+        network: 'arbitrum-sepolia',
+        chainId: 421614,
+        urls: {
+          apiURL: 'https://api-sepolia.arbiscan.io/api',
+          browserURL: 'https://sepolia.arbiscan.io',
+        },
+      },
+      {
+        network: 'optimism-sepolia',
+        chainId: 11155420,
+        urls: {
+          apiURL: 'https://api-sepolia-optimistic.etherscan.io/api',
+          browserURL: 'https://sepolia-optimism.etherscan.io',
+        },
+      },
+    ],
+  },
+  sourcify: {
+    enabled: false,
   },
   paths: {
     artifacts: 'build/contracts',
@@ -85,7 +120,7 @@ const config: HardhatUserConfig = {
     disambiguatePaths: false,
   },
   solidity: {
-    version: '0.6.12',
+    version: '0.8.10',
     settings: {
       optimizer: {
         enabled: true,
@@ -94,7 +129,7 @@ const config: HardhatUserConfig = {
     },
     overrides: {
       'contracts/FundingRoundFactory.sol': {
-        version: '0.6.12',
+        version: '0.8.10',
         settings: {
           optimizer: {
             enabled: true,
@@ -103,7 +138,7 @@ const config: HardhatUserConfig = {
         },
       },
       'contracts/FundingRound.sol': {
-        version: '0.6.12',
+        version: '0.8.10',
         settings: {
           optimizer: {
             enabled: true,
@@ -111,26 +146,8 @@ const config: HardhatUserConfig = {
           },
         },
       },
-      'contracts/snarkVerifiers/BatchUpdateStateTreeVerifier32.sol': {
-        version: '0.6.12',
-        settings: {
-          optimizer: {
-            enabled: true,
-            runs: 10000000,
-          },
-        },
-      },
-      'contracts/snarkVerifiers/QuadVoteTallyVerifier32.sol': {
-        version: '0.6.12',
-        settings: {
-          optimizer: {
-            enabled: true,
-            runs: 10000000,
-          },
-        },
-      },
       'contracts/recipientRegistry/OptimisticRecipientRegistry.sol': {
-        version: '0.6.12',
+        version: '0.8.10',
         settings: {
           optimizer: {
             enabled: true,
@@ -139,7 +156,7 @@ const config: HardhatUserConfig = {
         },
       },
       'contracts/userRegistry/SimpleUserRegistry.sol': {
-        version: '0.6.12',
+        version: '0.8.10',
         settings: {
           optimizer: {
             enabled: true,
@@ -148,7 +165,7 @@ const config: HardhatUserConfig = {
         },
       },
       'contracts/userRegistry/BrightIdUserRegistry.sol': {
-        version: '0.6.12',
+        version: '0.8.10',
         settings: {
           optimizer: {
             enabled: true,
@@ -166,12 +183,17 @@ task(
   async (_, { config }, runSuper) => {
     await runSuper()
     // Copy Poseidon artifacts
-    const poseidons = ['PoseidonT3', 'PoseidonT6']
-    for (const contractName of poseidons) {
+    const externalContracts: Array<string> = [
+      'PoseidonT3',
+      'PoseidonT4',
+      'PoseidonT5',
+      'PoseidonT6',
+    ]
+    for (const contractName of externalContracts) {
       const artifact = JSON.parse(
         fs
           .readFileSync(
-            `../node_modules/maci-contracts/compiled/${contractName}.json`
+            `./node_modules/maci-contracts/build/artifacts/contracts/crypto/${contractName}.sol/${contractName}.json`
           )
           .toString()
       )
@@ -182,5 +204,3 @@ task(
     }
   }
 )
-
-export default config

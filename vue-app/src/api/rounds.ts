@@ -19,10 +19,8 @@ function toRoundId({ network, address }: { network: string; address: string }): 
   return `${network}-${address}`.toLowerCase()
 }
 
-//TODO: update to take factory address as a parameter
+//TODO: update to take ClrFund address as a parameter
 export async function getRounds(): Promise<Round[]> {
-  //TODO: updateto pass factory address as a parameter, default to env. variable
-
   let data
   try {
     data = await sdk.GetRounds()

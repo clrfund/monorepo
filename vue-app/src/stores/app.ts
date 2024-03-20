@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { BigNumber } from 'ethers'
 import {
   type CartItem,
   type Contributor,
@@ -13,7 +12,7 @@ import { getCommittedCart } from '@/api/cart'
 import { operator, chain, ThemeMode, recipientRegistryType, recipientJoinDeadlineConfig } from '@/api/core'
 import { type RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
 import { getTally, type Tally } from '@/api/tally'
-import { type Factory, getFactoryInfo } from '@/api/factory'
+import { type ClrFund, getClrFundInfo } from '@/api/clrFund'
 import { getMACIFactoryInfo, type MACIFactory } from '@/api/maci-factory'
 import { isSameAddress } from '@/utils/accounts'
 import { storage } from '@/api/storage'
@@ -23,7 +22,7 @@ import { useUserStore } from './user'
 import { getAssetsUrl } from '@/utils/url'
 import { getTokenLogo } from '@/utils/tokens'
 import { assert, ASSERT_MISSING_ROUND, ASSERT_MISSING_SIGNATURE, ASSERT_NOT_CONNECTED_WALLET } from '@/utils/assert'
-import { Keypair } from '@clrfund/maci-utils'
+import { Keypair } from '@clrfund/common'
 
 export type AppState = {
   isAppReady: boolean
@@ -31,7 +30,7 @@ export type AppState = {
   cartEditModeSelected: boolean
   committedCart: CartItem[]
   cartLoaded: boolean
-  contribution: BigNumber | null
+  contribution: bigint | null
   contributor: Contributor | null
   hasVoted: boolean
   currentRound: RoundInfo | null
@@ -39,7 +38,7 @@ export type AppState = {
   showCartPanel: boolean
   tally: Tally | null
   theme: string | null
-  factory: Factory | null
+  clrFund: ClrFund | null
   maciFactory: MACIFactory | null
   showSimpleLeaderboard: boolean
 }
@@ -59,7 +58,7 @@ export const useAppStore = defineStore('app', {
     showCartPanel: false,
     tally: null,
     theme: null,
-    factory: null,
+    clrFund: null,
     maciFactory: null,
     showSimpleLeaderboard: true,
   }),
@@ -147,29 +146,29 @@ export const useAppStore = defineStore('app', {
     },
     hasUserContributed: (state): boolean => {
       const userStore = useUserStore()
-      return !!userStore.currentUser && !!state.contribution && !state.contribution.isZero()
+      return !!userStore.currentUser && !!state.contribution && state.contribution !== BigInt(0)
     },
     operator: (): string => {
       return operator
     },
     userRegistryAddress: (state): string | undefined => {
-      const { currentRound, factory } = state
+      const { currentRound, clrFund } = state
 
       if (currentRound) {
         return currentRound.userRegistryAddress
       }
 
-      if (factory) {
-        return factory.userRegistryAddress
+      if (clrFund) {
+        return clrFund.userRegistryAddress
       }
     },
-    matchingPool: (state): BigNumber => {
-      const { currentRound, factory } = state
+    matchingPool: (state): bigint => {
+      const { currentRound, clrFund } = state
 
-      let matchingPool = BigNumber.from(0)
+      let matchingPool = BigInt(0)
 
-      if (factory) {
-        matchingPool = factory.matchingPool
+      if (clrFund) {
+        matchingPool = clrFund.matchingPool
       }
 
       if (currentRound) {
@@ -179,12 +178,12 @@ export const useAppStore = defineStore('app', {
       return matchingPool
     },
     nativeTokenSymbol: (state): string => {
-      const { currentRound, factory } = state
+      const { currentRound, clrFund } = state
 
       let nativeTokenSymbol = ''
 
-      if (factory) {
-        nativeTokenSymbol = factory.nativeTokenSymbol
+      if (clrFund) {
+        nativeTokenSymbol = clrFund.nativeTokenSymbol
       }
 
       if (currentRound) {
@@ -194,12 +193,12 @@ export const useAppStore = defineStore('app', {
       return nativeTokenSymbol
     },
     nativeTokenDecimals: (state): number | undefined => {
-      const { currentRound, factory } = state
+      const { currentRound, clrFund } = state
 
       let nativeTokenDecimals
 
-      if (factory) {
-        nativeTokenDecimals = factory.nativeTokenDecimals
+      if (clrFund) {
+        nativeTokenDecimals = clrFund.nativeTokenDecimals
       }
 
       if (currentRound) {
@@ -209,12 +208,12 @@ export const useAppStore = defineStore('app', {
       return nativeTokenDecimals
     },
     nativeTokenAddress: (state): string => {
-      const { currentRound, factory } = state
+      const { currentRound, clrFund } = state
 
       let nativeTokenAddress = ''
 
-      if (factory) {
-        nativeTokenAddress = factory.nativeTokenAddress
+      if (clrFund) {
+        nativeTokenAddress = clrFund.nativeTokenAddress
       }
 
       if (currentRound) {
@@ -349,7 +348,7 @@ export const useAppStore = defineStore('app', {
         throw new Error('item is not in the cart')
       } else if (this.contribution === null) {
         throw new Error('invalid operation')
-      } else if (this.contribution.isZero() || this.cart.length > MAX_CART_SIZE) {
+      } else if (this.contribution === BigInt(0) || this.cart.length > MAX_CART_SIZE) {
         this.cart.splice(itemIndex, 1)
       } else {
         // The number of MACI messages can't go down after initial submission
@@ -433,12 +432,13 @@ export const useAppStore = defineStore('app', {
       if (this.committedCart.length > 0) {
         // only overwrite the uncommitted cart if there's committed cart
         this.restoreCommittedCartToLocalCart()
+        this.setHasVote(true)
       }
     },
     setContributor(contributor: Contributor | null) {
       this.contributor = contributor
     },
-    setContribution(contribution: BigNumber | null) {
+    setContribution(contribution: bigint | null) {
       this.contribution = contribution
     },
     async loadContributorData() {
@@ -460,9 +460,9 @@ export const useAppStore = defineStore('app', {
         stateIndex,
       }
     },
-    async loadFactoryInfo() {
-      const factory = await getFactoryInfo()
-      this.factory = factory
+    async loadClrFundInfo() {
+      const clrFund = await getClrFundInfo()
+      this.clrFund = clrFund
     },
     async loadMACIFactoryInfo() {
       const factory = await getMACIFactoryInfo()

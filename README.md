@@ -62,24 +62,17 @@ In a future version, we plan to address this by routing ETH and token contributi
 
 ## Development
 
-### Install Node v12 with nvm
+### Install Node v18 with nvm
 
 ```sh
-nvm install 12
-nvm use 12
+nvm install 20
+nvm use 20
 ```
 
-If using the M1 chip in Apple products, you need to use Node v16.
+### Install the dependencies and build
 
 ```sh
-nvm install 16
-nvm use 16
-```
-
-### Install the dependencies
-
-```sh
-yarn
+yarn && yarn build
 
 # Along with the dependencies, git hooks are also installed. At the end of the installation, you will see the following line after a successful setup.
 husky - Git hooks installed
@@ -109,9 +102,8 @@ In a 2nd terminal you will need to run your graph node (more on this
 [here](docs/subgraph.md))
 
 ```sh
-# go to the thegraph repo directory and init the node
-cd graph-node/docker
-docker-compose up
+cd subgraph/graph-node
+docker compose up -d
 ```
 
 And finally, in a 3rd terminal

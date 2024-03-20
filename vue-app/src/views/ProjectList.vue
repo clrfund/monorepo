@@ -144,7 +144,7 @@ async function loadProjectRoundInfo(roundAddress: string): Promise<ProjectRoundI
   }
 
   if (!recipientRegistryAddress) {
-    // pass null as round address to get recipient registry address from the factory
+    // pass null as round address to get recipient registry address from ClrFund
     recipientRegistryAddress = await getRecipientRegistryAddress(null)
   }
 

@@ -2,21 +2,14 @@
 
 ## Working with ZK proofs
 
-Install [zkutil](https://github.com/poma/zkutil) (see instructions in [MACI readme](https://github.com/appliedzkp/maci#get-started)).
-
-Download [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/Qmbi3nqjBwANPMk5BRyKjCJ4QSHK6WNp7v9NLLo4uwrG1f) for 'test' circuits to `snark-params` directory. Example:
-
-```
-ipfs get --output snark-params Qmbi3nqjBwANPMk5BRyKjCJ4QSHK6WNp7v9NLLo4uwrG1f
-```
-
-Set the path to downloaded parameter files and also the path to `zkutil` binary (if needed):
-
-```
-export NODE_CONFIG='{"snarkParamsPath": "../../../contracts/snark-params/", "zkutil_bin": "/usr/bin/zkutil"}'
-```
+Read the [deployment guide](../docs/deployment.md) on how to install MACI dependencies, which include installing rapidsnark (for ubuntu only), c++ libraries and downloading circuit parameter files.
 
 ## End-to-end tests
+
+Start the hardhat node:
+```
+yarn run node
+```
 
 Run the tests:
 
@@ -26,7 +19,7 @@ yarn e2e
 
 ## Scripts
 
-### Deploy factory contract
+### Deploy the ClrFund contract
 
 Deploy to local network:
 
@@ -34,50 +27,35 @@ Deploy to local network:
 yarn deploy:local
 ```
 
-### Deploy test round
-
-This includes:
-
-- Deploying ERC20 token contract.
-- Adding tokens to the matching pool.
-- Adding recipients.
-- Deploying funding round.
-- Deploying MACI instance.
-
-```
-yarn deployTestRound:local
-```
-
 ### Run test round
 
-Set coordinator's private key (optional, by default the Ganache account #1 will be used):
+Download the circuit zkeys:
 
 ```
-export COORDINATOR_ETH_PK='0x...'
+# this script will download the zkeys in the params folder where the script is run
+../.github/scripts/download-6-9-2-3.sh
 ```
 
-Contribute funds, wait until sign-up period ends (10 minutes) and vote:
+If you have previously downloaded the zkeys, you can export the environment variable CIRCUIT_DIRECTORY to point to the directory.
+
+Run the script, the github action test-script.yml uses this script.
 
 ```
-yarn contribute:local
-sleep 300s && yarn vote:local
+sh/runScriptTests.sh
 ```
 
-Wait until voting period ends, process messages, tally votes and verify the results:
-
-```
-sleep 300s && yarn tally:local && yarn finalize:local
-```
-
-Claim funds:
-
-```
-yarn claim:local
-```
+The test includes setting coordinator keys, contribute funds, vote, tally, finalize and claim funds
 
 ### Verify all clr.fund contracts
 The following command will verify all clr.fund contracts. It will log a warning if contract already verified or missing.
 
 ```
-yarn hardhat verify-all <funding-round-address> --network <network>
+yarn hardhat verify-all --clrfund <clrfund-address>  --network <network>
+```
+
+### Generate coordinator key
+If you want to genereate a single key to coordinate multiple rounds.
+
+```
+yarn ts-node tasks/maciNewKey.ts
 ```

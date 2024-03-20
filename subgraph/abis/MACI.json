@@ -2,10 +2,246 @@
   {
     "inputs": [
       {
+        "internalType": "contract IPollFactory",
+        "name": "_pollFactory",
+        "type": "address"
+      },
+      {
+        "internalType": "contract IMessageProcessorFactory",
+        "name": "_messageProcessorFactory",
+        "type": "address"
+      },
+      {
+        "internalType": "contract ITallySubsidyFactory",
+        "name": "_tallyFactory",
+        "type": "address"
+      },
+      {
+        "internalType": "contract ITallySubsidyFactory",
+        "name": "_subsidyFactory",
+        "type": "address"
+      },
+      {
+        "internalType": "contract SignUpGatekeeper",
+        "name": "_signUpGatekeeper",
+        "type": "address"
+      },
+      {
+        "internalType": "contract InitialVoiceCreditProxy",
+        "name": "_initialVoiceCreditProxy",
+        "type": "address"
+      },
+      {
+        "internalType": "contract TopupCredit",
+        "name": "_topupCredit",
+        "type": "address"
+      },
+      {
+        "internalType": "uint8",
+        "name": "_stateTreeDepth",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "payable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_caller",
+        "type": "address"
+      }
+    ],
+    "name": "CallerMustBePoll",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidMessage",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "MaciPubKeyLargerThanSnarkFieldSize",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "pollId",
+        "type": "uint256"
+      }
+    ],
+    "name": "PollDoesNotExist",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "PoseidonHashLibrariesNotLinked",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "pollId",
+        "type": "uint256"
+      }
+    ],
+    "name": "PreviousPollNotCompleted",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SignupTemporaryBlocked",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "TooManySignups",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_pollId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "_coordinatorPubKeyX",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "_coordinatorPubKeyY",
+        "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "poll",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "messageProcessor",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "tally",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "subsidy",
+            "type": "address"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct MACI.PollContracts",
+        "name": "pollAddr",
+        "type": "tuple"
+      }
+    ],
+    "name": "DeployPoll",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_stateIndex",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "_userPubKeyX",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "_userPubKeyY",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_voiceCreditBalance",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_timestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "SignUp",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "MESSAGE_DATA_LENGTH",
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_duration",
+        "type": "uint256"
+      },
+      {
         "components": [
           {
             "internalType": "uint8",
-            "name": "stateTreeDepth",
+            "name": "intStateTreeDepth",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "messageTreeSubDepth",
             "type": "uint8"
           },
           {
@@ -19,82 +255,13 @@
             "type": "uint8"
           }
         ],
-        "internalType": "struct MACIParameters.TreeDepths",
+        "internalType": "struct Params.TreeDepths",
         "name": "_treeDepths",
         "type": "tuple"
       },
       {
         "components": [
           {
-            "internalType": "uint8",
-            "name": "tallyBatchSize",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "messageBatchSize",
-            "type": "uint8"
-          }
-        ],
-        "internalType": "struct MACIParameters.BatchSizes",
-        "name": "_batchSizes",
-        "type": "tuple"
-      },
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "maxUsers",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "maxMessages",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "maxVoteOptions",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct MACIParameters.MaxValues",
-        "name": "_maxValues",
-        "type": "tuple"
-      },
-      {
-        "internalType": "contract SignUpGatekeeper",
-        "name": "_signUpGatekeeper",
-        "type": "address"
-      },
-      {
-        "internalType": "contract SnarkVerifier",
-        "name": "_batchUstVerifier",
-        "type": "address"
-      },
-      {
-        "internalType": "contract SnarkVerifier",
-        "name": "_qvtVerifier",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_signUpDurationSeconds",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_votingDurationSeconds",
-        "type": "uint256"
-      },
-      {
-        "internalType": "contract InitialVoiceCreditProxy",
-        "name": "_initialVoiceCreditProxy",
-        "type": "address"
-      },
-      {
-        "components": [
-          {
             "internalType": "uint256",
             "name": "x",
             "type": "uint256"
@@ -105,235 +272,72 @@
             "type": "uint256"
           }
         ],
-        "internalType": "struct MACISharedObjs.PubKey",
+        "internalType": "struct DomainObjs.PubKey",
         "name": "_coordinatorPubKey",
         "type": "tuple"
       },
       {
         "internalType": "address",
-        "name": "_coordinatorAddress",
+        "name": "_verifier",
         "type": "address"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "iv",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256[10]",
-            "name": "data",
-            "type": "uint256[10]"
-          }
-        ],
-        "indexed": false,
-        "internalType": "struct MACISharedObjs.Message",
-        "name": "_message",
-        "type": "tuple"
       },
       {
+        "internalType": "address",
+        "name": "_vkRegistry",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "useSubsidy",
+        "type": "bool"
+      }
+    ],
+    "name": "deployPoll",
+    "outputs": [
+      {
         "components": [
           {
-            "internalType": "uint256",
-            "name": "x",
-            "type": "uint256"
+            "internalType": "address",
+            "name": "poll",
+            "type": "address"
           },
           {
-            "internalType": "uint256",
-            "name": "y",
-            "type": "uint256"
+            "internalType": "address",
+            "name": "messageProcessor",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "tally",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "subsidy",
+            "type": "address"
           }
         ],
-        "indexed": false,
-        "internalType": "struct MACISharedObjs.PubKey",
-        "name": "_encPubKey",
+        "internalType": "struct MACI.PollContracts",
+        "name": "pollAddr",
         "type": "tuple"
       }
     ],
-    "name": "PublishMessage",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "x",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "y",
-            "type": "uint256"
-          }
-        ],
-        "indexed": false,
-        "internalType": "struct MACISharedObjs.PubKey",
-        "name": "_userPubKey",
-        "type": "tuple"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "_stateIndex",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "_voiceCreditBalance",
-        "type": "uint256"
-      }
-    ],
-    "name": "SignUp",
-    "type": "event"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_newStateRoot",
-        "type": "uint256"
-      },
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "x",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "y",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct MACISharedObjs.PubKey[]",
-        "name": "_ecdhPubKeys",
-        "type": "tuple[]"
-      },
-      {
-        "internalType": "uint256[8]",
-        "name": "_proof",
-        "type": "uint256[8]"
-      }
-    ],
-    "name": "batchProcessMessage",
-    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
       {
-        "internalType": "uint8",
-        "name": "_levels",
-        "type": "uint8"
-      }
-    ],
-    "name": "calcEmptyVoteOptionTreeRoot",
-    "outputs": [
-      {
         "internalType": "uint256",
-        "name": "",
+        "name": "_pollId",
         "type": "uint256"
       }
     ],
-    "stateMutability": "pure",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "calcSignUpDeadline",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "calcVotingDeadline",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint8",
-        "name": "_treeLevels",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_zeroValue",
-        "type": "uint256"
-      }
-    ],
-    "name": "computeEmptyQuinRoot",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "pure",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint8",
-        "name": "_treeLevels",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_zeroValue",
-        "type": "uint256"
-      }
-    ],
-    "name": "computeEmptyRoot",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "pure",
-    "type": "function"
-  },
-
-  {
-    "inputs": [],
-    "name": "coordinatorAddress",
+    "name": "getPoll",
     "outputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "poll",
         "type": "address"
       }
     ],
@@ -342,101 +346,11 @@
   },
   {
     "inputs": [],
-    "name": "coordinatorPubKey",
+    "name": "getStateAqRoot",
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "x",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "y",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "coordinatorReset",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "currentMessageBatchIndex",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "currentPerVOSpentVoiceCreditsCommitment",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "currentQvtBatchNum",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "currentResultsCommitment",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "currentSpentVoiceCreditsCommitment",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "emptyVoteOptionTreeRoot",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
+        "name": "root",
         "type": "uint256"
       }
     ],
@@ -446,143 +360,54 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "_newStateRoot",
-        "type": "uint256"
-      },
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "x",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "y",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct MACISharedObjs.PubKey[]",
-        "name": "_ecdhPubKeys",
-        "type": "tuple[]"
-      }
-    ],
-    "name": "genBatchUstPublicSignals",
-    "outputs": [
-      {
-        "internalType": "uint256[]",
-        "name": "",
-        "type": "uint256[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_intermediateStateRoot",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_newResultsCommitment",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_newSpentVoiceCreditsCommitment",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_newPerVOSpentVoiceCreditsCommitment",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_totalVotes",
-        "type": "uint256"
-      }
-    ],
-    "name": "genQvtPublicSignals",
-    "outputs": [
-      {
-        "internalType": "uint256[]",
-        "name": "",
-        "type": "uint256[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getMessageTreeRoot",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getStateTreeRoot",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "hasUnprocessedMessages",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "hasUntalliedStateLeaves",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256[]",
+        "internalType": "uint256[2]",
         "name": "array",
-        "type": "uint256[]"
+        "type": "uint256[2]"
       }
     ],
-    "name": "hash11",
+    "name": "hash2",
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "result",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256[3]",
+        "name": "array",
+        "type": "uint256[3]"
+      }
+    ],
+    "name": "hash3",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "result",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256[4]",
+        "name": "array",
+        "type": "uint256[4]"
+      }
+    ],
+    "name": "hash4",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "result",
         "type": "uint256"
       }
     ],
@@ -601,7 +426,7 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "result",
         "type": "uint256"
       }
     ],
@@ -612,12 +437,12 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_left",
+        "name": "left",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "_right",
+        "name": "right",
         "type": "uint256"
       }
     ],
@@ -625,7 +450,7 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "result",
         "type": "uint256"
       }
     ],
@@ -638,7 +463,7 @@
         "components": [
           {
             "internalType": "uint256",
-            "name": "iv",
+            "name": "msgType",
             "type": "uint256"
           },
           {
@@ -647,16 +472,33 @@
             "type": "uint256[10]"
           }
         ],
-        "internalType": "struct MACISharedObjs.Message",
+        "internalType": "struct DomainObjs.Message",
         "name": "_message",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "x",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "y",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct DomainObjs.PubKey",
+        "name": "_encPubKey",
         "type": "tuple"
       }
     ],
-    "name": "hashMessage",
+    "name": "hashMessageAndEncPubKey",
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "msgHash",
         "type": "uint256"
       }
     ],
@@ -680,14 +522,9 @@
                 "type": "uint256"
               }
             ],
-            "internalType": "struct MACISharedObjs.PubKey",
+            "internalType": "struct DomainObjs.PubKey",
             "name": "pubKey",
             "type": "tuple"
-          },
-          {
-            "internalType": "uint256",
-            "name": "voteOptionTreeRoot",
-            "type": "uint256"
           },
           {
             "internalType": "uint256",
@@ -696,7 +533,7 @@
           },
           {
             "internalType": "uint256",
-            "name": "nonce",
+            "name": "timestamp",
             "type": "uint256"
           }
         ],
@@ -709,24 +546,11 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "ciphertext",
         "type": "uint256"
       }
     ],
     "stateMutability": "pure",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "hashedBlankStateLeaf",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -743,50 +567,48 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "maxMessages",
-    "outputs": [
+    "inputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "_pollId",
         "type": "uint256"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "maxUsers",
+    "name": "mergeStateAq",
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "root",
         "type": "uint256"
       }
     ],
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "messageBatchSize",
-    "outputs": [
+    "inputs": [
       {
-        "internalType": "uint8",
-        "name": "",
-        "type": "uint8"
+        "internalType": "uint256",
+        "name": "_numSrQueueOps",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_pollId",
+        "type": "uint256"
       }
     ],
-    "stateMutability": "view",
+    "name": "mergeStateAqSubRoots",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [],
-    "name": "messageTree",
+    "name": "messageProcessorFactory",
     "outputs": [
       {
-        "internalType": "contract IncrementalMerkleTree",
+        "internalType": "contract IMessageProcessorFactory",
         "name": "",
         "type": "address"
       }
@@ -796,20 +618,7 @@
   },
   {
     "inputs": [],
-    "name": "messageTreeMaxLeafIndex",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "numMessages",
+    "name": "nextPollId",
     "outputs": [
       {
         "internalType": "uint256",
@@ -835,25 +644,12 @@
   },
   {
     "inputs": [],
-    "name": "originalCurrentResultsCommitment",
+    "name": "owner",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "address",
         "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "originalSpentVoiceCreditsCommitment",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -862,48 +658,23 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "_intermediateStateRoot",
-        "type": "uint256"
+        "internalType": "uint256[2]",
+        "name": "dataToPad",
+        "type": "uint256[2]"
       },
       {
         "internalType": "uint256",
-        "name": "_newResultsCommitment",
+        "name": "msgType",
         "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_newSpentVoiceCreditsCommitment",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_newPerVOSpentVoiceCreditsCommitment",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_totalVotes",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256[8]",
-        "name": "_proof",
-        "type": "uint256[8]"
       }
     ],
-    "name": "proveVoteTallyBatch",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
+    "name": "padAndHashMessage",
+    "outputs": [
       {
         "components": [
           {
             "internalType": "uint256",
-            "name": "iv",
+            "name": "msgType",
             "type": "uint256"
           },
           {
@@ -912,8 +683,8 @@
             "type": "uint256[10]"
           }
         ],
-        "internalType": "struct MACISharedObjs.Message",
-        "name": "_message",
+        "internalType": "struct DomainObjs.Message",
+        "name": "message",
         "type": "tuple"
       },
       {
@@ -929,14 +700,75 @@
             "type": "uint256"
           }
         ],
-        "internalType": "struct MACISharedObjs.PubKey",
-        "name": "_encPubKey",
+        "internalType": "struct DomainObjs.PubKey",
+        "name": "padKey",
         "type": "tuple"
+      },
+      {
+        "internalType": "uint256",
+        "name": "msgHash",
+        "type": "uint256"
       }
     ],
-    "name": "publishMessage",
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "pollFactory",
+    "outputs": [
+      {
+        "internalType": "contract IPollFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "polls",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "renounceOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "array",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "sha256Hash",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "result",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -954,8 +786,8 @@
             "type": "uint256"
           }
         ],
-        "internalType": "struct MACISharedObjs.PubKey",
-        "name": "_userPubKey",
+        "internalType": "struct DomainObjs.PubKey",
+        "name": "_pubKey",
         "type": "tuple"
       },
       {
@@ -976,19 +808,6 @@
   },
   {
     "inputs": [],
-    "name": "signUpDurationSeconds",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "signUpGatekeeper",
     "outputs": [
       {
@@ -1002,49 +821,10 @@
   },
   {
     "inputs": [],
-    "name": "signUpTimestamp",
+    "name": "stateAq",
     "outputs": [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "stateRoot",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "stateRootBeforeProcessing",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "stateTree",
-    "outputs": [
-      {
-        "internalType": "contract IncrementalMerkleTree",
+        "internalType": "contract AccQueue",
         "name": "",
         "type": "address"
       }
@@ -1054,7 +834,7 @@
   },
   {
     "inputs": [],
-    "name": "tallyBatchSize",
+    "name": "stateTreeDepth",
     "outputs": [
       {
         "internalType": "uint8",
@@ -1067,12 +847,12 @@
   },
   {
     "inputs": [],
-    "name": "totalVotes",
+    "name": "subsidyFactory",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "contract ITallySubsidyFactory",
         "name": "",
-        "type": "uint256"
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -1080,41 +860,7 @@
   },
   {
     "inputs": [],
-    "name": "treeDepths",
-    "outputs": [
-      {
-        "internalType": "uint8",
-        "name": "stateTreeDepth",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint8",
-        "name": "messageTreeDepth",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint8",
-        "name": "voteOptionTreeDepth",
-        "type": "uint8"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_spent",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_salt",
-        "type": "uint256"
-      }
-    ],
-    "name": "verifySpentVoiceCredits",
+    "name": "subtreesMerged",
     "outputs": [
       {
         "internalType": "bool",
@@ -1127,12 +873,12 @@
   },
   {
     "inputs": [],
-    "name": "voteOptionsMaxLeafIndex",
+    "name": "tallyFactory",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "contract ITallySubsidyFactory",
         "name": "",
-        "type": "uint256"
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -1140,15 +886,28 @@
   },
   {
     "inputs": [],
-    "name": "votingDurationSeconds",
+    "name": "topupCredit",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "contract TopupCredit",
         "name": "",
-        "type": "uint256"
+        "type": "address"
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]

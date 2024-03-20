@@ -62,17 +62,16 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { BigNumber, Contract } from 'ethers'
-import { parseFixed } from '@ethersproject/bignumber'
+import { Contract, parseUnits } from 'ethers'
 import Transaction from '@/components/Transaction.vue'
 import InputButton from '@/components/InputButton.vue'
 
 import { waitForTransaction } from '@/utils/contracts'
 import { formatAmount } from '@/utils/amounts'
-import { formatUnits } from '@ethersproject/units'
+import { formatUnits } from 'ethers'
 
 import { ERC20 } from '@/api/abi'
-import { factory } from '@/api/core'
+import { clrFundContract } from '@/api/core'
 import { VueFinalModal } from 'vue-final-modal'
 import { useAppStore, useUserStore } from '@/stores'
 
@@ -95,7 +94,7 @@ const balance = computed<string | null>(() => {
   return formatUnits(balance, nativeTokenDecimals.value)
 })
 const renderBalance = computed<string | null>(() => {
-  const balance: BigNumber | null | undefined = userStore.currentUser?.balance
+  const balance: bigint | null | undefined = userStore.currentUser?.balance
   if (balance === null || typeof balance === 'undefined') return null
   return formatAmount(balance, nativeTokenDecimals.value, null, 5)
 })
@@ -109,13 +108,13 @@ const isBalanceSufficient = computed<boolean>(() => {
 })
 
 const isAmountValid = computed<boolean>(() => {
-  let _amount
+  let _amount: bigint
   try {
-    _amount = parseFixed(amount.value, nativeTokenDecimals.value)
+    _amount = parseUnits(amount.value, nativeTokenDecimals.value)
   } catch {
     return false
   }
-  if (_amount.lte(BigNumber.from(0))) {
+  if (_amount <= 0n) {
     return false
   }
   if (balance.value && parseFloat(amount.value) > parseFloat(balance.value)) {
@@ -126,19 +125,21 @@ const isAmountValid = computed<boolean>(() => {
 
 async function contributeMatchingFunds() {
   step.value += 1
-  const token = new Contract(nativeTokenAddress.value, ERC20, userStore.signer)
-  const _amount = parseFixed(amount.value, nativeTokenDecimals.value)
+  const signer = await userStore.getSigner()
+  const token = new Contract(nativeTokenAddress.value, ERC20, signer)
+  const _amount = parseUnits(amount.value, nativeTokenDecimals.value)
 
-  // TODO: update to take factory address as a parameter from the route props, default to env. variable
+  // TODO: update to take ClrFund address as a parameter from the route props, default to env. variable
   const matchingPoolAddress = import.meta.env.VITE_MATCHING_POOL_ADDRESS
     ? import.meta.env.VITE_MATCHING_POOL_ADDRESS
-    : factory.address
+    : clrFundContract.target
 
   try {
     await waitForTransaction(token.transfer(matchingPoolAddress, _amount), hash => (transferTxHash.value = hash))
   } catch (error) {
-    transferTxError.value = error.message
-    if (error.message.indexOf('Nonce too high') >= 0 && import.meta.env.MODE === 'development') {
+    const errorMessage = (error as Error).message
+    transferTxError.value = errorMessage
+    if (errorMessage.indexOf('Nonce too high') >= 0 && import.meta.env.MODE === 'development') {
       transferTxError.value = 'Have you been buidling?? Reset your nonce! 🪄'
     }
     return

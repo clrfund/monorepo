@@ -42,7 +42,6 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { BigNumber } from '@ethersproject/bignumber'
 import { chain as _chain } from '@/api/core'
 import { formatAmount } from '@/utils/amounts'
 import Links from '@/components/Links.vue'
@@ -66,11 +65,11 @@ const nativeTokenSymbol = computed(() => appStore.nativeTokenSymbol)
 const nativeTokenDecimals = computed(() => appStore.nativeTokenDecimals)
 const tokenBalance = computed(() => {
   if (!currentUser.value?.balance) return null
-  return parseFloat(formatAmount(currentUser.value.balance as BigNumber, nativeTokenDecimals.value))
+  return parseFloat(formatAmount(currentUser.value.balance as bigint, nativeTokenDecimals.value))
 })
 const etherBalance = computed(() => {
   if (!currentUser.value?.etherBalance) return null
-  return parseFloat(formatAmount(currentUser.value.etherBalance as BigNumber))
+  return parseFloat(formatAmount(currentUser.value.etherBalance as bigint))
 })
 const needsTokens = computed(() => {
   return !hasUserContributed.value && tokenBalance.value === 0

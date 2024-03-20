@@ -30,7 +30,7 @@ const TransactionSuccess = () => import('@/views/TransactionSuccess.vue')
 const Leaderboard = () => import('@/views/Leaderboard.vue')
 const LeaderboardProject = () => import('@/views/LeaderboardProject.vue')
 
-// TODO: create a new route that takes funding factory address as a param
+// TODO: create a new route that takes funding ClrFund address as a param
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',

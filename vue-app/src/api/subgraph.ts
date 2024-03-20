@@ -1,4 +1,4 @@
-import type { TransactionReceipt } from '@ethersproject/abstract-provider'
+import type { TransactionReceipt } from 'ethers'
 import sdk from '@/graphql/sdk'
 
 /**

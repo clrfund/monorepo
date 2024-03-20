@@ -1,10 +1,13 @@
 import { BaseProvider, FetchLogArgs, Log } from './BaseProvider'
-import { utils, BigNumber } from 'ethers'
+import { FetchRequest } from 'ethers'
 
 const EtherscanApiUrl: Record<string, string> = {
   xdai: 'https://api.gnosisscan.io',
   arbitrum: 'https://api.arbiscan.io',
   'arbitrum-goerli': 'https://api-goerli.arbiscan.io',
+  'arbitrum-sepolia': 'https://api-sepolia.arbiscan.io',
+  optimism: 'https://api-optimistic.etherscan.io',
+  'optimism-sepolia': 'https://api-sepolia-optimistic.etherscan.io',
 }
 
 export class EtherscanProvider extends BaseProvider {
@@ -30,11 +33,14 @@ export class EtherscanProvider extends BaseProvider {
     }
 
     const topic0 = filter.topics?.[0] || ''
+    const toBlockQuery = lastBlock ? `&toBlock=${lastBlock}` : ''
     const url =
       `${baseUrl}/api?module=logs&action=getLogs&address=${filter.address}` +
-      `&topic0=${topic0}&fromBlock=${startBlock}&&toBlock=${lastBlock}&apikey=${this.apiKey}`
+      `&topic0=${topic0}&fromBlock=${startBlock}${toBlockQuery}&apikey=${this.apiKey}`
 
-    const result = await utils.fetchJson(url)
+    const req = new FetchRequest(url)
+    const resp = await req.send()
+    const result = resp.bodyJson
 
     if (result.status === '0' && result.message === 'No records found') {
       return []
@@ -45,7 +51,7 @@ export class EtherscanProvider extends BaseProvider {
     }
 
     return result.result.map((res: any) => ({
-      blockNumber: BigNumber.from(res.blockNumber).toNumber(),
+      blockNumber: Number(res.blockNumber),
       blockHash: res.blockHash,
       transactionIndex: res.transactionIndex,
       removed: false,

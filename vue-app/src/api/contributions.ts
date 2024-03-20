@@ -1,12 +1,10 @@
-import { BigNumber, Contract, Signer, FixedNumber } from 'ethers'
-import { parseFixed } from '@ethersproject/bignumber'
-
-import type { TransactionResponse } from '@ethersproject/abstract-provider'
-import { Keypair, PubKey, PrivKey, Message, Command, getPubKeyId } from '@clrfund/maci-utils'
+import { Contract, FixedNumber, parseUnits, id } from 'ethers'
+import type { TransactionResponse, Signer } from 'ethers'
+import { Keypair, PubKey, PrivKey, Message, Command } from '@clrfund/common'
 
 import type { RoundInfo } from './round'
 import { FundingRound, ERC20 } from './abi'
-import { factory, provider } from './core'
+import { clrFundContract, provider } from './core'
 import type { Project } from './projects'
 import sdk from '@/graphql/sdk'
 import { Transaction } from '@/utils/transaction'
@@ -25,6 +23,17 @@ export interface CartItem extends Project {
 export interface Contributor {
   keypair: Keypair
   stateIndex: number
+}
+
+/**
+ * get the id of the subgraph public key entity from the pubKey value
+ * @param fundingRoundAddress funding round address
+ * @param pubKey MACI public key
+ * @returns the id for the subgraph public key entity
+ */
+function getPubKeyId(fundingRoundAddress = '', pubKey: PubKey): string {
+  const pubKeyPair = pubKey.asContractParam()
+  return id(fundingRoundAddress.toLowerCase() + '.' + pubKeyPair.x + '.' + pubKeyPair.y)
 }
 
 export function getCartStorageKey(roundAddress: string): string {
@@ -61,19 +70,16 @@ export function serializeContributorData(contributor: Contributor): string {
 export function deserializeContributorData(data: string | null): Contributor | null {
   if (data) {
     const parsed = JSON.parse(data)
-    const keypair = new Keypair(PrivKey.unserialize(parsed.privateKey))
+    const keypair = new Keypair(PrivKey.deserialize(parsed.privateKey))
     return { keypair, stateIndex: parsed.stateIndex }
   } else {
     return null
   }
 }
 
-export async function getContributionAmount(
-  fundingRoundAddress: string,
-  contributorAddress: string,
-): Promise<BigNumber> {
+export async function getContributionAmount(fundingRoundAddress: string, contributorAddress: string): Promise<bigint> {
   if (!fundingRoundAddress) {
-    return BigNumber.from(0)
+    return 0n
   }
   const data = await sdk.GetContributionsAmount({
     fundingRoundAddress: fundingRoundAddress.toLowerCase(),
@@ -81,14 +87,14 @@ export async function getContributionAmount(
   })
 
   if (!data.contributions.length) {
-    return BigNumber.from(0)
+    return 0n
   }
 
-  return BigNumber.from(data.contributions[0].amount)
+  return BigInt(data.contributions[0].amount)
 }
 
-export async function getTotalContributed(fundingRoundAddress: string): Promise<{ count: number; amount: BigNumber }> {
-  const nativeTokenAddress = await factory.nativeToken()
+export async function getTotalContributed(fundingRoundAddress: string): Promise<{ count: number; amount: bigint }> {
+  const nativeTokenAddress = await clrFundContract.nativeToken()
   const nativeToken = new Contract(nativeTokenAddress, ERC20, provider)
   const balance = await nativeToken.balanceOf(fundingRoundAddress)
 
@@ -97,7 +103,7 @@ export async function getTotalContributed(fundingRoundAddress: string): Promise<
   })
 
   if (!data.fundingRound?.contributorCount) {
-    return { count: 0, amount: BigNumber.from(0) }
+    return { count: 0, amount: 0n }
   }
 
   const count = parseInt(data.fundingRound.contributorCount)
@@ -111,36 +117,22 @@ export async function withdrawContribution(roundAddress: string, signer: Signer)
   return transaction
 }
 
-export async function hasContributorVoted(fundingRoundAddress: string, contributorAddress: string): Promise<boolean> {
-  if (!fundingRoundAddress) {
-    return false
-  }
-  const data = await sdk.GetContributorVotes({
-    fundingRoundAddress: fundingRoundAddress.toLowerCase(),
-    contributorAddress: contributorAddress.toLowerCase(),
-  })
-  return !!data.fundingRound?.contributors?.[0]?.votes?.length
-}
-
 export function isContributionAmountValid(value: string, currentRound: RoundInfo): boolean {
   // if (!currentRound) {
   // 	// Skip validation
   // 	return true
   // }
   const { nativeTokenDecimals, voiceCreditFactor } = currentRound
-  let amount
+  let amount: bigint
   try {
-    amount = parseFixed(value, nativeTokenDecimals)
+    amount = parseUnits(value, nativeTokenDecimals)
   } catch {
     return false
   }
-  if (amount.lte(BigNumber.from(0))) {
+  if (amount <= 0n) {
     return false
   }
-  const normalizedValue = FixedNumber.fromValue(
-    amount.div(voiceCreditFactor).mul(voiceCreditFactor),
-    nativeTokenDecimals,
-  )
+  const normalizedValue = FixedNumber.fromValue((amount / voiceCreditFactor) * voiceCreditFactor, nativeTokenDecimals)
     .toUnsafeFloat()
     .toString()
   return normalizedValue === value
@@ -156,7 +148,7 @@ export async function getContributorIndex(fundingRoundAddress: string, pubKey: P
   if (!fundingRoundAddress) {
     return null
   }
-  const id = getPubKeyId(pubKey)
+  const id = getPubKeyId(fundingRoundAddress, pubKey)
   const data = await sdk.GetContributorIndex({
     fundingRoundAddress: fundingRoundAddress.toLowerCase(),
     publicKeyId: id,
@@ -167,6 +159,20 @@ export async function getContributorIndex(fundingRoundAddress: string, pubKey: P
   }
 
   return Number(data.publicKeys[0].stateIndex)
+}
+
+/**
+ * Convert to MACI Message object
+ * @param type message type, 1 for key change or vote, 2 for topup
+ * @param data message data
+ * @returns Message
+ */
+function getMaciMessage(type: any, data: any[] | null): Message {
+  const msgType = BigInt(type)
+  const rawData = data || []
+  const msgData = rawData.map((d: string) => BigInt(d))
+  const maciMessage = new Message(BigInt(msgType), msgData)
+  return maciMessage
 }
 
 /**
@@ -191,7 +197,7 @@ export async function getContributorMessages({
     return []
   }
 
-  const key = getPubKeyId(contributorKey.pubKey)
+  const key = getPubKeyId(fundingRoundAddress, contributorKey.pubKey)
   const result = await sdk.GetContributorMessages({
     fundingRoundAddress: fundingRoundAddress.toLowerCase(),
     pubKey: key,
@@ -207,28 +213,27 @@ export async function getContributorMessages({
   let latestTransaction: Transaction | null = null
   const latestMessages = result.messages
     .filter(message => {
-      const { iv, data, blockNumber, transactionIndex } = message
-
       try {
-        const maciMessage = new Message(iv, data || [])
+        const maciMessage = getMaciMessage(message.msgType, message.data)
         const { command, signature } = Command.decrypt(maciMessage, sharedKey)
         if (!command.verifySignature(signature, contributorKey.pubKey)) {
           // Not signed by this user, filter it out
           return false
         }
-
-        const currentTx = new Transaction({
-          blockNumber: Number(blockNumber),
-          transactionIndex: Number(transactionIndex),
-        })
-
-        // save the latest transaction
-        if (!latestTransaction || currentTx.compare(latestTransaction) > 0) {
-          latestTransaction = currentTx
-        }
       } catch {
         // if we can't decrypt the message, filter it out
         return false
+      }
+
+      const { blockNumber, transactionIndex } = message
+      const currentTx = new Transaction({
+        blockNumber: Number(blockNumber),
+        transactionIndex: Number(transactionIndex),
+      })
+
+      // save the latest transaction
+      if (!latestTransaction || currentTx.compare(latestTransaction) > 0) {
+        latestTransaction = currentTx
       }
       return true
     })
@@ -240,8 +245,7 @@ export async function getContributorMessages({
       return latestTransaction && tx.compare(latestTransaction) === 0
     })
     .map(message => {
-      const { iv, data } = message
-      return new Message(iv, data || [])
+      return getMaciMessage(message.msgType, message.data)
     })
 
   return latestMessages

@@ -1,295 +1,56 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.6.12;
-pragma experimental ABIEncoderV2;
+pragma solidity ^0.8.10;
 
-import '@openzeppelin/contracts/access/Ownable.sol';
-import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
-import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
-import '@openzeppelin/contracts/utils/EnumerableSet.sol';
+import {FundingRound} from './FundingRound.sol';
+import {IClrFund} from './interfaces/IClrFund.sol';
+import {IMACIFactory} from './interfaces/IMACIFactory.sol';
+import {MACICommon} from './MACICommon.sol';
+import {MACI} from 'maci-contracts/contracts/MACI.sol';
+import {SignUpGatekeeper} from 'maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol';
+import {InitialVoiceCreditProxy} from 'maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
 
-import 'maci-contracts/sol/MACI.sol';
-import 'maci-contracts/sol/MACISharedObjs.sol';
-import 'maci-contracts/sol/gatekeepers/SignUpGatekeeper.sol';
-import 'maci-contracts/sol/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
-
-import './userRegistry/IUserRegistry.sol';
-import './recipientRegistry/IRecipientRegistry.sol';
-import './MACIFactory.sol';
-import './FundingRound.sol';
-
-contract FundingRoundFactory is Ownable, MACISharedObjs {
-  using EnumerableSet for EnumerableSet.AddressSet;
-  using SafeERC20 for ERC20;
-
-  // State
-  address public coordinator;
-
-  ERC20 public nativeToken;
-  MACIFactory public maciFactory;
-  IUserRegistry public userRegistry;
-  IRecipientRegistry public recipientRegistry;
-  PubKey public coordinatorPubKey;
-
-  EnumerableSet.AddressSet private fundingSources;
-  FundingRound[] public rounds;
-
-  // Events
-  event FundingSourceAdded(address _source);
-  event FundingSourceRemoved(address _source);
-  event RoundStarted(address _round);
-  event RoundFinalized(address _round);
-  event TokenChanged(address _token);
-  event CoordinatorChanged(address _coordinator);
-
-  constructor(
-    MACIFactory _maciFactory
-  )
-    public
-  {
-    maciFactory = _maciFactory;
-  }
-
+/**
+* @dev A factory to deploy the funding round contract
+*/
+contract FundingRoundFactory is MACICommon {
   /**
-    * @dev Set registry of verified users.
-    * @param _userRegistry Address of a user registry.
-    */
-  function setUserRegistry(IUserRegistry _userRegistry)
-    external
-    onlyOwner
-  {
-    userRegistry = _userRegistry;
-  }
-
-  /**
-    * @dev Set recipient registry.
-    * @param _recipientRegistry Address of a recipient registry.
-    */
-  function setRecipientRegistry(IRecipientRegistry _recipientRegistry)
-    external
-    onlyOwner
-  {
-    recipientRegistry = _recipientRegistry;
-    (,, uint256 maxVoteOptions) = maciFactory.maxValues();
-    recipientRegistry.setMaxRecipients(maxVoteOptions);
-  }
-
-  /**
-    * @dev Add matching funds source.
-    * @param _source Address of a funding source.
-    */
-  function addFundingSource(address _source)
-    external
-    onlyOwner
-  {
-    bool result = fundingSources.add(_source);
-    require(result, 'Factory: Funding source already added');
-    emit FundingSourceAdded(_source);
-  }
-
-  /**
-    * @dev Remove matching funds source.
-    * @param _source Address of the funding source.
-    */
-  function removeFundingSource(address _source)
-    external
-    onlyOwner
-  {
-    bool result = fundingSources.remove(_source);
-    require(result, 'Factory: Funding source not found');
-    emit FundingSourceRemoved(_source);
-  }
-
-  function getCurrentRound()
-    public
-    view
-    returns (FundingRound _currentRound)
-  {
-    if (rounds.length == 0) {
-      return FundingRound(address(0));
-    }
-    return rounds[rounds.length - 1];
-  }
-
-  function setMaciParameters(
-    uint8 _stateTreeDepth,
-    uint8 _messageTreeDepth,
-    uint8 _voteOptionTreeDepth,
-    uint8 _tallyBatchSize,
-    uint8 _messageBatchSize,
-    SnarkVerifier _batchUstVerifier,
-    SnarkVerifier _qvtVerifier,
-    uint256 _signUpDuration,
-    uint256 _votingDuration
+  * @dev Deploy the funding round contract
+  * @param _duration the funding round duration
+  * @param _clrfund the clrfund contract containing information used to
+  *                 deploy a funding round, e.g. nativeToken, coordinator address
+  *                 coordinator public key, etc.
+   */
+  function deploy(
+    uint256 _duration,
+    address _clrfund
   )
     external
-    onlyOwner
+    returns (address)
   {
-    maciFactory.setMaciParameters(
-      _stateTreeDepth,
-      _messageTreeDepth,
-      _voteOptionTreeDepth,
-      _tallyBatchSize,
-      _messageBatchSize,
-      _batchUstVerifier,
-      _qvtVerifier,
-      _signUpDuration,
-      _votingDuration
-    );
-  }
-
-  /**
-    * @dev Deploy new funding round.
-    */
-  function deployNewRound()
-    external
-    onlyOwner
-  {
-    require(maciFactory.owner() == address(this), 'Factory: MACI factory is not owned by FR factory');
-    require(address(userRegistry) != address(0), 'Factory: User registry is not set');
-    require(address(recipientRegistry) != address(0), 'Factory: Recipient registry is not set');
-    require(address(nativeToken) != address(0), 'Factory: Native token is not set');
-    require(coordinator != address(0), 'Factory: No coordinator');
-    FundingRound currentRound = getCurrentRound();
-    require(
-      address(currentRound) == address(0) || currentRound.isFinalized(),
-      'Factory: Current round is not finalized'
-    );
-    // Make sure that the max number of recipients is set correctly
-    (,, uint256 maxVoteOptions) = maciFactory.maxValues();
-    recipientRegistry.setMaxRecipients(maxVoteOptions);
-    // Deploy funding round and MACI contracts
+    IClrFund clrfund = IClrFund(_clrfund);
     FundingRound newRound = new FundingRound(
-      nativeToken,
-      userRegistry,
-      recipientRegistry,
-      coordinator
+      clrfund.nativeToken(),
+      clrfund.userRegistry(),
+      clrfund.recipientRegistry(),
+      clrfund.coordinator()
     );
-    rounds.push(newRound);
-    MACI maci = maciFactory.deployMaci(
+
+    IMACIFactory maciFactory = clrfund.maciFactory();
+    (MACI maci, MACI.PollContracts memory pollContracts) = maciFactory.deployMaci(
       SignUpGatekeeper(newRound),
       InitialVoiceCreditProxy(newRound),
-      coordinator,
-      coordinatorPubKey
+      address(newRound.topupToken()),
+      _duration,
+      newRound.coordinator(),
+      clrfund.coordinatorPubKey(),
+      address(this)
     );
-    newRound.setMaci(maci);
-    emit RoundStarted(address(newRound));
-  }
 
-  /**
-    * @dev Get total amount of matching funds.
-    */
-  function getMatchingFunds(ERC20 token)
-    external
-    view
-    returns (uint256)
-  {
-    uint256 matchingPoolSize = token.balanceOf(address(this));
-    for (uint256 index = 0; index < fundingSources.length(); index++) {
-      address fundingSource = fundingSources.at(index);
-      uint256 allowance = token.allowance(fundingSource, address(this));
-      uint256 balance = token.balanceOf(fundingSource);
-      uint256 contribution = allowance < balance ? allowance : balance;
-      matchingPoolSize += contribution;
-    }
-    return matchingPoolSize;
-  }
-
-  /**
-    * @dev Transfer funds from matching pool to current funding round and finalize it.
-    * @param _totalSpent Total amount of spent voice credits.
-    * @param _totalSpentSalt The salt.
-    */
-  function transferMatchingFunds(
-    uint256 _totalSpent,
-    uint256 _totalSpentSalt
-  )
-    external
-    onlyOwner
-  {
-    FundingRound currentRound = getCurrentRound();
-    require(address(currentRound) != address(0), 'Factory: Funding round has not been deployed');
-    ERC20 roundToken = currentRound.nativeToken();
-    // Factory contract is the default funding source
-    uint256 matchingPoolSize = roundToken.balanceOf(address(this));
-    if (matchingPoolSize > 0) {
-      roundToken.safeTransfer(address(currentRound), matchingPoolSize);
-    }
-    // Pull funds from other funding sources
-    for (uint256 index = 0; index < fundingSources.length(); index++) {
-      address fundingSource = fundingSources.at(index);
-      uint256 allowance = roundToken.allowance(fundingSource, address(this));
-      uint256 balance = roundToken.balanceOf(fundingSource);
-      uint256 contribution = allowance < balance ? allowance : balance;
-      if (contribution > 0) {
-        roundToken.safeTransferFrom(fundingSource, address(currentRound), contribution);
-      }
-    }
-    currentRound.finalize(_totalSpent, _totalSpentSalt);
-    emit RoundFinalized(address(currentRound));
-  }
-
-  /**
-    * @dev Cancel current round.
-    */
-   function cancelCurrentRound()
-    external
-    onlyOwner
-  {
-    FundingRound currentRound = getCurrentRound();
-    require(address(currentRound) != address(0), 'Factory: Funding round has not been deployed');
-    require(!currentRound.isFinalized(), 'Factory: Current round is finalized');
-    currentRound.cancel();
-    emit RoundFinalized(address(currentRound));
-  }
-
-  /**
-    * @dev Set token in which contributions are accepted.
-    * @param _token Address of the token contract.
-    */
-  function setToken(address _token)
-    external
-    onlyOwner
-  {
-    nativeToken = ERC20(_token);
-    emit TokenChanged(_token);
-  }
-
-  /**
-    * @dev Set coordinator's address and public key.
-    * @param _coordinator Coordinator's address.
-    * @param _coordinatorPubKey Coordinator's public key.
-    */
-  function setCoordinator(
-    address _coordinator,
-    PubKey memory _coordinatorPubKey
-  )
-    external
-    onlyOwner
-  {
-    coordinator = _coordinator;
-    coordinatorPubKey = _coordinatorPubKey;
-    emit CoordinatorChanged(_coordinator);
-  }
-
-  function coordinatorQuit()
-    external
-    onlyCoordinator
-  {
-    // The fact that they quit is obvious from
-    // the address being 0x0
-    coordinator = address(0);
-    coordinatorPubKey = PubKey(0, 0);
-    FundingRound currentRound = getCurrentRound();
-    if (address(currentRound) != address(0) && !currentRound.isFinalized()) {
-      currentRound.cancel();
-      emit RoundFinalized(address(currentRound));
-    }
-    emit CoordinatorChanged(address(0));
-  }
-
-  modifier onlyCoordinator() {
-    require(msg.sender == coordinator, 'Factory: Sender is not the coordinator');
-    _;
+    // link funding round with maci related contracts
+    newRound.setMaci(maci, pollContracts);
+    newRound.transferOwnership(_clrfund);
+    maci.transferOwnership(address(newRound));
+    return address(newRound);
   }
 }

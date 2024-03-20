@@ -26,12 +26,12 @@
     "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ clrfund/clrfund",
     "create-local": "graph create --node http://localhost:8020/ clrfund/clrfund",
     "remove-local": "graph remove --node http://localhost:8020/ clrfund/clrfund",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 clrfund/clrfund",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 clrfund/clrfund --version-label=v0.0.1",
     "gen-uml": "graphqlviz https://api.thegraph.com/subgraphs/name/clrfund/clrfund | dot -Tpng -o subgraphUML.png"
   },
   "dependencies": {
-    "@graphprotocol/graph-cli": "^0.46.1",
-    "@graphprotocol/graph-ts": "^0.29.3"
+    "@graphprotocol/graph-cli": "^0.68.1",
+    "@graphprotocol/graph-ts": "^0.33.0"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.44.0",

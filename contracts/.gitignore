@@ -7,4 +7,8 @@ proofs.json
 tally.json
 .env
 .DS_Store
-tasks/addresses.txt
+addresses.txt
+proof_output
+typechain-types
+params
+local-state.json

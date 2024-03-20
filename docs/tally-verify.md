@@ -1,201 +1,34 @@
 # How to tally votes
 
-A funding round coordinator can tally votes using the MACI CLI, Docker or clrfund scripts.
+Only a funding round coordinator can tally votes.
 
-## Using MACI CLI
-
-### Clone the [MACI repo](https://github.com/privacy-scaling-explorations/maci) and switch to version v0.10.1:
-
-```
-git clone https://github.com/privacy-scaling-explorations/maci.git
-cd maci/
-git checkout v0.10.1
-```
-
-Follow instructions in README.md to install necessary dependencies.
-
-### Download circuits parameters
-
-Download the [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/QmbVzVWqNTjEv5S3Vvyq7NkLVkpqWuA9DGMRibZYJXKJqy) for 'batch 64' circuits into the `circuits/params/` directory.
-
-Change the permission of the c binaries to be executable:
-```
-cd circuits/params
-chmod u+x qvt32 batchUst32
-```
-
-Or, run the script monorepo/.github/scripts/download-batch64-params.sh to download the parameter files.
-
-
-The contract deployment scripts, `deploy*.ts` in the [clrfund repository](https://github.com/clrfund/monorepo/tree/develop/contracts/scripts) currently use the `batch 64` circuits, if you want to use a smaller size circuits, you can find them [here](../contracts/contracts/snarkVerifiers/README.md). You will need to update the deploy script to call `deployMaciFactory()` with your circuit and redeploy the contracts.
-
-```
-   // e.g. to use the x32 circuits
-   const circuit = 'x32' // defined in contracts/utils/deployment.ts
-   const maciFactory = await deployMaciFactory(deployer, circuit)
-```
-
-### Recompile the contracts:
-Compile the contracts to generate the ABI that the MACI command lines use in the next step.
-
-```
-cd ../contracts
-npm run compileSol
-```
-
-### Generate coordinator key
-Generate the coordinator key used to encrypt messages. The key will be used when deploying new round.
-
-```
-cd ../cli
-node build/index.js genMaciKeypair
-```
-
-A single key can be used to coordinate multiple rounds.
 
 ### Tally votes
 
-Download the logs to be fed to the `proveOnChain` step. This step is useful
-especially to avoid hitting rating limiting from the node. Make sure to run this
-step againts a node that has archiving enabled, e.g. could use the alchemy node:
+Install MACI dependencies (see the github action, `.github/workflows/test-scripts.yml` for all the dependencies to install)
 
-```
-cd ../cli
-node build/index.js fetchLogs \
-    --eth-provider <ETH_HOSTNAME> \
-    --contract <MACI_CONTRACT_ADDR> \
-    --start-block <BLOCK_NUMBER> \
-    --num-blocks-per-request <BLOCKS_PER_REQ> \
-    --output logs
-```
+Run the script monorepo/.github/scripts/download-6-9-2-3.sh to download the parameter files.
 
-Decrypt messages, tally the votes and generate proofs:
-
-```
-node build/index.js genProofs \
-    --eth-provider <ETH_HOSTNAME> \
-    --contract <MACI_CONTRACT_ADDR> \
-    --privkey <COORDINATOR_PRIVKEY> \
-    --tally-file tally.json \
-    --logs-file logs \
-    --macistate macistate \
-    --output proofs.json
-```
-
-The coordinator private key (`COORDINATOR_PRIVKEY`) must be in the MACI key format (starts with `macisk`).  It is used to decrypt messages.
-
-The `genProofs` command will create two files: `proofs.json` and `tally.json`. The `proofs.json` file will be needed to run the next command, `proveOnChain`, which submits proofs to the MACI contract:
-
-```
-node build/index.js proveOnChain \
-    --eth-provider <json-rpc-api-url> \
-    --contract <maci-address> \
-    --eth-privkey <eth-private-key> \
-    --proof-file proofs.json
-```
-
-The Ethereum private key (`eth-private-key`) can be any private key that controls the necessary amount of ETH to pay for gas.
-
-The process may take several hours. Results can be found in `tally.json` file, which must then be published via IPFS.
-
-Finally, the [CID](https://docs.ipfs.tech/concepts/content-addressing/) of tally file must be submitted to `FundingRound` contract:
-
-```
-await fundingRound.publishTallyHash('<CID>')
-```
-
-## Using Docker
-
-In case you are in a different OS than Linux, you can run all the previous MACI CLI commands by running the Docker image located in the MACI repo.
-
-**Note:** the batch 64 zkSNARK parameters have been tested using Ubuntu 22.04 + Node v16.13.2
-
-### Use the docker image
-
-First, install [docker](https://docs.docker.com/engine/install/) and [docker-compose](https://docs.docker.com/compose/install/)
-
-Inside the maci repo, run:
-
-```
-docker-compose up
-```
-
-Once the container is built, in a different terminal, grab the container id:
-
-```
-docker container ls
-```
-
-Get inside the container and execute the scripts you want:
-
-```
-docker exec -it {CONTAINER_ID} bash
-
-# inside the container
-cd cli/
-node build/index.js genProofs ...
-```
-
-## Using clrfund scripts
-
-### Generate coordinator key
-
-```
-cd contracts/
-yarn ts-node scripts/generate-key.ts
-```
-
-A single key can be used to coordinate multiple rounds.
-
-### Tally votes
-
-Install [zkutil](https://github.com/poma/zkutil) (see instructions in [MACI readme](https://github.com/appliedzkp/maci#get-started)).
-
-Switch to `contracts` directory:
-
-```
-cd contracts/
-```
-
-Download [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/QmbVzVWqNTjEv5S3Vvyq7NkLVkpqWuA9DGMRibZYJXKJqy) for 'batch 64' circuits to `snark-params` directory. Example:
-
-```
-ipfs get --output snark-params QmbVzVWqNTjEv5S3Vvyq7NkLVkpqWuA9DGMRibZYJXKJqy
-```
-
-Change the permission of the c binaries to be executable:
-```
-cd snark-params
-chmod u+x qvt32 batchUst32
-```
-
-Or, run the script monorepo/.github/scripts/download-batch64-params.sh to download the parameter files.
-
-
-
-Set the path to downloaded parameter files and also the path to `zkutil` binary (if needed):
-
-```
-export NODE_CONFIG='{"snarkParamsPath": "path-to/snark-params/", "zkutil_bin": "/usr/bin/zkutil"}'
-```
-
-Set the following env vars in `.env`:
+Set the following env vars in `/contracts/.env`:
 
 ```
 # private key for decrypting messages
-COORDINATOR_PK=<coordinator-private-key>
+COORDINATOR_MACISK=<coordinator-private-key>
 
 # private key for interacting with contracts
-COORDINATOR_ETH_PK=<eth-private-key>
+WALLET_MNEMONIC=
+WALLET_PRIVATE_KEY
 ```
 
 Decrypt messages and tally the votes:
 
-```
-yarn hardhat tally --network {network} --round-address {funding-round-address} --start-block {maci-contract-start-block}
+```sh
+yarn hardhat clr-tally --clrfund <clrfund-address> --maci-tx-hash <maci creation transaction hash> --rapidsnark <rapidsnark path> --circuit-directory <circuit zkeys directory> --network <network>
 ```
 
-If there's error and the tally task was stopped prematurely, it can be resumed by passing 2 additional parameters, '--maci-logs' and/or '--maci-state-file', if the files were generated.
+The `--rapidsnark` option is required if run on x86 architecture.
+
+If there's error and the tally task was stopped prematurely, it can be resumed by passing 2 additional parameters, '--tally-file' and/or '--maci-state-file', if the files were generated.
 
 Result will be saved to `tally.json` file, which must then be published via IPFS.
 
@@ -214,34 +47,25 @@ ipfs add tally.json
 Make sure you have the following env vars in `.env`. Ignore this if you are running a local test round in `localhost`, the script will know these values itself.
 
 ```
-FACTORY_ADDRESS=<funding-round-factory-address>
-COORDINATOR_ETH_PK=<eth-private-key>
+# private key of the owner of the clrfund contract for interacting with the contract
+WALLET_MNEMONIC=
+WALLET_PRIVATE_KEY=
 ```
 
 Once you have the `tally.json` from the tally script, run:
 
-```
-yarn hardhat run --network {network} scripts/finalize.ts
+```sh
+yarn hardhat clr-finalize --clrfund <clrfund address> --tally-file <tally file> --network <network>
 ```
 
 # How to verify the tally results
 
-Anyone can verify the tally results using the MACI cli or clrfund scripts.
-
-### Using MACI CLI
-
-Follow the steps in tallying votes to get the MACI cli, circuit parameters, and tally file, and verify using the following command:
-
-```
-node build/index.js verify -t tally.json
-```
-
-### Using clrfund scripts
+Anyone can verify the tally results in the tally.json.
 
 From the clrfund contracts folder, run the following command to verify the result:
 
-```
-yarn ts-node scripts/verify.ts tally.json
+```sh
+yarn hardhat verify-tally-file --tally-file <tally file> --tally-address <tally contract address> --network <network>
 ```
 
 # How to enable the leaderboard view
@@ -254,7 +78,7 @@ After finalizing the round, enable the leaderboard view in the vue-app by export
 ```sh
 cd contracts
 
-yarn hardhat export-round --output-dir ../vue-app/src/rounds --network <network> --round-address <round address> --operator <operator> --start-block <recipient-registry-start-block> --ipfs <ipfs-gateway-url>
+yarn hardhat clr-export-round --output-dir ../vue-app/src/rounds --network <network> --round-address <round address> --operator <operator> --start-block <recipient-registry-start-block> --ipfs <ipfs-gateway-url>
 
 ```
 3) Build and deploy the app
@@ -263,3 +87,12 @@ yarn hardhat export-round --output-dir ../vue-app/src/rounds --network <network>
 
 ## Troubleshooting
 If you encountered `core dumped` while running the genProofs script as seen in this [issue](https://github.com/clrfund/monorepo/issues/383), make sure the files are not corrupted due to disk space issue, e.g. check file sizes, checksum, and missing files.
+
+Also, lack of memory can also cause `core dump`, try to work around it by setting `max-old-space-size` before rrunning the tally script.
+```
+export NODE_OPTIONS=--max-old-space-size=4096
+```
+
+If you notice `Error at message index 0 - failed decryption due to either wrong encryption public key or corrupted ciphertext` while running the tally script, don't worry, it's just a warning. This issue is tracked [here](https://github.com/privacy-scaling-explorations/maci/issues/1134)
+
+`Error at message index n - invalid nonce` is also a warning, not an error. This error occurs when users reallocated their contribution.

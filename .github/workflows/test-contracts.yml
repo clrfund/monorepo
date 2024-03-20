@@ -7,20 +7,22 @@ on:
       - 'contracts/**'
 
 env:
-  NODE_VERSION: 16.x
+  NODE_VERSION: 20.x
 
 jobs:
   test-contracts:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
     - name: Use Node.js ${{ env.NODE_VERSION }}
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ env.NODE_VERSION }}
     - name: Install
-      run: yarn
+      run: |
+        git config --global url."https://".insteadOf git://
+        yarn && yarn build
     - name: Run tests
       run: yarn test:contracts
 

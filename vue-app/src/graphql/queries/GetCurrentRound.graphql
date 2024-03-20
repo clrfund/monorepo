@@ -1,5 +1,5 @@
-query GetCurrentRound($fundingRoundFactoryAddress: ID!) {
-  fundingRoundFactory(id: $fundingRoundFactoryAddress) {
+query GetCurrentRound($clrFundAddress: ID!) {
+  clrFund(id: $clrFundAddress) {
     currentRound {
       id
     }

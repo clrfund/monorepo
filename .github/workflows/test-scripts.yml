@@ -8,7 +8,8 @@ on:
       - '.github/workflows/test-scripts.yml'
 
 env:
-  NODE_VERSION: 16.x
+  NODE_VERSION: 20.x
+  ZKEYS_DOWNLOAD_SCRIPT: "download-6-9-2-3.sh"
 
 jobs:
   script-tests:
@@ -22,23 +23,33 @@ jobs:
       run: |
         sudo apt update
         sudo apt-get install build-essential libgmp-dev libsodium-dev nlohmann-json3-dev nasm g++ curl
-    - name: Install rust toolchain
-      uses: actions-rs/toolchain@v1
+    - name: Checkout rapidsnark source code
+      uses: actions/checkout@v3
       with:
-        toolchain: stable
-    - name: Install zkutil
+        repository: clrfund/rapidsnark
+        path: rapidsnark
+    - name: Install rapidsnark
       run: |
-        cargo install zkutil --version 0.3.2
+        cd $GITHUB_WORKSPACE/rapidsnark
+        npm install
+        git submodule init
+        git submodule update
+        ./build_gmp.sh host
+        mkdir build_prover && cd build_prover
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../package
+        make -j4 && make install
     - name: Checkout source code
       uses: actions/checkout@v3
       with:
         path: monorepo
-    - name: Download batch 64 params
+    - name: Download circuit params
       run: |
-        $GITHUB_WORKSPACE/monorepo/.github/scripts/download-batch64-params.sh
+        $GITHUB_WORKSPACE/monorepo/.github/scripts/${ZKEYS_DOWNLOAD_SCRIPT}
     - name: Build CLR
       run: |
         cd monorepo
+        # use https to avoid error: unable to connect to github.com
+        git config --global url."https://".insteadOf git://
         yarn && yarn build
     - name: Start hardhat network
       run: |
@@ -46,14 +57,7 @@ jobs:
         yarn start:node &
     - name: Run script tests
       run: |
+        export RAPID_SNARK=$GITHUB_WORKSPACE/rapidsnark/package/bin/prover
+        export CIRCUIT_DIRECTORY=$GITHUB_WORKSPACE/params
         cd monorepo/contracts
-        export NODE_CONFIG=$(node -e "const snarkParamsPath=process.env.GITHUB_WORKSPACE + '/params'; console.log(JSON.stringify({ snarkParamsPath }));")
-        echo $NODE_CONFIG
-        yarn deploy:local
-        yarn deployTestRound:local
-        yarn contribute:local
-        yarn vote:local
-        yarn hardhat evm-increase-time 1200 --network localhost
-        yarn tally:local
-        yarn finalize:local
-        yarn claim:local
+        ./sh/runScriptTests.sh

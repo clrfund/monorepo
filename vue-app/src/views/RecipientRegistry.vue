@@ -142,7 +142,7 @@ import Links from '@/components/Links.vue'
 import TransactionModal from '@/components/TransactionModal.vue'
 import { useUserStore, useRecipientStore } from '@/stores'
 import { storeToRefs } from 'pinia'
-import type { TransactionResponse } from '@ethersproject/abstract-provider'
+import type { TransactionResponse } from 'ethers'
 import { useModal } from 'vue-final-modal'
 import { showError } from '@/utils/modal'
 
@@ -200,14 +200,14 @@ function hasProjectLink(request: Request): boolean {
 }
 
 async function approve(request: Request): Promise<void> {
-  await waitForTransactionAndLoad(
-    registerProject(recipientRegistryAddress.value!, request.recipientId, userStore.signer),
-  )
+  const signer = await userStore.getSigner()
+  await waitForTransactionAndLoad(registerProject(recipientRegistryAddress.value!, request.recipientId, signer))
 }
 
 async function reject(request: Request): Promise<void> {
+  const signer = await userStore.getSigner()
   await waitForTransactionAndLoad(
-    rejectProject(recipientRegistryAddress.value!, request.recipientId, request.requester, userStore.signer),
+    rejectProject(recipientRegistryAddress.value!, request.recipientId, request.requester, signer),
   )
 }
 

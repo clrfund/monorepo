@@ -1,16 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es2018",
+    "target": "es2020",
     "module": "commonjs",
     "strict": true,
     "esModuleInterop": true,
-    "outDir": "dist",
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
     "resolveJsonModule": true
   },
-  "include": ["./scripts", "./tests"],
-  "files": [
-    "./hardhat.config.ts",
-    "./node_modules/@nomiclabs/hardhat-ethers/src/type-extensions.d.ts",
-    "./node_modules/@nomiclabs/hardhat-waffle/src/type-extensions.d.ts"
-  ]
+  "include": ["./scripts", "./tests", "./cli", "./e2e", "./utils"],
+  "files": ["./hardhat.config.ts"]
 }

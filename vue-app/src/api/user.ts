@@ -1,9 +1,8 @@
 import makeBlockie from 'ethereum-blockies-base64'
-import { BigNumber, Contract, Signer, type ContractTransaction } from 'ethers'
-import type { Web3Provider } from '@ethersproject/providers'
+import { Contract, type TransactionResponse, type Signer, BrowserProvider } from 'ethers'
 
 import { FundingRound, UserRegistry, ERC20 } from './abi'
-import { factory, ipfsGatewayUrl, provider, operator } from './core'
+import { clrfundContractAddress, ipfsGatewayUrl, provider, operator } from './core'
 import type { BrightId } from './bright-id'
 import { SnapshotUserRegistry, MerkleUserRegistry } from './abi'
 import {
@@ -21,17 +20,17 @@ To get logged in, sign this message to prove you have access to this wallet. Thi
 
 You will be asked to sign each time you load the app.
 
-Contract address: ${factory.address.toLowerCase()}.`
+Contract address: ${clrfundContractAddress.toLowerCase()}.`
 
 export interface User {
   walletAddress: string
-  walletProvider: Web3Provider
+  walletProvider: BrowserProvider
   encryptionKey?: string
   brightId?: BrightId
   isRegistered?: boolean // If is in user registry
-  balance?: BigNumber | null
-  etherBalance?: BigNumber | null
-  contribution?: BigNumber | null
+  balance?: bigint | null
+  etherBalance?: bigint | null
+  contribution?: bigint | null
   ensName?: string | null
 }
 
@@ -59,12 +58,12 @@ export async function isRegisteredUser(fundingRoundAddress: string, walletAddres
   return contributor.isRegistered
 }
 
-export async function getTokenBalance(tokenAddress: string, walletAddress: string): Promise<BigNumber> {
+export async function getTokenBalance(tokenAddress: string, walletAddress: string): Promise<bigint> {
   const token = new Contract(tokenAddress, ERC20, provider)
   return await token.balanceOf(walletAddress)
 }
 
-export async function getEtherBalance(walletAddress: string): Promise<BigNumber> {
+export async function getEtherBalance(walletAddress: string): Promise<bigint> {
   return await provider.getBalance(walletAddress)
 }
 
@@ -79,7 +78,7 @@ export async function registerUserSnapshot(
   registryAddress: string,
   proofRlpBytes: string,
   signer: Signer,
-): Promise<ContractTransaction> {
+): Promise<TransactionResponse> {
   const registry = new Contract(registryAddress, SnapshotUserRegistry, signer)
   const walletAddress = await signer.getAddress()
   return registry.addUser(walletAddress, proofRlpBytes)
@@ -115,7 +114,7 @@ export async function registerUserMerkle(
   registryAddress: string,
   proof: string[],
   signer: Signer,
-): Promise<ContractTransaction> {
+): Promise<TransactionResponse> {
   const registry = new Contract(registryAddress, MerkleUserRegistry, signer)
   const walletAddress = await signer.getAddress()
   return registry.addUser(walletAddress, proof)

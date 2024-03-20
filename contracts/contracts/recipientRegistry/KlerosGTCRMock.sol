@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.6.12;
+pragma solidity ^0.8.10;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
 
@@ -77,7 +77,7 @@ contract KlerosGTCRMock is Ownable {
   constructor(
     string memory _registrationMetaEvidence,
     string memory _clearingMetaEvidence
-  ) public {
+  ) {
     emit MetaEvidence(0, _registrationMetaEvidence);
     emit MetaEvidence(1, _clearingMetaEvidence);
   }

@@ -1,21 +1,18 @@
-import { ethers, waffle } from 'hardhat'
-import { use, expect } from 'chai'
-import { solidity } from 'ethereum-waffle'
-import { BigNumber, Contract } from 'ethers'
-import { keccak256 } from '@ethersproject/solidity'
+import { ethers } from 'hardhat'
+import { expect } from 'chai'
+import { Contract, solidityPackedKeccak256 } from 'ethers'
 import { gtcrEncode } from '@kleros/gtcr-encoder'
+import { time } from '@nomicfoundation/hardhat-network-helpers'
 
 import { UNIT, ZERO_ADDRESS } from '../utils/constants'
 import { getTxFee, getEventArg } from '../utils/contracts'
 import { deployContract } from '../utils/deployment'
+import { HardhatEthersSigner } from '@nomicfoundation/hardhat-ethers/signers'
 
-use(solidity)
-
-const { provider } = waffle
 const MAX_RECIPIENTS = 15
 
 async function getCurrentTime(): Promise<number> {
-  return (await provider.getBlock('latest')).timestamp
+  return await time.latest()
 }
 
 function getRecipientId(
@@ -23,16 +20,22 @@ function getRecipientId(
   address: string,
   metadata: string
 ): string {
-  return keccak256(
+  return solidityPackedKeccak256(
     ['address', 'address', 'string'],
     [registryAddress, address, metadata]
   )
 }
 
-describe('Simple Recipient Registry', () => {
-  const [, deployer, controller, recipient] = provider.getWallets()
-
+describe('Simple Recipient Registry', async () => {
   let registry: Contract
+  let registryAddress: string
+  let deployer: HardhatEthersSigner
+  let controller: HardhatEthersSigner
+  let recipient: HardhatEthersSigner
+
+  before(async () => {
+    ;[, deployer, controller, recipient] = await ethers.getSigners()
+  })
 
   beforeEach(async () => {
     const SimpleRecipientRegistry = await ethers.getContractFactory(
@@ -40,6 +43,7 @@ describe('Simple Recipient Registry', () => {
       deployer
     )
     registry = await SimpleRecipientRegistry.deploy(controller.address)
+    registryAddress = await registry.getAddress()
   })
 
   describe('initializing and configuring', () => {
@@ -49,14 +53,18 @@ describe('Simple Recipient Registry', () => {
     })
 
     it('sets max number of recipients', async () => {
-      await registry.connect(controller).setMaxRecipients(MAX_RECIPIENTS)
+      await (registry.connect(controller) as Contract).setMaxRecipients(
+        MAX_RECIPIENTS
+      )
       expect(await registry.maxRecipients()).to.equal(MAX_RECIPIENTS)
     })
 
     it('reverts if given number is less than current limit', async () => {
-      await registry.connect(controller).setMaxRecipients(MAX_RECIPIENTS)
+      await (registry.connect(controller) as Contract).setMaxRecipients(
+        MAX_RECIPIENTS
+      )
       await expect(
-        registry.connect(controller).setMaxRecipients(1)
+        (registry.connect(controller) as Contract).setMaxRecipients(1)
       ).to.be.revertedWith(
         'RecipientRegistry: Max number of recipients can not be decreased'
       )
@@ -81,14 +89,17 @@ describe('Simple Recipient Registry', () => {
     let recipientId: string
 
     beforeEach(async () => {
-      await registry.connect(controller).setMaxRecipients(MAX_RECIPIENTS)
+      await (registry.connect(controller) as Contract).setMaxRecipients(
+        MAX_RECIPIENTS
+      )
       recipientAddress = recipient.address
       metadata = JSON.stringify({
         name: 'Recipient',
         description: 'Description',
         imageHash: 'Ipfs imageHash',
       })
-      recipientId = getRecipientId(registry.address, recipientAddress, metadata)
+      const registryAddress = await registry.getAddress()
+      recipientId = getRecipientId(registryAddress, recipientAddress, metadata)
     })
 
     it('allows owner to add recipient', async () => {
@@ -117,7 +128,7 @@ describe('Simple Recipient Registry', () => {
       const anotherRecipientAddress =
         '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
       const anotherRecipientId = getRecipientId(
-        registry.address,
+        registryAddress,
         anotherRecipientAddress,
         metadata
       )
@@ -139,7 +150,7 @@ describe('Simple Recipient Registry', () => {
     })
 
     it('rejects attempts to add recipient from anyone except owner', async () => {
-      const registryAsRecipient = registry.connect(recipient)
+      const registryAsRecipient = registry.connect(recipient) as Contract
       await expect(
         registryAsRecipient.addRecipient(recipientAddress, metadata)
       ).to.be.revertedWith('Ownable: caller is not the owner')
@@ -203,7 +214,7 @@ describe('Simple Recipient Registry', () => {
     })
 
     it('rejects attempts to remove recipient from anyone except owner', async () => {
-      const registryAsRecipient = registry.connect(recipient)
+      const registryAsRecipient = registry.connect(recipient) as Contract
       await expect(
         registryAsRecipient.removeRecipient(recipientId)
       ).to.be.revertedWith('Ownable: caller is not the owner')
@@ -226,7 +237,7 @@ describe('Simple Recipient Registry', () => {
 
     it('should not return recipient address for recipient that has been added after the end of round', async () => {
       const startTime = await getCurrentTime()
-      await provider.send('evm_increaseTime', [1000])
+      await time.increase(1000)
       const endTime = await getCurrentTime()
       await registry.addRecipient(recipientAddress, metadata)
       expect(
@@ -238,7 +249,7 @@ describe('Simple Recipient Registry', () => {
       await registry.addRecipient(recipientAddress, metadata)
       const startTime = await getCurrentTime()
       await registry.removeRecipient(recipientId)
-      await provider.send('evm_increaseTime', [1000])
+      await time.increase(1000)
       const endTime = await getCurrentTime()
       expect(
         await registry.getRecipientAddress(recipientIndex, startTime, endTime)
@@ -265,13 +276,13 @@ describe('Simple Recipient Registry', () => {
       // Replace recipients
       const removedRecipient1 = '0x0000000000000000000000000000000000000001'
       const removedRecipient1Id = getRecipientId(
-        registry.address,
+        registryAddress,
         removedRecipient1,
         metadata
       )
       const removedRecipient2 = '0x0000000000000000000000000000000000000002'
       const removedRecipient2Id = getRecipientId(
-        registry.address,
+        registryAddress,
         removedRecipient2,
         metadata
       )
@@ -295,7 +306,7 @@ describe('Simple Recipient Registry', () => {
         removedRecipient2
       )
 
-      await provider.send('evm_increaseTime', [1000])
+      await time.increase(1000)
       const time3 = await getCurrentTime()
       // Recipients removed before the beginning of the round should be replaced
       expect(await registry.getRecipientAddress(1, time2, time3)).to.equal(
@@ -325,7 +336,13 @@ describe('Simple Recipient Registry', () => {
 })
 
 describe('Kleros GTCR adapter', () => {
-  const [, deployer, controller, recipient] = provider.getWallets()
+  let tcr: Contract
+  let registry: Contract
+  let deployer: HardhatEthersSigner
+  let controller: HardhatEthersSigner
+  let recipient: HardhatEthersSigner
+  let tcrAddress: string
+
   const gtcrColumns = [
     {
       label: 'Name',
@@ -346,12 +363,13 @@ describe('Kleros GTCR adapter', () => {
       columns: gtcrColumns,
       values: { Name: `test-${address}`, Address: address },
     })
-    const recipientId = keccak256(['bytes'], [recipientData])
+    const recipientId = solidityPackedKeccak256(['bytes'], [recipientData])
     return [recipientId, recipientData]
   }
 
-  let tcr: Contract
-  let registry: Contract
+  before(async () => {
+    ;[, deployer, controller, recipient] = await ethers.getSigners()
+  })
 
   beforeEach(async () => {
     const KlerosGTCRMock = await ethers.getContractFactory(
@@ -359,32 +377,40 @@ describe('Kleros GTCR adapter', () => {
       deployer
     )
     tcr = await KlerosGTCRMock.deploy('/ipfs/0', '/ipfs/1')
+    tcrAddress = await tcr.getAddress()
     const KlerosGTCRAdapter = await ethers.getContractFactory(
       'KlerosGTCRAdapter',
       deployer
     )
-    registry = await KlerosGTCRAdapter.deploy(tcr.address, controller.address)
+    registry = await KlerosGTCRAdapter.deploy(tcrAddress, controller.address)
   })
 
   it('initializes correctly', async () => {
-    expect(await registry.tcr()).to.equal(tcr.address)
+    expect(await registry.tcr()).to.equal(tcrAddress)
     expect(await registry.controller()).to.equal(controller.address)
     expect(await registry.maxRecipients()).to.equal(0)
   })
 
   describe('managing recipients', () => {
     const recipientIndex = 1
-    const [recipientId, recipientData] = encodeRecipient(recipient.address)
+    let recipientId: string
+    let recipientData: string
+
+    before(async () => {
+      ;[recipientId, recipientData] = encodeRecipient(recipient.address)
+    })
 
     beforeEach(async () => {
-      await registry.connect(controller).setMaxRecipients(MAX_RECIPIENTS)
+      await (registry.connect(controller) as Contract).setMaxRecipients(
+        MAX_RECIPIENTS
+      )
     })
 
     it('allows anyone to add recipient', async () => {
       await tcr.addItem(recipientData)
-      const recipientAdded = await registry
-        .connect(recipient)
-        .addRecipient(recipientId)
+      const recipientAdded = await (
+        registry.connect(recipient) as Contract
+      ).addRecipient(recipientId)
       let currentTime = await getCurrentTime()
       expect(recipientAdded)
         .to.emit(registry, 'RecipientAdded')
@@ -403,9 +429,9 @@ describe('Kleros GTCR adapter', () => {
         anotherRecipientAddress
       )
       await tcr.addItem(anotherRecipientData)
-      const anotherRecipientAdded = await registry
-        .connect(recipient)
-        .addRecipient(anotherRecipientId)
+      const anotherRecipientAdded = await (
+        registry.connect(recipient) as Contract
+      ).addRecipient(anotherRecipientId)
       currentTime = await getCurrentTime()
       // Should increase recipient index for every new recipient
       expect(anotherRecipientAdded)
@@ -439,11 +465,11 @@ describe('Kleros GTCR adapter', () => {
 
     it('allows anyone to remove recipient', async () => {
       await tcr.addItem(recipientData)
-      await registry.connect(recipient).addRecipient(recipientId)
+      await (registry.connect(recipient) as Contract).addRecipient(recipientId)
       await tcr.removeItem(recipientId)
-      const recipientRemoved = await registry
-        .connect(recipient)
-        .removeRecipient(recipientId)
+      const recipientRemoved = await (
+        registry.connect(recipient) as Contract
+      ).removeRecipient(recipientId)
       const currentTime = await getCurrentTime()
       expect(recipientRemoved)
         .to.emit(registry, 'RecipientRemoved')
@@ -490,7 +516,9 @@ describe('Kleros GTCR adapter', () => {
     }
 
     beforeEach(async () => {
-      await registry.connect(controller).setMaxRecipients(MAX_RECIPIENTS)
+      await (registry.connect(controller) as Contract).setMaxRecipients(
+        MAX_RECIPIENTS
+      )
     })
 
     it('allows to re-use index of removed recipient', async () => {
@@ -525,7 +553,7 @@ describe('Kleros GTCR adapter', () => {
         removedRecipient2
       )
 
-      await provider.send('evm_increaseTime', [1000])
+      time.increase(1000)
       const time3 = await getCurrentTime()
       // Recipients removed before the beginning of the round should be replaced
       expect(await registry.getRecipientAddress(1, time2, time3)).to.equal(
@@ -539,23 +567,33 @@ describe('Kleros GTCR adapter', () => {
 })
 
 describe('Optimistic recipient registry', () => {
-  const [, deployer, controller, recipient, requester] = provider.getWallets()
   let registry: Contract
+  let registryAddress: string
 
-  const baseDeposit = UNIT.div(10) // 0.1 ETH
-  const challengePeriodDuration = BigNumber.from(86400) // Seconds
+  let deployer: HardhatEthersSigner
+  let controller: HardhatEthersSigner
+  let recipient: HardhatEthersSigner
+  let requester: HardhatEthersSigner
+
+  const baseDeposit = UNIT / 10n // 0.1 ETH
+  const challengePeriodDuration = 86400 // Seconds
 
   enum RequestType {
     Registration = 0,
     Removal = 1,
   }
 
+  before(async () => {
+    ;[, deployer, controller, recipient, requester] = await ethers.getSigners()
+  })
   beforeEach(async () => {
-    registry = await deployContract(deployer, 'OptimisticRecipientRegistry', [
-      baseDeposit,
-      challengePeriodDuration,
-      controller.address,
-    ])
+    registry = await deployContract({
+      name: 'OptimisticRecipientRegistry',
+      contractArgs: [baseDeposit, challengePeriodDuration, controller.address],
+      ethers,
+      signer: deployer,
+    })
+    registryAddress = await registry.getAddress()
   })
 
   it('initializes correctly', async () => {
@@ -568,13 +606,13 @@ describe('Optimistic recipient registry', () => {
   })
 
   it('changes base deposit', async () => {
-    const newBaseDeposit = baseDeposit.mul(2)
+    const newBaseDeposit = baseDeposit * 2n
     await registry.setBaseDeposit(newBaseDeposit)
     expect(await registry.baseDeposit()).to.equal(newBaseDeposit)
   })
 
   it('changes challenge period duration', async () => {
-    const newChallengePeriodDuration = challengePeriodDuration.mul(2)
+    const newChallengePeriodDuration = challengePeriodDuration * 2
     await registry.setChallengePeriodDuration(newChallengePeriodDuration)
     expect(await registry.challengePeriodDuration()).to.equal(
       newChallengePeriodDuration
@@ -588,20 +626,22 @@ describe('Optimistic recipient registry', () => {
     let recipientId: string
 
     beforeEach(async () => {
-      await registry.connect(controller).setMaxRecipients(MAX_RECIPIENTS)
+      await (registry.connect(controller) as Contract).setMaxRecipients(
+        MAX_RECIPIENTS
+      )
       recipientAddress = recipient.address
       metadata = JSON.stringify({
         name: 'Recipient',
         description: 'Description',
         imageHash: 'Ipfs imageHash',
       })
-      recipientId = getRecipientId(registry.address, recipientAddress, metadata)
+      recipientId = getRecipientId(registryAddress, recipientAddress, metadata)
     })
 
     it('allows anyone to submit registration request', async () => {
-      const requestSubmitted = await registry
-        .connect(requester)
-        .addRecipient(recipientAddress, metadata, { value: baseDeposit })
+      const requestSubmitted = await (
+        registry.connect(requester) as Contract
+      ).addRecipient(recipientAddress, metadata, { value: baseDeposit })
       const currentTime = await getCurrentTime()
       expect(requestSubmitted)
         .to.emit(registry, 'RequestSubmitted')
@@ -612,7 +652,9 @@ describe('Optimistic recipient registry', () => {
           metadata,
           currentTime
         )
-      expect(await provider.getBalance(registry.address)).to.equal(baseDeposit)
+      expect(await ethers.provider.getBalance(registryAddress)).to.equal(
+        baseDeposit
+      )
     })
 
     it('should not accept zero-address as recipient address', async () => {
@@ -637,7 +679,7 @@ describe('Optimistic recipient registry', () => {
       await registry.addRecipient(recipientAddress, metadata, {
         value: baseDeposit,
       })
-      await provider.send('evm_increaseTime', [86400])
+      await time.increase(86400)
       await registry.executeRequest(recipientId)
       await expect(
         registry.addRecipient(recipientAddress, metadata, {
@@ -660,16 +702,18 @@ describe('Optimistic recipient registry', () => {
     it('should not accept registration request with incorrect deposit size', async () => {
       await expect(
         registry.addRecipient(recipientAddress, metadata, {
-          value: baseDeposit.div(2),
+          value: baseDeposit / 2n,
         })
       ).to.be.revertedWith('RecipientRegistry: Incorrect deposit amount')
     })
 
     it('allows owner to challenge registration request', async () => {
-      await registry
-        .connect(requester)
-        .addRecipient(recipientAddress, metadata, { value: baseDeposit })
-      const requesterBalanceBefore = await provider.getBalance(
+      await (registry.connect(requester) as Contract).addRecipient(
+        recipientAddress,
+        metadata,
+        { value: baseDeposit }
+      )
+      const requesterBalanceBefore = await ethers.provider.getBalance(
         requester.address
       )
       const requestRejected = await registry.challengeRequest(
@@ -680,8 +724,10 @@ describe('Optimistic recipient registry', () => {
       expect(requestRejected)
         .to.emit(registry, 'RequestResolved')
         .withArgs(recipientId, RequestType.Registration, true, 0, currentTime)
-      const requesterBalanceAfter = await provider.getBalance(requester.address)
-      expect(requesterBalanceBefore.add(baseDeposit)).to.equal(
+      const requesterBalanceAfter = await ethers.provider.getBalance(
+        requester.address
+      )
+      expect(requesterBalanceBefore + baseDeposit).to.equal(
         requesterBalanceAfter
       )
     })
@@ -690,33 +736,38 @@ describe('Optimistic recipient registry', () => {
       await registry.addRecipient(recipientAddress, metadata, {
         value: baseDeposit,
       })
-      const controllerBalanceBefore = await provider.getBalance(
+      const controllerBalanceBefore = await ethers.provider.getBalance(
         controller.address
       )
       await registry.challengeRequest(recipientId, controller.address)
-      const controllerBalanceAfter = await provider.getBalance(
+      const controllerBalanceAfter = await ethers.provider.getBalance(
         controller.address
       )
-      expect(controllerBalanceBefore.add(baseDeposit)).to.equal(
+      expect(controllerBalanceBefore + baseDeposit).to.equal(
         controllerBalanceAfter
       )
     })
 
     it('allows only owner to challenge requests', async () => {
-      await registry
-        .connect(requester)
-        .addRecipient(recipientAddress, metadata, { value: baseDeposit })
+      await (registry.connect(requester) as Contract).addRecipient(
+        recipientAddress,
+        metadata,
+        { value: baseDeposit }
+      )
       await expect(
-        registry
-          .connect(requester)
-          .challengeRequest(recipientId, requester.address)
+        (registry.connect(requester) as Contract).challengeRequest(
+          recipientId,
+          requester.address
+        )
       ).to.be.revertedWith('Ownable: caller is not the owner')
     })
 
     it('should not allow to challenge resolved request', async () => {
-      await registry
-        .connect(requester)
-        .addRecipient(recipientAddress, metadata, { value: baseDeposit })
+      await (registry.connect(requester) as Contract).addRecipient(
+        recipientAddress,
+        metadata,
+        { value: baseDeposit }
+      )
       await registry.challengeRequest(recipientId, requester.address)
       await expect(
         registry.challengeRequest(recipientId, requester.address)
@@ -724,17 +775,19 @@ describe('Optimistic recipient registry', () => {
     })
 
     it('allows anyone to execute unchallenged registration request', async () => {
-      await registry
-        .connect(requester)
-        .addRecipient(recipientAddress, metadata, { value: baseDeposit })
-      await provider.send('evm_increaseTime', [86400])
+      await (registry.connect(requester) as Contract).addRecipient(
+        recipientAddress,
+        metadata,
+        { value: baseDeposit }
+      )
+      await time.increase(86400)
 
-      const requesterBalanceBefore = await provider.getBalance(
+      const requesterBalanceBefore = await ethers.provider.getBalance(
         requester.address
       )
-      const requestExecuted = await registry
-        .connect(requester)
-        .executeRequest(recipientId)
+      const requestExecuted = await (
+        registry.connect(requester) as Contract
+      ).executeRequest(recipientId)
       const currentTime = await getCurrentTime()
       expect(requestExecuted)
         .to.emit(registry, 'RequestResolved')
@@ -746,8 +799,10 @@ describe('Optimistic recipient registry', () => {
           currentTime
         )
       const txFee = await getTxFee(requestExecuted)
-      const requesterBalanceAfter = await provider.getBalance(requester.address)
-      expect(requesterBalanceBefore.sub(txFee).add(baseDeposit)).to.equal(
+      const requesterBalanceAfter = await ethers.provider.getBalance(
+        requester.address
+      )
+      expect(requesterBalanceBefore - txFee + baseDeposit).to.equal(
         requesterBalanceAfter
       )
 
@@ -772,7 +827,7 @@ describe('Optimistic recipient registry', () => {
       })
 
       await expect(
-        registry.connect(requester).executeRequest(recipientId)
+        (registry.connect(requester) as Contract).executeRequest(recipientId)
       ).to.be.revertedWith('RecipientRegistry: Challenge period is not over')
     })
 
@@ -782,30 +837,34 @@ describe('Optimistic recipient registry', () => {
       })
 
       let recipientCount = await registry.getRecipientCount()
-      expect(recipientCount.toNumber()).to.equal(0)
+      expect(Number(recipientCount)).to.equal(0)
 
       await registry.executeRequest(recipientId)
 
       recipientCount = await registry.getRecipientCount()
-      expect(recipientCount.toNumber()).to.equal(1)
+      expect(Number(recipientCount)).to.equal(1)
     })
 
     it('should remember initial deposit amount during registration', async () => {
-      await registry
-        .connect(requester)
-        .addRecipient(recipientAddress, metadata, { value: baseDeposit })
-      await registry.setBaseDeposit(baseDeposit.mul(2))
-      await provider.send('evm_increaseTime', [86400])
+      await (registry.connect(requester) as Contract).addRecipient(
+        recipientAddress,
+        metadata,
+        { value: baseDeposit }
+      )
+      await registry.setBaseDeposit(baseDeposit * 2n)
+      await time.increase(86400)
 
-      const requesterBalanceBefore = await provider.getBalance(
+      const requesterBalanceBefore = await ethers.provider.getBalance(
         requester.address
       )
-      const requestExecuted = await registry
-        .connect(requester)
-        .executeRequest(recipientId)
+      const requestExecuted = await (
+        registry.connect(requester) as Contract
+      ).executeRequest(recipientId)
       const txFee = await getTxFee(requestExecuted)
-      const requesterBalanceAfter = await provider.getBalance(requester.address)
-      expect(requesterBalanceBefore.sub(txFee).add(baseDeposit)).to.equal(
+      const requesterBalanceAfter = await ethers.provider.getBalance(
+        requester.address
+      )
+      expect(requesterBalanceBefore - txFee + baseDeposit).to.equal(
         requesterBalanceAfter
       )
     })
@@ -821,7 +880,7 @@ describe('Optimistic recipient registry', () => {
         })
         recipientAddress = `0x000000000000000000000000000000000000${recipientName}`
         recipientId = getRecipientId(
-          registry.address,
+          registryAddress,
           recipientAddress,
           metadata
         )
@@ -829,13 +888,13 @@ describe('Optimistic recipient registry', () => {
           await registry.addRecipient(recipientAddress, metadata, {
             value: baseDeposit,
           })
-          await provider.send('evm_increaseTime', [86400])
+          await time.increase(86400)
           await registry.executeRequest(recipientId)
         } else {
           await registry.addRecipient(recipientAddress, metadata, {
             value: baseDeposit,
           })
-          await provider.send('evm_increaseTime', [86400])
+          await time.increase(86400)
           await expect(registry.executeRequest(recipientId)).to.be.revertedWith(
             'RecipientRegistry: Recipient limit reached'
           )
@@ -847,7 +906,7 @@ describe('Optimistic recipient registry', () => {
       await registry.addRecipient(recipientAddress, metadata, {
         value: baseDeposit,
       })
-      await provider.send('evm_increaseTime', [86400])
+      await time.increase(86400)
       await registry.executeRequest(recipientId)
 
       const requestSubmitted = await registry.removeRecipient(recipientId, {
@@ -871,7 +930,7 @@ describe('Optimistic recipient registry', () => {
       })
       await registry.executeRequest(recipientId)
 
-      const registryAsRequester = registry.connect(requester)
+      const registryAsRequester = registry.connect(requester) as Contract
       await registryAsRequester.removeRecipient(recipientId, {
         value: baseDeposit,
       })
@@ -891,12 +950,14 @@ describe('Optimistic recipient registry', () => {
       await registry.addRecipient(recipientAddress, metadata, {
         value: baseDeposit,
       })
-      await provider.send('evm_increaseTime', [86400])
+      await time.increase(86400)
       await registry.executeRequest(recipientId)
 
       await registry.removeRecipient(recipientId, { value: baseDeposit })
-      await provider.send('evm_increaseTime', [86400])
-      await registry.connect(requester).executeRequest(recipientId)
+      await time.increase(86400)
+      await (registry.connect(requester) as Contract).executeRequest(
+        recipientId
+      )
 
       await expect(registry.removeRecipient(recipientId)).to.be.revertedWith(
         'RecipientRegistry: Recipient already removed'
@@ -907,7 +968,7 @@ describe('Optimistic recipient registry', () => {
       await registry.addRecipient(recipientAddress, metadata, {
         value: baseDeposit,
       })
-      await provider.send('evm_increaseTime', [86400])
+      await time.increase(86400)
       await registry.executeRequest(recipientId)
 
       await registry.removeRecipient(recipientId, { value: baseDeposit })
@@ -920,7 +981,7 @@ describe('Optimistic recipient registry', () => {
       await registry.addRecipient(recipientAddress, metadata, {
         value: baseDeposit,
       })
-      await provider.send('evm_increaseTime', [86400])
+      await time.increase(86400)
       await registry.executeRequest(recipientId)
 
       await registry.removeRecipient(recipientId, { value: baseDeposit })
@@ -947,15 +1008,15 @@ describe('Optimistic recipient registry', () => {
       await registry.addRecipient(recipientAddress, metadata, {
         value: baseDeposit,
       })
-      await provider.send('evm_increaseTime', [86400])
+      await time.increase(86400)
       await registry.executeRequest(recipientId)
 
       await registry.removeRecipient(recipientId, { value: baseDeposit })
-      await provider.send('evm_increaseTime', [86400])
+      await time.increase(86400)
 
-      const requestExecuted = await registry
-        .connect(requester)
-        .executeRequest(recipientId)
+      const requestExecuted = await (
+        registry.connect(requester) as Contract
+      ).executeRequest(recipientId)
       const currentTime = await getCurrentTime()
       expect(requestExecuted)
         .to.emit(registry, 'RequestResolved')
@@ -981,11 +1042,16 @@ describe('Optimistic recipient registry', () => {
         '_recipientId'
       )
 
-      const anotherRegistry = await deployContract(
-        deployer,
-        'OptimisticRecipientRegistry',
-        [baseDeposit, challengePeriodDuration, controller.address]
-      )
+      const anotherRegistry = await deployContract({
+        name: 'OptimisticRecipientRegistry',
+        contractArgs: [
+          baseDeposit,
+          challengePeriodDuration,
+          controller.address,
+        ],
+        ethers,
+        signer: deployer,
+      })
       const txTwo = await anotherRegistry.addRecipient(
         recipientAddress,
         metadata,

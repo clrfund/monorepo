@@ -1,4 +1,4 @@
-import { utils } from 'ethers'
+import { FetchRequest } from 'ethers'
 
 const IPFS_BASE_URL = 'https://ipfs.io'
 
@@ -13,6 +13,6 @@ export async function getIpfsContent(
   gatewayUrl = IPFS_BASE_URL
 ): Promise<any> {
   const url = `${gatewayUrl}/ipfs/${hash}`
-  const result = utils.fetchJson(url)
-  return result
+  const req = new FetchRequest(url)
+  return req.send()
 }

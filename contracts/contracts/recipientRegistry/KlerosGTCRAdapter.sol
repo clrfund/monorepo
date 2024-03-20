@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.6.12;
+pragma solidity ^0.8.10;
 
 import 'solidity-rlp/contracts/RLPReader.sol';
 
@@ -43,7 +43,6 @@ contract KlerosGTCRAdapter is BaseRecipientRegistry {
     IKlerosGTCR _tcr,
     address _controller
   )
-    public
   {
     tcr = _tcr;
     controller = _controller;

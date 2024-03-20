@@ -3,8 +3,7 @@ import { recipientRegistryType } from './core'
 import SimpleRegistry from './recipient-registry-simple'
 import OptimisticRegistry from './recipient-registry-optimistic'
 import KlerosRegistry from './recipient-registry-kleros'
-import type { BigNumber, Signer } from 'ethers'
-import type { TransactionResponse } from '@ethersproject/abstract-provider'
+import type { ContractTransactionResponse, Signer } from 'ethers'
 
 export async function getRegistryInfo(registryAddress: string): Promise<RegistryInfo> {
   if (recipientRegistryType === 'simple') {
@@ -21,9 +20,9 @@ export async function getRegistryInfo(registryAddress: string): Promise<Registry
 export async function addRecipient(
   registryAddress: string,
   recipientApplicationData: RecipientApplicationData,
-  deposit: BigNumber,
+  deposit: bigint,
   signer: Signer,
-): Promise<TransactionResponse> {
+): Promise<ContractTransactionResponse> {
   if (recipientRegistryType === 'simple') {
     return await SimpleRegistry.addRecipient(registryAddress, recipientApplicationData, signer)
   } else if (recipientRegistryType === 'optimistic') {

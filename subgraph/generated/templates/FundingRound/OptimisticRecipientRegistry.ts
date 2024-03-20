@@ -7,7 +7,7 @@ import {
   Entity,
   Bytes,
   Address,
-  BigInt
+  BigInt,
 } from "@graphprotocol/graph-ts";
 
 export class OwnershipTransferred extends ethereum.Event {
@@ -104,7 +104,7 @@ export class OptimisticRecipientRegistry extends ethereum.SmartContract {
   static bind(address: Address): OptimisticRecipientRegistry {
     return new OptimisticRecipientRegistry(
       "OptimisticRecipientRegistry",
-      address
+      address,
     );
   }
 
@@ -127,7 +127,7 @@ export class OptimisticRecipientRegistry extends ethereum.SmartContract {
     let result = super.call(
       "challengePeriodDuration",
       "challengePeriodDuration():(uint256)",
-      []
+      [],
     );
 
     return result[0].toBigInt();
@@ -137,7 +137,7 @@ export class OptimisticRecipientRegistry extends ethereum.SmartContract {
     let result = super.tryCall(
       "challengePeriodDuration",
       "challengePeriodDuration():(uint256)",
-      []
+      [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -152,8 +152,8 @@ export class OptimisticRecipientRegistry extends ethereum.SmartContract {
       "challengeRequest(bytes32,address):(bool)",
       [
         ethereum.Value.fromFixedBytes(_recipientId),
-        ethereum.Value.fromAddress(_beneficiary)
-      ]
+        ethereum.Value.fromAddress(_beneficiary),
+      ],
     );
 
     return result[0].toBoolean();
@@ -161,15 +161,15 @@ export class OptimisticRecipientRegistry extends ethereum.SmartContract {
 
   try_challengeRequest(
     _recipientId: Bytes,
-    _beneficiary: Address
+    _beneficiary: Address,
   ): ethereum.CallResult<boolean> {
     let result = super.tryCall(
       "challengeRequest",
       "challengeRequest(bytes32,address):(bool)",
       [
         ethereum.Value.fromFixedBytes(_recipientId),
-        ethereum.Value.fromAddress(_beneficiary)
-      ]
+        ethereum.Value.fromAddress(_beneficiary),
+      ],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -197,7 +197,7 @@ export class OptimisticRecipientRegistry extends ethereum.SmartContract {
     let result = super.call(
       "executeRequest",
       "executeRequest(bytes32):(bool)",
-      [ethereum.Value.fromFixedBytes(_recipientId)]
+      [ethereum.Value.fromFixedBytes(_recipientId)],
     );
 
     return result[0].toBoolean();
@@ -207,7 +207,7 @@ export class OptimisticRecipientRegistry extends ethereum.SmartContract {
     let result = super.tryCall(
       "executeRequest",
       "executeRequest(bytes32):(bool)",
-      [ethereum.Value.fromFixedBytes(_recipientId)]
+      [ethereum.Value.fromFixedBytes(_recipientId)],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -219,7 +219,7 @@ export class OptimisticRecipientRegistry extends ethereum.SmartContract {
   getRecipientAddress(
     _index: BigInt,
     _startTime: BigInt,
-    _endTime: BigInt
+    _endTime: BigInt,
   ): Address {
     let result = super.call(
       "getRecipientAddress",
@@ -227,8 +227,8 @@ export class OptimisticRecipientRegistry extends ethereum.SmartContract {
       [
         ethereum.Value.fromUnsignedBigInt(_index),
         ethereum.Value.fromUnsignedBigInt(_startTime),
-        ethereum.Value.fromUnsignedBigInt(_endTime)
-      ]
+        ethereum.Value.fromUnsignedBigInt(_endTime),
+      ],
     );
 
     return result[0].toAddress();
@@ -237,7 +237,7 @@ export class OptimisticRecipientRegistry extends ethereum.SmartContract {
   try_getRecipientAddress(
     _index: BigInt,
     _startTime: BigInt,
-    _endTime: BigInt
+    _endTime: BigInt,
   ): ethereum.CallResult<Address> {
     let result = super.tryCall(
       "getRecipientAddress",
@@ -245,14 +245,37 @@ export class OptimisticRecipientRegistry extends ethereum.SmartContract {
       [
         ethereum.Value.fromUnsignedBigInt(_index),
         ethereum.Value.fromUnsignedBigInt(_startTime),
-        ethereum.Value.fromUnsignedBigInt(_endTime)
-      ]
+        ethereum.Value.fromUnsignedBigInt(_endTime),
+      ],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  getRecipientCount(): BigInt {
+    let result = super.call(
+      "getRecipientCount",
+      "getRecipientCount():(uint256)",
+      [],
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_getRecipientCount(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getRecipientCount",
+      "getRecipientCount():(uint256)",
+      [],
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   maxRecipients(): BigInt {
@@ -265,7 +288,7 @@ export class OptimisticRecipientRegistry extends ethereum.SmartContract {
     let result = super.tryCall(
       "maxRecipients",
       "maxRecipients():(uint256)",
-      []
+      [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -293,7 +316,7 @@ export class OptimisticRecipientRegistry extends ethereum.SmartContract {
     let result = super.call(
       "setMaxRecipients",
       "setMaxRecipients(uint256):(bool)",
-      [ethereum.Value.fromUnsignedBigInt(_maxRecipients)]
+      [ethereum.Value.fromUnsignedBigInt(_maxRecipients)],
     );
 
     return result[0].toBoolean();
@@ -303,7 +326,7 @@ export class OptimisticRecipientRegistry extends ethereum.SmartContract {
     let result = super.tryCall(
       "setMaxRecipients",
       "setMaxRecipients(uint256):(bool)",
-      [ethereum.Value.fromUnsignedBigInt(_maxRecipients)]
+      [ethereum.Value.fromUnsignedBigInt(_maxRecipients)],
     );
     if (result.reverted) {
       return new ethereum.CallResult();

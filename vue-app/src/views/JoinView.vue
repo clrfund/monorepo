@@ -725,8 +725,8 @@ import { useRecipientStore, useAppStore, useUserStore } from '@/stores'
 import { waitForTransactionAndCheck } from '@/utils/contracts'
 import { addRecipient as _addRecipient } from '@/api/recipient-registry'
 import { isValidEthAddress, resolveEns } from '@/utils/accounts'
-import * as isIPFS from 'is-ipfs'
 import { toReactive } from '@vueuse/core'
+import { IPFS } from '@/api/ipfs'
 
 const route = useRoute()
 const router = useRouter()
@@ -798,8 +798,7 @@ const txHash = ref('')
 const txError = ref('')
 
 function validIpfsHash(hash: string): boolean {
-  const isValid = Boolean(hash) && isIPFS.cid(hash)
-  return isValid
+  return IPFS.isValidCid(hash)
 }
 
 const isNavDisabled = computed<boolean>(
@@ -942,13 +941,9 @@ async function addRecipient() {
         throw { message: 'round over' }
       }
 
+      const signer = await userStore.getSigner()
       await waitForTransactionAndCheck(
-        _addRecipient(
-          recipientRegistryAddress.value,
-          recipient.value,
-          recipientRegistryInfo.value.deposit,
-          currentUser.value.walletProvider.getSigner(),
-        ),
+        _addRecipient(recipientRegistryAddress.value, recipient.value, recipientRegistryInfo.value.deposit, signer),
         receipt => {
           return isOptimisticRecipientRegistry ? isTransactionInSubgraph(receipt) : Promise.resolve(true)
         },
@@ -1190,7 +1185,11 @@ async function checkEns(): Promise<void> {
   &:hover {
     background: var(--bg-primary-color);
     border: 2px solid var(--border-color);
-    box-shadow: 0px 4px 16px 0px 25, 22, 35, 0.4;
+    box-shadow:
+      0px 4px 16px 0px 25,
+      22,
+      35,
+      0.4;
   }
   &:optional {
     border: 2px solid var(--border-color);

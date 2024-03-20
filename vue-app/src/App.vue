@@ -46,6 +46,7 @@ import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import { useMeta } from 'vue-meta'
 import type { WalletUser } from '@/stores'
+import type { BrowserProvider } from 'ethers'
 
 const route = useRoute()
 const appStore = useAppStore()
@@ -166,13 +167,18 @@ onMounted(async () => {
   }
 
   appReady.value = true
-  await appStore.loadFactoryInfo()
-  await appStore.loadMACIFactoryInfo()
-  await appStore.loadRoundInfo()
-  await recipientStore.loadRecipientRegistryInfo()
-  appStore.isAppReady = true
+  try {
+    await appStore.loadClrFundInfo()
+    await appStore.loadMACIFactoryInfo()
+    await appStore.loadRoundInfo()
+    await recipientStore.loadRecipientRegistryInfo()
+    appStore.isAppReady = true
 
-  setupLoadIntervals()
+    setupLoadIntervals()
+  } catch (err) {
+    /* eslint-disable-next-line no-console */
+    console.warn('Failed to load application data:', err)
+  }
 })
 
 onBeforeUnmount(() => {
@@ -187,10 +193,10 @@ watch(walletUser, async () => {
       const user: WalletUser = {
         chainId: walletUser.value.chainId,
         walletAddress: walletUser.value.walletAddress,
-        web3Provider: walletUser.value.web3Provider,
+        web3Provider: walletUser.value.web3Provider as BrowserProvider,
       }
       // make sure factory is loaded
-      await appStore.loadFactoryInfo()
+      await appStore.loadClrFundInfo()
       userStore.loginUser(user)
       await userStore.loadUserInfo()
       await userStore.loadBrightID()

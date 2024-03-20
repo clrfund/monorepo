@@ -1,11 +1,19 @@
 name: Create new round
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      duration:
+        description: 'Round duration'
+        required: true
+        default: 3600
+
 
 env:
-  NODE_VERSION: 16.x
-  SUBGRPAH_URL: "https://api.thegraph.com/subgraphs/name/clrfund/clrfund-arbitrum-goerli"
+  NODE_VERSION: 20.x
+  SUBGRPAH_URL: "https://api.thegraph.com/subgraphs/name/clrfund/clrfund-testnet"
   WALLET_PRIVATE_KEY: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_WALLET_PRIVATE_KEY }}
+  NETWORK: arbitrum-sepolia
 
 jobs:
   create-new-round:
@@ -19,10 +27,14 @@ jobs:
       uses: actions/checkout@v3
     - name: Build CLR
       run: |
+        # use https to avoid error: unable to connect to github.com
+        git config --global url."https://".insteadOf git://
         yarn && yarn build
     - name: Run create new round script
       run: |
         cd contracts
-        export FACTORY=$(curl -X POST -d '{"query":"{fundingRoundFactories {id}}"}' $SUBGRPAH_URL)
-        export FACTORY_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.FACTORY).data.fundingRoundFactories[0].id)')
-        yarn hardhat run scripts/newRound.ts --network arbitrum-goerli
+        export CLRFUND=$(curl -X POST -d '{"query":"{clrFunds {id}}"}' $SUBGRPAH_URL)
+        export CLRFUND_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.CLRFUND).data.clrFunds[0].id)')
+        yarn hardhat new-round --network "${NETWORK}" \
+          --duration ${{ github.event.inputs.duration }} \
+          --clrfund ${CLRFUND_ADDRESS}

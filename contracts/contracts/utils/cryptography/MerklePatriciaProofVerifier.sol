@@ -4,9 +4,9 @@
  * Modified from https://github.com/lidofinance/curve-merkle-oracle/blob/main/contracts/MerklePatriciaProofVerifier.sol
  * git commit hash 1033b3e84142317ffd8f366b52e489d5eb49c73f
  */
-pragma solidity ^0.6.12;
+pragma solidity ^0.8.10;
 
-import {RLPReader} from "solidity-rlp/contracts/RLPReader.sol";
+import {RLPReader} from 'solidity-rlp/contracts/RLPReader.sol';
 
 
 library MerklePatriciaProofVerifier {
@@ -40,7 +40,7 @@ library MerklePatriciaProofVerifier {
 
         if (stack.length == 0) {
             // Root hash of empty Merkle-Patricia-Trie
-            require(rootHash == 0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421, "MerklePatriciaProofVerifier: Invalid empty root hash");
+            require(rootHash == 0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421, 'MerklePatriciaProofVerifier: Invalid empty root hash');
             return new bytes(0);
         }
 
@@ -53,12 +53,12 @@ library MerklePatriciaProofVerifier {
 
             // The root node is hashed with Keccak-256 ...
             if (i == 0 && rootHash != stack[i].rlpBytesKeccak256()) {
-                revert("MerklePatriciaProofVerifier: Invalid first root hash");
+                revert('MerklePatriciaProofVerifier: Invalid first root hash');
             }
             // ... whereas all other nodes are hashed with the MPT
             // hash function.
             if (i != 0 && nodeHashHash != _mptHashHash(stack[i])) {
-                revert("MerklePatriciaProofVerifier: Invalid node hash");
+                revert('MerklePatriciaProofVerifier: Invalid node hash');
             }
             // We verified that stack[i] has the correct hash, so we
             // may safely decode it.
@@ -89,7 +89,7 @@ library MerklePatriciaProofVerifier {
                     // Sanity check
                     if (i < stack.length - 1) {
                         // divergent node must come last in proof
-                        revert("MerklePatriciaProofVerifier: divergent node must come last in the proof");
+                        revert('MerklePatriciaProofVerifier: divergent node must come last in the proof');
                     }
 
                     return new bytes(0);
@@ -99,7 +99,7 @@ library MerklePatriciaProofVerifier {
                     // Sanity check
                     if (i < stack.length - 1) {
                         // leaf node must come last in proof
-                        revert("MerklePatriciaProofVerifier: leaf node must come last in the proof");
+                        revert('MerklePatriciaProofVerifier: leaf node must come last in the proof');
                     }
 
                     if (mptKeyOffset < mptKey.length) {
@@ -112,7 +112,7 @@ library MerklePatriciaProofVerifier {
                     // Sanity check
                     if (i == stack.length - 1) {
                         // shouldn't be at last level
-                        revert("MerklePatriciaProofVerifier: unexpected last level for extension");
+                        revert('MerklePatriciaProofVerifier: unexpected last level for extension');
                     }
 
                     if (!node[1].isList()) {
@@ -134,14 +134,14 @@ library MerklePatriciaProofVerifier {
                     mptKeyOffset += 1;
                     if (nibble >= 16) {
                         // each element of the path has to be a nibble
-                        revert("MerklePatriciaProofVerifier: Each element of the path has to be a nibble");
+                        revert('MerklePatriciaProofVerifier: Each element of the path has to be a nibble');
                     }
 
                     if (_isEmptyBytesequence(node[nibble])) {
                         // Sanity
                         if (i != stack.length - 1) {
                             // leaf node should be at last level
-                            revert("MerklePatriciaProofVerifier: leaf node should be at the last level");
+                            revert('MerklePatriciaProofVerifier: leaf node should be at the last level');
                         }
 
                         return new bytes(0);
@@ -156,7 +156,7 @@ library MerklePatriciaProofVerifier {
                     // Sanity
                     if (i != stack.length - 1) {
                         // should be at last level
-                        revert("MerklePatriciaProofVerifier: Should be at the last level");
+                        revert('MerklePatriciaProofVerifier: Should be at the last level');
                     }
 
                     return node[16].toBytes();
@@ -214,7 +214,7 @@ library MerklePatriciaProofVerifier {
             isLeaf = true;
         } else {
             // Not supposed to happen!
-            revert("MerklePatriciaProofVerifier: Unexpected firstNibble value");
+            revert('MerklePatriciaProofVerifier: Unexpected firstNibble value');
         }
         return (isLeaf, _decodeNibbles(compact, skipNibbles));
     }
