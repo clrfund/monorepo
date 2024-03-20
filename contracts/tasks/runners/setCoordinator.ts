@@ -12,8 +12,9 @@ import { task } from 'hardhat/config'
 import { Subtask } from '../helpers/Subtask'
 import { ISubtaskParams } from '../helpers/types'
 
-task('set-coordinator', 'Set the Clrfund coordinator').setAction(
-  async (_, hre) => {
+task('set-coordinator', 'Set the Clrfund coordinator')
+  .addOptionalParam('clrfund', 'The ClrFund contract address')
+  .setAction(async ({ clrfund }, hre) => {
     const subtask = Subtask.getInstance(hre)
     subtask.setHre(hre)
 
@@ -22,7 +23,11 @@ task('set-coordinator', 'Set the Clrfund coordinator').setAction(
       await subtask.logStart()
 
       // set incremental to avoid resetting contract de
-      const params: ISubtaskParams = { verify: false, incremental: false }
+      const params: ISubtaskParams = {
+        verify: false,
+        incremental: false,
+        clrfund,
+      }
       const steps = await subtask.getDeploySteps(['coordinator'], params)
 
       const skip = 0
@@ -38,5 +43,4 @@ task('set-coordinator', 'Set the Clrfund coordinator').setAction(
     }
 
     await subtask.finish(success)
-  }
-)
+  })

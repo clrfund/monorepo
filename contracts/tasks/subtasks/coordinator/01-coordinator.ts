@@ -6,6 +6,7 @@ import { Subtask } from '../../helpers/Subtask'
 import { EContracts } from '../../../utils/types'
 import { Contract, getAddress } from 'ethers'
 import { Keypair, PrivKey, PubKey } from '@clrfund/common'
+import { ISubtaskParams } from '../../helpers/types'
 
 const subtask = Subtask.getInstance()
 
@@ -13,18 +14,23 @@ const subtask = Subtask.getInstance()
  * Deploy step registration and task itself
  */
 subtask
-  .addTask('coordinator:set-coordinator', 'Set the clrfund coordinator')
-  .setAction(async (_, hre) => {
+  .addTask(
+    'coordinator:set-coordinator',
+    'Set the clrfund coordinator',
+    ({ clrfund }) => Promise.resolve({ clrfund })
+  )
+  .setAction(async ({ clrfund }: ISubtaskParams, hre) => {
     subtask.setHre(hre)
     const deployer = await subtask.getDeployer()
 
     const clrfundContract = await subtask.getContract<Contract>({
       name: EContracts.ClrFund,
+      address: clrfund,
     })
 
     const coordinator = await subtask.getConfigField<string>(
       EContracts.ClrFund,
-      'coordinaotor'
+      'coordinator'
     )
     const coordinatorAddress = coordinator || (await deployer.getAddress())
 
