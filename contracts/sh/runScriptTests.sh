@@ -11,6 +11,7 @@ export OUTPUT_DIR="./proof_output/${NOW}"
 export TALLY_FILE=${OUTPUT_DIR}/tally.json
 export HARDHAT_NETWORK=localhost
 export RAPID_SNARK=${RAPID_SNARK:-~/rapidsnark/package/bin/prover}
+export ROUND_DURATION=1000
 
 mkdir -p ${OUTPUT_DIR}
 
@@ -25,12 +26,11 @@ export COORDINATOR_MACISK=$(echo "${MACI_KEYPAIR}" | grep -o "macisk.*$")
 yarn hardhat new-clrfund --network ${HARDHAT_NETWORK}
  
 # deploy a new funding round
-yarn hardhat new-round --network ${HARDHAT_NETWORK}
+yarn hardhat new-round --round-duration ${ROUND_DURATION} --network ${HARDHAT_NETWORK}
 
 yarn hardhat add-recipients --network ${HARDHAT_NETWORK}
 yarn hardhat contribute --network ${HARDHAT_NETWORK}
 
-ROUND_DURATION=$(node -e 'const config=JSON.parse(fs.readFileSync(`./deploy-config.json`).toString()); console.log(config.localhost?.FundingRound?.duration || 1000)')
 yarn hardhat time-travel --seconds ${ROUND_DURATION} --network ${HARDHAT_NETWORK}
 
 # run the tally script
