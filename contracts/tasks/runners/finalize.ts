@@ -37,14 +37,14 @@ task('finalize', 'Finalize a funding round')
 
     await subtask.logStart()
 
-    const clrfundcontractAddress =
+    const clrfundContractAddress =
       clrfund ?? storage.mustGetAddress(EContracts.ClrFund, network.name)
 
     const clrfundContract = await ethers.getContractAt(
       EContracts.ClrFund,
-      clrfundcontractAddress
+      clrfundContractAddress
     )
-    console.log('ClrFund address', clrfund)
+    console.log('ClrFund address', clrfundContractAddress)
 
     const currentRoundAddress = await clrfundContract.getCurrentRound()
     const fundingRound = await ethers.getContractAt(
