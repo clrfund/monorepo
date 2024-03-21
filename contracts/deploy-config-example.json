@@ -5,7 +5,6 @@
       "paramsDirectory": "./params"
     },
     "ClrFund": {
-      "template": false,
       "coordinator": "",
       "token": "",
       "userRegistry": "SimpleUserRegistry",
@@ -30,7 +29,6 @@
       "paramsDirectory": "./params"
     },
     "ClrFund": {
-      "template": false,
       "coordinator": "",
       "token": "0x65bc8dd04808d99cf8aa6749f128d55c2051edde",
       "userRegistry": "BrightIdUserRegistry",
