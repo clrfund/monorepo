@@ -13,7 +13,7 @@ Set the following env vars in `/contracts/.env`:
 
 ```
 # private key for decrypting messages
-COORDINATOR_MACISK=<coordinator-private-key>
+COORDINATOR_MACISK=<coordinator-maci-private-key>
 
 # private key for interacting with contracts
 WALLET_MNEMONIC=
@@ -23,14 +23,16 @@ WALLET_PRIVATE_KEY
 Decrypt messages and tally the votes:
 
 ```
-yarn hardhat tally --rapidsnark ${RAPID_SNARK} --output-dir ${OUTPUT_DIR} --network <network>
+yarn hardhat tally --rapidsnark {RAPID_SNARK} --output-dir {OUTPUT_DIR} --network {network}
 ```
+
+You only need to provide `--rapidsnark` if you are running the `tally` command on an intel chip.
 
 If there's error and the tally task was stopped prematurely, it can be resumed by passing 2 additional parameters, '--tally-file' and/or '--maci-state-file', if the files were generated.
 
 ```
 # for rerun
-yarn hardhat tally --maci-state-file <file> --tally-file <tally.json> --network <network>
+yarn hardhat tally --maci-state-file {maci-state.json} --tally-file {tally.json}  --output-dir {OUTPUT_DIR} --network {network}
 ```
 
 Result will be saved to `tally.json` file, which must then be published via IPFS.
@@ -58,7 +60,7 @@ WALLET_PRIVATE_KEY=
 Once you have the `tally.json` from the tally script, run:
 
 ```
-yarn hardhat finalize --tally-file <tally file> --network <network>
+yarn hardhat finalize --tally-file {tally.json} --network {network}
 ```
 
 # How to verify the tally results
@@ -68,7 +70,7 @@ Anyone can verify the tally results in the tally.json.
 From the clrfund contracts folder, run the following command to verify the result:
 
 ```
-yarn hardhat verify-tally-file --tally-file <tally file> --network <network>
+yarn hardhat verify-tally-file --tally-file {tally.json} --network {network}
 ```
 
 # How to enable the leaderboard view
@@ -81,7 +83,7 @@ After finalizing the round, enable the leaderboard view in the vue-app by export
 ```sh
 cd contracts
 
-yarn hardhat export-round --output-dir ../vue-app/src/rounds --network <network> --round-address <round address> --operator <operator> --start-block <recipient-registry-start-block> --ipfs <ipfs-gateway-url>
+yarn hardhat export-round --output-dir ../vue-app/src/rounds --network {network} --round-address {round_address} --operator {operator} --start-block {recipient-registry-start-block} --ipfs {ipfs-gateway-url}
 
 ```
 3) Build and deploy the app
