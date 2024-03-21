@@ -1,6 +1,6 @@
 {
   "name": "@clrfund/subgraph",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "repository": "https://github.com/clrfund/monorepo/subgraph",
   "keywords": [
     "clr.fund",
