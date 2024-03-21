@@ -4,17 +4,18 @@ import { expect } from 'chai'
 import { deployMockContract, MockContract } from '@clrfund/waffle-mock-contract'
 
 import { getEventArg, getGasUsage } from '../utils/contracts'
-import { deployMaciFactory, deployPoseidonLibraries } from '../utils/deployment'
+import { deployMaciFactory, deployPoseidonLibraries } from '../utils/testutils'
 import { MaciParameters } from '../utils/maciParameters'
 import { HardhatEthersSigner } from '@nomicfoundation/hardhat-ethers/signers'
 import { Keypair } from '@clrfund/common'
+import { MACIFactory } from '../typechain-types'
 
 describe('MACI factory', () => {
   let deployer: HardhatEthersSigner
   let coordinator: HardhatEthersSigner
 
   const duration = 100
-  let maciFactory: Contract
+  let maciFactory: MACIFactory
   let signUpGatekeeper: MockContract
   let initialVoiceCreditProxy: MockContract
   let topupContract: MockContract
@@ -29,7 +30,6 @@ describe('MACI factory', () => {
   beforeEach(async () => {
     if (!poseidonContracts) {
       poseidonContracts = await deployPoseidonLibraries({
-        artifactsPath: config.paths.artifacts,
         ethers,
         signer: deployer,
       })
@@ -84,7 +84,7 @@ describe('MACI factory', () => {
   })
 
   it('allows only owner to set MACI parameters', async () => {
-    const coordinatorMaciFactory = maciFactory.connect(coordinator) as Contract
+    const coordinatorMaciFactory = maciFactory.connect(coordinator)
     await expect(
       coordinatorMaciFactory.setMaciParameters(
         ...maciParameters.asContractParam()
@@ -118,7 +118,7 @@ describe('MACI factory', () => {
       ...maciParameters.asContractParam()
     )
     await setParamTx.wait()
-    const coordinatorMaciFactory = maciFactory.connect(coordinator) as Contract
+    const coordinatorMaciFactory = maciFactory.connect(coordinator)
 
     const deployTx = await coordinatorMaciFactory.deployMaci(
       signUpGatekeeper.target,
@@ -149,7 +149,7 @@ describe('MACI factory', () => {
 
     const maciAddress = await getEventArg(
       deployTx,
-      maciFactory,
+      maciFactory as unknown as Contract,
       'MaciDeployed',
       '_maci'
     )
@@ -173,7 +173,7 @@ describe('MACI factory', () => {
 
     const maciAddress = await getEventArg(
       deployTx,
-      maciFactory,
+      maciFactory as unknown as Contract,
       'MaciDeployed',
       '_maci'
     )

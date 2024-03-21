@@ -18,6 +18,26 @@ yarn e2e
 ```
 
 ## Scripts
+### Generate coordinator key
+
+```
+yarn hardhat new-maci-key
+```
+
+### Copy env for contracts
+
+```sh
+# update COORDINATOR_MACISK with the MACI key from previous step
+# adjust other configuration if necessary
+cp contracts/.env.example contracts/.env
+```
+
+### Copy configuration for contract deployment
+
+```sh
+# adjust the configuration for localhost if necessary
+cp contracts/deploy-config-example.json contracts/deploy-config.json
+```
 
 ### Deploy the ClrFund contract
 
@@ -50,12 +70,6 @@ The test includes setting coordinator keys, contribute funds, vote, tally, final
 The following command will verify all clr.fund contracts. It will log a warning if contract already verified or missing.
 
 ```
-yarn hardhat verify-all --clrfund <clrfund-address>  --network <network>
+yarn hardhat verify-all --network <network>
 ```
 
-### Generate coordinator key
-If you want to genereate a single key to coordinate multiple rounds.
-
-```
-yarn ts-node tasks/maciNewKey.ts
-```

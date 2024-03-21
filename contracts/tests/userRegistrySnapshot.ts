@@ -139,6 +139,7 @@ describe('SnapshotUserRegistry', function () {
               provider
             )
             const accountProofRlpBytes = rlpEncodeProof(proof.accountProof)
+
             const tx = await userRegistry.setStorageRoot(
               token.address,
               block.hash,

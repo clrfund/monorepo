@@ -12,3 +12,5 @@ proof_output
 typechain-types
 params
 local-state.json
+deploy-config.json
+deployed-contracts.json

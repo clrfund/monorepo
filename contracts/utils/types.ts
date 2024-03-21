@@ -8,6 +8,7 @@ export enum EContracts {
   MACIFactory = 'MACIFactory',
   MACI = 'MACI',
   Verifier = 'Verifier',
+  VkRegistry = 'VkRegistry',
   TopupCredit = 'TopupCredit',
   PollFactory = 'PollFactory',
   Poll = 'Poll',
@@ -19,9 +20,11 @@ export enum EContracts {
   PoseidonT4 = 'PoseidonT4',
   PoseidonT5 = 'PoseidonT5',
   PoseidonT6 = 'PoseidonT6',
+  IRecipientRegistry = 'IRecipientRegistry',
   SimpleRecipientRegistry = 'SimpleRecipientRegistry',
   OptimisticRecipientRegistry = 'OptimisticRecipientRegistry',
   KlerosGTCRAdapter = 'KlerosGTCRAdapter',
+  IUserRegistry = 'IUserRegistry',
   SimpleUserRegistry = 'SimpleUserRegistry',
   SemaphoreUserRegistry = 'SemaphoreUserRegistry',
   BrightIdUserRegistry = 'BrightIdUserRegistry',
@@ -30,12 +33,6 @@ export enum EContracts {
   ClrFundDeployer = 'ClrFundDeployer',
   ERC20 = 'ERC20',
   TopupToken = 'TopupToken',
-}
-
-export enum recipientRegistryType {
-  simple = 0,
-  kleros = 1,
-  optimistic = 2,
 }
 
 export interface Project {

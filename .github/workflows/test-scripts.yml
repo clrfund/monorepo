@@ -44,7 +44,8 @@ jobs:
         path: monorepo
     - name: Download circuit params
       run: |
-        $GITHUB_WORKSPACE/monorepo/.github/scripts/${ZKEYS_DOWNLOAD_SCRIPT}
+        cd monorepo/contracts
+        ../.github/scripts/${ZKEYS_DOWNLOAD_SCRIPT}
     - name: Build CLR
       run: |
         cd monorepo

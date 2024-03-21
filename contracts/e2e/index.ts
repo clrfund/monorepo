@@ -17,11 +17,7 @@ import {
   DEFAULT_SR_QUEUE_OPS,
 } from '../utils/constants'
 import { getEventArg } from '../utils/contracts'
-import {
-  deployContract,
-  deployPoseidonLibraries,
-  deployMaciFactory,
-} from '../utils/deployment'
+import { deployPoseidonLibraries, deployMaciFactory } from '../utils/testutils'
 import { getIpfsHash } from '../utils/ipfs'
 import {
   bnSqrt,
@@ -39,6 +35,7 @@ import { existsSync, mkdirSync } from 'fs'
 import path from 'path'
 import { FundingRound } from '../typechain-types'
 import { JSONFile } from '../utils/JSONFile'
+import { EContracts } from '../utils/types'
 
 type VoteData = { recipientIndex: number; voiceCredits: bigint }
 type ClaimData = { [index: number]: bigint }
@@ -142,7 +139,6 @@ describe('End-to-end Tests', function () {
     params = await MaciParameters.fromConfig(circuit, circuitDirectory)
     poseidonLibraries = await deployPoseidonLibraries({
       ethers,
-      artifactsPath: config.paths.artifacts,
       signer: deployer,
     })
   })
@@ -168,17 +164,14 @@ describe('End-to-end Tests', function () {
       maciParameters: params,
     })
 
-    clrfund = await deployContract({
-      name: 'ClrFund',
-      signer: deployer,
-      ethers,
-    })
+    clrfund = await ethers.deployContract(EContracts.ClrFund, deployer)
+    await clrfund.waitForDeployment()
 
-    const roundFactory = await deployContract({
-      name: 'FundingRoundFactory',
-      signer: deployer,
-      ethers,
-    })
+    const roundFactory = await ethers.deployContract(
+      EContracts.FundingRoundFactory,
+      deployer
+    )
+    await roundFactory.waitForDeployment()
 
     const initClrfundTx = await clrfund.init(
       maciFactory.target,
@@ -188,17 +181,23 @@ describe('End-to-end Tests', function () {
     const transferTx = await maciFactory.transferOwnership(clrfund.target)
     await transferTx.wait()
 
-    userRegistry = await ethers.deployContract('SimpleUserRegistry', deployer)
-    await clrfund.setUserRegistry(userRegistry.target)
-    const SimpleRecipientRegistry = await ethers.getContractFactory(
-      'SimpleRecipientRegistry',
+    userRegistry = await ethers.deployContract(
+      EContracts.SimpleUserRegistry,
       deployer
     )
-    recipientRegistry = await SimpleRecipientRegistry.deploy(clrfund.target)
+    await clrfund.setUserRegistry(userRegistry.target)
+    recipientRegistry = await ethers.deployContract(
+      EContracts.SimpleRecipientRegistry,
+      [clrfund.target],
+      { signer: deployer }
+    )
     await clrfund.setRecipientRegistry(recipientRegistry.target)
 
     // Deploy ERC20 token contract
-    const Token = await ethers.getContractFactory('AnyOldERC20Token', deployer)
+    const Token = await ethers.getContractFactory(
+      EContracts.AnyOldERC20Token,
+      deployer
+    )
     const tokenInitialSupply = UNIT * BigInt(10000)
     token = await Token.deploy(tokenInitialSupply)
     await token.transfer(await poolContributor1.getAddress(), UNIT * BigInt(50))
@@ -262,15 +261,15 @@ describe('End-to-end Tests', function () {
 
     const fundingRoundAddress = await clrfund.getCurrentRound()
     fundingRound = await ethers.getContractAt(
-      'FundingRound',
+      EContracts.FundingRound,
       fundingRoundAddress
     )
     const maciAddress = await fundingRound.maci()
-    maci = await ethers.getContractAt('MACI', maciAddress)
+    maci = await ethers.getContractAt(EContracts.MACI, maciAddress)
 
     pollId = await fundingRound.pollId()
     const pollAddress = await fundingRound.poll()
-    pollContract = await ethers.getContractAt('Poll', pollAddress)
+    pollContract = await ethers.getContractAt(EContracts.Poll, pollAddress)
 
     await mine()
   })
@@ -331,7 +330,10 @@ describe('End-to-end Tests', function () {
     messageProcessorAddress: string
   }> {
     const tallyAddress = await fundingRound.tally()
-    const tallyContact = await ethers.getContractAt('Tally', tallyAddress)
+    const tallyContact = await ethers.getContractAt(
+      EContracts.Tally,
+      tallyAddress
+    )
     const messageProcessorAddress = await tallyContact.messageProcessor()
 
     return { tallyAddress, messageProcessorAddress }

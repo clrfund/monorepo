@@ -325,11 +325,6 @@ export async function mergeMaciSubtrees({
 export function newMaciPrivateKey(): string {
   const keypair = new Keypair()
   const secretKey = keypair.privKey.serialize()
-  const publicKey = keypair.pubKey.serialize()
-
-  console.log(`SecretKey: ${secretKey}`)
-  console.log(`PublicKey: ${publicKey}`)
-
   return secretKey
 }
 

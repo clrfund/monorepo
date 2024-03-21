@@ -1,10 +1,14 @@
 import { Signer, Contract } from 'ethers'
 import { MockContract, deployMockContract } from '@clrfund/waffle-mock-contract'
 import { artifacts, ethers, config } from 'hardhat'
-import { deployMaciFactory, deployPoseidonLibraries } from './deployment'
 import { MaciParameters } from './maciParameters'
 import { PubKey } from '@clrfund/common'
-import { getEventArg } from './contracts'
+import { deployContract, getEventArg, setVerifyingKeys } from './contracts'
+import { HardhatEthersHelpers } from '@nomicfoundation/hardhat-ethers/types'
+import { EContracts } from './types'
+import { Libraries } from 'hardhat/types'
+import { MACIFactory, VkRegistry } from '../typechain-types'
+import { ZERO_ADDRESS } from './constants'
 
 /**
  * Deploy a mock contract with the given contract name
@@ -18,6 +22,133 @@ export async function deployMockContractByName(
 ): Promise<MockContract> {
   const ContractArtifacts = await artifacts.readArtifact(name)
   return deployMockContract(signer, ContractArtifacts.abi)
+}
+
+/**
+ * Deploy all the poseidon contracts
+ *
+ * @param signer The signer for the deployment transaction
+ * @param ethers Hardhat ethers handle
+ * @returns the deployed poseidon contracts
+ */
+export async function deployPoseidonLibraries({
+  signer,
+  ethers,
+}: {
+  signer?: Signer
+  ethers: HardhatEthersHelpers
+}): Promise<{ [name: string]: string }> {
+  const PoseidonT3Contract = await deployContract<Contract>(
+    EContracts.PoseidonT3,
+    ethers,
+    { signer }
+  )
+
+  const PoseidonT4Contract = await deployContract<Contract>(
+    EContracts.PoseidonT4,
+    ethers,
+    { signer }
+  )
+
+  const PoseidonT5Contract = await deployContract<Contract>(
+    EContracts.PoseidonT5,
+    ethers,
+    { signer }
+  )
+
+  const PoseidonT6Contract = await deployContract<Contract>(
+    EContracts.PoseidonT6,
+    ethers,
+    {
+      signer,
+    }
+  )
+
+  const libraries = {
+    PoseidonT3: await PoseidonT3Contract.getAddress(),
+    PoseidonT4: await PoseidonT4Contract.getAddress(),
+    PoseidonT5: await PoseidonT5Contract.getAddress(),
+    PoseidonT6: await PoseidonT6Contract.getAddress(),
+  }
+  return libraries
+}
+
+/**
+ * Deploy an instance of MACI factory
+ * libraries - poseidon contracts
+ * ethers - hardhat ethers handle
+ * signer - if signer is not provided, use default signer in ethers
+ * @returns MACI factory contract
+ */
+export async function deployMaciFactory({
+  libraries,
+  ethers,
+  signer,
+  maciParameters,
+  quiet,
+}: {
+  libraries: Libraries
+  ethers: HardhatEthersHelpers
+  signer?: Signer
+  maciParameters: MaciParameters
+  quiet?: boolean
+}): Promise<MACIFactory> {
+  const vkRegistry = await deployContract<VkRegistry>(
+    EContracts.VkRegistry,
+    ethers,
+    { signer, quiet }
+  )
+  await setVerifyingKeys(vkRegistry, maciParameters)
+
+  const verifier = await deployContract<Contract>(EContracts.Verifier, ethers, {
+    signer,
+    quiet,
+  })
+
+  const pollFactory = await deployContract<Contract>(
+    EContracts.PollFactory,
+    ethers,
+    { libraries, signer, quiet }
+  )
+
+  const tallyFactory = await deployContract<Contract>(
+    EContracts.TallyFactory,
+    ethers,
+    { libraries, signer, quiet }
+  )
+
+  const messageProcessorFactory = await deployContract<Contract>(
+    EContracts.MessageProcessorFactory,
+    ethers,
+    { libraries, signer, quiet }
+  )
+
+  // all the factories to deploy MACI contracts
+  const factories = {
+    pollFactory: pollFactory.target,
+    tallyFactory: tallyFactory.target,
+    // subsidy is not currently used
+    subsidyFactory: ZERO_ADDRESS,
+    messageProcessorFactory: messageProcessorFactory.target,
+  }
+
+  const maciFactory = await deployContract<MACIFactory>(
+    EContracts.MACIFactory,
+    ethers,
+    {
+      args: [vkRegistry.target, factories, verifier.target],
+      libraries,
+      signer,
+      quiet,
+    }
+  )
+
+  const setTx = await maciFactory.setMaciParameters(
+    ...maciParameters.asContractParam()
+  )
+  await setTx.wait()
+
+  return maciFactory
 }
 
 /**
@@ -47,22 +178,22 @@ export async function deployTestFundingRound(
   deployer: Signer
 ): Promise<DeployTestFundingRoundOutput> {
   const token = await ethers.deployContract(
-    'AnyOldERC20Token',
+    EContracts.AnyOldERC20Token,
     [tokenSupply],
     deployer
   )
 
   const mockUserRegistry = await deployMockContractByName(
-    'IUserRegistry',
+    EContracts.IUserRegistry,
     deployer
   )
   const mockRecipientRegistry = await deployMockContractByName(
-    'IRecipientRegistry',
+    EContracts.IRecipientRegistry,
     deployer
   )
 
   const fundingRound = await ethers.deployContract(
-    'FundingRound',
+    EContracts.FundingRound,
     [
       token.target,
       mockUserRegistry.target,
@@ -75,7 +206,6 @@ export async function deployTestFundingRound(
   const libraries = await deployPoseidonLibraries({
     signer: deployer,
     ethers,
-    artifactsPath: config.paths.artifacts,
   })
 
   const maciParameters = MaciParameters.mock()
@@ -86,13 +216,22 @@ export async function deployTestFundingRound(
     maciParameters,
   })
   const factories = await maciFactory.factories()
-  const topupToken = await ethers.deployContract('TopupToken', deployer)
-  const vkRegistry = await ethers.deployContract('VkRegistry', deployer)
-  const mockVerifier = await deployMockContractByName('Verifier', deployer)
-  const mockTally = await deployMockContractByName('Tally', deployer)
+  const topupToken = await ethers.deployContract(
+    EContracts.TopupToken,
+    deployer
+  )
+  const vkRegistry = await ethers.deployContract(
+    EContracts.VkRegistry,
+    deployer
+  )
+  const mockVerifier = await deployMockContractByName(
+    EContracts.Verifier,
+    deployer
+  )
+  const mockTally = await deployMockContractByName(EContracts.Tally, deployer)
 
   const maciInstance = await ethers.deployContract(
-    'MACI',
+    EContracts.MACI,
     [
       factories.pollFactory,
       factories.messageProcessorFactory,
