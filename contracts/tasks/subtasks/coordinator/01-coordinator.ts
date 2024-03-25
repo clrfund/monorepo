@@ -28,7 +28,7 @@ subtask
       address: clrfund,
     })
 
-    const coordinator = await subtask.getConfigField<string>(
+    const coordinator = await subtask.tryGetConfigField<string>(
       EContracts.ClrFund,
       'coordinator'
     )

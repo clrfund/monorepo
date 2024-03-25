@@ -40,7 +40,7 @@ subtask
     'recipient:deploy-optimistic-recipient-registry',
     'Deploy an optimistic recipient regsitry'
   )
-  .setAction(async ({ incremental }: ISubtaskParams, hre) => {
+  .setAction(async ({ incremental, clrfund }: ISubtaskParams, hre) => {
     subtask.setHre(hre)
     const deployer = await subtask.getDeployer()
     const network = hre.network.name
@@ -72,17 +72,13 @@ subtask
       'challengePeriodSeconds'
     )
 
-    const clrfundContractAddress = storage.mustGetAddress(
-      EContracts.ClrFund,
-      network
-    )
-
     const clrfundContract = await subtask.getContract<ClrFund>({
       name: EContracts.ClrFund,
-      address: clrfundContractAddress,
+      address: clrfund,
     })
     const decimals = await getTokenDecimals(clrfundContract)
 
+    const clrfundContractAddress = await clrfundContract.getAddress()
     const args = [
       parseUnits(deposit, decimals),
       challengePeriodSeconds || defaultChallengePeriodSeconds,

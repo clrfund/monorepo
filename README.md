@@ -62,7 +62,7 @@ In a future version, we plan to address this by routing ETH and token contributi
 
 ## Development
 
-### Install Node v18 with nvm
+### Install Node v20 with nvm
 
 ```sh
 nvm install 20

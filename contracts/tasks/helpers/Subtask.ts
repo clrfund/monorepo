@@ -88,8 +88,17 @@ export class Subtask {
     try {
       this.config = JSONFile.read(DEPLOY_CONFIG) as TConfig
     } catch (e) {
-      //console.log('eror =======================', e)
-      this.config = {} as TConfig
+      if (e instanceof Error) {
+        const regex = new RegExp('ENOENT: no such file or directory')
+        if (regex.test(e.message)) {
+          // silent about no deploy-config.json file error to allow
+          // unit test to run without error
+        } else {
+          console.log('=======================')
+          console.log('Failed to read', DEPLOY_CONFIG, e.message)
+        }
+      }
+      this.config = {}
     }
 
     this.storage = ContractStorage.getInstance()
@@ -384,8 +393,10 @@ export class Subtask {
   private getDefaultParams = ({
     verify,
     incremental,
+    clrfund,
+    roundDuration,
   }: ISubtaskParams): Promise<TaskArguments> =>
-    Promise.resolve({ verify, incremental })
+    Promise.resolve({ verify, incremental, clrfund, roundDuration })
 
   /**
    * Get deploy step sequence

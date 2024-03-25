@@ -17,14 +17,16 @@ const storage = ContractStorage.getInstance()
  */
 subtask
   .addTask('token:set-token', 'Set token in the ClrFund contract')
-  .setAction(async ({ incremental }: ISubtaskParams, hre) => {
+  .setAction(async ({ incremental, clrfund }: ISubtaskParams, hre) => {
     subtask.setHre(hre)
     const network = hre.network.name
+    const deployer = await subtask.getDeployer()
 
-    let tokenAddress = subtask.getConfigField<string>(
+    let tokenAddress = subtask.tryGetConfigField<string>(
       EContracts.ClrFund,
       'token'
     )
+
     if (!tokenAddress) {
       tokenAddress = storage.mustGetAddress(
         EContracts.AnyOldERC20Token,
@@ -34,6 +36,8 @@ subtask
 
     const clrfundContract = await subtask.getContract<ClrFund>({
       name: EContracts.ClrFund,
+      address: clrfund,
+      signer: deployer,
     })
 
     if (incremental) {
@@ -49,4 +53,6 @@ subtask
     if (receipt?.status !== 1) {
       throw new Error('Failed to set token')
     }
+
+    subtask.logTransaction(tx)
   })

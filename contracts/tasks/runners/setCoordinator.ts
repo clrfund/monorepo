@@ -1,12 +1,14 @@
 /**
  * Set the coordinator in clrfund
+ *
  * Usage:
  * hardhat set-coordinator --network <network>
  *
  * Note:
- * 1) Make sure you have deploy-config.json (see deploy-config-example.json).
- * 2) Make sure you have deployed-contracts.json created from the new-clrfund task
- * 3) Make sure that the COORDINATOR_MACISK (coordinator's MACI private key) is set in the .env file
+ * 1) The script will use the signer address as the coordinator address if
+ *  it is not configured in the clrfund.coordinator field in the deploy-config.json file (see deploy-config-example.json).
+ * 2) Use --clrfund to specify the clrfund address if you do not have the deployed-contracts.json file
+ * 3) Make sure that the COORDINATOR_MACISK (the coordinator's MACI private key) is set in the .env file
  */
 import { task } from 'hardhat/config'
 import { Subtask } from '../helpers/Subtask'
