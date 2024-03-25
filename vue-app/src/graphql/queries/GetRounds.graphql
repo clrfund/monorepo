@@ -1,5 +1,5 @@
-query GetRounds {
-  fundingRounds(orderBy: startTime, orderDirection: asc) {
+query GetRounds($clrFundAddress: String!) {
+  fundingRounds(where:{clrFund: $clrFundAddress}, orderBy: startTime, orderDirection: desc) {
     id
     isFinalized
     isCancelled

@@ -41,11 +41,12 @@ import { onMounted, ref } from 'vue'
 import { type Round, getRounds } from '@/api/rounds'
 import Links from '@/components/Links.vue'
 import { DateTime } from 'luxon'
+import { clrfundContractAddress } from '@/api/core'
 
 const rounds = ref<Round[]>([])
 
 onMounted(async () => {
-  rounds.value = (await getRounds()).reverse()
+  rounds.value = (await getRounds(clrfundContractAddress)).reverse()
 })
 </script>
 
