@@ -1,3 +1,4 @@
+{{#clrFundDeployerAddress}}
 type ClrFundDeployer @entity {
   id: ID!
   clrFunds: [ClrFund!] @derivedFrom(field: "clrFundDeployer")
@@ -5,10 +6,13 @@ type ClrFundDeployer @entity {
   lastUpdatedAt: String
 }
 
+{{/clrFundDeployerAddress}}
 type ClrFund @entity {
   id: ID!
   owner: Bytes
+  {{#clrFundDeployerAddress}}
   clrFundDeployer: ClrFundDeployer!
+  {{/clrFundDeployerAddress}}
   coordinator: Bytes
   nativeToken: Bytes
   nativeTokenInfo: Token

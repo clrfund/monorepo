@@ -1,6 +1,0 @@
-{
-  "network": "arbitrum-goerli",
-  "address": "0x0a12CE1B7a95f2067AB930f0b2316FF21Cd5A430",
-  "clrFundStartBlock": 325577,
-  "recipientRegistryStartBlock": 325577
-}

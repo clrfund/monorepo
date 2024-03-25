@@ -4,11 +4,37 @@ repository: https://github.com/clrfund/monorepo
 schema:
   file: ./schema.graphql
 dataSources:
+{{#clrFundDeployerAddress}}
+  - kind: ethereum/contract
+    name: ClrFundDeployer
+    network: {{network}}
+    source:
+      address: '{{clrFundDeployerAddress}}'
+      abi: ClrFundDeployer
+      startBlock: {{clrFundDeployerStartBlock}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ClrFundDeployer
+        - ClrFund
+      abis:
+        - name: ClrFund
+          file: ./abis/ClrFund.json
+        - name: ClrFundDeployer
+          file: ./abis/ClrFundDeployer.json
+      eventHandlers:
+        - event: NewInstance(indexed address)
+          handler: handleNewInstance
+      file: ./src/ClrFundDeployerMapping.ts
+{{/clrFundDeployerAddress}}
+{{#clrFundAddress}}
   - kind: ethereum/contract
     name: ClrFund
     network: {{network}}
     source:
-      address: '{{address}}'
+      address: '{{clrFundAddress}}'
       abi: ClrFund
       startBlock: {{clrFundStartBlock}}
     mapping:
@@ -58,6 +84,7 @@ dataSources:
         - event: RecipientRegistryChanged(address)
           handler: handleRecipientRegistryChanged
       file: ./src/ClrFundMapping.ts
+  {{/clrFundAddress}}
   - kind: ethereum/contract
     name: OptimisticRecipientRegistry
     network: {{network}}
@@ -83,6 +110,60 @@ dataSources:
           handler: handleRequestSubmitted
       file: ./src/OptimisticRecipientRegistryMapping.ts
 templates:
+{{#clrFundDeployerAddress}}
+  - name: ClrFund
+    kind: ethereum/contract
+    network: {{network}}
+    source:
+      abi: ClrFund
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ClrFund
+        - RecipientRegistry
+        - ContributorRegistry
+        - FundingRound
+        - Token
+      abis:
+        - name: ClrFund
+          file: ./abis/ClrFund.json
+        - name: FundingRound
+          file: ./abis/FundingRound.json
+        - name: MACIFactory
+          file: ./abis/MACIFactory.json
+        - name: OptimisticRecipientRegistry
+          file: ./abis/OptimisticRecipientRegistry.json
+        - name: BrightIdUserRegistry
+          file: ./abis/BrightIdUserRegistry.json
+        - name: Token
+          file: ./abis/Token.json
+        - name: Poll
+          file: ./abis/Poll.json
+        - name: MACI
+          file: ./abis/MACI.json
+      eventHandlers:
+        - event: CoordinatorChanged(address)
+          handler: handleCoordinatorChanged
+        - event: FundingSourceAdded(address)
+          handler: handleFundingSourceAdded
+        - event: FundingSourceRemoved(address)
+          handler: handleFundingSourceRemoved
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: RoundFinalized(address)
+          handler: handleRoundFinalized
+        - event: RoundStarted(address)
+          handler: handleRoundStarted
+        - event: TokenChanged(address)
+          handler: handleTokenChanged
+        - event: UserRegistryChanged(address)
+          handler: handleUserRegistryChanged
+        - event: RecipientRegistryChanged(address)
+          handler: handleRecipientRegistryChanged
+      file: ./src/ClrFundMapping.ts
+{{/clrFundDeployerAddress}}
   - name: FundingRound
     kind: ethereum/contract
     network: {{network}}
