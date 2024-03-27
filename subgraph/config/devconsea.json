@@ -1,0 +1,6 @@
+{
+  "network": "arbitrum-one",
+  "address": "0xCd1c43003E54736532bdDb276F88D4036D661926",
+  "clrFundStartBlock": 194806650,
+  "recipientRegistryStartBlock": 194806650
+}
