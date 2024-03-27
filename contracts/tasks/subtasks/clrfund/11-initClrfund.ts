@@ -47,4 +47,5 @@ subtask
     if (receipt?.status !== 1) {
       throw new Error('Failed to initialize ClrFund')
     }
+    subtask.logTransaction(tx)
   })
