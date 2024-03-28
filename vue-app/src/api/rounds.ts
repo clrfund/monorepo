@@ -19,11 +19,15 @@ function toRoundId({ network, address }: { network: string; address: string }): 
   return `${network}-${address}`.toLowerCase()
 }
 
-//TODO: update to take ClrFund address as a parameter
-export async function getRounds(): Promise<Round[]> {
+/**
+ * Get a list of funding rounds created by the clrFund contract
+ * @param clrFundAddress The ClrFund contract address
+ * @returns A list of funding rounds
+ */
+export async function getRounds(clrFundAddress: string): Promise<Round[]> {
   let data
   try {
-    data = await sdk.GetRounds()
+    data = await sdk.GetRounds({ clrFundAddress: clrFundAddress.toLowerCase() })
   } catch {
     return []
   }

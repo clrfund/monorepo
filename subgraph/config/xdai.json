@@ -1,6 +1,6 @@
 {
   "network": "xdai",
-  "address": "0x4ede8f30d9c2dc96a9d6787e9c4a478424fb960a",
+  "clrFundAddress": "0x4ede8f30d9c2dc96a9d6787e9c4a478424fb960a",
   "clrFundStartBlock": 15217676,
   "recipientRegistryStartBlock": 15217676
 }

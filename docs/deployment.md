@@ -73,9 +73,8 @@ cp deploy-config-example.json deploy-config.json
 Update the `VkRegistry.paramsDirectory` with the circuit parameter folder. If you ran the `monorepo/.github/scripts/download-6-9-2-3.sh` in the `contracts` folder, it should be `./params`.
 
 
-### Run the deploy script
-Use the `-h` switch to print the command line help menu for all the scripts in the `cli` folder. For hardhat help, use `yarn hardhat help`.
-
+### Run the deployment scripts
+Use `yarn hardhat help` to print the command line help menu for all available commands. Note that the following steps are for deploying a standalone ClrFund instance. To deploy an instance of the ClrFundDeployer contract, please refer to the [ClrFundDeployer Deployment Guide](./deploy-clrFundDeployer.md)
 
 1. Deploy an instance of ClrFund
 
@@ -128,14 +127,19 @@ Currently, we are using the [Hosted Service](https://thegraph.com/docs/en/hosted
 
 Inside `/subgraph`:
 
-1. Prepare the `subgraph.yaml` with the correct network data
-   - Update or create a new JSON file which you want to use, under `/config`
+1. Prepare the config file
+   - Under the `/config` folder, create a new JSON file or update an existing one
+   - If you deployed a standalone ClrFund contract, use the `xdai.json` as a template to create your config file
+   - If you deployed a ClrFundDeployer contract, use the `deployer-arbitrum-sepolia.json` as a template
+2. Prepare the `schema.graphql` file
+   - Run `npx mustache <your-config-file> schema.template.graphql > schema.graphql`
+2. Prepare the `subgraph.yaml` file
    - Run `npx mustache <your-config-file> subgraph.template.yaml > subgraph.yaml`
-2. Build:
+3. Build:
    - `yarn codegen`
    - `yarn build`
-3. Authenticate with `yarn graph auth --product hosted-service <ACCESS_TOKEN>`
-4. Deploy it by running `yarn graph deploy --product hosted-service USERNAME/SUBGRAPH`
+4. Authenticate with `yarn graph auth --product hosted-service <ACCESS_TOKEN>`
+5. Deploy it by running `yarn graph deploy --product hosted-service USERNAME/SUBGRAPH`
 
 
 ### Deploy the user interface
