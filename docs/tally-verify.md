@@ -20,22 +20,34 @@ WALLET_MNEMONIC=
 WALLET_PRIVATE_KEY
 ```
 
-Decrypt messages and tally the votes:
+Decrypt messages, tally the votes and generate proofs:
 
 ```
-yarn hardhat tally --rapidsnark {RAPID_SNARK} --output-dir {OUTPUT_DIR} --network {network}
+yarn hardhat gen-proofs --clrfund {CLRFUND_CONTRACT_ADDRESS} --maci-tx-hash {MACI_CREATION_TRANSACTION_HASH} --proof-dir {OUTPUT_DIR} --rapidsnark {RAPID_SNARK} --network {network}
 ```
 
 You only need to provide `--rapidsnark` if you are running the `tally` command on an intel chip.
-
-If there's error and the tally task was stopped prematurely, it can be resumed by passing 2 additional parameters, '--tally-file' and/or '--maci-state-file', if the files were generated.
+If `gen-proofs` failed, you can rerun the command with the same parameters. If the maci-state.json file has been created, you can skip fetching MACI logs by providing the MACI state file as follow:
 
 ```
-# for rerun
-yarn hardhat tally --maci-state-file {maci-state.json} --tally-file {tally.json}  --output-dir {OUTPUT_DIR} --network {network}
+yarn hardhat gen-proofs --clrfund {CLRFUND_CONTRACT_ADDRESS} --maci-state-file {MACI_STATE_FILE_PATH} --proof-dir {OUTPUT_DIR} --rapidsnark {RAPID_SNARK} --network {network}
 ```
 
-Result will be saved to `tally.json` file, which must then be published via IPFS.
+
+** Make a backup of the {OUTPUT_DIR} before continuing to the next step **
+
+
+Upload the proofs on chain:
+```
+yarn hardhat prove-on-chain --clrfund {CLRFUND_CONTRACT_ADDRESS} --proof-dir {OUTPUT_DIR} --network {network}
+yarn hardhat publish-tally-results --clrfund {CLRFUND_CONTRACT_ADDRESS} --proof-dir {OUTPUT_DIR} --network localhost
+```
+
+If there's error running `prove-on-chain` or `publish-tally-resuls`, simply rerun the commands with the same parameters.
+
+
+
+Result will be saved to `{OUTPUT_DIR}/tally.json` file, which must then be published via IPFS.
 
 **Using [command line](https://docs.ipfs.tech/reference/kubo/cli/#ipfs)**
 
