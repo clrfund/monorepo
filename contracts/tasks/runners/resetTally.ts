@@ -21,6 +21,8 @@ task('reset-tally', 'Reset the tally contract')
 
     let success = false
     try {
+      await subtask.logStart()
+
       const [coordinator] = await hre.ethers.getSigners()
       console.log('Coordinator address: ', await coordinator.getAddress())
 
