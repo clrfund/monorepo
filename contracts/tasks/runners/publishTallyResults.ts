@@ -100,7 +100,7 @@ task('publish-tally-results', 'Publish tally results')
   .addOptionalParam(
     'batchSize',
     'The batch size to upload tally result on-chain',
-    10,
+    8,
     types.int
   )
   .addFlag('manageNonce', 'Whether to manually manage transaction nonce')
