@@ -33,13 +33,15 @@ yarn hardhat contribute --network ${HARDHAT_NETWORK}
 
 yarn hardhat time-travel --seconds ${ROUND_DURATION} --network ${HARDHAT_NETWORK}
 
-# run the tally script
+# tally the votes
 NODE_OPTIONS="--max-old-space-size=4096"
-yarn hardhat tally \
+yarn hardhat gen-proofs \
   --rapidsnark ${RAPID_SNARK} \
-  --batch-size 8 \
-  --output-dir ${OUTPUT_DIR} \
+  --proof-dir ${OUTPUT_DIR} \
+  --maci-start-block 0 \
   --network "${HARDHAT_NETWORK}"
+yarn hardhat prove-on-chain --proof-dir ${OUTPUT_DIR} --network "${HARDHAT_NETWORK}"
+yarn hardhat publish-tally-results --proof-dir ${OUTPUT_DIR} --network "${HARDHAT_NETWORK}"
  
 # finalize the round
 yarn hardhat finalize --tally-file ${TALLY_FILE} --network ${HARDHAT_NETWORK}

@@ -19,6 +19,7 @@ import { HardhatEthersHelpers } from '@nomicfoundation/hardhat-ethers/types'
 import { EContracts } from '../../utils/types'
 import { Subtask } from '../helpers/Subtask'
 import { getCurrentFundingRoundContract } from '../../utils/contracts'
+import { ContractStorage } from '../helpers/ContractStorage'
 
 /**
  * Get the message processor contract address from the tally contract
@@ -40,7 +41,7 @@ async function getMessageProcessorAddress(
 }
 
 task('prove-on-chain', 'Prove on chain with the MACI proofs')
-  .addParam('clrfund', 'ClrFund contract address')
+  .addOptionalParam('clrfund', 'ClrFund contract address')
   .addParam('proofDir', 'The proof output directory')
   .addFlag('manageNonce', 'Whether to manually manage transaction nonce')
   .addOptionalParam(
@@ -52,7 +53,8 @@ task('prove-on-chain', 'Prove on chain with the MACI proofs')
   .setAction(async ({ clrfund, quiet, manageNonce, proofDir }, hre) => {
     console.log('Verbose logging enabled:', !quiet)
 
-    const { ethers } = hre
+    const { ethers, network } = hre
+    const storage = ContractStorage.getInstance()
     const subtask = Subtask.getInstance(hre)
     subtask.setHre(hre)
 
@@ -67,8 +69,10 @@ task('prove-on-chain', 'Prove on chain with the MACI proofs')
 
     await subtask.logStart()
 
+    const clrfundContractAddress =
+      clrfund ?? storage.mustGetAddress(EContracts.ClrFund, network.name)
     const fundingRoundContract = await getCurrentFundingRoundContract(
-      clrfund,
+      clrfundContractAddress,
       coordinator,
       ethers
     )

@@ -15,7 +15,7 @@
  *
  * Sample usage:
  *
- *  yarn hardhat tally --clrfund <clrfund-address> --proof-dir <proof output directory> \
+ *  yarn hardhat gen-proofs --clrfund <clrfund-address> --proof-dir <proof output directory> \
  *   --maci-tx-hash <hash> --network <network>
  *
  */
@@ -36,9 +36,10 @@ import { getMaciStateFilePath } from '../../utils/misc'
 import { EContracts } from '../../utils/types'
 import { Subtask } from '../helpers/Subtask'
 import { getCurrentFundingRoundContract } from '../../utils/contracts'
+import { ContractStorage } from '../helpers/ContractStorage'
 
 task('gen-proofs', 'Generate MACI proofs offchain')
-  .addParam('clrfund', 'FundingRound contract address')
+  .addOptionalParam('clrfund', 'FundingRound contract address')
   .addParam('proofDir', 'The proof output directory')
   .addOptionalParam('maciTxHash', 'MACI creation transaction hash')
   .addOptionalParam(
@@ -89,6 +90,7 @@ task('gen-proofs', 'Generate MACI proofs offchain')
       console.log('Verbose logging enabled:', !quiet)
 
       const { ethers, network } = hre
+      const storage = ContractStorage.getInstance()
       const subtask = Subtask.getInstance(hre)
       subtask.setHre(hre)
 
@@ -121,8 +123,10 @@ task('gen-proofs', 'Generate MACI proofs offchain')
 
       await subtask.logStart()
 
+      const clrfundContractAddress =
+        clrfund ?? storage.mustGetAddress(EContracts.ClrFund, network.name)
       const fundingRoundContract = await getCurrentFundingRoundContract(
-        clrfund,
+        clrfundContractAddress,
         coordinator,
         ethers
       )

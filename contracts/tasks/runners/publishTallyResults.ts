@@ -24,6 +24,7 @@ import { EContracts } from '../../utils/types'
 import { Subtask } from '../helpers/Subtask'
 import { getCurrentFundingRoundContract } from '../../utils/contracts'
 import { getTalyFilePath } from '../../utils/misc'
+import { ContractStorage } from '../helpers/ContractStorage'
 
 /**
  * Publish the tally IPFS hash on chain if it's not already published
@@ -94,7 +95,7 @@ async function getRecipientTreeDepth(
 }
 
 task('publish-tally-results', 'Publish tally results')
-  .addParam('clrfund', 'ClrFund contract address')
+  .addOptionalParam('clrfund', 'ClrFund contract address')
   .addParam('proofDir', 'The proof output directory')
   .addOptionalParam(
     'batchSize',
@@ -106,7 +107,8 @@ task('publish-tally-results', 'Publish tally results')
   .addFlag('quiet', 'Whether to log on the console')
   .setAction(
     async ({ clrfund, proofDir, batchSize, manageNonce, quiet }, hre) => {
-      const { ethers } = hre
+      const { ethers, network } = hre
+      const storage = ContractStorage.getInstance()
       const subtask = Subtask.getInstance(hre)
       subtask.setHre(hre)
 
@@ -119,8 +121,10 @@ task('publish-tally-results', 'Publish tally results')
 
       await subtask.logStart()
 
+      const clrfundContractAddress =
+        clrfund ?? storage.mustGetAddress(EContracts.ClrFund, network.name)
       const fundingRoundContract = await getCurrentFundingRoundContract(
-        clrfund,
+        clrfundContractAddress,
         coordinator,
         ethers
       )
