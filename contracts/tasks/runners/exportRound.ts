@@ -29,6 +29,11 @@ type RoundListEntry = {
   isFinalized: boolean
 }
 
+// Map hardhat network name to the etherscan api network name in the hardhat.config
+const ETHERSCAN_NETWORKS: Record<string, string> = {
+  optimism: 'optimisticEthereum',
+}
+
 const toUndefined = () => undefined
 const toString = (val: bigint) => BigInt(val).toString()
 const toZero = () => BigInt(0)
@@ -41,13 +46,18 @@ function roundListFileName(directory: string): string {
   return path.join(directory, 'rounds.json')
 }
 
+function toEtherscanNetworkName(network: string): string {
+  return ETHERSCAN_NETWORKS[network] ?? network
+}
+
 function getEtherscanApiKey(config: any, network: string): string {
   let etherscanApiKey = ''
   if (config.etherscan?.apiKey) {
     if (typeof config.etherscan.apiKey === 'string') {
       etherscanApiKey = config.etherscan.apiKey
     } else {
-      etherscanApiKey = config.etherscan.apiKey[network]
+      const etherscanNetwork = toEtherscanNetworkName(network)
+      etherscanApiKey = config.etherscan.apiKey[etherscanNetwork]
     }
   }
 
