@@ -34,7 +34,7 @@ yarn hardhat gen-proofs --clrfund {CLRFUND_CONTRACT_ADDRESS} --maci-state-file {
 ```
 
 
-** Make a backup of the {OUTPUT_DIR} before continuing to the next step **
+**Make a backup of the {OUTPUT_DIR} before continuing to the next step**
 
 
 Upload the proofs on chain:
