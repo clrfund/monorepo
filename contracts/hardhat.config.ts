@@ -59,7 +59,7 @@ export default {
         'https://sepolia-rollup.arbitrum.io/rpc',
       accounts,
     },
-    optimism: {
+    optimisticEthereum: {
       url: process.env.JSONRPC_HTTP_URL || 'https://mainnet.optimism.io',
       accounts,
     },
