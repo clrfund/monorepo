@@ -29,10 +29,9 @@ export function isPathExist(path: string): boolean {
 }
 
 /**
- * Returns the directory of the path
- * @param file The file path
- * @returns The directory of the file
+ * Create a directory
+ * @param directory The directory to create
  */
-export function getDirname(file: string): string {
-  return path.dirname(file)
+export function makeDirectory(directory: string): void {
+  fs.mkdirSync(directory)
 }

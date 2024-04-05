@@ -183,6 +183,8 @@ type getGenProofArgsInput = {
   endBlock?: number
   // MACI state file
   maciStateFile?: string
+  // Tally output file
+  tallyFile: string
   // transaction signer
   signer: Signer
   // flag to turn on verbose logging in MACI cli
@@ -206,11 +208,10 @@ export function getGenProofArgs(args: getGenProofArgsInput): GenProofsArgs {
     startBlock,
     endBlock,
     maciStateFile,
+    tallyFile,
     signer,
     quiet,
   } = args
-
-  const tallyFile = getTalyFilePath(outputDir)
 
   const {
     processZkFile,

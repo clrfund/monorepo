@@ -79,22 +79,14 @@ jobs:
         export BLOCKS_PER_BATCH=${{ github.event.inputs.blocks_per_batch }}
         export RAPID_SNARK="$GITHUB_WORKSPACE/rapidsnark/package/bin/prover"
         export CIRCUIT_DIRECTORY=$GITHUB_WORKSPACE/params
-        export PROOF_OUTPUT_DIR=./proof_output
         # tally and finalize
         cd monorepo/contracts
-        mkdir -p ${PROOF_OUTPUT_DIR}
-        yarn gen-proofs --clrfund "${CLRFUND_ADDRESS}" \
-          --blocks-per-batch ${BLOCKS_PER_BATCH} \
+        mkdir -p proof_output
+        yarn hardhat tally --clrfund "${CLRFUND_ADDRESS}" --network "${NETWORK}" \
           --rapidsnark ${RAPID_SNARK} \
-          --maci-tx-hash "${MACI_TX_HASH}" \
-          --proof-dir ${PROOF_OUTPUT_DIR} \
-          --network "${NETWORK}"
-        yarn hardhat prove-on-chain --clrfund "${CLRFUND_ADDRESS}" \
-          --proof-dir ${PROOF_OUTPUT_DIR} \
-          --network "${NETWORK}"
-        yarn hardhat publish-tally-results --clrfund "${CLRFUND_ADDRESS}" \
-          --proof-dir ${PROOF_OUTPUT_DIR} \
-          --network "${NETWORK}"
+          --params-dir ${CIRCUIT_DIRECTORY} \
+          --blocks-per-batch ${BLOCKS_PER_BATCH} \
+          --maci-tx-hash "${MACI_TX_HASH}" --output-dir "./proof_output"
         curl --location --request POST 'https://api.pinata.cloud/pinning/pinFileToIPFS' \
           --header "Authorization: Bearer ${{ secrets.PINATA_JWT }}" \
           --form 'file=@"./proof_output/tally.json"'

@@ -1,13 +1,6 @@
 /**
  * Script for generating MACI proofs
  *
- * Pass --maci-tx-hash if this is the first time running the script and you
- * want to get MACI logs starting from the block as recorded in the MACI creation
- * transaction hash
- *
- * Pass --maci-state-file if you have previously ran the script and have
- * the maci-state file (maci-state.json)
- *
  * Make sure to set the following environment variables in the .env file
  * 1) WALLET_PRIVATE_KEY or WALLET_MNEMONIC
  *   - coordinator's wallet private key to interact with contracts
@@ -32,11 +25,17 @@ import {
   genLocalState,
   mergeMaciSubtrees,
 } from '../../utils/maci'
-import { getMaciStateFilePath } from '../../utils/misc'
+import {
+  getMaciStateFilePath,
+  getTalyFilePath,
+  isPathExist,
+  makeDirectory,
+} from '../../utils/misc'
 import { EContracts } from '../../utils/types'
 import { Subtask } from '../helpers/Subtask'
 import { getCurrentFundingRoundContract } from '../../utils/contracts'
 import { ContractStorage } from '../helpers/ContractStorage'
+import { DEFAULT_CIRCUIT } from '../../utils/circuits'
 
 task('gen-proofs', 'Generate MACI proofs offchain')
   .addOptionalParam('clrfund', 'FundingRound contract address')
@@ -48,9 +47,9 @@ task('gen-proofs', 'Generate MACI proofs offchain')
     undefined,
     types.int
   )
-  .addOptionalParam('maciStateFile', 'MACI state file')
   .addFlag('manageNonce', 'Whether to manually manage transaction nonce')
   .addOptionalParam('rapidsnark', 'The rapidsnark prover path')
+  .addParam('paramsDir', 'The circuit zkeys directory', './params')
   .addOptionalParam(
     'blocksPerBatch',
     'The number of blocks per batch of logs to fetch on-chain',
@@ -77,8 +76,8 @@ task('gen-proofs', 'Generate MACI proofs offchain')
         maciStartBlock,
         maciTxHash,
         quiet,
-        maciStateFile,
         proofDir,
+        paramsDir,
         blocksPerBatch,
         rapidsnark,
         numQueueOps,
@@ -94,10 +93,6 @@ task('gen-proofs', 'Generate MACI proofs offchain')
       const subtask = Subtask.getInstance(hre)
       subtask.setHre(hre)
 
-      if (!maciStateFile && !maciTxHash && maciStartBlock == undefined) {
-        throw new Error('Please provide --maci-start-block or --maci-tx-hash')
-      }
-
       const [coordinatorSigner] = await ethers.getSigners()
       if (!coordinatorSigner) {
         throw new Error('Env. variable WALLET_PRIVATE_KEY not set')
@@ -112,14 +107,15 @@ task('gen-proofs', 'Generate MACI proofs offchain')
         throw new Error('Env. variable COORDINATOR_MACISK not set')
       }
 
-      const circuit = subtask.getConfigField<string>(
-        EContracts.VkRegistry,
-        'circuit'
-      )
-      const circuitDirectory = subtask.getConfigField<string>(
-        EContracts.VkRegistry,
-        'paramsDirectory'
-      )
+      const circuit =
+        subtask.tryGetConfigField<string>(EContracts.VkRegistry, 'circuit') ||
+        DEFAULT_CIRCUIT
+
+      const circuitDirectory =
+        subtask.tryGetConfigField<string>(
+          EContracts.VkRegistry,
+          'paramsDirectory'
+        ) || paramsDir
 
       await subtask.logStart()
 
@@ -136,9 +132,6 @@ task('gen-proofs', 'Generate MACI proofs offchain')
       console.log('PollId', pollId)
 
       const maciAddress = await fundingRoundContract.maci()
-
-      const providerUrl = (network.config as any).url
-
       await mergeMaciSubtrees({
         maciAddress,
         pollId,
@@ -147,41 +140,53 @@ task('gen-proofs', 'Generate MACI proofs offchain')
         quiet,
       })
 
-      const maciStateFilePath = maciStateFile
-        ? maciStateFile
-        : getMaciStateFilePath(proofDir)
-
-      if (!maciStateFile) {
-        await genLocalState({
-          quiet,
-          outputPath: maciStateFilePath,
-          pollId,
-          maciContractAddress: maciAddress,
-          coordinatorPrivateKey: coordinatorMacisk,
-          ethereumProvider: providerUrl,
-          transactionHash: maciTxHash,
-          startBlock: maciStartBlock,
-          blockPerBatch: blocksPerBatch,
-          signer: coordinator,
-          sleep,
-        })
+      if (!isPathExist(proofDir)) {
+        makeDirectory(proofDir)
       }
 
-      const genProofArgs = getGenProofArgs({
-        maciAddress,
-        pollId,
-        coordinatorMacisk,
-        rapidsnark,
-        circuitType: circuit,
-        circuitDirectory,
-        outputDir: proofDir,
-        blocksPerBatch: getNumber(blocksPerBatch),
-        maciTxHash,
-        maciStateFile: maciStateFilePath,
-        signer: coordinator,
-        quiet,
-      })
-      await genProofs(genProofArgs)
+      const tallyFile = getTalyFilePath(proofDir)
+      const maciStateFile = getMaciStateFilePath(proofDir)
+      const providerUrl = (network.config as any).url
+
+      if (!isPathExist(tallyFile)) {
+        if (!isPathExist(maciStateFile)) {
+          if (!maciTxHash && maciStartBlock == null) {
+            throw new Error(
+              'Please provide a value for --maci-tx-hash or --maci-start-block'
+            )
+          }
+
+          await genLocalState({
+            quiet,
+            outputPath: maciStateFile,
+            pollId,
+            maciContractAddress: maciAddress,
+            coordinatorPrivateKey: coordinatorMacisk,
+            ethereumProvider: providerUrl,
+            transactionHash: maciTxHash,
+            startBlock: maciStartBlock,
+            blockPerBatch: blocksPerBatch,
+            signer: coordinator,
+            sleep,
+          })
+        }
+
+        const genProofArgs = getGenProofArgs({
+          maciAddress,
+          pollId,
+          coordinatorMacisk,
+          rapidsnark,
+          circuitType: circuit,
+          circuitDirectory,
+          outputDir: proofDir,
+          blocksPerBatch: getNumber(blocksPerBatch),
+          maciStateFile,
+          tallyFile,
+          signer: coordinator,
+          quiet,
+        })
+        await genProofs(genProofArgs)
+      }
 
       const success = true
       await subtask.finish(success)
