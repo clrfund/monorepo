@@ -2,16 +2,17 @@
  * Claim funds. This script is mainly used by e2e testing
  *
  * Sample usage:
- *  yarn hardhat claim \
- *   --tally-file <tally file> \
- *   --recipient <recipient-index> \
- *   --network <network>
+ *  yarn hardhat claim --recipient <recipient-index> --network <network>
  */
 
 import { getEventArg } from '../../utils/contracts'
 import { getRecipientClaimData } from '@clrfund/common'
 import { JSONFile } from '../../utils/JSONFile'
-import { isPathExist } from '../../utils/misc'
+import {
+  getProofDirForRound,
+  getTalyFilePath,
+  isPathExist,
+} from '../../utils/misc'
 import { getNumber } from 'ethers'
 import { task, types } from 'hardhat/config'
 import { EContracts } from '../../utils/types'
@@ -25,13 +26,9 @@ task('claim', 'Claim funnds for test recipients')
     undefined,
     types.int
   )
-  .addParam('tallyFile', 'The tally file')
+  .addParam('proofDir', 'The proof output directory', './proof_output')
   .setAction(
-    async ({ tallyFile, recipient, roundAddress }, { ethers, network }) => {
-      if (!isPathExist(tallyFile)) {
-        throw new Error(`Path ${tallyFile} does not exist`)
-      }
-
+    async ({ proofDir, recipient, roundAddress }, { ethers, network }) => {
       if (recipient <= 0) {
         throw new Error('Recipient must be greater than 0')
       }
@@ -40,6 +37,17 @@ task('claim', 'Claim funnds for test recipients')
       const fundingRound =
         roundAddress ??
         storage.mustGetAddress(EContracts.FundingRound, network.name)
+
+      const proofDirForRound = getProofDirForRound(
+        proofDir,
+        network.name,
+        fundingRound
+      )
+
+      const tallyFile = getTalyFilePath(proofDirForRound)
+      if (!isPathExist(tallyFile)) {
+        throw new Error(`Path ${tallyFile} does not exist`)
+      }
 
       const tally = JSONFile.read(tallyFile)
 

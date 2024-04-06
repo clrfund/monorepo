@@ -5,6 +5,8 @@
  * Make sure to set the following environment variables in the .env file
  * 1) WALLET_PRIVATE_KEY or WALLET_MNEMONIC
  *   - coordinator's wallet private key to interact with contracts
+ * 2) PINATA_API_KEY - The Pinata api key for pinning file to IPFS
+ * 3) PINATA_SECRET_API_KEY - The Pinata secret api key for pinning file to IPFS
  *
  * Sample usage:
  *
@@ -15,7 +17,7 @@
 import { BaseContract, getNumber, NonceManager } from 'ethers'
 import { task, types } from 'hardhat/config'
 
-import { getIpfsHash } from '../../utils/ipfs'
+import { Ipfs } from '../../utils/ipfs'
 import { JSONFile } from '../../utils/JSONFile'
 import { addTallyResultsBatch, TallyData, verify } from '../../utils/maci'
 import { FundingRound, Poll } from '../../typechain-types'
@@ -25,17 +27,17 @@ import { Subtask } from '../helpers/Subtask'
 import { getCurrentFundingRoundContract } from '../../utils/contracts'
 import { getTalyFilePath } from '../../utils/misc'
 import { ContractStorage } from '../helpers/ContractStorage'
+import { PINATA_PINNING_URL } from '../../utils/constants'
 
 /**
  * Publish the tally IPFS hash on chain if it's not already published
  * @param fundingRoundContract Funding round contract
- * @param tallyData Tally data
+ * @param tallyHash Tally hash
  */
 async function publishTallyHash(
   fundingRoundContract: FundingRound,
-  tallyData: TallyData
+  tallyHash: string
 ) {
-  const tallyHash = await getIpfsHash(tallyData)
   console.log(`Tally hash is ${tallyHash}`)
 
   const tallyHashOnChain = await fundingRoundContract.tallyHash()
@@ -63,7 +65,9 @@ async function submitTallyResults(
 ) {
   const startIndex = await fundingRoundContract.totalTallyResults()
   const total = tallyData.results.tally.length
-  console.log('Uploading tally results in batches of', batchSize)
+  if (startIndex < total) {
+    console.log('Uploading tally results in batches of', batchSize)
+  }
   const addTallyGas = await addTallyResultsBatch(
     fundingRoundContract,
     recipientTreeDepth,
@@ -119,6 +123,16 @@ task('publish-tally-results', 'Publish tally results')
       const coordinator = manageNonce ? new NonceManager(signer) : signer
       console.log('Coordinator address: ', await coordinator.getAddress())
 
+      const apiKey = process.env.PINATA_API_KEY
+      if (!apiKey) {
+        throw new Error('Env. variable PINATA_API_KEY not set')
+      }
+
+      const secretApiKey = process.env.PINATA_SECRET_API_KEY
+      if (!secretApiKey) {
+        throw new Error('Env. variable PINATA_SECRET_API_KEY not set')
+      }
+
       await subtask.logStart()
 
       const clrfundContractAddress =
@@ -149,8 +163,10 @@ task('publish-tally-results', 'Publish tally results')
         quiet,
       })
 
+      const tallyHash = await Ipfs.pinFile(tallyFile, apiKey, secretApiKey)
+
       // Publish tally hash if it is not already published
-      await publishTallyHash(fundingRoundContract, tallyData)
+      await publishTallyHash(fundingRoundContract, tallyHash)
 
       // Submit tally results to the funding round contract
       // This function can be re-run from where it left off

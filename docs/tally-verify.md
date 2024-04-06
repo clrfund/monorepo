@@ -18,46 +18,23 @@ COORDINATOR_MACISK=<coordinator-maci-private-key>
 # private key for interacting with contracts
 WALLET_MNEMONIC=
 WALLET_PRIVATE_KEY
+
+# credential to upload tally result to IPFS
+PINATA_API_KEY=
+PINATA_SECRET_API_KEY=
 ```
 
-Decrypt messages, tally the votes and generate proofs:
+Decrypt messages, tally the votes:
 
 ```
-yarn hardhat gen-proofs --clrfund {CLRFUND_CONTRACT_ADDRESS} --maci-tx-hash {MACI_CREATION_TRANSACTION_HASH} --proof-dir {OUTPUT_DIR} --rapidsnark {RAPID_SNARK} --network {network}
+yarn hardhat tally --clrfund {CLRFUND_CONTRACT_ADDRESS} --maci-tx-hash {MACI_CREATION_TRANSACTION_HASH} --proof-dir {OUTPUT_DIR} --rapidsnark {RAPID_SNARK} --network {network}
 ```
 
 You only need to provide `--rapidsnark` if you are running the `tally` command on an intel chip.
-If `gen-proofs` failed, you can rerun the command with the same parameters. If the maci-state.json file has been created, you can skip fetching MACI logs by providing the MACI state file as follow:
-
-```
-yarn hardhat gen-proofs --clrfund {CLRFUND_CONTRACT_ADDRESS} --maci-state-file {MACI_STATE_FILE_PATH} --proof-dir {OUTPUT_DIR} --rapidsnark {RAPID_SNARK} --network {network}
+If the `tally` script failed, you can rerun the command with the same parameters.
 ```
 
-
-**Make a backup of the {OUTPUT_DIR} before continuing to the next step**
-
-
-Upload the proofs on chain:
-```
-yarn hardhat prove-on-chain --clrfund {CLRFUND_CONTRACT_ADDRESS} --proof-dir {OUTPUT_DIR} --network {network}
-yarn hardhat publish-tally-results --clrfund {CLRFUND_CONTRACT_ADDRESS} --proof-dir {OUTPUT_DIR} --network localhost
-```
-
-If there's error running `prove-on-chain` or `publish-tally-resuls`, simply rerun the commands with the same parameters.
-
-
-
-Result will be saved to `{OUTPUT_DIR}/tally.json` file, which must then be published via IPFS.
-
-**Using [command line](https://docs.ipfs.tech/reference/kubo/cli/#ipfs)**
-
-```
-# start ipfs daemon in one terminal
-ipfs daemon
-
-# in a diff terminal, go to `/contracts` (or where you have the file) and publish the file
-ipfs add tally.json
-```
+Result will be saved to `{OUTPUT_DIR}/{network}-{fundingRoundAddress}/tally.json` file, which is also available on IPFS at `https://{ipfs-gateway-host}/ipfs/{tally-hash}`.
 
 ### Finalize round
 
@@ -72,7 +49,7 @@ WALLET_PRIVATE_KEY=
 Once you have the `tally.json` from the tally script, run:
 
 ```
-yarn hardhat finalize --tally-file {tally.json} --network {network}
+yarn hardhat finalize --clrfund {CLRFUND_CONTRACT_ADDRESS} --proof-dir {OUTPUT_DIR} --network {network}
 ```
 
 # How to verify the tally results

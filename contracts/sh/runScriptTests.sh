@@ -35,17 +35,15 @@ yarn hardhat time-travel --seconds ${ROUND_DURATION} --network ${HARDHAT_NETWORK
 
 # tally the votes
 NODE_OPTIONS="--max-old-space-size=4096"
-yarn hardhat gen-proofs \
+yarn hardhat tally \
   --rapidsnark ${RAPID_SNARK} \
   --proof-dir ${OUTPUT_DIR} \
   --maci-start-block 0 \
   --network "${HARDHAT_NETWORK}"
-yarn hardhat prove-on-chain --proof-dir ${OUTPUT_DIR} --network "${HARDHAT_NETWORK}"
-yarn hardhat publish-tally-results --proof-dir ${OUTPUT_DIR} --network "${HARDHAT_NETWORK}"
  
 # finalize the round
-yarn hardhat finalize --tally-file ${TALLY_FILE} --network ${HARDHAT_NETWORK}
+yarn hardhat finalize --proof-dir ${OUTPUT_DIR} --network ${HARDHAT_NETWORK}
  
 # claim funds
-yarn hardhat claim --recipient 1 --tally-file ${TALLY_FILE}  --network ${HARDHAT_NETWORK}
-yarn hardhat claim --recipient 2 --tally-file ${TALLY_FILE}  --network ${HARDHAT_NETWORK}
+yarn hardhat claim --recipient 1 --proof-dir ${OUTPUT_DIR}  --network ${HARDHAT_NETWORK}
+yarn hardhat claim --recipient 2 --proof-dir ${OUTPUT_DIR}  --network ${HARDHAT_NETWORK}

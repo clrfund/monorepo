@@ -9,11 +9,13 @@
  */
 import { getNumber } from 'ethers'
 import { task, types } from 'hardhat/config'
+import { ClrFund } from '../../typechain-types'
 
 import {
   DEFAULT_SR_QUEUE_OPS,
   DEFAULT_GET_LOG_BATCH_SIZE,
 } from '../../utils/constants'
+import { getProofDirForRound } from '../../utils/misc'
 import { EContracts } from '../../utils/types'
 import { ContractStorage } from '../helpers/ContractStorage'
 import { Subtask } from '../helpers/Subtask'
@@ -76,6 +78,16 @@ task('tally', 'Tally votes')
     ) => {
       console.log('Verbose logging enabled:', !quiet)
 
+      const apiKey = process.env.PINATA_API_KEY
+      if (!apiKey) {
+        throw new Error('Env. variable PINATA_API_KEY not set')
+      }
+
+      const secretApiKey = process.env.PINATA_SECRET_API_KEY
+      if (!secretApiKey) {
+        throw new Error('Env. variable PINATA_SECRET_API_KEY not set')
+      }
+
       const storage = ContractStorage.getInstance()
       const subtask = Subtask.getInstance(hre)
       subtask.setHre(hre)
@@ -85,6 +97,21 @@ task('tally', 'Tally votes')
       const clrfundContractAddress =
         clrfund ?? storage.mustGetAddress(EContracts.ClrFund, hre.network.name)
 
+      const clrfundContract = subtask.getContract<ClrFund>({
+        name: EContracts.ClrFund,
+        address: clrfundContractAddress,
+      })
+
+      const fundingRoundContractAddress = await (
+        await clrfundContract
+      ).getCurrentRound()
+
+      const outputDir = getProofDirForRound(
+        proofDir,
+        hre.network.name,
+        fundingRoundContractAddress
+      )
+
       await hre.run('gen-proofs', {
         clrfund: clrfundContractAddress,
         maciStartBlock,
@@ -93,7 +120,7 @@ task('tally', 'Tally votes')
         blocksPerBatch,
         rapidsnark,
         sleep,
-        proofDir,
+        proofDir: outputDir,
         paramsDir,
         manageNonce,
         quiet,
@@ -102,7 +129,7 @@ task('tally', 'Tally votes')
       // proveOnChain if not already processed
       await hre.run('prove-on-chain', {
         clrfund: clrfundContractAddress,
-        proofDir,
+        proofDir: outputDir,
         manageNonce,
         quiet,
       })
@@ -110,7 +137,7 @@ task('tally', 'Tally votes')
       // Publish tally hash if it is not already published
       await hre.run('publish-tally-results', {
         clrfund: clrfundContractAddress,
-        proofDir,
+        proofDir: outputDir,
         batchSize,
         manageNonce,
         quiet,

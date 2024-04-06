@@ -36,6 +36,29 @@ import { Subtask } from '../helpers/Subtask'
 import { getCurrentFundingRoundContract } from '../../utils/contracts'
 import { ContractStorage } from '../helpers/ContractStorage'
 import { DEFAULT_CIRCUIT } from '../../utils/circuits'
+import { JSONFile } from '../../utils/JSONFile'
+
+/**
+ * Check if the tally file with the maci contract address exists
+ * @param tallyFile The tally file path
+ * @param maciAddress The MACI contract address
+ * @returns true if the file exists and it contains the MACI contract address
+ */
+function tallyFileExists(tallyFile: string, maciAddress: string): boolean {
+  if (!isPathExist(tallyFile)) {
+    return false
+  }
+  try {
+    const tallyData = JSONFile.read(tallyFile)
+    return (
+      tallyData.maci &&
+      tallyData.maci.toLowerCase() === maciAddress.toLowerCase()
+    )
+  } catch {
+    // in case the file does not have the expected format/field
+    return false
+  }
+}
 
 task('gen-proofs', 'Generate MACI proofs offchain')
   .addOptionalParam('clrfund', 'FundingRound contract address')
@@ -148,45 +171,48 @@ task('gen-proofs', 'Generate MACI proofs offchain')
       const maciStateFile = getMaciStateFilePath(proofDir)
       const providerUrl = (network.config as any).url
 
-      if (!isPathExist(tallyFile)) {
-        if (!isPathExist(maciStateFile)) {
-          if (!maciTxHash && maciStartBlock == null) {
-            throw new Error(
-              'Please provide a value for --maci-tx-hash or --maci-start-block'
-            )
-          }
+      if (tallyFileExists(tallyFile, maciAddress)) {
+        console.log('The tally file has already been generated.')
+        return
+      }
 
-          await genLocalState({
-            quiet,
-            outputPath: maciStateFile,
-            pollId,
-            maciContractAddress: maciAddress,
-            coordinatorPrivateKey: coordinatorMacisk,
-            ethereumProvider: providerUrl,
-            transactionHash: maciTxHash,
-            startBlock: maciStartBlock,
-            blockPerBatch: blocksPerBatch,
-            signer: coordinator,
-            sleep,
-          })
+      if (!isPathExist(maciStateFile)) {
+        if (!maciTxHash && maciStartBlock == null) {
+          throw new Error(
+            'Please provide a value for --maci-tx-hash or --maci-start-block'
+          )
         }
 
-        const genProofArgs = getGenProofArgs({
-          maciAddress,
-          pollId,
-          coordinatorMacisk,
-          rapidsnark,
-          circuitType: circuit,
-          circuitDirectory,
-          outputDir: proofDir,
-          blocksPerBatch: getNumber(blocksPerBatch),
-          maciStateFile,
-          tallyFile,
-          signer: coordinator,
+        await genLocalState({
           quiet,
+          outputPath: maciStateFile,
+          pollId,
+          maciContractAddress: maciAddress,
+          coordinatorPrivateKey: coordinatorMacisk,
+          ethereumProvider: providerUrl,
+          transactionHash: maciTxHash,
+          startBlock: maciStartBlock,
+          blockPerBatch: blocksPerBatch,
+          signer: coordinator,
+          sleep,
         })
-        await genProofs(genProofArgs)
       }
+
+      const genProofArgs = getGenProofArgs({
+        maciAddress,
+        pollId,
+        coordinatorMacisk,
+        rapidsnark,
+        circuitType: circuit,
+        circuitDirectory,
+        outputDir: proofDir,
+        blocksPerBatch: getNumber(blocksPerBatch),
+        maciStateFile,
+        tallyFile,
+        signer: coordinator,
+        quiet,
+      })
+      await genProofs(genProofArgs)
 
       const success = true
       await subtask.finish(success)

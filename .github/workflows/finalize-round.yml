@@ -86,8 +86,7 @@ jobs:
           --rapidsnark ${RAPID_SNARK} \
           --params-dir ${CIRCUIT_DIRECTORY} \
           --blocks-per-batch ${BLOCKS_PER_BATCH} \
-          --maci-tx-hash "${MACI_TX_HASH}" --output-dir "./proof_output"
-        curl --location --request POST 'https://api.pinata.cloud/pinning/pinFileToIPFS' \
-          --header "Authorization: Bearer ${{ secrets.PINATA_JWT }}" \
-          --form 'file=@"./proof_output/tally.json"'
-        yarn hardhat --network "${NETWORK}" finalize --clrfund "${CLRFUND_ADDRESS}"
+          --maci-tx-hash "${MACI_TX_HASH}" \
+          --proof-dir "./proof_output"
+        yarn hardhat --network "${NETWORK}" finalize --clrfund "${CLRFUND_ADDRESS}" \
+          --proof-dir "./proof_output"

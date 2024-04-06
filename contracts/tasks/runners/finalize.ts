@@ -6,7 +6,7 @@
  *   - clrfund owner's wallet private key to interact with the contract
  *
  * Sample usage:
- *  yarn hardhat finalize --clrfund <clrfund address> --tally-file <tally file> --network <network>
+ *  yarn hardhat finalize --clrfund <clrfund address> --network <network>
  */
 
 import { JSONFile } from '../../utils/JSONFile'
@@ -16,20 +16,13 @@ import { task } from 'hardhat/config'
 import { EContracts } from '../../utils/types'
 import { ContractStorage } from '../helpers/ContractStorage'
 import { Subtask } from '../helpers/Subtask'
+import { getProofDirForRound, getTalyFilePath } from '../../utils/misc'
 
 task('finalize', 'Finalize a funding round')
   .addOptionalParam('clrfund', 'The ClrFund contract address')
-  .addOptionalParam(
-    'tallyFile',
-    'The tally file path',
-    './proof_output/tally.json'
-  )
-  .setAction(async ({ clrfund, tallyFile }, hre) => {
+  .addParam('proofDir', 'The proof output directory', './proof_output')
+  .setAction(async ({ clrfund, proofDir }, hre) => {
     const { ethers, network } = hre
-    const tally = JSONFile.read(tallyFile)
-    if (!tally.maci) {
-      throw Error('Bad tally file ' + tallyFile)
-    }
 
     const storage = ContractStorage.getInstance()
     const subtask = Subtask.getInstance(hre)
@@ -62,6 +55,17 @@ task('finalize', 'Finalize a funding round')
 
     const treeDepths = await pollContract.treeDepths()
     console.log('voteOptionTreeDepth', treeDepths.voteOptionTreeDepth)
+
+    const currentRoundProofDir = getProofDirForRound(
+      proofDir,
+      network.name,
+      currentRoundAddress
+    )
+    const tallyFile = getTalyFilePath(currentRoundProofDir)
+    const tally = JSONFile.read(tallyFile)
+    if (!tally.maci) {
+      throw Error('Bad tally file ' + tallyFile)
+    }
 
     const totalSpent = tally.totalSpentVoiceCredits.spent
     const totalSpentSalt = tally.totalSpentVoiceCredits.salt
