@@ -15,7 +15,8 @@
 import { task, types } from 'hardhat/config'
 
 import { Subtask } from '../helpers/Subtask'
-import { type ISubtaskParams } from '../helpers/types'
+import { ContractStorage } from '../helpers/ContractStorage'
+import { EContracts, type ISubtaskParams } from '../helpers/types'
 
 task('new-deployer', 'Deploy a new instance of ClrFund')
   .addFlag('incremental', 'Incremental deployment')
@@ -26,6 +27,7 @@ task('new-deployer', 'Deploy a new instance of ClrFund')
   .setAction(async (params: ISubtaskParams, hre) => {
     const { verify, manageNonce } = params
     const subtask = Subtask.getInstance(hre)
+    const storage = ContractStorage.getInstance()
 
     subtask.setHre(hre)
     const deployer = await subtask.getDeployer()
@@ -63,7 +65,10 @@ task('new-deployer', 'Deploy a new instance of ClrFund')
     await subtask.finish(success)
 
     if (verify) {
-      console.log('Verify all contracts')
-      await hre.run('verify-all')
+      const address = storage.mustGetAddress(
+        EContracts.ClrFundDeployer,
+        hre.network.name
+      )
+      await hre.run('verify-deployer', { address })
     }
   })
