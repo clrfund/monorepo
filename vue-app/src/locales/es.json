@@ -728,10 +728,8 @@
     "div1": "Estás casi listo para unirte a esta ronda de financiamiento.",
     "li1": "Tu proyecto solo necesita pasar por algunas verificaciones finales para asegurarse de que cumpla con los criterios de la ronda. Puedes",
     "link1": "obtener más información sobre el proceso de registro aquí.",
-    "li2": "Una vez que se complete, la página de tu proyecto se publicará.",
-    "li3": "Si tu proyecto no pasa alguna verificación, te lo haremos saber por correo electrónico y te devolveremos tu depósito.",
-    "linkProjects": "Ver proyectos",
-    "link2": "Ver proyecto",
+    "li2": "Una vez que se complete, la página de tu proyecto se publicará y te devolveremos tu depósito.",
+    "li3": "Si tu proyecto no pasa alguna verificación, te devolveremos tu depósito.",
     "link3": "Ir a inicio"
   },
   "projectList": {

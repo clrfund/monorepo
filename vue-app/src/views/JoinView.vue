@@ -717,12 +717,11 @@ import { useVuelidate } from '@vuelidate/core'
 import { required, requiredIf, email, maxLength, url, helpers } from '@vuelidate/validators'
 import type { RecipientApplicationData } from '@/api/types'
 import type { Project } from '@/api/projects'
-import { isTransactionInSubgraph } from '@/api/subgraph'
 import { formToProjectInterface } from '@/api/projects'
-import { chain, showComplianceRequirement, isOptimisticRecipientRegistry } from '@/api/core'
+import { chain, showComplianceRequirement } from '@/api/core'
 import { DateTime } from 'luxon'
 import { useRecipientStore, useAppStore, useUserStore } from '@/stores'
-import { waitForTransactionAndCheck } from '@/utils/contracts'
+import { waitForTransaction } from '@/utils/contracts'
 import { addRecipient as _addRecipient } from '@/api/recipient-registry'
 import { isValidEthAddress, resolveEns } from '@/utils/accounts'
 import { toReactive } from '@vueuse/core'
@@ -942,11 +941,8 @@ async function addRecipient() {
       }
 
       const signer = await userStore.getSigner()
-      await waitForTransactionAndCheck(
+      await waitForTransaction(
         _addRecipient(recipientRegistryAddress.value, recipient.value, recipientRegistryInfo.value.deposit, signer),
-        receipt => {
-          return isOptimisticRecipientRegistry ? isTransactionInSubgraph(receipt) : Promise.resolve(true)
-        },
         hash => (txHash.value = hash),
       )
 
