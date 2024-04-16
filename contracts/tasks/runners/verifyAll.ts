@@ -132,7 +132,6 @@ async function getUserRegistryName(
  * Get the list of contracts to verify
  * @param clrfund The ClrFund contract address
  * @param ethers The Hardhat Ethers helper
- * @param etherscanProvider The Etherscan provider
  * @returns The list of contracts to verify
  */
 async function getContractList(

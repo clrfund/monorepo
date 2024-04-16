@@ -6,6 +6,17 @@ type EventAbiEntry = {
   remove: AbiInfo
 }
 
+/**
+ * MACI v0 ABI used in exportRound.ts
+ */
+export const MaciV0Abi = [
+  'function signUpTimestamp() view returns (uint256)',
+  'function signUpDurationSeconds() view returns (uint256)',
+  'function votingDurationSeconds() view returns (uint256)',
+  `function treeDepths() view returns ((uint8 stateTreeDepth, uint8 messageTreeDepth, uint8 voteOptionTreeDepth))`,
+  'function numMessages() view returns (uint256)',
+]
+
 export const getRecipientAddressAbi = [
   `function getRecipientAddress(uint256 _index, uint256 _startTime, uint256 _endTime)` +
     ` external view returns (address)`,

@@ -1,6 +1,5 @@
 import { task } from 'hardhat/config'
 import { EContracts } from '../../utils/types'
-import { EtherscanProvider } from '../../utils/providers/EtherscanProvider'
 import { ContractVerifier } from '../helpers/ContractVerifier'
 import { ConstructorArguments } from '../helpers/ConstructorArguments'
 
