@@ -1,5 +1,5 @@
 <template>
-  <vue-final-modal class="modal-container" background="interactive">
+  <base-modal>
     <div class="modal-body">
       <div v-if="step === 0">
         <h2>
@@ -116,7 +116,7 @@
         ></transaction>
       </div>
     </div>
-  </vue-final-modal>
+  </base-modal>
 </template>
 
 <script setup lang="ts">
@@ -128,8 +128,6 @@ import Transaction from '@/components/Transaction.vue'
 import { formatAmount } from '@/utils/amounts'
 import { waitForTransaction, getEventArg, getPollContract } from '@/utils/contracts'
 import ProgressBar from '@/components/ProgressBar.vue'
-// @ts-ignore
-import { VueFinalModal } from 'vue-final-modal'
 import { FundingRound, ERC20, MACI } from '@/api/abi'
 import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'

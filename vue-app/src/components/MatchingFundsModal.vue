@@ -1,5 +1,5 @@
 <template>
-  <vue-final-modal class="modal-container" background="interactive">
+  <base-modal>
     <div class="modal-body">
       <div v-if="step === 1">
         <h3>{{ $t('matchingFundsModal.title', { nativeTokenSymbol }) }}</h3>
@@ -57,7 +57,7 @@
         <button class="btn-primary" @click="$emit('close')">{{ $t('matchingFundsModal.button3') }}</button>
       </div>
     </div>
-  </vue-final-modal>
+  </base-modal>
 </template>
 
 <script setup lang="ts">
@@ -72,7 +72,6 @@ import { formatUnits } from 'ethers'
 
 import { ERC20 } from '@/api/abi'
 import { clrFundContract } from '@/api/core'
-import { VueFinalModal } from 'vue-final-modal'
 import { useAppStore, useUserStore } from '@/stores'
 
 const appStore = useAppStore()

@@ -11,6 +11,7 @@ declare module '@vue/runtime-core' {
     AddToCartButton: typeof import('./components/AddToCartButton.vue')['default']
     BackLink: typeof import('./components/BackLink.vue')['default']
     BalanceItem: typeof import('./components/BalanceItem.vue')['default']
+    BaseModal: typeof import('./components/BaseModal.vue')['default']
     Breadcrumbs: typeof import('./components/Breadcrumbs.vue')['default']
     BrightIdWidget: typeof import('./components/BrightIdWidget.vue')['default']
     CallToActionCard: typeof import('./components/CallToActionCard.vue')['default']
