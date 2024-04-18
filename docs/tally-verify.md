@@ -18,34 +18,23 @@ COORDINATOR_MACISK=<coordinator-maci-private-key>
 # private key for interacting with contracts
 WALLET_MNEMONIC=
 WALLET_PRIVATE_KEY
+
+# credential to upload tally result to IPFS
+PINATA_API_KEY=
+PINATA_SECRET_API_KEY=
 ```
 
-Decrypt messages and tally the votes:
+Decrypt messages, tally the votes:
 
 ```
-yarn hardhat tally --rapidsnark {RAPID_SNARK} --output-dir {OUTPUT_DIR} --network {network}
+yarn hardhat tally --clrfund {CLRFUND_CONTRACT_ADDRESS} --maci-tx-hash {MACI_CREATION_TRANSACTION_HASH} --proof-dir {OUTPUT_DIR} --rapidsnark {RAPID_SNARK} --network {network}
 ```
 
 You only need to provide `--rapidsnark` if you are running the `tally` command on an intel chip.
-
-If there's error and the tally task was stopped prematurely, it can be resumed by passing 2 additional parameters, '--tally-file' and/or '--maci-state-file', if the files were generated.
-
-```
-# for rerun
-yarn hardhat tally --maci-state-file {maci-state.json} --tally-file {tally.json}  --output-dir {OUTPUT_DIR} --network {network}
+If the `tally` script failed, you can rerun the command with the same parameters.
 ```
 
-Result will be saved to `tally.json` file, which must then be published via IPFS.
-
-**Using [command line](https://docs.ipfs.tech/reference/kubo/cli/#ipfs)**
-
-```
-# start ipfs daemon in one terminal
-ipfs daemon
-
-# in a diff terminal, go to `/contracts` (or where you have the file) and publish the file
-ipfs add tally.json
-```
+Result will be saved to `{OUTPUT_DIR}/{network}-{fundingRoundAddress}/tally.json` file, which is also available on IPFS at `https://{ipfs-gateway-host}/ipfs/{tally-hash}`.
 
 ### Finalize round
 
@@ -60,7 +49,7 @@ WALLET_PRIVATE_KEY=
 Once you have the `tally.json` from the tally script, run:
 
 ```
-yarn hardhat finalize --tally-file {tally.json} --network {network}
+yarn hardhat finalize --clrfund {CLRFUND_CONTRACT_ADDRESS} --proof-dir {OUTPUT_DIR} --network {network}
 ```
 
 # How to verify the tally results

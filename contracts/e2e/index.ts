@@ -36,6 +36,7 @@ import path from 'path'
 import { FundingRound } from '../typechain-types'
 import { JSONFile } from '../utils/JSONFile'
 import { EContracts } from '../utils/types'
+import { getTalyFilePath } from '../utils/misc'
 
 type VoteData = { recipientIndex: number; voiceCredits: bigint }
 type ClaimData = { [index: number]: bigint }
@@ -359,6 +360,8 @@ describe('End-to-end Tests', function () {
       mkdirSync(outputDir, { recursive: true })
     }
 
+    const tallyFile = getTalyFilePath(outputDir)
+
     // past an end block that's later than the MACI start block
     const genProofArgs = getGenProofArgs({
       maciAddress,
@@ -368,6 +371,7 @@ describe('End-to-end Tests', function () {
       circuitType: circuit,
       circuitDirectory,
       outputDir,
+      tallyFile,
       blocksPerBatch: DEFAULT_GET_LOG_BATCH_SIZE,
       maciTxHash: maciTransactionHash,
       signer: coordinator,

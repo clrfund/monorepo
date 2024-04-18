@@ -2,6 +2,7 @@ import {
   BaseContract,
   ContractTransactionResponse,
   TransactionResponse,
+  Signer,
 } from 'ethers'
 import { getEventArg } from '@clrfund/common'
 import { EContracts } from './types'
@@ -9,7 +10,7 @@ import {
   DeployContractOptions,
   HardhatEthersHelpers,
 } from '@nomicfoundation/hardhat-ethers/types'
-import { VkRegistry } from '../typechain-types'
+import { VkRegistry, FundingRound } from '../typechain-types'
 import { MaciParameters } from './maciParameters'
 import { IVerifyingKeyStruct } from 'maci-contracts'
 
@@ -89,4 +90,30 @@ export async function getTxFee(
   return receipt ? BigInt(receipt.gasUsed) * BigInt(receipt.gasPrice) : 0n
 }
 
+/**
+ * Return the current funding round contract handle
+ * @param clrfund ClrFund contract address
+ * @param signer Signer who will interact with the funding round contract
+ * @param hre Hardhat runtime environment
+ */
+export async function getCurrentFundingRoundContract(
+  clrfund: string,
+  signer: Signer,
+  ethers: HardhatEthersHelpers
+): Promise<FundingRound> {
+  const clrfundContract = await ethers.getContractAt(
+    EContracts.ClrFund,
+    clrfund,
+    signer
+  )
+
+  const fundingRound = await clrfundContract.getCurrentRound()
+  const fundingRoundContract = await ethers.getContractAt(
+    EContracts.FundingRound,
+    fundingRound,
+    signer
+  )
+
+  return fundingRoundContract as BaseContract as FundingRound
+}
 export { getEventArg }
