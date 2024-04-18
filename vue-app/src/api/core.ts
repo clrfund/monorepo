@@ -60,6 +60,8 @@ export const operator: string = import.meta.env.VITE_OPERATOR || 'Clr.fund'
 export const SUBGRAPH_ENDPOINT =
   import.meta.env.VITE_SUBGRAPH_URL || 'https://api.thegraph.com/subgraphs/name/clrfund/clrfund'
 
+export const isActiveApp = Boolean(import.meta.env.VITE_SUBGRAPH_URL)
+
 // application theme
 export enum ThemeMode {
   LIGHT = 'light',

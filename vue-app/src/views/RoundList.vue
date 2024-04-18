@@ -46,7 +46,7 @@ import { clrfundContractAddress } from '@/api/core'
 const rounds = ref<Round[]>([])
 
 onMounted(async () => {
-  rounds.value = (await getRounds(clrfundContractAddress)).reverse()
+  rounds.value = await getRounds(clrfundContractAddress)
 })
 </script>
 

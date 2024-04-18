@@ -22,14 +22,18 @@ function toRoundId({ network, address }: { network: string; address: string }): 
 /**
  * Get a list of funding rounds created by the clrFund contract
  * @param clrFundAddress The ClrFund contract address
- * @returns A list of funding rounds
+ * @returns A list of funding rounds sorted by start time in descending order
  */
-export async function getRounds(clrFundAddress: string): Promise<Round[]> {
+export async function getRounds(clrFundAddress?: string): Promise<Round[]> {
   let data
-  try {
-    data = await sdk.GetRounds({ clrFundAddress: clrFundAddress.toLowerCase() })
-  } catch {
-    return []
+  if (clrFundAddress) {
+    try {
+      data = await sdk.GetRounds({ clrFundAddress: clrFundAddress.toLowerCase() })
+    } catch {
+      data = { fundingRounds: [] }
+    }
+  } else {
+    data = { fundingRounds: [] }
   }
 
   const rounds: Round[] = extraRounds.map(({ address, network, startTime, votingDeadline }, index): Round => {
@@ -59,7 +63,7 @@ export async function getRounds(clrFundAddress: string): Promise<Round[]> {
   }
 
   return rounds
-    .sort((a, b) => a.startTime - b.startTime)
+    .sort((a, b) => b.startTime - a.startTime)
     .map((r, index) => {
       return {
         index,

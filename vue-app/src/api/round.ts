@@ -1,6 +1,6 @@
 import { Contract, toNumber, getAddress, hexlify, randomBytes } from 'ethers'
 import { DateTime } from 'luxon'
-import { PubKey } from '@clrfund/common'
+import { PubKey, type Tally } from '@clrfund/common'
 
 import { FundingRound, Poll } from './abi'
 import { provider, clrFundContract } from './core'
@@ -38,6 +38,7 @@ export interface RoundInfo {
   messages: number
   blogUrl?: string
   network?: string
+  tally?: Tally
 }
 
 export interface TimeLeft {
@@ -97,7 +98,7 @@ export function toRoundInfo(data: any, network: string): RoundInfo {
     nativeTokenDecimals,
     voiceCreditFactor,
     status,
-    startTime: DateTime.fromSeconds(data.startTime),
+    startTime: DateTime.fromSeconds(Number(data.startTime)),
     signUpDeadline: DateTime.fromSeconds(Number(data.startTime) + Number(data.signUpDuration)),
     votingDeadline: DateTime.fromSeconds(
       Number(data.startTime) + Number(data.signUpDuration) + Number(data.votingDuration),
@@ -121,6 +122,16 @@ export async function getLeaderboardRoundInfo(fundingRoundAddress: string, netwo
   let round: RoundInfo | null = null
   try {
     round = toRoundInfo(data.round, network)
+
+    round.tally = {
+      provider: data.tally.provider,
+      maci: data.tally.maci,
+      pollId: data.pollId,
+      newTallyCommitment: data.tally.newTallyCommitment,
+      results: data.tally.results,
+      totalSpentVoiceCredits: data.tally.totalSpentVoiceCredits ?? data.tally.totalVoiceCredits,
+      perVOSpentVoiceCredits: data.tally.perVOSpentVoiceCredits ?? data.tally.totalVoiceCreditsPerVoteOption,
+    }
   } catch (err) {
     /* eslint-disable-next-line no-console */
     console.warn(`Failed map leaderboard round info`, err)

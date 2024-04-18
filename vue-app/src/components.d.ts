@@ -8,6 +8,7 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     Accordion: typeof import('./components/Accordion.vue')['default']
+    ActiveApp: typeof import('./components/ActiveApp.vue')['default']
     AddToCartButton: typeof import('./components/AddToCartButton.vue')['default']
     BackLink: typeof import('./components/BackLink.vue')['default']
     BalanceItem: typeof import('./components/BalanceItem.vue')['default']
@@ -55,6 +56,7 @@ declare module '@vue/runtime-core' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SignatureModal: typeof import('./components/SignatureModal.vue')['default']
+    StaticApp: typeof import('./components/StaticApp.vue')['default']
     TimeLeft: typeof import('./components/TimeLeft.vue')['default']
     Transaction: typeof import('./components/Transaction.vue')['default']
     TransactionModal: typeof import('./components/TransactionModal.vue')['default']

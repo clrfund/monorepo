@@ -7,14 +7,17 @@ export interface MACIFactory {
   maxRecipients: number
 }
 
-export async function getMACIFactoryInfo(): Promise<MACIFactory> {
+export async function getMACIFactoryInfo(maxRecipients?: number): Promise<MACIFactory> {
   const maciFactoryAddress = await clrFundContract.maciFactory()
 
-  const maciFactory = new Contract(maciFactoryAddress, MACIFactoryABI, provider)
-  const treeDepths = await maciFactory.treeDepths()
+  if (maxRecipients === undefined) {
+    const maciFactory = new Contract(maciFactoryAddress, MACIFactoryABI, provider)
+    const treeDepths = await maciFactory.treeDepths()
+    maxRecipients = 5 ** getNumber(treeDepths.voteOptionTreeDepth) - 1
+  }
 
   return {
     maciFactoryAddress,
-    maxRecipients: 5 ** getNumber(treeDepths.voteOptionTreeDepth) - 1,
+    maxRecipients,
   }
 }

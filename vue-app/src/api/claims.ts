@@ -15,16 +15,16 @@ export async function getAllocatedAmount(
   return allocatedAmount
 }
 
-export async function isFundsClaimed(
-  fundingRoundAddress: string,
-  recipientAddress: string,
-  recipientIndex: number,
-): Promise<boolean> {
-  const data = await sdk.GetRecipientDonations({
-    fundingRoundAddress: fundingRoundAddress.toLowerCase(),
-    recipientAddress,
-    recipientIndex,
-  })
+export async function isFundsClaimed(fundingRoundAddress: string, recipientIndex: number): Promise<boolean> {
+  let claimed = false
 
-  return !!data.donations.length
+  try {
+    const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
+    const recipients = await fundingRound.recipients(recipientIndex)
+    claimed = !!recipients.fundsClaimed
+  } catch {
+    // recipient status is not available in older contract interface
+    claimed = true
+  }
+  return claimed
 }

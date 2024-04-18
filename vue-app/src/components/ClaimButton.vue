@@ -80,17 +80,17 @@ async function checkAllocation() {
     await loadTally()
   }
 
-  allocatedAmount.value = await getAllocatedAmount(
-    currentRound.value.fundingRoundAddress,
-    currentRound.value.nativeTokenDecimals,
-    tally.value!.results.tally[props.project.index],
-    tally.value!.perVOSpentVoiceCredits.tally[props.project.index],
-  )
-  claimed.value = await isFundsClaimed(
-    currentRound.value.fundingRoundAddress,
-    props.project.address,
-    props.project.index,
-  )
+  if (tally.value) {
+    console.log('tally.value', tally.value)
+    allocatedAmount.value = await getAllocatedAmount(
+      currentRound.value.fundingRoundAddress,
+      currentRound.value.nativeTokenDecimals,
+      tally.value.results.tally[props.project.index],
+      tally.value.perVOSpentVoiceCredits.tally[props.project.index],
+    )
+  }
+
+  claimed.value = await isFundsClaimed(currentRound.value.fundingRoundAddress, props.project.index)
   isLoading.value = false
 }
 
@@ -116,7 +116,7 @@ function canClaim(): boolean {
   return hasClaimBtn() && !!currentUser.value && !claimed.value
 }
 
-function formatAmount(value: BigInt): string {
+function formatAmount(value: bigint): string {
   const maxDecimals = 6
   const { nativeTokenDecimals } = currentRound.value!
   return _formatAmount(value, nativeTokenDecimals, null, maxDecimals)
