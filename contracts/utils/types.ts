@@ -27,6 +27,8 @@ export enum EContracts {
   IUserRegistry = 'IUserRegistry',
   SimpleUserRegistry = 'SimpleUserRegistry',
   SemaphoreUserRegistry = 'SemaphoreUserRegistry',
+  SnapshotUserRegistry = 'SnapshotUserRegistry',
+  MerkleUserRegistry = 'MerkleUserRegistry',
   BrightIdUserRegistry = 'BrightIdUserRegistry',
   AnyOldERC20Token = 'AnyOldERC20Token',
   BrightIdSponsor = 'BrightIdSponsor',

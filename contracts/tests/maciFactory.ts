@@ -1,4 +1,4 @@
-import { artifacts, ethers, config } from 'hardhat'
+import { artifacts, ethers } from 'hardhat'
 import { Contract, TransactionResponse } from 'ethers'
 import { expect } from 'chai'
 import { deployMockContract, MockContract } from '@clrfund/waffle-mock-contract'

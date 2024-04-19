@@ -15,7 +15,7 @@ export class RequestResolvedParser extends BaseParser {
     const timestamp = toDate(args._timestamp)
 
     let state =
-      args._type === 1 ? RecipientState.Removed : RecipientState.Accepted
+      args._type === 1n ? RecipientState.Removed : RecipientState.Accepted
 
     if (args._rejected) {
       state = RecipientState.Rejected
