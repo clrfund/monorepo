@@ -605,7 +605,7 @@ function submitCart(event: any) {
 }
 
 const canWithdrawContribution = computed(
-  () => currentRound.value?.status === RoundStatus.Cancelled && !contribution.value,
+  () => currentRound.value?.status === RoundStatus.Cancelled && contribution.value > 0n,
 )
 
 const showCollapseCart = computed(() => route.name !== 'cart')

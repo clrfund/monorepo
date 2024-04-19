@@ -1,5 +1,5 @@
 <template>
-  <vue-final-modal class="modal-container" background="interactive">
+  <base-modal>
     <div class="modal-body">
       <div v-if="step === 1">
         <h3>{{ $t('withdrawalModal.h3_1') }}</h3>
@@ -18,13 +18,11 @@
         </button>
       </div>
     </div>
-  </vue-final-modal>
+  </base-modal>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-// @ts-ignore
-import { VueFinalModal } from 'vue-final-modal'
 import { withdrawContribution } from '@/api/contributions'
 import Transaction from '@/components/Transaction.vue'
 import { waitForTransaction } from '@/utils/contracts'

@@ -1,5 +1,5 @@
 <template>
-  <vue-final-modal class="modal-container" background="interactive">
+  <base-modal>
     <div class="modal-body">
       <div v-if="step === 1">
         <h3>{{ $t('reallocationModal.h3') }}</h3>
@@ -17,16 +17,14 @@
         ></transaction>
       </div>
     </div>
-  </vue-final-modal>
+  </base-modal>
 </template>
 
 <script lang="ts" setup>
-import { Contract } from 'ethers'
 import type { PubKey, Message } from '@clrfund/common'
 import Transaction from '@/components/Transaction.vue'
 import { waitForTransaction, getPollContract } from '@/utils/contracts'
 import { createMessage } from '@clrfund/common'
-import { VueFinalModal } from 'vue-final-modal'
 
 import { useAppStore, useUserStore } from '@/stores'
 import { useRouter } from 'vue-router'

@@ -1,5 +1,5 @@
 <template>
-  <vue-final-modal class="modal-container" background="interactive">
+  <base-modal>
     <div class="modal-body">
       <div v-if="step === 1">
         <h2>{{ $t('claimModal.h2_1') }}</h2>
@@ -24,7 +24,7 @@
         </button>
       </div>
     </div>
-  </vue-final-modal>
+  </base-modal>
 </template>
 
 <script setup lang="ts">
@@ -33,8 +33,6 @@ import { Contract } from 'ethers'
 import { FundingRound } from '@/api/abi'
 import type { Project } from '@/api/projects'
 import Transaction from '@/components/Transaction.vue'
-// @ts-ignore
-import { VueFinalModal } from 'vue-final-modal'
 import { formatAmount as _formatAmount } from '@/utils/amounts'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
 import { getRecipientClaimData } from '@clrfund/common'
