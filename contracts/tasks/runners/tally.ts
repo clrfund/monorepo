@@ -1,177 +1,43 @@
 /**
  * Script for tallying votes which involves fetching MACI logs, generating proofs,
- * and proving on chain
- *
- * This script can be rerun by passing in --maci-state-file and --tally-file
- * If the --maci-state-file is passed, it will skip MACI log fetching
- * If the --tally-file is passed, it will skip MACI log fetching and proof generation
- *
- * Make sure to set the following environment variables in the .env file
- * 1) WALLET_PRIVATE_KEY or WALLET_MNEMONIC
- *   - coordinator's wallet private key to interact with contracts
- * 2) COORDINATOR_MACISK - coordinator's MACI private key to decrypt messages
+ * proving on chain, and uploading tally results on chain
  *
  * Sample usage:
- *
  *  yarn hardhat tally --clrfund <clrfund-address> --maci-tx-hash <hash> --network <network>
  *
- * To rerun:
- *
- *  yarn hardhat tally --clrfund <clrfund-address> --maci-state-file <file> \
- *    --tally-file <tally.json> --network <network>
+ * This script can be re-run with the same input parameters
  */
-import { BaseContract, getNumber, Signer, NonceManager } from 'ethers'
+import { getNumber } from 'ethers'
 import { task, types } from 'hardhat/config'
+import { ClrFund } from '../../typechain-types'
 
 import {
   DEFAULT_SR_QUEUE_OPS,
   DEFAULT_GET_LOG_BATCH_SIZE,
 } from '../../utils/constants'
-import { getIpfsHash } from '../../utils/ipfs'
-import { JSONFile } from '../../utils/JSONFile'
-import {
-  getGenProofArgs,
-  genProofs,
-  proveOnChain,
-  addTallyResultsBatch,
-  mergeMaciSubtrees,
-  genLocalState,
-  TallyData,
-} from '../../utils/maci'
-import { getMaciStateFilePath, getDirname } from '../../utils/misc'
-import { FundingRound, Poll, Tally } from '../../typechain-types'
-import { HardhatEthersHelpers } from '@nomicfoundation/hardhat-ethers/types'
+import { getProofDirForRound } from '../../utils/misc'
 import { EContracts } from '../../utils/types'
 import { ContractStorage } from '../helpers/ContractStorage'
 import { Subtask } from '../helpers/Subtask'
 
-/**
- * Publish the tally IPFS hash on chain if it's not already published
- * @param fundingRoundContract Funding round contract
- * @param tallyData Tally data
- */
-async function publishTallyHash(
-  fundingRoundContract: FundingRound,
-  tallyData: TallyData
-) {
-  const tallyHash = await getIpfsHash(tallyData)
-  console.log(`Tally hash is ${tallyHash}`)
-
-  const tallyHashOnChain = await fundingRoundContract.tallyHash()
-  if (tallyHashOnChain !== tallyHash) {
-    const tx = await fundingRoundContract.publishTallyHash(tallyHash)
-    const receipt = await tx.wait()
-    if (receipt?.status !== 1) {
-      throw new Error('Failed to publish tally hash on chain')
-    }
-
-    console.log('Published tally hash on chain')
-  }
-}
-/**
- * Submit tally data to funding round contract
- * @param fundingRoundContract Funding round contract
- * @param batchSize Number of tally results per batch
- * @param tallyData Tally file content
- */
-async function submitTallyResults(
-  fundingRoundContract: FundingRound,
-  recipientTreeDepth: number,
-  tallyData: TallyData,
-  batchSize: number
-) {
-  const startIndex = await fundingRoundContract.totalTallyResults()
-  const total = tallyData.results.tally.length
-  console.log('Uploading tally results in batches of', batchSize)
-  const addTallyGas = await addTallyResultsBatch(
-    fundingRoundContract,
-    recipientTreeDepth,
-    tallyData,
-    getNumber(batchSize),
-    getNumber(startIndex),
-    (processed: number) => {
-      console.log(`Processed ${processed} / ${total}`)
-    }
-  )
-  console.log('Tally results uploaded. Gas used:', addTallyGas.toString())
-}
-
-/**
- * Return the current funding round contract handle
- * @param clrfund ClrFund contract address
- * @param coordinator Signer who will interact with the funding round contract
- * @param hre Hardhat runtime environment
- */
-async function getFundingRound(
-  clrfund: string,
-  coordinator: Signer,
-  ethers: HardhatEthersHelpers
-): Promise<FundingRound> {
-  const clrfundContract = await ethers.getContractAt(
-    EContracts.ClrFund,
-    clrfund,
-    coordinator
-  )
-
-  const fundingRound = await clrfundContract.getCurrentRound()
-  const fundingRoundContract = await ethers.getContractAt(
-    EContracts.FundingRound,
-    fundingRound,
-    coordinator
-  )
-
-  return fundingRoundContract as BaseContract as FundingRound
-}
-
-/**
- * Get the recipient tree depth (aka vote option tree depth)
- * @param fundingRoundContract Funding round conract
- * @param ethers Hardhat Ethers Helper
- * @returns Recipient tree depth
- */
-async function getRecipientTreeDepth(
-  fundingRoundContract: FundingRound,
-  ethers: HardhatEthersHelpers
-): Promise<number> {
-  const pollAddress = await fundingRoundContract.poll()
-  const pollContract = await ethers.getContractAt(EContracts.Poll, pollAddress)
-  const treeDepths = await (pollContract as BaseContract as Poll).treeDepths()
-  const voteOptionTreeDepth = treeDepths.voteOptionTreeDepth
-  return getNumber(voteOptionTreeDepth)
-}
-
-/**
- * Get the message processor contract address from the tally contract
- * @param tallyAddress Tally contract address
- * @param ethers Hardhat ethers helper
- * @returns Message processor contract address
- */
-async function getMessageProcessorAddress(
-  tallyAddress: string,
-  ethers: HardhatEthersHelpers
-): Promise<string> {
-  const tallyContract = (await ethers.getContractAt(
-    EContracts.Tally,
-    tallyAddress
-  )) as BaseContract as Tally
-
-  const messageProcessorAddress = await tallyContract.messageProcessor()
-  return messageProcessorAddress
-}
-
 task('tally', 'Tally votes')
   .addOptionalParam('clrfund', 'ClrFund contract address')
   .addOptionalParam('maciTxHash', 'MACI creation transaction hash')
-  .addOptionalParam('maciStateFile', 'MACI state file')
+  .addOptionalParam(
+    'maciStartBlock',
+    'MACI creation block',
+    undefined,
+    types.int
+  )
   .addFlag('manageNonce', 'Whether to manually manage transaction nonce')
-  .addOptionalParam('tallyFile', 'The tally file path')
   .addOptionalParam(
     'batchSize',
     'The batch size to upload tally result on-chain',
-    10,
+    8,
     types.int
   )
-  .addParam('outputDir', 'The proof output directory', './proof_output')
+  .addParam('proofDir', 'The proof output directory', './proof_output')
+  .addParam('paramsDir', 'The circuit zkeys directory', './params')
   .addOptionalParam('rapidsnark', 'The rapidsnark prover path')
   .addOptionalParam(
     'numQueueOps',
@@ -197,11 +63,11 @@ task('tally', 'Tally votes')
       {
         clrfund,
         maciTxHash,
+        maciStartBlock,
         quiet,
-        maciStateFile,
-        outputDir,
+        proofDir,
+        paramsDir,
         numQueueOps,
-        tallyFile,
         blocksPerBatch,
         rapidsnark,
         sleep,
@@ -212,140 +78,70 @@ task('tally', 'Tally votes')
     ) => {
       console.log('Verbose logging enabled:', !quiet)
 
-      const { ethers, network } = hre
+      const apiKey = process.env.PINATA_API_KEY
+      if (!apiKey) {
+        throw new Error('Env. variable PINATA_API_KEY not set')
+      }
+
+      const secretApiKey = process.env.PINATA_SECRET_API_KEY
+      if (!secretApiKey) {
+        throw new Error('Env. variable PINATA_SECRET_API_KEY not set')
+      }
+
       const storage = ContractStorage.getInstance()
       const subtask = Subtask.getInstance(hre)
       subtask.setHre(hre)
 
-      const [coordinatorSigner] = await ethers.getSigners()
-      if (!coordinatorSigner) {
-        throw new Error('Env. variable WALLET_PRIVATE_KEY not set')
-      }
-      const coordinator = manageNonce
-        ? new NonceManager(coordinatorSigner)
-        : coordinatorSigner
-      console.log('Coordinator address: ', await coordinator.getAddress())
-
-      const coordinatorMacisk = process.env.COORDINATOR_MACISK
-      if (!coordinatorMacisk) {
-        throw new Error('Env. variable COORDINATOR_MACISK not set')
-      }
-
-      const circuit = subtask.getConfigField<string>(
-        EContracts.VkRegistry,
-        'circuit'
-      )
-      const circuitDirectory = subtask.getConfigField<string>(
-        EContracts.VkRegistry,
-        'paramsDirectory'
-      )
-
       await subtask.logStart()
 
       const clrfundContractAddress =
-        clrfund ?? storage.mustGetAddress(EContracts.ClrFund, network.name)
-      const fundingRoundContract = await getFundingRound(
-        clrfundContractAddress,
-        coordinator,
-        ethers
-      )
-      console.log('Funding round contract', fundingRoundContract.target)
+        clrfund ?? storage.mustGetAddress(EContracts.ClrFund, hre.network.name)
 
-      const recipientTreeDepth = await getRecipientTreeDepth(
-        fundingRoundContract,
-        ethers
-      )
+      const clrfundContract = subtask.getContract<ClrFund>({
+        name: EContracts.ClrFund,
+        address: clrfundContractAddress,
+      })
 
-      const pollId = await fundingRoundContract.pollId()
-      console.log('PollId', pollId)
+      const fundingRoundContractAddress = await (
+        await clrfundContract
+      ).getCurrentRound()
 
-      const maciAddress = await fundingRoundContract.maci()
-      const maciTransactionHash =
-        maciTxHash ?? storage.getTxHash(maciAddress, network.name)
-      console.log('MACI address', maciAddress)
-
-      const tallyAddress = await fundingRoundContract.tally()
-      const messageProcessorAddress = await getMessageProcessorAddress(
-        tallyAddress,
-        ethers
+      const outputDir = getProofDirForRound(
+        proofDir,
+        hre.network.name,
+        fundingRoundContractAddress
       )
 
-      const providerUrl = (network.config as any).url
-
-      const outputPath = maciStateFile
-        ? maciStateFile
-        : getMaciStateFilePath(outputDir)
-
-      await mergeMaciSubtrees({
-        maciAddress,
-        pollId,
+      await hre.run('gen-proofs', {
+        clrfund: clrfundContractAddress,
+        maciStartBlock,
+        maciTxHash,
         numQueueOps,
-        signer: coordinator,
+        blocksPerBatch,
+        rapidsnark,
+        sleep,
+        proofDir: outputDir,
+        paramsDir,
+        manageNonce,
         quiet,
       })
 
-      let tallyFilePath: string = tallyFile || ''
-      if (!tallyFile) {
-        if (!maciStateFile) {
-          await genLocalState({
-            quiet,
-            outputPath,
-            pollId,
-            maciContractAddress: maciAddress,
-            coordinatorPrivateKey: coordinatorMacisk,
-            ethereumProvider: providerUrl,
-            transactionHash: maciTransactionHash,
-            blockPerBatch: blocksPerBatch,
-            signer: coordinator,
-            sleep,
-          })
-        }
-
-        const genProofArgs = getGenProofArgs({
-          maciAddress,
-          pollId,
-          coordinatorMacisk,
-          rapidsnark,
-          circuitType: circuit,
-          circuitDirectory,
-          outputDir,
-          blocksPerBatch: getNumber(blocksPerBatch),
-          maciTxHash: maciTransactionHash,
-          maciStateFile: outputPath,
-          signer: coordinator,
-          quiet,
-        })
-        await genProofs(genProofArgs)
-        tallyFilePath = genProofArgs.tallyFile
-      }
-
-      const tally = JSONFile.read(tallyFilePath) as TallyData
-      const proofDir = getDirname(tallyFilePath)
-      console.log('Proof directory', proofDir)
-
       // proveOnChain if not already processed
-      await proveOnChain({
-        pollId,
-        proofDir,
-        subsidyEnabled: false,
-        maciAddress,
-        messageProcessorAddress,
-        tallyAddress,
-        signer: coordinator,
+      await hre.run('prove-on-chain', {
+        clrfund: clrfundContractAddress,
+        proofDir: outputDir,
+        manageNonce,
         quiet,
       })
 
       // Publish tally hash if it is not already published
-      await publishTallyHash(fundingRoundContract, tally)
-
-      // Submit tally results to the funding round contract
-      // This function can be re-run from where it left off
-      await submitTallyResults(
-        fundingRoundContract,
-        recipientTreeDepth,
-        tally,
-        batchSize
-      )
+      await hre.run('publish-tally-results', {
+        clrfund: clrfundContractAddress,
+        proofDir: outputDir,
+        batchSize,
+        manageNonce,
+        quiet,
+      })
 
       const success = true
       await subtask.finish(success)

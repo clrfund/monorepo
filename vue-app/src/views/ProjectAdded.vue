@@ -2,9 +2,9 @@
   <div>
     <round-status-banner v-if="currentRound" />
     <div class="gradient">
-      <img src="@/assets/moon.png" class="moon" />
+      <img src="@/assets/moon.png" class="moon desktop" />
       <div class="hero">
-        <image-responsive title="newrings" />
+        <image-responsive class="desktop" title="newrings" />
         <div class="content">
           <span class="emoji">🎉</span>
           <div class="flex-title">
@@ -23,12 +23,6 @@
             </li>
           </ul>
           <div class="mt2 button-spacing">
-            <template v-if="isOptimisticRecipientRegistry">
-              <links v-if="recipientId" :to="`/recipients/${recipientId}`" class="btn-primary">{{
-                $t('projectAdded.link2')
-              }}</links>
-            </template>
-            <links v-else to="/projects" class="btn-primary">{{ $t('projectAdded.linkProjects') }}</links>
             <links to="/" class="btn-secondary">{{ $t('projectAdded.link3') }}</links>
           </div>
         </div>
@@ -121,7 +115,7 @@ ul {
     height: calc(100vh - 113px);
     @media (max-width: $breakpoint-m) {
       padding: 2rem 0rem;
-      padding-bottom: 16rem;
+      flex-direction: column;
     }
 
     img {
@@ -130,21 +124,21 @@ ul {
       right: 0;
       width: 66%;
       @media (max-width: $breakpoint-m) {
+        position: relative;
         right: 0;
-        width: 100%;
+        width: 90%;
       }
     }
 
     .content {
       position: relative;
       z-index: 1;
-      padding: $content-space;
-      width: min(100%, 512px);
+      width: min(80%, 512px);
       margin-left: 2rem;
       margin-top: 3rem;
       @media (max-width: $breakpoint-m) {
-        width: 100%;
-        margin: 0;
+        width: 90%;
+        padding: 0;
       }
 
       .flex-title {
