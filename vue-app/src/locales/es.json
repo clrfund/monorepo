@@ -719,6 +719,7 @@
     "tooltip2": "Saldo de la billetera en la cadena {chain}",
     "h2_3": "Proyectos",
     "div1": "En revisión",
+    "withdraw_button": "Retirar {contribution} {tokenSymbol}",
     "btn2_1": "Vista previa",
     "btn2_2": "Ver",
     "div2": "No has enviado ningún proyecto"
@@ -891,7 +892,6 @@
     "div8": "Matching pool",
     "div9": "Los fondos restantes se destinarán al matching pool",
     "div10": "Distribuir {contribution} {tokenSymbol} de manera uniforme",
-    "button1": "Retirar {contribution} {tokenSymbol}",
     "div11": "No puedes",
     "div11_if2": "reasignar",
     "div11_if3": "contribuir",

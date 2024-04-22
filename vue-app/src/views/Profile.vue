@@ -56,6 +56,16 @@
         </div>
         <funds-needed-warning :onNavigate="onNavigateToBridge" />
       </div>
+      <div class="flex-row" style="justify-content: center" v-if="canWithdrawContribution">
+        <button class="btn-action" @click="openWithdrawalModal()">
+          {{
+            $t('profile.withdraw_button', {
+              contribution: formatAmount(contribution || 0n, nativeTokenDecimals),
+              tokenSymbol: nativeTokenSymbol,
+            })
+          }}
+        </button>
+      </div>
       <div class="projects-section">
         <h2>{{ $t('profile.h2_3') }}</h2>
         <div v-if="projects.length > 0" class="project-list">
@@ -93,13 +103,19 @@ import CopyButton from '@/components/CopyButton.vue'
 import Loader from '@/components/Loader.vue'
 import FundsNeededWarning from '@/components/FundsNeededWarning.vue'
 
-import { userRegistryType, UserRegistryType, chain } from '@/api/core'
-import { type Project, getProjects } from '@/api/projects'
+import { userRegistryType, UserRegistryType, chain, isActiveApp } from '@/api/core'
+import { type Project, getProjects, staticDataToProjectInterface } from '@/api/projects'
 import { isSameAddress } from '@/utils/accounts'
 import { getTokenLogo } from '@/utils/tokens'
 import { useAppStore, useUserStore, useRecipientStore, useWalletStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
+import { getLeaderboardData } from '@/api/leaderboard'
+import { formatAmount } from '@/utils/amounts'
+
+import WithdrawalModal from '@/components/WithdrawalModal.vue'
+import { useModal } from 'vue-final-modal'
+import { RoundStatus } from '@/api/round'
 
 interface Props {
   balance: string
@@ -111,7 +127,14 @@ const emit = defineEmits(['close'])
 
 const router = useRouter()
 const appStore = useAppStore()
-const { hasContributionPhaseEnded, nativeTokenSymbol, currentRound } = storeToRefs(appStore)
+const {
+  hasContributionPhaseEnded,
+  nativeTokenSymbol,
+  nativeTokenDecimals,
+  currentRound,
+  hasUserContributed,
+  contribution,
+} = storeToRefs(appStore)
 const userStore = useUserStore()
 const { currentUser } = storeToRefs(userStore)
 const recipientStore = useRecipientStore()
@@ -139,17 +162,41 @@ const displayAddress = computed(() => {
   return currentUser.value.ensName ?? currentUser.value.walletAddress
 })
 
+const canWithdrawContribution = computed(
+  () => currentRound.value?.status === RoundStatus.Cancelled && hasUserContributed,
+)
+
+const { open: openWithdrawalModal, close: closeWithdrawalModal } = useModal({
+  component: WithdrawalModal,
+  attrs: {
+    onClose() {
+      closeWithdrawalModal()
+    },
+  },
+})
+
 watch(recipientRegistryAddress, () => loadProjects())
 
 async function loadProjects(): Promise<void> {
-  if (!recipientRegistryAddress.value) return
-
   isLoading.value = true
-  const _projects: Project[] = await getProjects(
-    recipientRegistryAddress.value,
-    currentRound.value?.startTime.toSeconds(),
-    currentRound.value?.votingDeadline.toSeconds(),
-  )
+  let _projects: Project[] = []
+
+  if (isActiveApp) {
+    if (!recipientRegistryAddress.value) return
+    _projects = await getProjects(
+      recipientRegistryAddress.value,
+      currentRound.value?.startTime.toSeconds(),
+      currentRound.value?.votingDeadline.toSeconds(),
+    )
+  } else {
+    const currentRoundAddress = currentRound.value?.fundingRoundAddress || ''
+    const network = currentRound.value?.network || ''
+    const data = await getLeaderboardData(currentRoundAddress, network)
+    if (data) {
+      _projects = data.projects.map(p => staticDataToProjectInterface(p))
+    }
+  }
+
   const userProjects: Project[] = _projects.filter(
     ({ address, requester }) =>
       isSameAddress(address, currentUser.value?.walletAddress as string) ||

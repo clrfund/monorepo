@@ -1,6 +1,6 @@
 import sdk from '@/graphql/sdk'
 import extraRounds from '@/rounds/rounds.json'
-import { chain, voidedRounds } from './core'
+import { chain, voidedRounds, isActiveApp, clrfundContractAddress } from './core'
 
 export interface Round {
   index: number
@@ -21,14 +21,13 @@ function toRoundId({ network, address }: { network: string; address: string }): 
 
 /**
  * Get a list of funding rounds created by the clrFund contract
- * @param clrFundAddress The ClrFund contract address
  * @returns A list of funding rounds sorted by start time in descending order
  */
-export async function getRounds(clrFundAddress?: string): Promise<Round[]> {
+export async function getRounds(): Promise<Round[]> {
   let data
-  if (clrFundAddress) {
+  if (isActiveApp) {
     try {
-      data = await sdk.GetRounds({ clrFundAddress: clrFundAddress.toLowerCase() })
+      data = await sdk.GetRounds({ clrFundAddress: clrfundContractAddress.toLowerCase() })
     } catch {
       data = { fundingRounds: [] }
     }

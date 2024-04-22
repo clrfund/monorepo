@@ -719,6 +719,7 @@
     "tooltip2": "{chain} 链上钱包余额",
     "h2_3": "项目",
     "div1": "正在审核",
+    "withdraw_button": "取回 {contribution} {tokenSymbol}",
     "btn2_1": "预览",
     "btn2_2": "查看",
     "div2": "您尚未提交任何项目"
@@ -891,7 +892,6 @@
     "div8": "匹配池",
     "div9": "剩余的将会加入匹配池",
     "div10": "平均分配 {contribution} {tokenSymbol}",
-    "button1": "取回 {contribution} {tokenSymbol}",
     "div11": "不可以",
     "div11_if2": "重新分配",
     "div11_if3": "捐赠",

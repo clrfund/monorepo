@@ -719,6 +719,7 @@
     "tooltip2": "Balance of wallet on {chain} chain",
     "h2_3": "Projects",
     "div1": "Under review",
+    "withdraw_button": "Withdraw {contribution} {tokenSymbol}",
     "btn2_1": "Preview",
     "btn2_2": "View",
     "div2": "You haven't submitted any projects"
@@ -891,7 +892,6 @@
     "div8": "Matching pool",
     "div9": "Remaining funds go to matching pool",
     "div10": "Split {contribution} {tokenSymbol} evenly",
-    "button1": "Withdraw {contribution} {tokenSymbol}",
     "div11": "Can't",
     "div11_if2": "reallocate",
     "div11_if3": "contribute",

@@ -130,16 +130,6 @@
           }}
         </div>
       </div>
-      <div class="submit-btn-wrapper" v-if="canWithdrawContribution && cart.length >= 1">
-        <button class="btn-action" @click="openWithdrawalModal()">
-          {{
-            $t('cart.button1', {
-              contribution: formatAmount(contribution),
-              tokenSymbol: tokenSymbol,
-            })
-          }}
-        </button>
-      </div>
       <div
         class="submit-btn-wrapper"
         v-if="
@@ -232,7 +222,6 @@ import WalletModal from '@/components/WalletModal.vue'
 import SignatureModal from '@/components/SignatureModal.vue'
 import ContributionModal from '@/components/ContributionModal.vue'
 import ReallocationModal from '@/components/ReallocationModal.vue'
-import WithdrawalModal from '@/components/WithdrawalModal.vue'
 import CartItems from '@/components/CartItems.vue'
 import Links from '@/components/Links.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
@@ -562,15 +551,6 @@ const votes = computed(() => {
   return formattedVotes
 })
 
-const { open: openWithdrawalModal, close: closeWithdrawalModal } = useModal({
-  component: WithdrawalModal,
-  attrs: {
-    onClose() {
-      closeWithdrawalModal()
-    },
-  },
-})
-
 function submitCart(event: any) {
   event.preventDefault()
 
@@ -603,10 +583,6 @@ function submitCart(event: any) {
 
   appStore.toggleEditSelection(false)
 }
-
-const canWithdrawContribution = computed(
-  () => currentRound.value?.status === RoundStatus.Cancelled && !contribution.value,
-)
 
 const showCollapseCart = computed(() => route.name !== 'cart')
 

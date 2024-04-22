@@ -261,3 +261,33 @@ export function formToProjectInterface(data: RecipientApplicationData): Project 
     isLocked: true,
   }
 }
+
+/**
+ * Format the project data from the static round data to project interface
+ * @param project project data from the static round file
+ * @returns formatted project data
+ */
+export function staticDataToProjectInterface(project: any): Project {
+  return {
+    id: project.id,
+    address: project.recipientAddress,
+    name: project.metadata.name,
+    tagline: project.metadata.tagline,
+    description: project.metadata.description,
+    category: project.metadata.category,
+    problemSpace: project.metadata.problemSpace,
+    plans: project.metadata.plans,
+    teamName: project.metadata.teamName,
+    teamDescription: project.metadata.teamDescription,
+    githubUrl: project.metadata.githubUrl,
+    radicleUrl: project.metadata.radicleUrl,
+    websiteUrl: project.metadata.websiteUrl,
+    twitterUrl: project.metadata.twitterUrl,
+    discordUrl: project.discordUrl,
+    bannerImageUrl: `${ipfsGatewayUrl}/ipfs/${project.metadata.bannerImageHash}`,
+    thumbnailImageUrl: `${ipfsGatewayUrl}/ipfs/${project.metadata.thumbnailImageHash}`,
+    index: project.recipientIndex,
+    isHidden: project.state !== 'Accepted',
+    isLocked: false,
+  }
+}

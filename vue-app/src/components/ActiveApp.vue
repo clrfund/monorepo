@@ -29,7 +29,7 @@ interface Props {
   showBreadCrumb: boolean
   isSidebarShown: boolean
 }
-defineProps<Props>()
+const props = defineProps<Props>()
 
 const route = useRoute()
 const wallet = useWalletStore()
@@ -45,7 +45,7 @@ const routeName = computed(() => route.name?.toString() || '')
 
 const intervals: { [key: string]: any } = {}
 const isUserAndRoundLoaded = computed(() => !!currentUser.value && !!currentRound.value)
-const isSideCartShown = computed(() => isUserAndRoundLoaded.value && isSidebarShown.value && routeName.value !== 'cart')
+const isSideCartShown = computed(() => isUserAndRoundLoaded.value && props.isSidebarShown && routeName.value !== 'cart')
 const isVerifyStep = computed(() => routeName.value === 'verify-step')
 const isCartPadding = computed(() => {
   const routes = ['cart']

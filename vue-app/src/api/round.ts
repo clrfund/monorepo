@@ -3,7 +3,7 @@ import { DateTime } from 'luxon'
 import { PubKey, type Tally } from '@clrfund/common'
 
 import { FundingRound, Poll } from './abi'
-import { provider, clrFundContract } from './core'
+import { provider, clrFundContract, isActiveApp } from './core'
 import { getTotalContributed } from './contributions'
 import { isVoidedRound } from './rounds'
 import sdk from '@/graphql/sdk'
@@ -149,6 +149,11 @@ export async function getRoundInfo(
   if (cachedRound && isSameAddress(roundAddress, cachedRound.fundingRoundAddress)) {
     // the requested round matches the cached round, quick return
     return cachedRound
+  }
+
+  if (!isActiveApp) {
+    // static app should use the exported round information from rounds.json
+    return null
   }
 
   const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)

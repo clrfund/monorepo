@@ -497,6 +497,9 @@ export const useAppStore = defineStore('app', {
           maxRecipients = currentRoundInfo.maxRecipients
         }
       }
+      if (!this.clrFund) {
+        this.clrFund = await getClrFundInfo()
+      }
       await this.loadMACIFactoryInfo(maxRecipients)
     },
     async loadClrFundInfo() {
