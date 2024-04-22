@@ -254,7 +254,7 @@
             {{ $t('roundInfo.div21') }}
           </div>
         </div>
-        <div class="round-value-info">
+        <div class="round-value-info" v-if="matchingPool">
           <div class="round-info-sub-item">
             <div class="round-info-item-top">
               <div class="round-info-title">{{ $t('roundInfo.div16') }}</div>
@@ -265,7 +265,7 @@
               >
                 <img width="16" src="@/assets/info.svg" />
               </div>
-              <div v-tooltip="$t('roundInfo.tooltip9')" class="add-link" @click="addMatchingFunds">
+              <div v-if="isActiveApp" v-tooltip="$t('roundInfo.tooltip9')" class="add-link" @click="addMatchingFunds">
                 <img src="@/assets/add.svg" width="16px" />
                 <span class="add-funds-link">{{ $t('roundInfo.span1') }}</span>
               </div>
@@ -289,7 +289,7 @@ import { ref, onMounted, computed, watch } from 'vue'
 import { DateTime } from 'luxon'
 import { hasDateElapsed } from '@/utils/dates'
 import { type RoundInfo, getRoundInfo, getLeaderboardRoundInfo } from '@/api/round'
-import { chain } from '@/api/core'
+import { chain, isActiveApp } from '@/api/core'
 import { lsGet, lsSet } from '@/utils/localStorage'
 import { formatAmount as _formatAmount } from '@/utils/amounts'
 import MatchingFundsModal from '@/components/MatchingFundsModal.vue'

@@ -9,7 +9,7 @@ import {
   serializeCart,
 } from '@/api/contributions'
 import { getCommittedCart } from '@/api/cart'
-import { operator, chain, ThemeMode, recipientRegistryType, recipientJoinDeadlineConfig } from '@/api/core'
+import { operator, chain, ThemeMode, recipientRegistryType, recipientJoinDeadlineConfig, isActiveApp } from '@/api/core'
 import { type RoundInfo, RoundStatus, getRoundInfo, getLeaderboardRoundInfo } from '@/api/round'
 import { getTally, type Tally } from '@/api/tally'
 import { type ClrFund, getClrFundInfo, getMatchingFunds } from '@/api/clrFund'
@@ -24,6 +24,7 @@ import { getTokenLogo } from '@/utils/tokens'
 import { assert, ASSERT_MISSING_ROUND, ASSERT_MISSING_SIGNATURE, ASSERT_NOT_CONNECTED_WALLET } from '@/utils/assert'
 import { Keypair } from '@clrfund/common'
 import { getRounds } from '@/api/rounds'
+import { DateTime } from 'luxon'
 
 export type AppState = {
   isAppReady: boolean
@@ -67,6 +68,11 @@ export const useAppStore = defineStore('app', {
     recipientJoinDeadline: state => {
       if (recipientJoinDeadlineConfig) {
         return recipientJoinDeadlineConfig
+      }
+
+      if (!isActiveApp) {
+        // when running in static mode, do not allow adding recipients
+        return DateTime.now()
       }
 
       const recipientStore = useRecipientStore()
@@ -114,6 +120,9 @@ export const useAppStore = defineStore('app', {
     isCurrentRound:
       state =>
       (roundAddress: string): boolean => {
+        if (state.currentRoundAddress === null) {
+          return false
+        }
         const currentRoundAddress = state.currentRoundAddress || ''
         return isSameAddress(roundAddress, currentRoundAddress)
       },
