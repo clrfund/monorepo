@@ -1,7 +1,7 @@
 <template>
   <nav id="nav-bar">
     <links to="/">
-      <img class="clr-logo" :alt="operator" src="@/assets/logo.svg" />
+      <img class="clr-logo" :alt="operator" src="@/assets/ES-long-w-no-padding.svg" />
     </links>
     <div class="btn-row">
       <div>
