@@ -54,8 +54,12 @@ export async function isVerifiedUser(userRegistryAddress: string, walletAddress:
 
 export async function isRegisteredUser(fundingRoundAddress: string, walletAddress: string): Promise<boolean> {
   const round = new Contract(fundingRoundAddress, FundingRound, provider)
-  const contributor = await round.contributors(walletAddress)
-  return contributor.isRegistered
+  try {
+    const contributor = await round.contributors(walletAddress)
+    return contributor.isRegistered
+  } catch {
+    return false
+  }
 }
 
 export async function getTokenBalance(tokenAddress: string, walletAddress: string): Promise<bigint> {
