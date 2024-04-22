@@ -121,7 +121,7 @@
     <h2>Quadratic Funding Resources</h2>
     <ul>
       <li>
-        <links to="https://vitalik.ca/general/2019/12/07/quadratic.html"
+        <links to="https://vitalik.eth.limo/general/2019/12/07/quadratic.html"
           >Quadratic Payments: A Primer</links
         >
       </li>

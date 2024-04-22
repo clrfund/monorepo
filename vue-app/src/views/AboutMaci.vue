@@ -134,7 +134,7 @@
     <p>
       From
       <links
-        to="https://github.com/appliedzkp/maci/blob/master/specs/01_introduction.md"
+        to="https://github.com/privacy-scaling-explorations/maci/blob/v0.10.1/specs/01_introduction.md"
         >MACI's introduction documentation</links
       >:
     </p>
@@ -175,7 +175,7 @@
     </blockquote>
 
     <p>
-      <links to="https://github.com/appliedzkp/maci/tree/master/specs"
+      <links to="https://maci.pse.dev/blog/maci-1-0-technical-introduction"
         >Read more on the technical details of MACI here</links
       >. >
     </p>
@@ -202,17 +202,17 @@
     <ul>
       <li>
         <links
-          to="https://ethresear.ch/t/minimal-anti-collusion-infrastructure/541"
+          to="https://ethresear.ch/t/minimal-anti-collusion-infrastructure/5413"
           >Vitalik Buterin on Minimal anti-collusion infrastructure</links
         >
       </li>
       <li>
-        <links to="https://github.com/appliedzkp/maci">The MACI repo</links>
+        <links to="https://github.com/privacy-scaling-explorations/maci">The MACI repo</links>
       </li>
       <li>
         <links
-          to="https://github.com/appliedzkp/maci/blob/master/specs/01_introduction.md"
-          >The technical spec</links
+          to="https://maci.pse.dev"
+          >MACI documentation</links
         >
       </li>
     </ul>
