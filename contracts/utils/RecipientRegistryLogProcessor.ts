@@ -7,6 +7,7 @@ import { Log } from './providers/BaseProvider'
 import { toDate } from './date'
 import { EVENT_ABIS } from './abi'
 import { AbiInfo } from './types'
+import { HardhatConfig } from 'hardhat/types'
 
 function getFilter(address: string, abiInfo: AbiInfo): EventFilter {
   const eventInterface = new Interface([abiInfo.abi])
@@ -41,14 +42,14 @@ export class RecipientRegistryLogProcessor {
     endBlock,
     startBlock,
     blocksPerBatch,
-    etherscanApiKey,
+    config,
     network,
   }: {
     recipientRegistry: Contract
     startBlock: number
     endBlock: number
     blocksPerBatch: number
-    etherscanApiKey: string
+    config: HardhatConfig
     network: string
   }): Promise<Log[]> {
     // fetch event logs containing project information
@@ -64,7 +65,7 @@ export class RecipientRegistryLogProcessor {
 
     const logProvider = ProviderFactory.createProvider({
       network,
-      etherscanApiKey,
+      config,
     })
 
     let logs: Log[] = []

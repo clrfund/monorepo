@@ -1,6 +1,6 @@
 import { Signer, Contract } from 'ethers'
 import { MockContract, deployMockContract } from '@clrfund/waffle-mock-contract'
-import { artifacts, ethers, config } from 'hardhat'
+import { artifacts, ethers } from 'hardhat'
 import { MaciParameters } from './maciParameters'
 import { PubKey } from '@clrfund/common'
 import { deployContract, getEventArg, setVerifyingKeys } from './contracts'

@@ -1,6 +1,6 @@
 {
   "name": "@clrfund/contracts",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "license": "GPL-3.0",
   "scripts": {
     "hardhat": "hardhat",
@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "4.9.0",
+    "@pinata/sdk": "^2.1.0",
     "dotenv": "^8.2.0",
     "maci-contracts": "^1.2.0",
     "solidity-rlp": "2.0.8"

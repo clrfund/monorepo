@@ -18,12 +18,11 @@ import { type ISubtaskParams } from '../helpers/types'
 task('set-token', 'Set the token in ClrFund')
   .addFlag('incremental', 'Incremental deployment')
   .addFlag('strict', 'Fail on warnings')
-  .addFlag('verify', 'Verify contracts at Etherscan')
   .addFlag('manageNonce', 'Manually increment nonce for each transaction')
   .addOptionalParam('clrfund', 'The ClrFund contract address')
   .addOptionalParam('skip', 'Skip steps with less or equal index', 0, types.int)
   .setAction(async (params: ISubtaskParams, hre) => {
-    const { verify, manageNonce } = params
+    const { manageNonce } = params
     const subtask = Subtask.getInstance(hre)
 
     subtask.setHre(hre)
@@ -53,9 +52,4 @@ task('set-token', 'Set the token in ClrFund')
     }
 
     await subtask.finish(success)
-
-    if (verify) {
-      console.log('Verify all contracts')
-      await hre.run('verify-all')
-    }
   })

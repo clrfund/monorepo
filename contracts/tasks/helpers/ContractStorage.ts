@@ -205,6 +205,26 @@ export class ContractStorage {
   }
 
   /**
+   * Get contract constructor argument by address from the json file
+   *
+   * @param address - contract address
+   * @param network - selected network
+   * @returns contract constructor arguments
+   */
+  getConstructorArguments(
+    address: string,
+    network: string
+  ): Array<unknown> | undefined {
+    if (!this.db[network]) {
+      return undefined
+    }
+
+    const instance = this.db[network].instance?.[address]
+    const args = instance?.verify?.args
+    return args ? JSON.parse(args) : undefined
+  }
+
+  /**
    * Get contract address by name from the json file
    *
    * @param id - contract name

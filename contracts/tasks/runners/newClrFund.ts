@@ -13,9 +13,9 @@
  *    where `nonce too low` errors occur occasionally
  */
 import { task, types } from 'hardhat/config'
-
+import { ContractStorage } from '../helpers/ContractStorage'
 import { Subtask } from '../helpers/Subtask'
-import { type ISubtaskParams } from '../helpers/types'
+import { EContracts, type ISubtaskParams } from '../helpers/types'
 
 task('new-clrfund', 'Deploy a new instance of ClrFund')
   .addFlag('incremental', 'Incremental deployment')
@@ -26,6 +26,7 @@ task('new-clrfund', 'Deploy a new instance of ClrFund')
   .setAction(async (params: ISubtaskParams, hre) => {
     const { verify, manageNonce } = params
     const subtask = Subtask.getInstance(hre)
+    const storage = ContractStorage.getInstance()
 
     subtask.setHre(hre)
     const deployer = await subtask.getDeployer()
@@ -62,7 +63,10 @@ task('new-clrfund', 'Deploy a new instance of ClrFund')
     await subtask.finish(success)
 
     if (verify) {
-      console.log('Verify all contracts')
-      await hre.run('verify-all')
+      const clrfund = storage.getAddress(EContracts.ClrFund, hre.network.name)
+      if (clrfund) {
+        console.log('Verify all contracts')
+        await hre.run('verify-all', { clrfund })
+      }
     }
   })
