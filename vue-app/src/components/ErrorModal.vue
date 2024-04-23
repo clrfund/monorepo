@@ -1,5 +1,5 @@
 <template>
-  <vue-final-modal class="modal-container" background="interactive">
+  <base-modal>
     <div class="modal-body">
       <div v-if="errorMessage">
         <div class="error">{{ errorMessage }}</div>
@@ -8,12 +8,10 @@
         </button>
       </div>
     </div>
-  </vue-final-modal>
+  </base-modal>
 </template>
 
 <script setup lang="ts">
-// @ts-ignore
-import { VueFinalModal } from 'vue-final-modal'
 interface Props {
   errorMessage: string
 }

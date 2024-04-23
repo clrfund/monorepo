@@ -6,7 +6,6 @@ import {
   OwnershipTransferred,
   TallyPublished,
   RegisterCall,
-  Voted,
   FundingRound as FundingRoundContract,
 } from '../generated/templates/FundingRound/FundingRound'
 import { OptimisticRecipientRegistry as RecipientRegistryContract } from '../generated/templates/FundingRound/OptimisticRecipientRegistry'
@@ -17,7 +16,6 @@ import {
   Contribution as FundingRoundContribution,
   Donation,
   FundingRound,
-  Vote,
 } from '../generated/schema'
 // The following functions can then be called on this contract to access
 // state variables and other data:
@@ -193,33 +191,4 @@ export function handleTallyPublished(event: TallyPublished): void {
 }
 export function handleOwnershipTransferred(event: OwnershipTransferred): void {
   log.info('handleOwnershipTransferred- Funding Round', [])
-}
-
-export function handleVoted(event: Voted): void {
-  log.info('handleVoted', [])
-
-  let fundingRoundId = event.address.toHexString()
-  let fundingRound = FundingRound.load(fundingRoundId)
-  if (fundingRound == null) {
-    log.error('Error: handleContribution failed', [])
-    return
-  }
-
-  //NOTE: voterAddress != contributor address is possible. This logic isn't necessarily correct since anyone can submit the encrypted message, we should give the option to vote annonymously from the UI by asking them to submi the message batch from another address
-  let voterAddress = event.params._contributor
-  let voterId = voterAddress.toHexString()
-  let voter = Contributor.load(voterId)
-  let voteId = fundingRoundId.concat('-vote-').concat(voterId)
-  let vote = new Vote(voteId)
-
-  //NOTE: If the contracts aren't being tracked initialize them
-  if (voter == null) {
-    vote.voterAddress = voterAddress
-    vote.secret = true
-  } else {
-    vote.voterAddress = voterAddress
-    vote.contributor = voterId
-    vote.secret = false
-  }
-  vote.save()
 }

@@ -1,6 +1,6 @@
-import { ethers } from 'ethers'
+import { JsonRpcProvider, Contract } from 'ethers'
 
-import { FundingRoundFactory } from './abi'
+import { ClrFund } from './abi'
 import { CHAIN_INFO } from '@/utils/chains'
 
 import historicalRounds from '@/rounds/rounds.json'
@@ -16,8 +16,8 @@ if (!walletConnectProjectId) {
   throw new Error('Please provide wallet connect project id')
 }
 
-export const mainnetProvider = new ethers.providers.StaticJsonRpcProvider(import.meta.env.VITE_ETHEREUM_MAINNET_API_URL)
-export const provider = new ethers.providers.StaticJsonRpcProvider(rpcUrl)
+export const mainnetProvider = new JsonRpcProvider(import.meta.env.VITE_ETHEREUM_MAINNET_API_URL)
+export const provider = new JsonRpcProvider(rpcUrl)
 export const chainId = Number(import.meta.env.VITE_ETHEREUM_API_CHAINID)
 export const chain = CHAIN_INFO[chainId]
 if (!chain) throw new Error('invalid chain id')
@@ -29,19 +29,16 @@ export const ipfsPinningJwt = import.meta.env.VITE_IPFS_PINNING_JWT
 export const ipfsApiKey = import.meta.env.VITE_IPFS_API_KEY
 export const ipfsSecretApiKey = import.meta.env.VITE_IPFS_SECRET_API_KEY
 if (!ipfsPinningJwt && !(ipfsApiKey && ipfsSecretApiKey)) {
-  throw new Error(
+  console.error(
     'Please setup environment variables for ' +
       'VITE_IPFS_API_KEY and VITE_IPFS_SECRET_API_KEY or VITE_IPFS_PINNING_JWT',
   )
 }
 
-//TODO: need to be able to pass the factory contract address dynamically, note all places this is used make factory address a parameter that defaults to the env. variable set
+//TODO: need to be able to pass the clrfund contract address dynamically, note all places this is used make clrfund address a parameter that defaults to the env. variable set
 //NOTE: these calls will be replaced by subgraph queries eventually.
-export const factory = new ethers.Contract(
-  import.meta.env.VITE_CLRFUND_FACTORY_ADDRESS as string,
-  FundingRoundFactory,
-  provider,
-)
+export const clrFundContract = new Contract(import.meta.env.VITE_CLRFUND_ADDRESS as string, ClrFund, provider)
+export const clrfundContractAddress = import.meta.env.VITE_CLRFUND_ADDRESS as string
 export const userRegistryType = import.meta.env.VITE_USER_REGISTRY_TYPE
 export enum UserRegistryType {
   BRIGHT_ID = 'brightid',
@@ -62,6 +59,8 @@ export const operator: string = import.meta.env.VITE_OPERATOR || 'Clr.fund'
 
 export const SUBGRAPH_ENDPOINT =
   import.meta.env.VITE_SUBGRAPH_URL || 'https://api.thegraph.com/subgraphs/name/clrfund/clrfund'
+
+export const isActiveApp = Boolean(import.meta.env.VITE_SUBGRAPH_URL)
 
 // application theme
 export enum ThemeMode {

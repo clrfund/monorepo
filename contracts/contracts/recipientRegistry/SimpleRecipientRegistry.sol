@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.6.12;
+pragma solidity ^0.8.10;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
 
@@ -31,7 +31,6 @@ contract SimpleRecipientRegistry is Ownable, BaseRecipientRegistry {
   constructor(
     address _controller
   )
-    public
   {
     controller = _controller;
   }

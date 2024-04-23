@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.6.12;
+pragma solidity ^0.8.10;
 
 // NOTE: had to copy contracts over since OZ uses a higher pragma than we do in the one's they maintain.
 
@@ -65,7 +65,7 @@ abstract contract ContextUpgradeable is Initializable {
     function __Context_init_unchained() internal initializer {
     }
     function _msgSender() internal view virtual returns (address) {
-        return tx.origin;
+        return msg.sender;
     }
 
     function _msgData() internal view virtual returns (bytes calldata) {

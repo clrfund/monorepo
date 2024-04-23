@@ -1,5 +1,5 @@
 <template>
-  <vue-final-modal class="modal-container" background="interactive">
+  <base-modal>
     <div class="modal-body">
       <div v-if="requestingSignature" class="loading">
         <loader />
@@ -12,12 +12,10 @@
         </button>
       </div>
     </div>
-  </vue-final-modal>
+  </base-modal>
 </template>
 
 <script setup lang="ts">
-// @ts-ignore
-import { VueFinalModal } from 'vue-final-modal'
 import { useUserStore } from '@/stores'
 
 const userStore = useUserStore()

@@ -7,7 +7,7 @@ import {
   Entity,
   Bytes,
   Address,
-  BigInt
+  BigInt,
 } from "@graphprotocol/graph-ts";
 
 export class OwnershipTransferred extends ethereum.Event {
@@ -103,7 +103,7 @@ export class BrightIdUserRegistry extends ethereum.SmartContract {
     let result = super.call(
       "brightIdSponsor",
       "brightIdSponsor():(address)",
-      []
+      [],
     );
 
     return result[0].toAddress();
@@ -113,7 +113,7 @@ export class BrightIdUserRegistry extends ethereum.SmartContract {
     let result = super.tryCall(
       "brightIdSponsor",
       "brightIdSponsor():(address)",
-      []
+      [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -141,7 +141,7 @@ export class BrightIdUserRegistry extends ethereum.SmartContract {
     let result = super.call(
       "isVerifiedUser",
       "isVerifiedUser(address):(bool)",
-      [ethereum.Value.fromAddress(_user)]
+      [ethereum.Value.fromAddress(_user)],
     );
 
     return result[0].toBoolean();
@@ -151,7 +151,7 @@ export class BrightIdUserRegistry extends ethereum.SmartContract {
     let result = super.tryCall(
       "isVerifiedUser",
       "isVerifiedUser(address):(bool)",
-      [ethereum.Value.fromAddress(_user)]
+      [ethereum.Value.fromAddress(_user)],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -179,7 +179,7 @@ export class BrightIdUserRegistry extends ethereum.SmartContract {
     let result = super.call(
       "verifications",
       "verifications(address):(uint256)",
-      [ethereum.Value.fromAddress(param0)]
+      [ethereum.Value.fromAddress(param0)],
     );
 
     return result[0].toBigInt();
@@ -189,7 +189,7 @@ export class BrightIdUserRegistry extends ethereum.SmartContract {
     let result = super.tryCall(
       "verifications",
       "verifications(address):(uint256)",
-      [ethereum.Value.fromAddress(param0)]
+      [ethereum.Value.fromAddress(param0)],
     );
     if (result.reverted) {
       return new ethereum.CallResult();

@@ -1,0 +1,207 @@
+{{#clrFundDeployerAddress}}
+type ClrFundDeployer @entity {
+  id: ID!
+  clrFunds: [ClrFund!] @derivedFrom(field: "clrFundDeployer")
+  createdAt: String
+  lastUpdatedAt: String
+}
+
+{{/clrFundDeployerAddress}}
+type ClrFund @entity {
+  id: ID!
+  owner: Bytes
+  {{#clrFundDeployerAddress}}
+  clrFundDeployer: ClrFundDeployer!
+  {{/clrFundDeployerAddress}}
+  coordinator: Bytes
+  nativeToken: Bytes
+  nativeTokenInfo: Token
+  contributorRegistry: ContributorRegistry
+  contributorRegistryAddress: Bytes
+  recipientRegistry: RecipientRegistry
+  recipientRegistryAddress: Bytes
+  currentRound: FundingRound
+
+  maciFactory: Bytes
+  coordinatorPubKey: String
+  stateTreeDepth: BigInt
+  messageTreeDepth: BigInt
+  voteOptionTreeDepth: BigInt
+
+  fundingRounds: [FundingRound!] @derivedFrom(field: "clrFund")
+
+  createdAt: String
+  lastUpdatedAt: String
+}
+
+type Message @entity {
+  id: ID!
+  data: [BigInt!]
+  msgType: BigInt!
+  publicKey: PublicKey
+  fundingRound: FundingRound
+  poll: Poll
+  submittedBy: Bytes
+  timestamp: String
+  blockNumber: BigInt!
+  transactionIndex: BigInt!
+}
+
+type PublicKey @entity {
+  id: ID!
+  fundingRound: FundingRound
+  messages: [Message!] @derivedFrom(field: "publicKey")
+  x: BigInt!
+  y: BigInt!
+  stateIndex: BigInt
+  voiceCreditBalance: BigInt
+}
+
+type Poll @entity {
+  id: ID!
+  fundingRound: FundingRound!
+  messages: [Message!] @derivedFrom(field: "poll")
+}
+
+type FundingRound @entity {
+  id: ID!
+  clrFund: ClrFund
+  maci: Bytes
+  maciTxHash: Bytes
+  pollId: BigInt
+  pollAddress: Bytes
+  messages: [Message!] @derivedFrom(field: "fundingRound")
+  recipientRegistry: RecipientRegistry
+  recipientRegistryAddress: Bytes
+  contributorRegistry: ContributorRegistry
+  contributorRegistryAddress: Bytes
+  nativeToken: Bytes
+  nativeTokenInfo: Token
+  startTime: BigInt
+  signUpDeadline: BigInt
+  votingDeadline: BigInt
+
+  stateTreeDepth: Int
+  messageTreeDepth: Int
+  voteOptionTreeDepth: Int
+
+  coordinatorPubKeyX: BigInt
+  coordinatorPubKeyY: BigInt
+  coordinator: Bytes
+ 
+  voiceCreditFactor: BigInt
+  contributorCount: BigInt!
+  recipientCount: BigInt!
+  matchingPoolSize: BigInt
+  totalSpent: BigInt
+  totalVotes: BigInt
+  isFinalized: Boolean
+  isCancelled: Boolean
+  tallyHash: String
+
+  recipients: [Recipient!] @derivedFrom(field: "fundingRounds")
+  contributors: [Contributor!] @derivedFrom(field: "fundingRounds")
+  contributions: [Contribution!] @derivedFrom(field: "fundingRound")
+  createdAt: String
+  lastUpdatedAt: String
+}
+
+type RecipientRegistry @entity {
+  id: ID!
+  clrFund: ClrFund
+  baseDeposit: BigInt
+  challengePeriodDuration: BigInt
+  controller: Bytes
+  maxRecipients: BigInt
+  owner: Bytes
+  recipients: [Recipient!] @derivedFrom(field: "recipientRegistry")
+  createdAt: String
+  lastUpdatedAt: String 
+}
+
+type Recipient @entity {
+  id: ID!
+  recipientRegistry: RecipientRegistry
+  
+  recipientIndex: BigInt
+  requestType: String
+  requester: String
+  submissionTime: String
+  deposit: BigInt
+  recipientAddress: Bytes
+  recipientMetadata: String
+  rejected: Boolean
+  verified: Boolean
+  voteOptionIndex: BigInt
+  requestResolvedHash: Bytes
+  requestSubmittedHash: Bytes
+
+  fundingRounds: [FundingRound!]
+  
+  createdAt: String
+  lastUpdatedAt: String
+}
+
+type ContributorRegistry @entity {
+  id: ID!
+  clrFund: ClrFund!
+  context: String
+  owner: Bytes
+  contributors: [Contributor!] @derivedFrom(field: "contributorRegistry")
+
+  createdAt: String
+  lastUpdatedAt: String
+}
+
+type Contributor @entity {
+  id: ID!
+  contributorRegistry: ContributorRegistry!
+
+  verifiedTimeStamp: String
+  # sponsors: [Bytes]
+  contributorAddress: Bytes
+
+  fundingRounds: [FundingRound!]
+  contributions: [Contribution!] @derivedFrom(field: "contributor")
+
+  createdAt: String
+  lastUpdatedAt: String
+}
+
+type Coordinator @entity {
+  id: ID!
+  contact: String
+
+  createdAt: String
+  lastUpdatedAt: String
+}
+
+type Contribution @entity {
+  id: ID!
+  contributor: Contributor
+  fundingRound: FundingRound
+  amount: BigInt
+  voiceCredits: BigInt
+
+  createdAt: String
+}
+
+type Donation @entity {
+  id: ID!
+  recipient: Bytes
+  fundingRound: FundingRound
+  amount: BigInt
+  voteOptionIndex: BigInt
+
+  createdAt: String
+}
+
+type Token @entity {
+  id: ID!
+  tokenAddress: Bytes
+  symbol: String
+  decimals: BigInt
+  createdAt: String
+  lastUpdatedAt: String
+}
+

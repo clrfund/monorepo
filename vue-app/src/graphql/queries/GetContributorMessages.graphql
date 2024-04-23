@@ -14,7 +14,7 @@ query GetContributorMessages(
     {
       id
       data
-      iv
+      msgType
       timestamp
       blockNumber
       transactionIndex

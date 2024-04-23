@@ -719,6 +719,7 @@
     "tooltip2": "Balance of wallet on {chain} chain",
     "h2_3": "Projects",
     "div1": "Under review",
+    "withdraw_button": "Withdraw {contribution} {tokenSymbol}",
     "btn2_1": "Preview",
     "btn2_2": "View",
     "div2": "You haven't submitted any projects"
@@ -728,10 +729,8 @@
     "div1": "You’re almost on board this funding round.",
     "li1": "Your project just needs to go through some final checks to ensure it meets round criteria. You can",
     "link1": "learn more about the registration process here.",
-    "li2": "Once that's complete, your project page will go live.",
-    "li3": " If your project fails any checks, we'll let you know by email and return your deposit.",
-    "linkProjects": "View projects",
-    "link2": "View project",
+    "li2": "Once that's complete, your project page will go live and we'll refund your deposit.",
+    "li3": " If your project fails any checks, we'll return your deposit.",
     "link3": "Go home"
   },
   "projectList": {
@@ -893,7 +892,6 @@
     "div8": "Matching pool",
     "div9": "Remaining funds go to matching pool",
     "div10": "Split {contribution} {tokenSymbol} evenly",
-    "button1": "Withdraw {contribution} {tokenSymbol}",
     "div11": "Can't",
     "div11_if2": "reallocate",
     "div11_if3": "contribute",
