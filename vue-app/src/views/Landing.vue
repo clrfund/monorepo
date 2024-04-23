@@ -9,9 +9,10 @@
         </div>
         <div>
           <div class="hero-content">
-            <h1>{{ $t('landing.hero.title') }}</h1>
-            <div id="subtitle" class="subtitle">
-              {{ $t('landing.hero.subtitle') }}
+            <h1>QUADRATIC FUNDING @DEVCON!</h1>
+            <div id="subtitle" class="subtitle">QF @ Devcon for the LatAm Community! Brought to you by:</div>
+            <div class="organizers-wrapper">
+              <image-responsive title="organizers" class="organizers" alt="organizers of QF round." />
             </div>
             <div class="btn-group">
               <links v-if="leaderboardRoute" class="btn-action" :to="leaderboardRoute">
@@ -337,7 +338,6 @@ ol li::before {
   }
   .image-wrapper img {
     position: absolute;
-    mix-blend-mode: exclusion;
     width: 70%;
     max-width: 880px;
     height: auto;
@@ -352,7 +352,7 @@ ol li::before {
   }
   .hero-content {
     position: relative;
-    max-width: 40%;
+    max-width: 60ch;
     min-height: 400px;
     display: flex;
     flex-direction: column;
@@ -369,12 +369,28 @@ ol li::before {
         89.75%
       );
     }
+
+    .organizers-wrapper {
+      padding-top: 2rem;
+      padding-bottom: 4rem;
+      grid-area: image;
+      position: relative;
+      display: flex;
+      max-width: 85%;
+
+      align-items: left;
+      .organizers {
+        position: relative;
+        margin: 0;
+        max-width: 100%;
+      }
+    }
   }
   #moon {
     position: absolute;
     top: 0;
     right: 0;
-    mix-blend-mode: exclusion;
+    mix-blend-mode: color-dodge;
   }
   .btn-group {
     display: flex;
@@ -449,7 +465,8 @@ ol li::before {
     border-radius: 0;
   }
   a {
-    color: var(--link-color);
+    color: var(--text-body);
+    text-decoration: underline;
   }
 }
 #about-1 {

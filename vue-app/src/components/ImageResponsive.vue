@@ -1,5 +1,13 @@
 <template>
-  <img sizes="(max-width: 1440px) 100vw, 1440px" :src="src" :srcset="srcset" />
+  <img
+    sizes="(max-width: 710px) 360px,
+     (max-width: 810px) 360px,
+     (max-width: 1080px) 720px,
+     (max-width: 1440px) 1080px,
+     (max-width: 2160px) 2160px, 1440px"
+    :src="src"
+    :srcset="srcset"
+  />
 </template>
 
 <script setup lang="ts">

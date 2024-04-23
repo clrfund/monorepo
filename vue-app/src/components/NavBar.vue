@@ -151,7 +151,7 @@ function toggleHelpDropdown(): void {
   height: 64px;
   justify-content: space-between;
   align-items: center;
-  background: var(--bg-secondary-color);
+  background: #ffffff;
   box-shadow: $box-shadow-nav-bar;
   @media (max-width: $breakpoint-m) {
     padding: 0 1rem;
@@ -272,7 +272,7 @@ function toggleHelpDropdown(): void {
 
   .clr-logo {
     margin: 0;
-    height: 2.25rem;
+    height: 3.25rem;
     vertical-align: middle;
   }
 

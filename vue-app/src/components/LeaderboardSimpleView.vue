@@ -98,7 +98,7 @@ const tokenSymbol = computed(() => {
 
 .content {
   :hover {
-    background-color: var(--bg-secondary-color);
+    background-color: var(--bg-light-accent);
   }
 }
 

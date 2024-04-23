@@ -453,7 +453,6 @@ const blockExplorer = computed(() => ({
   justify-content: center;
 }
 .image-wrapper img {
-  mix-blend-mode: exclusion;
   transform: rotate(15deg);
 }
 .round {

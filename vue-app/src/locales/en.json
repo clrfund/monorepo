@@ -742,8 +742,8 @@
   "leaderboard": {
     "no_round": "Something went wrong! Round information not found. Please report if issue persists.",
     "no_project": "No projects in this round",
-    "more": "more",
-    "less": "less",
+    "more": "More",
+    "less": "Less",
     "header": "Leaderboard",
     "heading": {
       "project": "Project",

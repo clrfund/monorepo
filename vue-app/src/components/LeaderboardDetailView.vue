@@ -155,7 +155,7 @@ const tokenLogo = computed(() => {
 
 a {
   .card:hover {
-    background: var(--bg-secondary-color);
+    background: var(--bg-light-accent);
   }
   color: var(--text-body);
 }
