@@ -62,11 +62,12 @@ export async function getRounds(): Promise<Round[]> {
     }
   }
 
+  const lastIndex = rounds.length - 1
   return rounds
     .sort((a, b) => b.startTime - a.startTime)
     .map((r, index) => {
       return {
-        index,
+        index: lastIndex - index,
         address: r.address,
         hasLeaderboard: r.hasLeaderboard,
         startTime: r.startTime,
