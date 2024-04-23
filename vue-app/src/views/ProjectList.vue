@@ -71,11 +71,14 @@ import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { DateTime } from 'luxon'
 import { isActiveApp } from '@/api/core'
+import { getSecondsFromNow } from '@/utils/dates'
 
 type ProjectRoundInfo = {
+  fundingRoundAddress: string
   recipientRegistryAddress: string
   startTime: number
   votingDeadline: number
+  network: string
 }
 
 const SHUFFLE_RANDOM_SEED = Math.random()
@@ -120,16 +123,11 @@ onMounted(async () => {
   try {
     roundAddress.value =
       (route.params.address as string) || currentRoundAddress.value || (await getCurrentRound()) || ''
-    if (isActiveApp) {
-      const round = await loadProjectRoundInfo(roundAddress.value)
-      await loadProjects(round)
-    } else {
-      await appStore.loadStaticClrFundInfo()
-      const network = currentRound.value?.network || ''
-      const visibleProjects = await getProjectsForStaticRound(roundAddress.value, network)
-      shuffleArray(visibleProjects)
-      projects.value = visibleProjects
-    }
+
+    const round = isActiveApp
+      ? await loadProjectRoundInfo(roundAddress.value)
+      : await loadStaticRoundInfo(roundAddress.value)
+    await loadProjects(round)
   } catch (err) {
     /* eslint-disable-next-line no-console */
     console.error('Error loading projects', err)
@@ -157,11 +155,27 @@ async function loadProjectRoundInfo(roundAddress: string): Promise<ProjectRoundI
     recipientRegistryAddress = await getRecipientRegistryAddress(null)
   }
 
-  return { recipientRegistryAddress, startTime, votingDeadline }
+  return { recipientRegistryAddress, startTime, votingDeadline, fundingRoundAddress: roundAddress, network: '' }
+}
+
+/**
+ * Get the round information from static file rounds.json
+ * @param roundAddress The funding round address
+ * @returns The project round information
+ */
+async function loadStaticRoundInfo(roundAddress: string): Promise<ProjectRoundInfo> {
+  await appStore.loadClrFundInfo()
+  const network = currentRound.value?.network || ''
+  const recipientRegistryAddress = currentRound.value?.recipientRegistryAddress || ''
+  const startTime = getSecondsFromNow(currentRound.value?.startTime || DateTime.now())
+  const votingDeadline = getSecondsFromNow(currentRound.value?.votingDeadline || DateTime.now())
+  return { recipientRegistryAddress, startTime, votingDeadline, fundingRoundAddress: roundAddress, network }
 }
 
 async function loadProjects(round: ProjectRoundInfo) {
-  const _projects = await getProjects(round.recipientRegistryAddress, round.startTime, round.votingDeadline)
+  const _projects = isActiveApp
+    ? await getProjects(round.recipientRegistryAddress, round.startTime, round.votingDeadline)
+    : await getProjectsForStaticRound(roundAddress.value, round.network)
   const visibleProjects = _projects.filter(project => {
     return !project.isHidden && !project.isLocked
   })
