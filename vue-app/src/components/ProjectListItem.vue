@@ -1,14 +1,6 @@
 <template>
   <div class="project-item">
     <div>
-      <links :to="projectRoute">
-        <div class="project-image">
-          <img :src="projectImageUrl || ''" :alt="project.name" />
-          <div v-if="project.category" class="tag">
-            {{ $t(categoryLocaleKey(project.category)) }}
-          </div>
-        </div>
-      </links>
       <div class="project-info">
         <div class="project-name">
           <links :to="projectRoute">
@@ -174,8 +166,7 @@ const projectRoute = computed<RouteLocationRaw>(() => {
   display: flex;
   line-height: 150%;
   flex-direction: column;
-  padding: 0 1.5rem;
-  padding-top: 0rem;
+  padding: 1.5rem;
 }
 
 .buttons {
