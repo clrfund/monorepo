@@ -60,7 +60,7 @@
 import { ref, computed, onMounted } from 'vue'
 
 import { getCurrentRound, getRoundInfo } from '@/api/round'
-import { type Project, getProjects, getRecipientRegistryAddress } from '@/api/projects'
+import { type Project, getProjects, getRecipientRegistryAddress, getProjectsForStaticRound } from '@/api/projects'
 
 import CallToActionCard from '@/components/CallToActionCard.vue'
 import ProjectListItem from '@/components/ProjectListItem.vue'
@@ -70,6 +70,7 @@ import { useRoute } from 'vue-router'
 import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { DateTime } from 'luxon'
+import { isActiveApp } from '@/api/core'
 
 type ProjectRoundInfo = {
   recipientRegistryAddress: string
@@ -119,8 +120,16 @@ onMounted(async () => {
   try {
     roundAddress.value =
       (route.params.address as string) || currentRoundAddress.value || (await getCurrentRound()) || ''
-    const round = await loadProjectRoundInfo(roundAddress.value)
-    await loadProjects(round)
+    if (isActiveApp) {
+      const round = await loadProjectRoundInfo(roundAddress.value)
+      await loadProjects(round)
+    } else {
+      await appStore.loadStaticClrFundInfo()
+      const network = currentRound.value?.network || ''
+      const visibleProjects = await getProjectsForStaticRound(roundAddress.value, network)
+      shuffleArray(visibleProjects)
+      projects.value = visibleProjects
+    }
   } catch (err) {
     /* eslint-disable-next-line no-console */
     console.error('Error loading projects', err)

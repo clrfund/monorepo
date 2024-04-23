@@ -104,7 +104,7 @@ import Loader from '@/components/Loader.vue'
 import FundsNeededWarning from '@/components/FundsNeededWarning.vue'
 
 import { userRegistryType, UserRegistryType, chain, isActiveApp } from '@/api/core'
-import { type Project, getProjects, staticDataToProjectInterface } from '@/api/projects'
+import { type Project, getProjects, getProjectsForStaticRound } from '@/api/projects'
 import { isSameAddress } from '@/utils/accounts'
 import { getTokenLogo } from '@/utils/tokens'
 import { useAppStore, useUserStore, useRecipientStore, useWalletStore } from '@/stores'
@@ -191,10 +191,7 @@ async function loadProjects(): Promise<void> {
   } else {
     const currentRoundAddress = currentRound.value?.fundingRoundAddress || ''
     const network = currentRound.value?.network || ''
-    const data = await getLeaderboardData(currentRoundAddress, network)
-    if (data) {
-      _projects = data.projects.map(p => staticDataToProjectInterface(p))
-    }
+    _projects = await getProjectsForStaticRound(currentRoundAddress, network)
   }
 
   const userProjects: Project[] = _projects.filter(
