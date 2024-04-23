@@ -14,5 +14,5 @@ export async function getLeaderboardData(roundAddress: string, network: string) 
     return r.address.toLowerCase() === lowercaseRoundAddress && r.network.toLowerCase() === lowercaseNetwork
   })
 
-  return found ? import(`../rounds/${lowercaseNetwork}/${lowercaseRoundAddress}.json`) : null
+  return found ? import(`../rounds/${found.network}/${found.address}.json`) : null
 }
