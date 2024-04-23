@@ -133,7 +133,7 @@ function translateDate(date: DateTime): string {
   })
 }
 
-async function promptSignagure() {
+async function promptSignature() {
   const { open, close } = useModal({
     component: SignatureModal,
     attrs: {
@@ -152,7 +152,7 @@ function handleButtonClicked() {
   if (currentUser.value.encryptionKey) {
     gotoVerify()
   } else {
-    promptSignagure()
+    promptSignature()
   }
 }
 

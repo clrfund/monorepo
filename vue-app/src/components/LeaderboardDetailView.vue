@@ -63,7 +63,6 @@
 import type { RoundInfo } from '@/api/round'
 import type { LeaderboardProject } from '@/api/projects'
 import type { LocationAsRelativeRaw } from 'vue-router'
-import type { BigNumber } from 'ethers'
 import { formatAmount } from '@/utils/amounts'
 import { getTokenLogo } from '@/utils/tokens'
 import { getAssetsUrl } from '@/utils/url'
@@ -82,16 +81,16 @@ function projectRoute(id: string): LocationAsRelativeRaw {
   }
 }
 
-function formatVotes(votes: BigNumber): string {
+function formatVotes(votes: bigint): string {
   // pass votes as string to skip formatting by tokenDecimal
   return formatAmount(votes.toString(), tokenDecimals.value, null, 0)
 }
 
-function formatDonation(donation: BigNumber): string {
-  return formatAmount(donation.mul(props.round.voiceCreditFactor), tokenDecimals.value, null, 0)
+function formatDonation(donation: bigint): string {
+  return formatAmount(donation * props.round.voiceCreditFactor, tokenDecimals.value, null, 0)
 }
 
-function formatAllocation(amount?: BigNumber): string {
+function formatAllocation(amount?: bigint): string {
   return amount ? formatAmount(amount, tokenDecimals.value, null, 0) : '0'
 }
 

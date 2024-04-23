@@ -36,10 +36,12 @@ import { markdown } from '@/utils/markdown'
 import { useRoute, type RouteLocationRaw } from 'vue-router'
 import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
+import { isActiveApp } from '@/api/core'
 
 const route = useRoute()
 const appStore = useAppStore()
-const { isRoundContributionPhase, canUserReallocate, currentRoundAddress, categoryLocaleKey } = storeToRefs(appStore)
+const { isRoundContributionPhase, canUserReallocate, currentRoundAddress, categoryLocaleKey, currentRound } =
+  storeToRefs(appStore)
 interface Props {
   project: Project
   roundAddress: string
@@ -81,12 +83,20 @@ const shouldShowCartInput = computed<boolean>(() => {
 })
 
 const projectRoute = computed<RouteLocationRaw>(() => {
-  return route.name === 'round'
-    ? {
-        name: 'round-project',
-        params: { address: props.roundAddress, id: props.project.id },
-      }
-    : { name: 'project', params: { id: props.project.id } }
+  if (isActiveApp) {
+    return route.name === 'round'
+      ? {
+          name: 'round-project',
+          params: { address: props.roundAddress, id: props.project.id },
+        }
+      : { name: 'project', params: { id: props.project.id } }
+  } else {
+    const network = currentRound.value?.network || ''
+    return {
+      name: 'leaderboard-project',
+      params: { address: props.roundAddress, network, id: props.project.id },
+    }
+  }
 })
 </script>
 
@@ -103,7 +113,11 @@ const projectRoute = computed<RouteLocationRaw>(() => {
   z-index: 0;
   &:hover {
     transform: scale(1.01);
-    box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
+    box-shadow:
+      0px 4px 4px 0px 0,
+      0,
+      0,
+      0.25;
   }
 }
 
@@ -111,7 +125,11 @@ const projectRoute = computed<RouteLocationRaw>(() => {
   background: var(--bg-primary-color);
   border-radius: 32px;
   padding: 0.5rem;
-  box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
+  box-shadow:
+    0px 4px 4px 0px 0,
+    0,
+    0,
+    0.25;
   font-family: Inter;
   font-size: 16px;
   font-style: normal;
@@ -136,7 +154,11 @@ const projectRoute = computed<RouteLocationRaw>(() => {
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
+  box-shadow:
+    0px 4px 4px 0px 0,
+    0,
+    0,
+    0.25;
   position: relative;
 
   img {

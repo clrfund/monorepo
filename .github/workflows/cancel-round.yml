@@ -1,10 +1,22 @@
 name: Cancel current round
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      clrfund:
+        description: 'Clrfund contract address'
+        required: true
+        default: '0x87790498127ff044f43b9230506833ca89113757'
+      network:
+        description: 'Network'
+        required: true
+        default: 'arbitrum-sepolia'
+      jsonrpc_url:
+        description: jsonrpc url to node
+        required: false
 
 env:
-  NODE_VERSION: 16.x
-  SUBGRPAH_URL: "https://api.thegraph.com/subgraphs/name/clrfund/clrfund-arbitrum-goerli"
+  NODE_VERSION: 20.x
   WALLET_PRIVATE_KEY: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_WALLET_PRIVATE_KEY }}
 
 jobs:
@@ -19,10 +31,12 @@ jobs:
       uses: actions/checkout@v3
     - name: Build CLR
       run: |
+        # use https to avoid error: unable to connect to github.com
+        git config --global url."https://".insteadOf git://
         yarn && yarn build
     - name: Run the cancel round script
       run: |
         cd contracts
-        export FACTORY=$(curl -X POST -d '{"query":"{fundingRoundFactories {id}}"}' $SUBGRPAH_URL)
-        export FACTORY_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.FACTORY).data.fundingRoundFactories[0].id)')
-        yarn hardhat cancel-round --factory ${FACTORY_ADDRESS} --network arbitrum-goerli
+        yarn hardhat cancel-round \
+        --clrfund ${{ github.event.inputs.clrfund }} \
+        --network ${{ github.event.inputs.network }}

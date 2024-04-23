@@ -31,7 +31,6 @@
 
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
-import type { BigNumber } from 'ethers'
 import { formatAmount } from '@/utils/amounts'
 import Profile from '@/views/Profile.vue'
 import WalletModal from '@/components/WalletModal.vue'
@@ -80,7 +79,7 @@ const etherBalance = computed(() => {
 })
 
 const balance = computed(() => {
-  const balance: BigNumber | null | undefined = currentUser.value?.balance
+  const balance: bigint | null | undefined = currentUser.value?.balance
   if (balance === null || typeof balance === 'undefined') return '0'
   return formatAmount(balance, nativeTokenDecimals.value, 4)
 })

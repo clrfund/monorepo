@@ -7,12 +7,21 @@
     "packages": [
       "common",
       "contracts",
-      "maci-utils",
       "vue-app",
       "subgraph"
     ],
     "nohoist": [
-      "**/@nomiclabs/**"
+      "**/@nomiclabs/**",
+      "**/snarkjs/**",
+      "**/snarkjs",
+      "**/maci-core/**",
+      "**/maci-core",
+      "**/maci-circuits/**",
+      "**/maci-circuits",
+      "**/maci-cli/**",
+      "**/maci-cli",
+      "**/maci-contracts/**",
+      "**/maci-contracts"
     ]
   },
   "lint-staged": {
@@ -26,7 +35,6 @@
     "build:web": "yarn workspace @clrfund/vue-app run build",
     "build:subgraph": "yarn workspace @clrfund/subgraph run codegen && yarn workspace @clrfund/subgraph run build",
     "start:dev": "yarn deploy:local && yarn start:subgraph && yarn start:web",
-    "start:registry": "yarn deploy:local-registry && yarn start:subgraph && yarn start:web",
     "start:node": "yarn workspace @clrfund/contracts run node",
     "start:web": "yarn workspace @clrfund/vue-app run serve",
     "start:subgraph": "yarn workspace @clrfund/subgraph run prepare:hardhat && yarn build:subgraph && yarn deploy:local-subgraph",
@@ -37,11 +45,8 @@
     "test:format": "yarn prettier --check",
     "test:lint-i18n": "echo yarn workspace @clrfund/vue-app run test:lint-i18n --ci",
     "deploy:subgraph": "yarn workspace @clrfund/subgraph run deploy",
-    "deploy:local": "yarn deploy:local-registry && yarn deploy:local-round",
-    "deploy:local-registry": "yarn workspace @clrfund/contracts run deploy:local",
-    "deploy:local-round": "yarn workspace @clrfund/contracts run deployTestRound:local",
+    "deploy:local": "yarn workspace @clrfund/contracts run deploy:local",
     "deploy:local-subgraph": "yarn workspace @clrfund/subgraph run create-local && yarn workspace @clrfund/subgraph run deploy-local",
-    "upgrade:local": "yarn workspace @clrfund/contracts run upgrade:local",
     "lint": "yarn workspaces run lint",
     "lint:contracts": "yarn workspace @clrfund/contracts run lint",
     "lint:web": "yarn workspace @clrfund/vue-app run lint",
@@ -53,7 +58,7 @@
   "devDependencies": {
     "husky": "^6.0.0",
     "lint-staged": "^11.0.0",
-    "prettier": "^2.8.0",
+    "prettier": "3.0.3",
     "typechain": "^3.0.0"
   }
 }

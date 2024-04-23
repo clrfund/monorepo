@@ -1,5 +1,18 @@
 # Deploy to a network
 
+## Install MACI dependencies
+
+### Install rapidsnark (if on an intel chip)
+
+Check the MACI doc, https://maci.pse.dev/docs/installation#install-rapidsnark-if-on-an-intel-chip, on how to install the rapidsnark.
+
+
+### Install C++ dependencies (if on intel chip)
+
+```
+sudo apt-get install libgmp-dev nlohmann-json3-dev nasm g++
+```
+
 ## Setup BrightID
 If using BrightID as the user registry type:
 
@@ -20,47 +33,73 @@ Once the app is registered, you will get an appId which will be set to `BRIGHTID
 
 ## Deploy Contracts
 
-### Deploy the BrightID sponsor contract (if using BrightID)
+Goto the `contracts` folder.
 
-1. Run `yarn hardhat --network {network} deploy-sponsor`
-2. Verify the contract by running `yarn hardhat --network arbitrum-goerli verify {contract address}`
-3. Set `BRIGHTID_SPONSOR` to the contract address in the next step
+### Generate the coordinator MACI private key
 
-### Edit the `/contracts/.env` file
+```
+yarn hardhat new-maci-key
+```
+
+Make a note of MACI private key to setup the `contracts/.env` file. 
+
+### Edit the `contracts/.env` file
 
 E.g.
 
 ```
-RECIPIENT_REGISTRY_TYPE=simple
-USER_REGISTRY_TYPE=simple
 JSONRPC_HTTP_URL=https://NETWORK.alchemyapi.io/v2/ADD_API_KEY
 WALLET_PRIVATE_KEY=
-NATIVE_TOKEN_ADDRESS=
-BRIGHTID_CONTEXT=
-BRIGHTID_SPONSOR=
+COORDINATOR_MACISK=The coordinator's private key from previous step which starts with `macisk.`
+# API keys for verifying contracts, update hardhat.config for additional keys if needed
+ARBISCAN_API_KEY=
 ```
 
-### Run the deploy script
+### Download MACI circuit files
 
-1. Adjust the `/contracts/scripts/deploy.ts` as you wish.
-2. Run `yarn hardhat run --network {network} scripts/deploy.ts` or use one of the `yarn deploy:{network}` available in `/contracts/package.json`.
-3. Make sure to save in a safe place the serializedCoordinatorPrivKey, you are going to need it for tallying the votes in future steps.
-4. To deploy a new funding round, update the .env file:
+The following script will download the files in the params folder under the current folder where the script is run
 
 ```
-# .env
-# The funding round factory address
-FACTORY_ADDRESS=
-# The coordinator MACI private key (serializedCoordinatorPrivKey saved in step 3)
-COORDINATOR_PK=
-# The coordinator wallet private key
-COORDINATOR_ETH_PK=
+monorepo/.github/scripts/download-6-9-2-3.sh
 ```
 
-5. If using a snapshot user registry, run the `set-storage-root` task to set the storage root for the block snapshot for user account verification
+
+### Edit the `contracts/deploy-config.json` file
 
 ```
-yarn hardhat --network {network} set-storage-root --registry 0x7113b39Eb26A6F0a4a5872E7F6b865c57EDB53E0 --slot 2 --token 0x65bc8dd04808d99cf8aa6749f128d55c2051edde --block 34677758 --network arbitrum-goerli
+cp deploy-config-example.json deploy-config.json
+```
+
+Update the `VkRegistry.paramsDirectory` with the circuit parameter folder. If you ran the `monorepo/.github/scripts/download-6-9-2-3.sh` in the `contracts` folder, it should be `./params`.
+
+
+### Run the deployment scripts
+Use `yarn hardhat help` to print the command line help menu for all available commands. Note that the following steps are for deploying a standalone ClrFund instance. To deploy an instance of the ClrFundDeployer contract, please refer to the [ClrFundDeployer Deployment Guide](./deploy-clrFundDeployer.md)
+
+1. Deploy an instance of ClrFund
+
+```
+yarn hardhat new-clrfund --network <network>
+```
+
+Notice that the file `deployed-contracts.json` is created or updated (if already exists). Make a copy of this file now in case you run the `new-clrfund` command without the --incremental flag, this file will be overwritten. You'll need this file for the `new-round` and `verify-all` commands.
+
+2. deploy new funding round
+```
+yarn hardhat new-round --network <network>
+```
+
+4. To load a list of users into the simple user registry,
+
+```
+yarn hardhat load-simple-users --file-path addresses.txt --user-registry <address> --network <network>
+```
+
+
+If using a snapshot user registry, run the `set-storage-root` task to set the storage root for the block snapshot for user account verification
+
+```
+yarn hardhat set-storage-root --registry {user-registry-address} --slot 2 --token {token-address} --block 34677758 --network {network}
 ```
 
 Note: to get the storage slot '--slot' value, run the `find-storage-slot` task.
@@ -75,16 +114,11 @@ yarn hardhat load-merkle-users --address-file ./addresses.txt --user-registry 0x
 Note: Make sure to upload generated merkle tree file to IPFS.
 
 
-6. Run the `newRound.ts` script to deploy a new funding round:
+8. Verify all deployed contracts:
+Make sure the `deployed-contracts.json` file is present as it stores contract constructor arguments used by the verify-all script.
 
 ```
-yarn hardhat run --network {network} scripts/newRound.ts
-```
-
-5. Verify all deployed contracts:
-
-```
-yarn hardhat verify-all {funding-round-factory-address} --network {network}
+yarn hardhat verify-all --network {network}
 ```
 
 ### Deploy the subgraph
@@ -93,14 +127,19 @@ Currently, we are using the [Hosted Service](https://thegraph.com/docs/en/hosted
 
 Inside `/subgraph`:
 
-1. Prepare the `subgraph.yaml` with the correct network data
-   - Update or create a new JSON file which you want to use, under `/config`
-   - Run `yarn prepare:{network}`
-2. Build:
+1. Prepare the config file
+   - Under the `/config` folder, create a new JSON file or update an existing one
+   - If you deployed a standalone ClrFund contract, use the `xdai.json` as a template to create your config file
+   - If you deployed a ClrFundDeployer contract, use the `deployer-arbitrum-sepolia.json` as a template
+2. Prepare the `schema.graphql` file
+   - Run `npx mustache <your-config-file> schema.template.graphql > schema.graphql`
+2. Prepare the `subgraph.yaml` file
+   - Run `npx mustache <your-config-file> subgraph.template.yaml > subgraph.yaml`
+3. Build:
    - `yarn codegen`
    - `yarn build`
-3. Authenticate with `yarn graph auth --product hosted-service <ACCESS_TOKEN>`
-4. Deploy it by running `yarn graph deploy --product hosted-service USERNAME/SUBGRAPH`
+4. Authenticate with `yarn graph auth --product hosted-service <ACCESS_TOKEN>`
+5. Deploy it by running `yarn graph deploy --product hosted-service USERNAME/SUBGRAPH`
 
 
 ### Deploy the user interface
@@ -119,7 +158,7 @@ VITE_INFURA_ID=
 VITE_IPFS_API_KEY=
 VITE_IPFS_SECRET_API_KEY=
 VITE_SUBGRAPH_URL=
-VITE_CLRFUND_FACTORY_ADDRESS=
+VITE_CLRFUND_ADDRESS=
 VITE_USER_REGISTRY_TYPE=
 VITE_BRIGHTID_CONTEXT=
 VITE_BRIGHTID_SPONSOR_KEY=
@@ -131,6 +170,8 @@ GOOGLE_APPLICATION_CREDENTIALS=
 VITE_GOOGLE_SPREADSHEET_ID=
 
 ```
+
+Note: if VITE_SUBGRAPH_URL is not set, the app will try to get the round information from the vue-app/src/rounds.json file which can be generated using the `hardhat export-round` command.
 
 ##### Setup the netlify functions
 

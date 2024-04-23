@@ -2,8 +2,7 @@ import { getEtherBalance, getTokenBalance, isVerifiedUser, isRegisteredUser, typ
 import { defineStore } from 'pinia'
 import { useAppStore } from '@/stores'
 import type { WalletUser } from '@/stores'
-import { getContributionAmount, hasContributorVoted } from '@/api/contributions'
-import type { BigNumber, Signer } from 'ethers'
+import { getContributionAmount } from '@/api/contributions'
 import { ensLookup, isValidSignature } from '@/utils/accounts'
 import { UserRegistryType, userRegistryType } from '@/api/core'
 import { getBrightId, type BrightId } from '@/api/bright-id'
@@ -19,13 +18,12 @@ export const useUserStore = defineStore('user', {
   state: (): UserState => ({
     currentUser: null,
   }),
-  getters: {
-    signer(): Signer {
+  getters: {},
+  actions: {
+    async getSigner() {
       assert(this.currentUser, ASSERT_NOT_CONNECTED_WALLET)
       return this.currentUser.walletProvider.getSigner()
     },
-  },
-  actions: {
     loginUser(user: WalletUser) {
       this.currentUser = {
         walletAddress: user.walletAddress,
@@ -43,7 +41,8 @@ export const useUserStore = defineStore('user', {
     async requestSignature() {
       assert(this.currentUser, ASSERT_NOT_CONNECTED_WALLET)
       if (!this.currentUser.encryptionKey) {
-        const signature = await this.signer.signMessage(LOGIN_MESSAGE)
+        const signer = await this.currentUser.walletProvider.getSigner()
+        const signature = await signer.signMessage(LOGIN_MESSAGE)
 
         if (!isValidSignature(signature)) {
           // gnosis safe does not return signature in hex string
@@ -62,13 +61,13 @@ export const useUserStore = defineStore('user', {
 
       let nativeTokenAddress = ''
       let userRegistryAddress = ''
-      let balance: BigNumber | null = null
+      let balance: bigint | null = null
       let isRegistered: boolean | undefined = undefined
       const walletAddress = this.currentUser.walletAddress
 
-      if (appStore.factory) {
-        nativeTokenAddress = appStore.factory.nativeTokenAddress
-        userRegistryAddress = appStore.factory.userRegistryAddress
+      if (appStore.clrFund) {
+        nativeTokenAddress = appStore.clrFund.nativeTokenAddress
+        userRegistryAddress = appStore.clrFund.userRegistryAddress
       }
 
       if (appStore.currentRound) {
@@ -76,12 +75,9 @@ export const useUserStore = defineStore('user', {
         userRegistryAddress = appStore.currentRound.userRegistryAddress
 
         let contribution = appStore.contribution
-        if (!contribution || contribution.isZero()) {
+        if (!contribution || contribution === BigInt(0)) {
           contribution = await getContributionAmount(appStore.currentRound.fundingRoundAddress, walletAddress)
-          const hasVoted = await hasContributorVoted(appStore.currentRound.fundingRoundAddress, walletAddress)
-
           appStore.contribution = contribution
-          appStore.hasVoted = hasVoted
         }
 
         isRegistered = await isRegisteredUser(appStore.currentRound.fundingRoundAddress, walletAddress)
