@@ -14,14 +14,15 @@ Two new env variables must be added:
   - create google service account (https://cloud.google.com/iam/docs/service-accounts-create)
   - create service account key
   - download the account credential file with the json string
+  - enable the google sheets api (https://console.cloud.google.com/apis/library/sheets.googleapis.com)
 - `VITE_GOOGLE_SPREADSHEET_ID`: the spreadsheet id that is going to be used
   - the spreadsheet id is auto-generated when you create a google spreadsheet
   - make sure to grant edit access to the service account
   - make sure the spreadsheet has a header with the following fields
-      |projectname |projecttagline |projectdescription |projectcategory |projectproblemSpace|fundaddressName |projectcategory |projectproblemSpace|fundaddressName |fundresolvedAddress |fundplans |teamname |teamdescription |teamemail |linksgithub |linksradicle |linkswebsite |linkstwitter |linksdiscord |imagebannerHash |imagethumbnailHash |
-      | ------------- | ------------- |------------- | ------------- | ------------- |------------- | ------------- | ------------- |------------- | ------------- | ------------- |------------- |------------- | ------------- |------------- | ------------- | ------------- |------------- | ------------- | ------------- |------------- |
+      |projectname |projecttagline |projectdescription |projectcategory |projectproblemSpace|fundaddressName |fundresolvedAddress |fundplans |teamname |teamdescription |teamemail |linksgithub |linksradicle |linkswebsite |linkstwitter |linksdiscord |imagebannerHash |imagethumbnailHash |
+      | ---------- | ------------- |------------- | ------------- | ------------- |------------- | ------------- | ------------- |------------- | ------------- | ------------- |------------- |------------- | ------------- |------------- | ------------- | ------------- |------------- |
 
-- `GOOGLE_SHEET_NAME`: the sheet name, default to Raw if not defined
+- `GOOGLE_SHEET_NAME`: the google sheet name, default to Sheet1 if not defined
 
 
 [Learn more about setting up Google authentication credentials](https://cloud.google.com/docs/authentication/getting-started).
@@ -44,10 +45,10 @@ With that, you will have the lambda functions in `/.netlify/functions/{function}
 
 
 # Testing using curl
-For example, if the netlify function is deployed on `https://clrfund-vue3.netlify.app`,
+For example, if the netlify function is deployed on `https://clrfund-testnet.netlify.app`,
 
 ```
 curl -H "Content-Type: application/json" \
     -d '{"project": { "name": "testtest", "tagline": "blah blah"}}' \
-    https://clrfund-vue3.netlify.app/.netlify/functions/recipient
+    https://clrfund-testnet.netlify.app/.netlify/functions/recipient
 ```

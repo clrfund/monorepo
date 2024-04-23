@@ -48,7 +48,6 @@
 <script setup lang="ts">
 import type { LeaderboardProject } from '@/api/projects'
 import type { RoundInfo } from '@/api/round'
-import type { BigNumber } from 'ethers'
 import { formatAmount } from '@/utils/amounts'
 
 interface Props {
@@ -75,7 +74,7 @@ const isThird = computed(() => {
   return props.rank === 3
 })
 
-function formatAllocationAmount(amount?: BigNumber): string {
+function formatAllocationAmount(amount?: bigint): string {
   const tokenDecimals = props.round.nativeTokenDecimals
   return amount ? formatAmount(amount, tokenDecimals, null, 0) : '0'
 }
@@ -164,7 +163,11 @@ const tokenSymbol = computed(() => {
   height: 2rem;
   overflow: hidden;
   justify-self: center;
-  box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
+  box-shadow:
+    0px 4px 4px 0px 0,
+    0,
+    0,
+    0.25;
   flex: 0 0 auto;
   border: 2px solid var(--border-color);
 

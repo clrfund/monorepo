@@ -6,7 +6,7 @@ import { CHAIN_INFO } from '@/utils/chains'
 import type { Provider } from './types'
 import { EthereumProvider } from '@walletconnect/ethereum-provider'
 import { chainId } from '@/api/core'
-import { providers } from 'ethers'
+import { BrowserProvider } from 'ethers'
 
 const CONNECTED_PROVIDER = 'connected-provider'
 const DISCONNECT_EVENT = 'disconnect'
@@ -22,7 +22,7 @@ const connectors: Record<WalletProvider, any> = {
 
 export type WalletUser = {
   chainId: number
-  web3Provider: providers.Web3Provider
+  web3Provider: BrowserProvider
   walletAddress: string
 }
 
@@ -95,7 +95,7 @@ export const useWalletStore = defineStore('wallet', {
       this.user = {
         chainId: conn.chainId,
         walletAddress: account,
-        web3Provider: markRaw(new providers.Web3Provider(conn.provider)),
+        web3Provider: markRaw(new BrowserProvider(conn.provider)),
       }
 
       // Emit EIP-1193 events and update plugin values

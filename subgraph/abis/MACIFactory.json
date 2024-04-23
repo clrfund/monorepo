@@ -2,53 +2,90 @@
   {
     "inputs": [
       {
-        "internalType": "uint8",
-        "name": "_stateTreeDepth",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint8",
-        "name": "_messageTreeDepth",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint8",
-        "name": "_voteOptionTreeDepth",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint8",
-        "name": "_tallyBatchSize",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint8",
-        "name": "_messageBatchSize",
-        "type": "uint8"
-      },
-      {
-        "internalType": "contract SnarkVerifier",
-        "name": "_batchUstVerifier",
+        "internalType": "address",
+        "name": "_vkRegistry",
         "type": "address"
       },
       {
-        "internalType": "contract SnarkVerifier",
-        "name": "_qvtVerifier",
+        "components": [
+          {
+            "internalType": "address",
+            "name": "pollFactory",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "tallyFactory",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "subsidyFactory",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "messageProcessorFactory",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct MACICommon.Factories",
+        "name": "_factories",
+        "type": "tuple"
+      },
+      {
+        "internalType": "address",
+        "name": "_verifier",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_signUpDuration",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_votingDuration",
-        "type": "uint256"
       }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidMessageProcessorFactory",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidPollFactory",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidSubsidyFactory",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidTallyFactory",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidVerifier",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidVkRegistry",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotInitialized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ProcessVkNotSet",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "TallyVkNotSet",
+    "type": "error"
   },
   {
     "anonymous": false,
@@ -90,16 +127,11 @@
   },
   {
     "inputs": [],
-    "name": "batchSizes",
+    "name": "MESSAGE_DATA_LENGTH",
     "outputs": [
       {
         "internalType": "uint8",
-        "name": "tallyBatchSize",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint8",
-        "name": "messageBatchSize",
+        "name": "",
         "type": "uint8"
       }
     ],
@@ -108,12 +140,12 @@
   },
   {
     "inputs": [],
-    "name": "batchUstVerifier",
+    "name": "TREE_ARITY",
     "outputs": [
       {
-        "internalType": "contract SnarkVerifier",
+        "internalType": "uint256",
         "name": "",
-        "type": "address"
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -123,17 +155,27 @@
     "inputs": [
       {
         "internalType": "contract SignUpGatekeeper",
-        "name": "_signUpGatekeeper",
+        "name": "signUpGatekeeper",
         "type": "address"
       },
       {
         "internalType": "contract InitialVoiceCreditProxy",
-        "name": "_initialVoiceCreditProxy",
+        "name": "initialVoiceCreditProxy",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "_coordinator",
+        "name": "topupCredit",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "duration",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "coordinator",
         "type": "address"
       },
       {
@@ -149,9 +191,14 @@
             "type": "uint256"
           }
         ],
-        "internalType": "struct MACISharedObjs.PubKey",
-        "name": "_coordinatorPubKey",
+        "internalType": "struct DomainObjs.PubKey",
+        "name": "coordinatorPubKey",
         "type": "tuple"
+      },
+      {
+        "internalType": "address",
+        "name": "maciOwner",
+        "type": "address"
       }
     ],
     "name": "deployMaci",
@@ -160,6 +207,33 @@
         "internalType": "contract MACI",
         "name": "_maci",
         "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "poll",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "messageProcessor",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "tally",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "subsidy",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct MACI.PollContracts",
+        "name": "_pollContracts",
+        "type": "tuple"
       }
     ],
     "stateMutability": "nonpayable",
@@ -167,25 +241,49 @@
   },
   {
     "inputs": [],
-    "name": "maxValues",
+    "name": "factories",
     "outputs": [
       {
-        "internalType": "uint256",
-        "name": "maxUsers",
-        "type": "uint256"
+        "internalType": "address",
+        "name": "pollFactory",
+        "type": "address"
       },
       {
-        "internalType": "uint256",
-        "name": "maxMessages",
-        "type": "uint256"
+        "internalType": "address",
+        "name": "tallyFactory",
+        "type": "address"
       },
       {
-        "internalType": "uint256",
-        "name": "maxVoteOptions",
-        "type": "uint256"
+        "internalType": "address",
+        "name": "subsidyFactory",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "messageProcessorFactory",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint8",
+        "name": "messageTreeSubDepth",
+        "type": "uint8"
+      }
+    ],
+    "name": "getMessageBatchSize",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "_messageBatchSize",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -194,19 +292,6 @@
     "outputs": [
       {
         "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "qvtVerifier",
-    "outputs": [
-      {
-        "internalType": "contract SnarkVerifier",
         "name": "",
         "type": "address"
       }
@@ -229,44 +314,31 @@
         "type": "uint8"
       },
       {
-        "internalType": "uint8",
-        "name": "_messageTreeDepth",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint8",
-        "name": "_voteOptionTreeDepth",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint8",
-        "name": "_tallyBatchSize",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint8",
-        "name": "_messageBatchSize",
-        "type": "uint8"
-      },
-      {
-        "internalType": "contract SnarkVerifier",
-        "name": "_batchUstVerifier",
-        "type": "address"
-      },
-      {
-        "internalType": "contract SnarkVerifier",
-        "name": "_qvtVerifier",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_signUpDuration",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_votingDuration",
-        "type": "uint256"
+        "components": [
+          {
+            "internalType": "uint8",
+            "name": "intStateTreeDepth",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "messageTreeSubDepth",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "messageTreeDepth",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "voteOptionTreeDepth",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct Params.TreeDepths",
+        "name": "_treeDepths",
+        "type": "tuple"
       }
     ],
     "name": "setMaciParameters",
@@ -275,13 +347,78 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_messageProcessorFactory",
+        "type": "address"
+      }
+    ],
+    "name": "setMessageProcessorFactory",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_pollFactory",
+        "type": "address"
+      }
+    ],
+    "name": "setPollFactory",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_tallyFactory",
+        "type": "address"
+      }
+    ],
+    "name": "setTallyFactory",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_verifier",
+        "type": "address"
+      }
+    ],
+    "name": "setVerifier",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_vkRegistry",
+        "type": "address"
+      }
+    ],
+    "name": "setVkRegistry",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
-    "name": "signUpDuration",
+    "name": "stateTreeDepth",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "uint8",
         "name": "",
-        "type": "uint256"
+        "type": "uint8"
       }
     ],
     "stateMutability": "view",
@@ -306,7 +443,12 @@
     "outputs": [
       {
         "internalType": "uint8",
-        "name": "stateTreeDepth",
+        "name": "intStateTreeDepth",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint8",
+        "name": "messageTreeSubDepth",
         "type": "uint8"
       },
       {
@@ -325,12 +467,25 @@
   },
   {
     "inputs": [],
-    "name": "votingDuration",
+    "name": "verifier",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "contract Verifier",
         "name": "",
-        "type": "uint256"
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "vkRegistry",
+    "outputs": [
+      {
+        "internalType": "contract VkRegistry",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",

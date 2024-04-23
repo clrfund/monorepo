@@ -1,19 +1,18 @@
-import { ethers, waffle } from 'hardhat'
-import { use, expect } from 'chai'
-import { solidity } from 'ethereum-waffle'
+import { ethers } from 'hardhat'
+import { expect } from 'chai'
 import { Contract } from 'ethers'
 
 import { ZERO_ADDRESS } from '../utils/constants'
-
-use(solidity)
+import { HardhatEthersSigner } from '@nomicfoundation/hardhat-ethers/signers'
 
 describe('Simple User Registry', () => {
-  const provider = waffle.provider
-  const [, deployer, user] = provider.getWallets()
-
   let registry: Contract
+  let user: HardhatEthersSigner
 
   beforeEach(async () => {
+    let deployer: HardhatEthersSigner
+    ;[, deployer, user] = await ethers.getSigners()
+
     const SimpleUserRegistry = await ethers.getContractFactory(
       'SimpleUserRegistry',
       deployer
@@ -44,7 +43,7 @@ describe('Simple User Registry', () => {
     })
 
     it('allows only owner to add users', async () => {
-      const registryAsUser = registry.connect(user)
+      const registryAsUser = registry.connect(user) as Contract
       await expect(registryAsUser.addUser(user.address)).to.be.revertedWith(
         'Ownable: caller is not the owner'
       )
@@ -66,7 +65,7 @@ describe('Simple User Registry', () => {
 
     it('allows only owner to remove users', async () => {
       await registry.addUser(user.address)
-      const registryAsUser = registry.connect(user)
+      const registryAsUser = registry.connect(user) as Contract
       await expect(registryAsUser.removeUser(user.address)).to.be.revertedWith(
         'Ownable: caller is not the owner'
       )

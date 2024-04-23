@@ -2,6 +2,8 @@ query GetRoundInfo($fundingRoundAddress: ID!) {
   fundingRound(id: $fundingRoundAddress) {
     id
     maci
+    pollId
+    pollAddress
     nativeTokenInfo {
       tokenAddress
       symbol
@@ -15,5 +17,13 @@ query GetRoundInfo($fundingRoundAddress: ID!) {
     contributorCount
     totalSpent
     matchingPoolSize
+    startTime
+    signUpDeadline
+    votingDeadline
+    coordinatorPubKeyX
+    coordinatorPubKeyY
+    stateTreeDepth
+    messageTreeDepth
+    voteOptionTreeDepth
   }
 }

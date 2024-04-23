@@ -4,25 +4,12 @@
   </metainfo>
   <div id="app" class="wrapper">
     <nav-bar :in-app="isInApp" />
-    <loader v-if="!appReady"></loader>
-    <div v-else id="content-container">
+    <div id="content-container">
       <div v-if="isSidebarShown" id="sidebar" :class="`${showCartPanel ? 'desktop-l' : 'desktop'}`">
         <round-information />
       </div>
-      <div
-        id="content"
-        :class="{
-          padded: isVerifyStep || (isSidebarShown && !isCartPadding),
-          'mr-cart-open': showCartPanel && isSideCartShown,
-          'mr-cart-closed': !showCartPanel && isSideCartShown,
-        }"
-      >
-        <breadcrumbs v-if="showBreadCrumb" />
-        <router-view :key="route.path" />
-      </div>
-      <div v-if="isSideCartShown" id="cart" :class="`desktop ${showCartPanel ? 'open-cart' : 'closed-cart'}`">
-        <cart-widget />
-      </div>
+      <active-app v-if="isActiveApp" :is-sidebar-shown="isSidebarShown" :show-bread-crumb="showBreadCrumb" />
+      <static-app v-else :is-sidebar-shown="isSidebarShown" :show-bread-crumb="showBreadCrumb" />
     </div>
     <mobile-tabs v-if="isMobileTabsShown" />
   </div>
@@ -32,32 +19,23 @@
 
 <script setup lang="ts">
 import NavBar from '@/components/NavBar.vue'
-import CartWidget from '@/components/CartWidget.vue'
 import MobileTabs from '@/components/MobileTabs.vue'
-import Breadcrumbs from '@/components/Breadcrumbs.vue'
+import ActiveApp from './components/ActiveApp.vue'
+import StaticApp from './components/StaticApp.vue'
+
 // @ts-ignore
 import { ModalsContainer } from 'vue-final-modal'
 
 import { getDefaultColorScheme } from '@/utils/theme'
-import { getCurrentRound } from '@/api/round'
-import { operator } from '@/api/core'
-import { useAppStore, useUserStore, useRecipientStore, useWalletStore } from '@/stores'
+import { operator, isActiveApp } from '@/api/core'
+import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import { useMeta } from 'vue-meta'
-import type { WalletUser } from '@/stores'
 
 const route = useRoute()
 const appStore = useAppStore()
-const { theme, showCartPanel, currentRound } = storeToRefs(appStore)
-
-const userStore = useUserStore()
-const { currentUser } = storeToRefs(userStore)
-
-const wallet = useWalletStore()
-const { user: walletUser } = storeToRefs(wallet)
-
-const recipientStore = useRecipientStore()
+const { theme, showCartPanel } = storeToRefs(appStore)
 
 // https://stackoverflow.com/questions/71785473/how-to-use-vue-meta-with-vue3
 // https://www.npmjs.com/package/vue-meta/v/3.0.0-alpha.7
@@ -79,18 +57,9 @@ useMeta(
   }),
 )
 
-const intervals: { [key: string]: any } = {}
-
 // state
 const routeName = computed(() => route.name?.toString() || '')
-const isUserAndRoundLoaded = computed(() => !!currentUser.value && !!currentRound.value)
 const isInApp = computed(() => routeName.value !== 'landing')
-const isVerifyStep = computed(() => routeName.value === 'verify-step')
-const isSideCartShown = computed(() => isUserAndRoundLoaded.value && isSidebarShown.value && routeName.value !== 'cart')
-const isCartPadding = computed(() => {
-  const routes = ['cart']
-  return routes.includes(routeName.value)
-})
 const isSidebarShown = computed(() => {
   const excludedRoutes = [
     'landing',
@@ -106,6 +75,7 @@ const isSidebarShown = computed(() => {
   ]
   return !excludedRoutes.includes(routeName.value)
 })
+
 const isMobileTabsShown = computed(() => {
   const excludedRoutes = [
     'landing',
@@ -120,6 +90,7 @@ const isMobileTabsShown = computed(() => {
   ]
   return !excludedRoutes.includes(routeName.value)
 })
+
 const showBreadCrumb = computed(() => {
   const excludedRoutes = ['landing', 'join', 'join-step', 'transaction-success', 'verify', 'project-added', 'verified']
   return !excludedRoutes.includes(routeName.value)
@@ -128,88 +99,6 @@ const showBreadCrumb = computed(() => {
 watch(theme, () => {
   const savedTheme = theme.value
   document.documentElement.setAttribute('data-theme', savedTheme || getDefaultColorScheme())
-})
-
-const appReady = ref(false)
-
-function setupLoadIntervals() {
-  intervals.round = setInterval(() => {
-    appStore.loadRoundInfo()
-  }, 60 * 1000)
-  intervals.recipient = setInterval(async () => {
-    recipientStore.loadRecipientRegistryInfo()
-  }, 60 * 1000)
-  intervals.user = setInterval(() => {
-    userStore.loadUserInfo()
-  }, 60 * 1000)
-}
-
-onMounted(async () => {
-  try {
-    await wallet.reconnect()
-  } catch (err) {
-    /* eslint-disable-next-line no-console */
-    console.warn('Unable to reconnect wallet', err)
-  }
-
-  try {
-    const roundAddress = appStore.currentRoundAddress || (await getCurrentRound())
-
-    if (roundAddress) {
-      appStore.selectRound(roundAddress)
-      /* eslint-disable-next-line no-console */
-      console.log('roundAddress', roundAddress)
-    }
-  } catch (err) {
-    /* eslint-disable-next-line no-console */
-    console.warn('Failed to get current round:', err)
-  }
-
-  appReady.value = true
-  await appStore.loadFactoryInfo()
-  await appStore.loadMACIFactoryInfo()
-  await appStore.loadRoundInfo()
-  await recipientStore.loadRecipientRegistryInfo()
-  appStore.isAppReady = true
-
-  setupLoadIntervals()
-})
-
-onBeforeUnmount(() => {
-  for (const interval of Object.keys(intervals)) {
-    clearInterval(intervals[interval])
-  }
-})
-
-watch(walletUser, async () => {
-  try {
-    if (walletUser.value) {
-      const user: WalletUser = {
-        chainId: walletUser.value.chainId,
-        walletAddress: walletUser.value.walletAddress,
-        web3Provider: walletUser.value.web3Provider,
-      }
-      // make sure factory is loaded
-      await appStore.loadFactoryInfo()
-      userStore.loginUser(user)
-      await userStore.loadUserInfo()
-      await userStore.loadBrightID()
-    } else {
-      await userStore.logoutUser()
-    }
-  } catch (err) {
-    /* eslint-disable-next-line no-console */
-    console.log('error', err)
-  }
-})
-
-watch(isUserAndRoundLoaded, async () => {
-  if (!isUserAndRoundLoaded.value) {
-    return
-  }
-
-  // load contribution when we get round information
-  await userStore.loadUserInfo()
 })
 </script>
 
@@ -480,6 +369,7 @@ summary:focus {
   padding: $modal-space;
   text-align: center;
   box-shadow: var(--box-shadow);
+  border: 2px solid rgba(115, 117, 166, 0.3);
   width: 400px;
   .loader {
     margin: $modal-space auto;

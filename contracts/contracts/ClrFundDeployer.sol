@@ -1,84 +1,72 @@
-/*
-The MIT License (MIT)
-Copyright (c) 2018 Murray Software, LLC.
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-The above copyright notice and this permission notice shall be included
-in all copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+// SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.6.12;
-import './MACIFactory.sol';
-import './ClrFund.sol';
+pragma solidity 0.8.10;
 
-contract CloneFactory { // implementation of eip-1167 - see https://eips.ethereum.org/EIPS/eip-1167
-    function createClone(address target) internal returns (address result) {
-        bytes20 targetBytes = bytes20(target);
-        assembly {
-            let clone := mload(0x40)
-            mstore(clone, 0x3d602d80600a3d3981f3363d3d373d3d3d363d73000000000000000000000000)
-            mstore(add(clone, 0x14), targetBytes)
-            mstore(add(clone, 0x28), 0x5af43d82803e903d91602b57fd5bf30000000000000000000000000000000000)
-            result := create(0, clone, 0x37)
-        }
-    }
-}
+import {MACIFactory} from './MACIFactory.sol';
+import {ClrFund} from './ClrFund.sol';
+import {CloneFactory} from './CloneFactory.sol';
+import {SignUpGatekeeper} from "maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol";
+import {InitialVoiceCreditProxy} from "maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol";
+import {Ownable} from '@openzeppelin/contracts/access/Ownable.sol';
 
-contract ClrFundDeployer is CloneFactory { 
-    
-    address public template;
-    mapping (address => bool) public clrfunds;
-    uint clrId = 0;
-    ClrFund private clrfund; // funding factory contract
-    
-    constructor(address _template) public {
-        template = _template;
-    }
-    
-    event NewInstance(address indexed clrfund);
-    event Register(address indexed clrfund, string metadata);
-     
-    function deployFund(
-      MACIFactory _maciFactory
-    ) public returns (address) {
-        ClrFund clrfund = ClrFund(createClone(template));
-        
-        clrfund.init(
-            _maciFactory
-        );
-       
-        emit NewInstance(address(clrfund));
-        
-        return address(clrfund);
-    }
-    
-    function registerInstance(
-        address _clrFundAddress,
-        string memory _metadata
-      ) public returns (bool) {
-          
-      clrfund = ClrFund(_clrFundAddress);
-      
-      require(clrfunds[_clrFundAddress] == false, 'ClrFund: metadata already registered');
+contract ClrFundDeployer is CloneFactory, Ownable {
+  address public clrfundTemplate;
+  address public maciFactory;
+  address public roundFactory;
+  mapping (address => bool) public clrfunds;
 
-      clrfunds[_clrFundAddress] = true;
-      
-      clrId = clrId + 1;
-      emit Register(_clrFundAddress, _metadata);
-      return true;
-      
-    }
-    
+  event NewInstance(address indexed clrfund);
+  event Register(address indexed clrfund, string metadata);
+  event NewFundingRoundTemplate(address newTemplate);
+  event NewClrfundTemplate(address newTemplate);
+
+  // errors
+  error ClrFundAlreadyRegistered();
+  error InvalidMaciFactory();
+  error InvalidClrFundTemplate();
+  error InvalidFundingRoundFactory();
+
+  constructor(
+    address _clrfundTemplate,
+    address _maciFactory,
+    address _roundFactory
+  )
+  {
+    if (_clrfundTemplate == address(0)) revert InvalidClrFundTemplate();
+    if (_maciFactory == address(0)) revert InvalidMaciFactory();
+    if (_roundFactory == address(0)) revert InvalidFundingRoundFactory();
+
+    clrfundTemplate = _clrfundTemplate;
+    maciFactory = _maciFactory;
+    roundFactory = _roundFactory;
+  }
+
+  /**
+    * @dev Set a new clrfund template
+    * @param _clrfundTemplate New template
+    */
+  function setClrFundTemplate(address _clrfundTemplate)
+    external
+    onlyOwner
+  {
+    if (_clrfundTemplate == address(0)) revert InvalidClrFundTemplate();
+
+    clrfundTemplate = _clrfundTemplate;
+    emit NewClrfundTemplate(_clrfundTemplate);
+  }
+
+  /**
+    * @dev Deploy a new instance of ClrFund
+    */
+  function deployClrFund() public returns (address) {
+    ClrFund clrfund = ClrFund(createClone(clrfundTemplate));
+    clrfund.init(maciFactory, roundFactory);
+
+    // clrfund.init() set the owner to us, now transfer to the caller
+    clrfund.transferOwnership(msg.sender);
+
+    emit NewInstance(address(clrfund));
+
+    return address(clrfund);
+  }
 }

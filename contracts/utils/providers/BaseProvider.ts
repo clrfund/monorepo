@@ -1,9 +1,9 @@
-import { EventFilter, Log } from '@ethersproject/abstract-provider'
+import { EventFilter, Log } from 'ethers'
 
 export interface FetchLogArgs {
   filter: EventFilter
   startBlock: number
-  lastBlock: number
+  lastBlock?: number
   blocksPerBatch: number
 }
 

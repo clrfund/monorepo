@@ -96,7 +96,11 @@ input[type='number'] {
   border: none;
   cursor: pointer;
   white-space: nowrap;
-  box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
+  box-shadow:
+    0px 4px 4px 0px 0,
+    0,
+    0,
+    0.25;
   &[disabled],
   &[disabled]:hover {
     cursor: not-allowed;

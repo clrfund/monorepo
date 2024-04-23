@@ -150,7 +150,6 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import type { BigNumber } from 'ethers'
 
 import type { RegistryInfo } from '@/api/recipient-registry-optimistic'
 import Loader from '@/components/Loader.vue'
@@ -180,7 +179,7 @@ const links = computed<Array<{ link: string; url: string }>>(() => [{ link: 'joi
 
 const registryInfo = computed<RegistryInfo | null>(() => recipientRegistryInfo.value)
 
-const deposit = computed<BigNumber | undefined>(() => registryInfo.value?.deposit)
+const deposit = computed<bigint | undefined>(() => registryInfo.value?.deposit)
 const depositToken = computed<string | null>(() => registryInfo.value?.depositToken || null)
 const spacesRemaining = computed(() => {
   // eslint-disable-next-line
@@ -221,7 +220,7 @@ function toggleCriteria(): void {
   showCriteriaPanel.value = !showCriteriaPanel.value
 }
 
-function formatAmount(value?: BigNumber): string {
+function formatAmount(value?: bigint): string {
   if (!value) return ''
   return _formatAmount(value, 18)
 }

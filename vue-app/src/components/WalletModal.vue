@@ -1,5 +1,5 @@
 <template>
-  <vue-final-modal class="modal-container" background="interactive">
+  <base-modal>
     <div v-if="connectingWallet" class="modal-body loading">
       <loader />
       <p>{{ $t('walletModal.p1') }}</p>
@@ -25,13 +25,12 @@
       </button>
       <div v-if="error" class="error">{{ error }}</div>
     </div>
-  </vue-final-modal>
+  </base-modal>
 </template>
 
 <script setup lang="ts">
 import Loader from '@/components/Loader.vue'
 import { useWalletStore, type WalletProvider } from '@/stores'
-import { VueFinalModal } from 'vue-final-modal'
 
 const error = ref('')
 const connectingWallet = ref(false)

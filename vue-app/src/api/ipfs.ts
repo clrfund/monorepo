@@ -1,4 +1,5 @@
 import { ipfsPinningUrl, ipfsPinningJwt, ipfsApiKey, ipfsSecretApiKey } from './core'
+import { CID } from 'multiformats/cid'
 
 export class IPFS {
   url: string
@@ -40,5 +41,19 @@ export class IPFS {
     const result = await fetch(this.url, options)
     const json = await result.json()
     return json.IpfsHash
+  }
+
+  /**
+   * Check if a CID hash has valid format
+   *
+   * @param hash CID string
+   * @returns true if the hash is a valid CID format
+   */
+  static isValidCid(hash: string): boolean {
+    try {
+      return Boolean(hash) && Boolean(CID.parse(hash))
+    } catch {
+      return false
+    }
   }
 }

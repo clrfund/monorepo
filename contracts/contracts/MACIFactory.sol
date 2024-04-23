@@ -1,118 +1,156 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.6.12;
-pragma experimental ABIEncoderV2;
+pragma solidity ^0.8.10;
 
-import '@openzeppelin/contracts/access/Ownable.sol';
-import 'maci-contracts/sol/MACI.sol';
-import 'maci-contracts/sol/MACIParameters.sol';
-import 'maci-contracts/sol/MACISharedObjs.sol';
-import 'maci-contracts/sol/gatekeepers/SignUpGatekeeper.sol';
-import 'maci-contracts/sol/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
+import {MACI} from 'maci-contracts/contracts/MACI.sol';
+import {IPollFactory} from 'maci-contracts/contracts/interfaces/IPollFactory.sol';
+import {ITallySubsidyFactory} from 'maci-contracts/contracts/interfaces/ITallySubsidyFactory.sol';
+import {IMessageProcessorFactory} from 'maci-contracts/contracts/interfaces/IMPFactory.sol';
+import {SignUpGatekeeper} from 'maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol';
+import {InitialVoiceCreditProxy} from 'maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
+import {TopupCredit} from 'maci-contracts/contracts/TopupCredit.sol';
+import {VkRegistry} from 'maci-contracts/contracts/VkRegistry.sol';
+import {Verifier} from 'maci-contracts/contracts/crypto/Verifier.sol';
+import {SnarkCommon} from 'maci-contracts/contracts/crypto/SnarkCommon.sol';
+import {Ownable} from '@openzeppelin/contracts/access/Ownable.sol';
+import {Params} from 'maci-contracts/contracts/utilities/Params.sol';
+import {DomainObjs} from 'maci-contracts/contracts/utilities/DomainObjs.sol';
+import {MACICommon} from './MACICommon.sol';
 
-contract MACIFactory is Ownable, MACIParameters, MACISharedObjs {
-  // Constants
-  uint256 private constant STATE_TREE_BASE = 2;
-  uint256 private constant MESSAGE_TREE_BASE = 2;
-  uint256 private constant VOTE_OPTION_TREE_BASE = 5;
+contract MACIFactory is Ownable, Params, SnarkCommon, DomainObjs, MACICommon {
 
-  // State
+  // Verifying Key Registry containing circuit parameters
+  VkRegistry public vkRegistry;
+  // All the factory contracts used to deploy Poll, Tally, MessageProcessor, Subsidy
+  Factories public factories;
+  // verifier is used when creating Tally, MessageProcessor, Subsidy
+  Verifier public verifier;
+
+  // circuit parameters
+  uint8 public stateTreeDepth;
   TreeDepths public treeDepths;
-  BatchSizes public batchSizes;
-  MaxValues public maxValues;
-  SnarkVerifier public batchUstVerifier;
-  SnarkVerifier public qvtVerifier;
-  uint256 public signUpDuration;
-  uint256 public votingDuration;
 
   // Events
   event MaciParametersChanged();
   event MaciDeployed(address _maci);
 
-  constructor(
-    uint8 _stateTreeDepth,
-    uint8 _messageTreeDepth,
-    uint8 _voteOptionTreeDepth,
-    uint8 _tallyBatchSize,
-    uint8 _messageBatchSize,
-    SnarkVerifier _batchUstVerifier,
-    SnarkVerifier _qvtVerifier,
-    uint256 _signUpDuration,
-    uint256 _votingDuration
-  )
-    public
-  {
-    _setMaciParameters(
-      _stateTreeDepth,
-      _messageTreeDepth,
-      _voteOptionTreeDepth,
-      _tallyBatchSize,
-      _messageBatchSize,
-      _batchUstVerifier,
-      _qvtVerifier,
-      _signUpDuration,
-      _votingDuration
-    );
-  }
+  // errors
+  error NotInitialized();
+  error ProcessVkNotSet();
+  error TallyVkNotSet();
+  error InvalidVkRegistry();
+  error InvalidPollFactory();
+  error InvalidTallyFactory();
+  error InvalidSubsidyFactory();
+  error InvalidMessageProcessorFactory();
+  error InvalidVerifier();
 
-  function _setMaciParameters(
-    uint8 _stateTreeDepth,
-    uint8 _messageTreeDepth,
-    uint8 _voteOptionTreeDepth,
-    uint8 _tallyBatchSize,
-    uint8 _messageBatchSize,
-    SnarkVerifier _batchUstVerifier,
-    SnarkVerifier _qvtVerifier,
-    uint256 _signUpDuration,
-    uint256 _votingDuration
-  )
-    internal
-  {
-    treeDepths = TreeDepths(_stateTreeDepth, _messageTreeDepth, _voteOptionTreeDepth);
-    batchSizes = BatchSizes(_tallyBatchSize, _messageBatchSize);
-    maxValues = MaxValues(
-      STATE_TREE_BASE ** treeDepths.stateTreeDepth - 1,
-      MESSAGE_TREE_BASE ** treeDepths.messageTreeDepth - 1,
-      VOTE_OPTION_TREE_BASE ** treeDepths.voteOptionTreeDepth - 1
-    );
-    batchUstVerifier = _batchUstVerifier;
-    qvtVerifier = _qvtVerifier;
-    signUpDuration = _signUpDuration;
-    votingDuration = _votingDuration;
+  constructor(
+    address _vkRegistry,
+    Factories memory _factories,
+    address _verifier
+  ) {
+    if (_vkRegistry == address(0)) revert InvalidVkRegistry();
+    if (_factories.pollFactory == address(0)) revert InvalidPollFactory();
+    if (_factories.tallyFactory == address(0)) revert InvalidTallyFactory();
+    if (_factories.messageProcessorFactory == address(0)) revert InvalidMessageProcessorFactory();
+    if (_verifier == address(0)) revert InvalidVerifier();
+
+    vkRegistry = VkRegistry(_vkRegistry);
+    factories = _factories;
+    verifier = Verifier(_verifier);
   }
 
   /**
-    * @dev Set MACI parameters.
-    */
+   * @dev calculate the message batch size
+   */
+  function getMessageBatchSize(uint8 messageTreeSubDepth) public pure
+    returns(uint256 _messageBatchSize) {
+      _messageBatchSize = TREE_ARITY ** messageTreeSubDepth;
+  }
+
+  /**
+   * @dev set vk registry
+   */
+  function setVkRegistry(address _vkRegistry) public onlyOwner {
+    if (_vkRegistry == address(0)) revert InvalidVkRegistry();
+
+    vkRegistry = VkRegistry(_vkRegistry);
+  }
+
+  /**
+   * @dev set poll factory in MACI factory
+   * @param _pollFactory poll factory
+   */
+  function setPollFactory(address _pollFactory) public onlyOwner {
+    if (_pollFactory == address(0)) revert InvalidPollFactory();
+
+    factories.pollFactory = _pollFactory;
+  }
+
+  /**
+   * @dev set tally factory in MACI factory
+   * @param _tallyFactory tally factory
+   */
+  function setTallyFactory(address _tallyFactory) public onlyOwner {
+    if (_tallyFactory == address(0)) revert InvalidTallyFactory();
+
+    factories.tallyFactory = _tallyFactory;
+  }
+
+  /**
+   * @dev set message processor factory in MACI factory
+   * @param _messageProcessorFactory message processor factory
+   */
+  function setMessageProcessorFactory(address _messageProcessorFactory) public onlyOwner {
+    if (_messageProcessorFactory == address(0)) revert InvalidMessageProcessorFactory();
+
+    factories.messageProcessorFactory = _messageProcessorFactory;
+  }
+
+  /**
+   * @dev set verifier in MACI factory
+   * @param _verifier verifier contract
+   */
+  function setVerifier(address _verifier) public onlyOwner {
+    if (_verifier == address(0)) revert InvalidVerifier();
+
+    verifier = Verifier(_verifier);
+  }
+
+  /**
+   * @dev set MACI zkeys parameters
+   */
   function setMaciParameters(
     uint8 _stateTreeDepth,
-    uint8 _messageTreeDepth,
-    uint8 _voteOptionTreeDepth,
-    uint8 _tallyBatchSize,
-    uint8 _messageBatchSize,
-    SnarkVerifier _batchUstVerifier,
-    SnarkVerifier _qvtVerifier,
-    uint256 _signUpDuration,
-    uint256 _votingDuration
+    TreeDepths calldata _treeDepths
   )
-    external
+    public
     onlyOwner
   {
-    require(
-      _voteOptionTreeDepth >= treeDepths.voteOptionTreeDepth,
-      'MACIFactory: Vote option tree depth can not be decreased'
-    );
-    _setMaciParameters(
+
+    uint256 messageBatchSize = getMessageBatchSize(_treeDepths.messageTreeSubDepth);
+
+    if (!vkRegistry.hasProcessVk(
       _stateTreeDepth,
-      _messageTreeDepth,
-      _voteOptionTreeDepth,
-      _tallyBatchSize,
-      _messageBatchSize,
-      _batchUstVerifier,
-      _qvtVerifier,
-      _signUpDuration,
-      _votingDuration
-    );
+      _treeDepths.messageTreeDepth,
+      _treeDepths.voteOptionTreeDepth,
+      messageBatchSize)
+    ) {
+      revert ProcessVkNotSet();
+    }
+
+    if (!vkRegistry.hasTallyVk(
+      _stateTreeDepth,
+      _treeDepths.intStateTreeDepth,
+      _treeDepths.voteOptionTreeDepth)
+    ) {
+      revert TallyVkNotSet();
+    }
+
+    stateTreeDepth = _stateTreeDepth;
+    treeDepths = _treeDepths;
+
     emit MaciParametersChanged();
   }
 
@@ -120,28 +158,64 @@ contract MACIFactory is Ownable, MACIParameters, MACISharedObjs {
     * @dev Deploy new MACI instance.
     */
   function deployMaci(
-    SignUpGatekeeper _signUpGatekeeper,
-    InitialVoiceCreditProxy _initialVoiceCreditProxy,
-    address _coordinator,
-    PubKey calldata _coordinatorPubKey
+    SignUpGatekeeper signUpGatekeeper,
+    InitialVoiceCreditProxy initialVoiceCreditProxy,
+    address topupCredit,
+    uint256 duration,
+    address coordinator,
+    PubKey calldata coordinatorPubKey,
+    address maciOwner
   )
     external
-    onlyOwner
-    returns (MACI _maci)
+    returns (MACI _maci, MACI.PollContracts memory _pollContracts)
   {
+    uint256 messageBatchSize = getMessageBatchSize(treeDepths.messageTreeSubDepth);
+
+    if (!vkRegistry.hasProcessVk(
+      stateTreeDepth,
+      treeDepths.messageTreeDepth,
+      treeDepths.voteOptionTreeDepth,
+      messageBatchSize)
+    ) {
+      revert ProcessVkNotSet();
+    }
+
+    if (!vkRegistry.hasTallyVk(
+      stateTreeDepth,
+      treeDepths.intStateTreeDepth,
+      treeDepths.voteOptionTreeDepth)
+    ) {
+      revert TallyVkNotSet();
+    }
+
     _maci = new MACI(
-      treeDepths,
-      batchSizes,
-      maxValues,
-      _signUpGatekeeper,
-      batchUstVerifier,
-      qvtVerifier,
-      signUpDuration,
-      votingDuration,
-      _initialVoiceCreditProxy,
-      _coordinatorPubKey,
-      _coordinator
+      IPollFactory(factories.pollFactory),
+      IMessageProcessorFactory(factories.messageProcessorFactory),
+      ITallySubsidyFactory(factories.tallyFactory),
+      ITallySubsidyFactory(factories.subsidyFactory),
+      signUpGatekeeper,
+      initialVoiceCreditProxy,
+      TopupCredit(topupCredit),
+      stateTreeDepth
     );
+
+    _pollContracts = _maci.deployPoll(
+      duration,
+      treeDepths,
+      coordinatorPubKey,
+      address(verifier),
+      address(vkRegistry),
+      // pass false to not deploy the subsidy contract
+      false
+    );
+
+    // transfer ownership to coordinator to run the tally scripts
+    Ownable(_pollContracts.poll).transferOwnership(coordinator);
+    Ownable(_pollContracts.messageProcessor).transferOwnership(coordinator);
+    Ownable(_pollContracts.tally).transferOwnership(coordinator);
+
+    _maci.transferOwnership(maciOwner);
+
     emit MaciDeployed(address(_maci));
   }
 }
