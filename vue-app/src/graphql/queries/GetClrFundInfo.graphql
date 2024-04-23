@@ -1,0 +1,11 @@
+query GetClrFundInfo($clrFundAddress: ID!) {
+  clrFund(id: $clrFundAddress) {
+    nativeTokenInfo {
+      tokenAddress
+      symbol
+      decimals
+    }
+    contributorRegistryAddress
+    recipientRegistryAddress
+  }
+}

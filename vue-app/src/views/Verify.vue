@@ -335,7 +335,7 @@ async function selfSponsorAndWait() {
     return
   }
 
-  const signer = userStore.signer
+  const signer = await userStore.getSigner()
   loadingTx.value = true
   sponsorTxError.value = ''
 
@@ -350,7 +350,7 @@ async function selfSponsorAndWait() {
 }
 
 async function register() {
-  const signer = userStore.signer
+  const signer = await userStore.getSigner()
 
   if (isBrightIdRequired && !brightId.value?.verification) {
     return

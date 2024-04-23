@@ -1,5 +1,5 @@
 <template>
-  <vue-final-modal class="modal-container" background="interactive">
+  <base-modal>
     <div class="modal-body">
       <div v-if="step === 1">
         <h3>{{ $t('reallocationModal.h3') }}</h3>
@@ -17,23 +17,20 @@
         ></transaction>
       </div>
     </div>
-  </vue-final-modal>
+  </base-modal>
 </template>
 
 <script lang="ts" setup>
-import { BigNumber, Contract } from 'ethers'
-import type { PubKey, Message } from '@clrfund/maci-utils'
+import type { PubKey, Message } from '@clrfund/common'
 import Transaction from '@/components/Transaction.vue'
-import { waitForTransaction } from '@/utils/contracts'
-import { createMessage } from '@clrfund/maci-utils'
-import { VueFinalModal } from 'vue-final-modal'
+import { waitForTransaction, getPollContract } from '@/utils/contracts'
+import { createMessage } from '@clrfund/common'
 
-import { FundingRound } from '@/api/abi'
 import { useAppStore, useUserStore } from '@/stores'
 import { useRouter } from 'vue-router'
 
 interface Props {
-  votes: [number, BigNumber][]
+  votes: [number, bigint][]
 }
 
 const props = defineProps<Props>()
@@ -53,8 +50,7 @@ onMounted(() => {
 
 async function vote() {
   const contributor = appStore.contributor
-  const { coordinatorPubKey, fundingRoundAddress } = appStore.currentRound!
-  const fundingRound = new Contract(fundingRoundAddress, FundingRound, userStore.signer)
+  const { coordinatorPubKey, fundingRoundAddress, pollId } = appStore.currentRound!
   const messages: Message[] = []
   const encPubKeys: PubKey[] = []
   let nonce = 1
@@ -67,14 +63,17 @@ async function vote() {
       recipientIndex,
       voiceCredits,
       nonce,
+      pollId,
     )
     messages.push(message)
     encPubKeys.push(encPubKey)
     nonce += 1
   }
   try {
+    const signer = await userStore.getSigner()
+    const pollContract = await getPollContract(fundingRoundAddress, signer)
     await waitForTransaction(
-      fundingRound.submitMessageBatch(
+      pollContract.publishMessageBatch(
         messages.reverse().map(msg => msg.asContractParam()),
         encPubKeys.reverse().map(key => key.asContractParam()),
       ),

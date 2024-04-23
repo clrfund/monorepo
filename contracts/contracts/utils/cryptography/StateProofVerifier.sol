@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.6.12;
+pragma solidity ^0.8.10;
 
-import {RLPReader} from "solidity-rlp/contracts/RLPReader.sol";
-import {MerklePatriciaProofVerifier} from "./MerklePatriciaProofVerifier.sol";
+import {RLPReader} from 'solidity-rlp/contracts/RLPReader.sol';
+import {MerklePatriciaProofVerifier} from './MerklePatriciaProofVerifier.sol';
 
 /**
  * @title A helper library for verification of Merkle Patricia account and state proofs.
@@ -55,7 +55,7 @@ library StateProofVerifier {
         }
 
         RLPReader.RLPItem[] memory acctFields = acctRlpBytes.toRlpItem().toList();
-        require(acctFields.length == 4, "ProofVerifier: Invalid account length");
+        require(acctFields.length == 4, 'ProofVerifier: Invalid account length');
 
         account.exists = true;
         account.nonce = acctFields[0].toUint();

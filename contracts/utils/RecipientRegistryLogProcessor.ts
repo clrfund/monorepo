@@ -1,4 +1,4 @@
-import { Contract, EventFilter, providers, constants, utils } from 'ethers'
+import { Contract, EventFilter, Interface, ZeroAddress } from 'ethers'
 import { ProviderFactory } from './providers/ProviderFactory'
 import { Project } from './types'
 import { RecipientState } from './constants'
@@ -6,11 +6,16 @@ import { ParserFactory } from './parsers/ParserFactory'
 import { Log } from './providers/BaseProvider'
 import { toDate } from './date'
 import { EVENT_ABIS } from './abi'
+import { AbiInfo } from './types'
+import { HardhatConfig } from 'hardhat/types'
 
-function getFilter(address: string, abi: string): EventFilter {
-  const eventInterface = new utils.Interface([abi])
-  const events = Object.values(eventInterface.events)
-  const topic0 = eventInterface.getEventTopic(events[0].name)
+function getFilter(address: string, abiInfo: AbiInfo): EventFilter {
+  const eventInterface = new Interface([abiInfo.abi])
+  const event = eventInterface.getEvent(abiInfo.name)
+  if (!event) {
+    throw new Error(`Event ${abiInfo.name} not found`)
+  }
+  const topic0 = event.topicHash
   return { address, topics: [topic0] }
 }
 
@@ -37,36 +42,37 @@ export class RecipientRegistryLogProcessor {
     endBlock,
     startBlock,
     blocksPerBatch,
-    etherscanApiKey,
+    config,
     network,
   }: {
     recipientRegistry: Contract
     startBlock: number
     endBlock: number
     blocksPerBatch: number
-    etherscanApiKey: string
+    config: HardhatConfig
     network: string
   }): Promise<Log[]> {
     // fetch event logs containing project information
     const lastBlock = endBlock
       ? endBlock
-      : await this.registry.provider.getBlockNumber()
+      : await this.registry.runner?.provider?.getBlockNumber()
 
+    const registryAddress = await this.registry.getAddress()
     console.log(
       `Fetching event logs from the recipient registry`,
-      this.registry.address
+      registryAddress
     )
 
     const logProvider = ProviderFactory.createProvider({
       network,
-      etherscanApiKey,
+      config,
     })
 
     let logs: Log[] = []
     for (let i = 0; i < EVENT_ABIS.length; i++) {
       const { add, remove } = EVENT_ABIS[i]
 
-      const filter = getFilter(this.registry.address, add.abi)
+      const filter = getFilter(registryAddress, add)
       const addLogs = await logProvider.fetchLogs({
         filter,
         startBlock,
@@ -75,7 +81,7 @@ export class RecipientRegistryLogProcessor {
       })
 
       if (addLogs.length > 0) {
-        const filter = getFilter(this.registry.address, remove.abi)
+        const filter = getFilter(registryAddress, remove)
         const removeLogs = await logProvider.fetchLogs({
           filter,
           startBlock,
@@ -99,7 +105,7 @@ export class RecipientRegistryLogProcessor {
     return logs
   }
 
-  async parseLogs(logs: providers.Log[]): Promise<Record<string, Project>> {
+  async parseLogs(logs: Log[]): Promise<Record<string, Project>> {
     const recipients: Record<string, Project> = {}
 
     for (let i = 0; i < logs.length; i++) {
@@ -112,16 +118,18 @@ export class RecipientRegistryLogProcessor {
       } catch (err) {
         console.log('failed to parse', (err as Error).message)
       }
-      const address = parsed.recipientAddress || constants.AddressZero
+      const address = parsed.recipientAddress || ZeroAddress
       const id = parsed.id || '0'
 
       const [block, transaction] = await Promise.all([
-        this.registry.provider.getBlock(log.blockNumber),
-        this.registry.provider.getTransactionReceipt(log.transactionHash),
+        this.registry.runner?.provider?.getBlock(log.blockNumber),
+        this.registry.runner?.provider?.getTransactionReceipt(
+          log.transactionHash
+        ),
       ])
-      const blockTimestamp = toDate(block.timestamp)
+      const blockTimestamp = toDate(block?.timestamp || 0)
       const createdAt = parsed.createdAt || blockTimestamp
-      const requester = transaction.from
+      const requester = transaction?.from
 
       if (!recipients[id]) {
         recipients[id] = {

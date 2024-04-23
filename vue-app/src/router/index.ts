@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
-import { isUserRegistrationRequired, isOptimisticRecipientRegistry } from '@/api/core'
+import { isUserRegistrationRequired, isOptimisticRecipientRegistry, isActiveApp } from '@/api/core'
 
 const Landing = () => import('@/views/Landing.vue')
 const JoinLanding = () => import('@/views/JoinLanding.vue')
@@ -30,7 +30,7 @@ const TransactionSuccess = () => import('@/views/TransactionSuccess.vue')
 const Leaderboard = () => import('@/views/Leaderboard.vue')
 const LeaderboardProject = () => import('@/views/LeaderboardProject.vue')
 
-// TODO: create a new route that takes funding factory address as a param
+// TODO: create a new route that takes funding ClrFund address as a param
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
@@ -262,7 +262,7 @@ if (isUserRegistrationRequired) {
   )
 }
 
-if (isOptimisticRecipientRegistry) {
+if (isOptimisticRecipientRegistry && isActiveApp) {
   routes.push({
     path: '/recipients',
     name: 'recipients',

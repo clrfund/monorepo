@@ -254,7 +254,7 @@
             {{ $t('roundInfo.div21') }}
           </div>
         </div>
-        <div class="round-value-info">
+        <div class="round-value-info" v-if="matchingPool">
           <div class="round-info-sub-item">
             <div class="round-info-item-top">
               <div class="round-info-title">{{ $t('roundInfo.div16') }}</div>
@@ -265,7 +265,7 @@
               >
                 <img width="16" src="@/assets/info.svg" />
               </div>
-              <div v-tooltip="$t('roundInfo.tooltip9')" class="add-link" @click="addMatchingFunds">
+              <div v-if="isActiveApp" v-tooltip="$t('roundInfo.tooltip9')" class="add-link" @click="addMatchingFunds">
                 <img src="@/assets/add.svg" width="16px" />
                 <span class="add-funds-link">{{ $t('roundInfo.span1') }}</span>
               </div>
@@ -286,11 +286,10 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
-import type { BigNumber } from 'ethers'
 import { DateTime } from 'luxon'
 import { hasDateElapsed } from '@/utils/dates'
 import { type RoundInfo, getRoundInfo, getLeaderboardRoundInfo } from '@/api/round'
-import { chain } from '@/api/core'
+import { chain, isActiveApp } from '@/api/core'
 import { lsGet, lsSet } from '@/utils/localStorage'
 import { formatAmount as _formatAmount } from '@/utils/amounts'
 import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
@@ -343,7 +342,7 @@ const formatTotalInRound = computed(() => {
   }
 
   const { contributions, matchingPool } = roundInfo.value
-  const totalInRound = contributions.add(matchingPool)
+  const totalInRound = contributions + matchingPool
 
   return formatAmount(totalInRound)
 })
@@ -395,10 +394,11 @@ function formatDate(value: DateTime): string {
   return value.toLocaleString(DateTime.DATETIME_SHORT) || ''
 }
 
-function formatAmount(value: BigNumber | string): string {
+function formatAmount(value: bigint | string): string {
   if (!nativeTokenDecimals.value) {
     return ''
   }
+
   return _formatAmount(value, nativeTokenDecimals.value, 4)
 }
 
@@ -426,7 +426,7 @@ function addMatchingFunds(): void {
         close()
         // Reload matching pool size
         appStore.loadRoundInfo()
-        appStore.loadFactoryInfo()
+        appStore.loadClrFundInfo()
       },
     },
   })

@@ -717,16 +717,15 @@ import { useVuelidate } from '@vuelidate/core'
 import { required, requiredIf, email, maxLength, url, helpers } from '@vuelidate/validators'
 import type { RecipientApplicationData } from '@/api/types'
 import type { Project } from '@/api/projects'
-import { isTransactionInSubgraph } from '@/api/subgraph'
 import { formToProjectInterface } from '@/api/projects'
-import { chain, showComplianceRequirement, isOptimisticRecipientRegistry } from '@/api/core'
+import { chain, showComplianceRequirement } from '@/api/core'
 import { DateTime } from 'luxon'
 import { useRecipientStore, useAppStore, useUserStore } from '@/stores'
-import { waitForTransactionAndCheck } from '@/utils/contracts'
+import { waitForTransaction } from '@/utils/contracts'
 import { addRecipient as _addRecipient } from '@/api/recipient-registry'
 import { isValidEthAddress, resolveEns } from '@/utils/accounts'
-import * as isIPFS from 'is-ipfs'
 import { toReactive } from '@vueuse/core'
+import { IPFS } from '@/api/ipfs'
 
 const route = useRoute()
 const router = useRouter()
@@ -798,8 +797,7 @@ const txHash = ref('')
 const txError = ref('')
 
 function validIpfsHash(hash: string): boolean {
-  const isValid = Boolean(hash) && isIPFS.cid(hash)
-  return isValid
+  return IPFS.isValidCid(hash)
 }
 
 const isNavDisabled = computed<boolean>(
@@ -942,16 +940,9 @@ async function addRecipient() {
         throw { message: 'round over' }
       }
 
-      await waitForTransactionAndCheck(
-        _addRecipient(
-          recipientRegistryAddress.value,
-          recipient.value,
-          recipientRegistryInfo.value.deposit,
-          currentUser.value.walletProvider.getSigner(),
-        ),
-        receipt => {
-          return isOptimisticRecipientRegistry ? isTransactionInSubgraph(receipt) : Promise.resolve(true)
-        },
+      const signer = await userStore.getSigner()
+      await waitForTransaction(
+        _addRecipient(recipientRegistryAddress.value, recipient.value, recipientRegistryInfo.value.deposit, signer),
         hash => (txHash.value = hash),
       )
 
@@ -1190,7 +1181,11 @@ async function checkEns(): Promise<void> {
   &:hover {
     background: var(--bg-primary-color);
     border: 2px solid var(--border-color);
-    box-shadow: 0px 4px 16px 0px 25, 22, 35, 0.4;
+    box-shadow:
+      0px 4px 16px 0px 25,
+      22,
+      35,
+      0.4;
   }
   &:optional {
     border: 2px solid var(--border-color);

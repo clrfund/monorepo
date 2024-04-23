@@ -1,14 +1,14 @@
 import { Address, BigInt } from '@graphprotocol/graph-ts'
 import { OptimisticRecipientRegistry as RecipientRegistryContract } from '../generated/OptimisticRecipientRegistry/OptimisticRecipientRegistry'
 
-import { RecipientRegistry, FundingRoundFactory } from '../generated/schema'
+import { RecipientRegistry, ClrFund } from '../generated/schema'
 import { OptimisticRecipientRegistry as RecipientRegistryTemplate } from '../generated/templates'
 
 /*
  * Create the recipient registry entity
  */
 export function createRecipientRegistry(
-  fundingRoundFactoryId: string,
+  clrFundId: string,
   recipientRegistryAddress: Address
 ): RecipientRegistry {
   let recipientRegistryId = recipientRegistryAddress.toHexString()
@@ -41,7 +41,7 @@ export function createRecipientRegistry(
   if (!owner.reverted) {
     recipientRegistry.owner = owner.value
   }
-  recipientRegistry.fundingRoundFactory = fundingRoundFactoryId
+  recipientRegistry.clrFund = clrFundId
   recipientRegistry.save()
 
   return recipientRegistry
@@ -59,17 +59,17 @@ export function loadRecipientRegistry(
     let recipientRegistryContract = RecipientRegistryContract.bind(address)
     let controller = recipientRegistryContract.try_controller()
     if (!controller.reverted) {
-      // Recipient registry's controller must be the factory
-      let factoryId = controller.value.toHexString()
-      let factory = FundingRoundFactory.load(factoryId)
-      if (factory) {
+      // Recipient registry's controller must be the ClrFund contract
+      let clrFundId = controller.value.toHexString()
+      let clrFund = ClrFund.load(clrFundId)
+      if (clrFund) {
         /* This is our registry, create it */
-        recipientRegistry = createRecipientRegistry(factory.id, address)
+        recipientRegistry = createRecipientRegistry(clrFund.id, address)
 
         // update factory
-        factory.recipientRegistry = recipientRegistryId
-        factory.recipientRegistryAddress = address
-        factory.save()
+        clrFund.recipientRegistry = recipientRegistryId
+        clrFund.recipientRegistryAddress = address
+        clrFund.save()
       }
     }
   }

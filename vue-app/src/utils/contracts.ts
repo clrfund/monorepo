@@ -1,7 +1,20 @@
-import type { Contract } from 'ethers'
-import type { TransactionResponse, TransactionReceipt } from '@ethersproject/abstract-provider'
+import type { TransactionResponse, TransactionReceipt, Signer } from 'ethers'
+import { Contract } from 'ethers'
+import { FundingRound, Poll } from '@/api/abi'
 import { provider, MAX_WAIT_DEPTH } from '@/api/core'
-import { isSameAddress } from '@/utils/accounts'
+import { getEventArg } from '@clrfund/common'
+
+/**
+ * Return the handle to the Poll contract
+ * @param fundingRoundAddress The funding round contract address
+ * @param signer The signer handle
+ * @returns The Poll contract handle
+ */
+export async function getPollContract(fundingRoundAddress: string, signer: Signer): Promise<Contract> {
+  const fundingRound = new Contract(fundingRoundAddress, FundingRound, signer)
+  const pollAddress = await fundingRound.poll()
+  return new Contract(pollAddress, Poll, signer)
+}
 
 export async function waitForTransaction(
   pendingTransaction: Promise<TransactionResponse>,
@@ -34,62 +47,9 @@ export async function waitForTransaction(
   return transactionReceipt
 }
 
-/**
- * Wait for transaction to be mined and available on the subgraph
- * @param pendingTransaction transaction to wait and check for
- * @param checkFn the check function
- * @param onTransactionHash callback function with the transaction hash
- * @returns transaction receipt
- */
-export async function waitForTransactionAndCheck(
-  pendingTransaction: Promise<TransactionResponse>,
-  checkFn: (receipt: TransactionReceipt) => Promise<boolean>,
-  onTransactionHash?: (hash: string) => void,
-): Promise<TransactionReceipt> {
-  const receipt = await waitForTransaction(pendingTransaction, onTransactionHash)
-
-  return new Promise(resolve => {
-    async function checkAndWait(depth = 0) {
-      if (await checkFn(receipt)) {
-        resolve(receipt)
-      } else {
-        if (depth > MAX_WAIT_DEPTH) {
-          throw new Error('Time out waiting for transaction ' + receipt.transactionHash)
-        }
-
-        const timeoutMs = 2 ** depth * 10
-        await new Promise(res => setTimeout(res, timeoutMs))
-        checkAndWait(depth + 1)
-      }
-    }
-
-    checkAndWait()
-  })
-}
-
-export function getEventArg(
-  transactionReceipt: TransactionReceipt,
-  contract: Contract,
-  eventName: string,
-  argumentName: string,
-): any {
-  // eslint-disable-next-line
-  for (const log of transactionReceipt.logs || []) {
-    if (!isSameAddress(log.address, contract.address)) {
-      continue
-    }
-    const event = contract.interface.parseLog(log)
-    // eslint-disable-next-line
-    if (event && event.name === eventName) {
-      return event.args[argumentName]
-    }
-  }
-  throw new Error(
-    `Event ${eventName} from contract ${contract.address} not found in transaction ${transactionReceipt.transactionHash}`,
-  )
-}
-
 export async function isTransactionMined(hash: string): Promise<boolean> {
   const receipt = await provider.getTransactionReceipt(hash)
   return !!receipt
 }
+
+export { getEventArg }
