@@ -2,7 +2,7 @@
   <div>
     <loader v-if="isLoading"></loader>
     <div :class="`grid ${showCartPanel ? 'cart-open' : 'cart-closed'}`" v-if="project">
-      <img class="project-image banner" :src="project.bannerImageUrl" :alt="project.name" />
+      <div class="banner"></div>
       <project-profile class="details" :project="project" :previewMode="false" />
       <div class="sticky-column">
         <div class="desktop">

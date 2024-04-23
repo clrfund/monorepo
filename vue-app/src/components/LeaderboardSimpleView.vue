@@ -24,9 +24,6 @@
             {{ rank }}
           </div>
         </div>
-        <div class="desktop project-image">
-          <img v-if="projectImageUrl" :src="projectImageUrl" :alt="project.name" />
-        </div>
         <div class="project-name">
           {{ project.name }}
         </div>
