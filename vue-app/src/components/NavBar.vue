@@ -4,9 +4,6 @@
       <img class="clr-logo" :alt="operator" src="@/assets/logo.svg" />
     </links>
     <div class="btn-row">
-      <div>
-        <img class="navbar-btn" :src="sunImageUrl" @click="toggleTheme()" />
-      </div>
       <div v-click-outside="closeHelpDropdown" class="help-dropdown">
         <img class="navbar-btn" src="@/assets/help.svg" @click="toggleHelpDropdown()" />
         <div v-if="showHelpDropdown" id="myHelpDropdown" class="button-menu">
@@ -138,11 +135,6 @@ function closeHelpDropdown(): void {
 
 function toggleHelpDropdown(): void {
   showHelpDropdown.value = !showHelpDropdown.value
-}
-
-function toggleTheme(): void {
-  appStore.toggleTheme()
-  lsSet(themeKey.value, appStore.theme)
 }
 </script>
 
