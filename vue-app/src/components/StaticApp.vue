@@ -28,16 +28,6 @@ const { user: walletUser } = storeToRefs(wallet)
 onMounted(async () => {
   await appStore.loadStaticClrFundInfo()
   appStore.isAppReady = true
-
-  if (currentRound.value) {
-    router.push({
-      name: 'leaderboard',
-      params: {
-        network: currentRound.value.network,
-        address: currentRound.value.fundingRoundAddress,
-      },
-    })
-  }
 })
 
 watch(walletUser, async () => {
