@@ -81,7 +81,6 @@ async function checkAllocation() {
   }
 
   if (tally.value) {
-    console.log('tally.value', tally.value)
     allocatedAmount.value = await getAllocatedAmount(
       currentRound.value.fundingRoundAddress,
       currentRound.value.nativeTokenDecimals,

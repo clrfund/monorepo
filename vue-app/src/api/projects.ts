@@ -291,3 +291,19 @@ export function staticDataToProjectInterface(project: any): Project {
     isLocked: false,
   }
 }
+
+/**
+ * Get the list of projects for a static round
+ * @param roundAddress The funding round contract address
+ * @param network The network
+ * @returns Array of projects
+ */
+export async function getProjectsForStaticRound(roundAddress: string, network: string): Promise<Project[]> {
+  const data = await getLeaderboardData(roundAddress, network)
+  if (!data) {
+    return []
+  }
+
+  const projects = data.projects.map(staticDataToProjectInterface)
+  return projects
+}

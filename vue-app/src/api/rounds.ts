@@ -1,5 +1,6 @@
 import sdk from '@/graphql/sdk'
 import extraRounds from '@/rounds/rounds.json'
+import { getNumber } from 'ethers'
 import { chain, voidedRounds, isActiveApp, clrfundContractAddress } from './core'
 
 export interface Round {
@@ -36,7 +37,7 @@ export async function getRounds(): Promise<Round[]> {
   }
 
   const rounds: Round[] = extraRounds.map(({ address, network, startTime, votingDeadline }, index): Round => {
-    return { index, address, network, hasLeaderboard: true, startTime, votingDeadline }
+    return { index, address, network, hasLeaderboard: true, startTime: getNumber(startTime), votingDeadline }
   })
 
   const leaderboardRounds = new Set(rounds.map(r => toRoundId({ network: r.network || '', address: r.address })))
