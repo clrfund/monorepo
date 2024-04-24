@@ -168,10 +168,6 @@ VITE_GOOGLE_SPREADSHEET_ID=
 
 See [How to set netlify function directory](https://docs.netlify.com/functions/optional-configuration/?fn-language=ts)
 
-2. Set environment variable: `AWS_LAMBDA_JS_RUNTIME=nodejs18.x`
-
-This environment variable is needed for the `sponsor.js` function. If not set, it will throw error `fetch not found`.
-
 
 #### Deploy on IPFS
 
