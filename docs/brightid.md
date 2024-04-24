@@ -58,12 +58,12 @@ By default, the clrfund app will connect to the BrightId node run by clrfund, ht
 ### General linking error
 1. check for sponsorship status from clrfund's brightid node:
   - https://brightid.clr.fund/brightid/v6/sponsorships/WALLET_ADDRESS
-3. check the clrfund's brightid node docker logs
+2. check the clrfund's brightid node docker logs
   - look for sponsorship event listening error
   ```.sh
     docker logs --since 1440m brightid-node-docker-db-1
   ```
-4. check for sponsorship token balance
+3. check for sponsorship token balance
   - for clrfund-arbitrum context: https://brightid.clr.fund/brightid/v6/apps/clrfund-arbitrum
 ### Signature is not valid
 1. Check that the verifier address is correct, it is the `ethSigningAddress` from https://brightid.clr.fund
