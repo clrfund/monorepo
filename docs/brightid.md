@@ -18,13 +18,13 @@ USER_REGISTRY_TYPE=brightid
 
 Available envs:
 
-| Network/Env | Context | Sponsor Contract |
-| ----------- | ------- | ---------------- |
-| arbitrum | clrfund-arbitrum |0x669A55Dd17a2f9F4dacC37C7eeB5Ed3e13f474f9|
-| arbitrum rinkeby | clrfund-arbitrum-rinkeby | 0xC7c81634Dac2de4E7f2Ba407B638ff003ce4534C |
-| arbitrum sepolia | clrfund-arbitrum-goerli | 0xF1ef516dEa7e6Dd334996726D58029Ee9bAD081D |
-| goerli | clrfund-goerli | 0xF045234A776C87060DEEc5689056455A24a59c08 |
-| xdai | clrfund-gnosischain |0x669A55Dd17a2f9F4dacC37C7eeB5Ed3e13f474f9|
+| Network/Env | Context |
+| ----------- | ------- |
+| arbitrum | clrfund-arbitrum |
+| arbitrum rinkeby | clrfund-arbitrum-rinkeby |
+| arbitrum sepolia | clrfund-arbitrum-goerli |
+| goerli | clrfund-goerli |
+| xdai | clrfund-gnosischain |
 
 ```.sh
 # /vue-app/.env
@@ -35,7 +35,6 @@ BRIGHTID_CONTEXT={CONTEXT}
 ```
 
 Note: the BrightID context is specific to the BrightID network - it's independent from the Ethereum network you choose to run the app on. It refers to the BrightID app context where you want to burn sponsorship tokens.
-The `Sponsor Contract` is the contract set up in the BrightID node to track the sponsorship event.
 
 The BrightID context can be found here: https://apps.brightid.org/#nodes
 
@@ -55,27 +54,9 @@ BRIGHTID_VERIFIER_ADDR=0xdbf0b2ee9887fe11934789644096028ed3febe9c
 By default, the clrfund app will connect to the BrightId node run by clrfund, https://brightid.clr.fund.
 
 
-**#4 configure the BrightID sponsorship page**
-By default, the clrfund app will sponsor the BrightId users using the smart contract event logging method. The `Sponsor` contract is listed in the step #2 above.
-
-Alternatively, you can configure the clrfund app to use the BrightId sponsorship api to submit the sponsorship request directly by setting the following environment variables. Only one of VITE_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY or VITE_BRIGHTID_SPONSOR_KEY needs to be set. If VITE_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY is set, the clrfund app must be deployed to the netlify platform as it will use the netlify serverless function. The netlify option is used if you want to protect the BrightId sponsor key.
-
-The BrightId sponsor key can be generated using the random Nacl keypair at [https://tweetnacl.js.org/#/sign](https://tweetnacl.js.org/#/sign).  Give the public key part to the BrightId folks to setup the context and put the private key part in VITE_BRIGHTID_SPONSOR_KEY or VITE_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY.
-
-```.sh
-# /vue-app/.env
-VITE_BRIGHTID_SPONSOR_API_URL=https://brightid.clr.fund/brightid/v6/operations
-VITE_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY=
-VITE_BRIGHTID_SPONSOR_KEY=
-```
-
-**#5 netlify function setup**
-See the [deployment guide](./deploymnet.md) for special setup to use the sponsor netlify function.
-
 ## Troubleshooting linking failure
-### Sponsorship timeout
-1. check for sponsorship status https://app.brightid.org/node/v6/sponsorships/WALLET_ADDRESS
-2. check for sponsorship status from clrfund's brightid node:
+### General linking error
+1. check for sponsorship status from clrfund's brightid node:
   - https://brightid.clr.fund/brightid/v6/sponsorships/WALLET_ADDRESS
 3. check the clrfund's brightid node docker logs
   - look for sponsorship event listening error
@@ -86,7 +67,7 @@ See the [deployment guide](./deploymnet.md) for special setup to use the sponsor
   - for clrfund-arbitrum context: https://brightid.clr.fund/brightid/v6/apps/clrfund-arbitrum
 ### Signature is not valid
 1. Check that the verifier address is correct, it is the `ethSigningAddress` from https://brightid.clr.fund
-2. You can update the verifier address using `sponsorContract.setSettings()`
+2. You can update the verifier address using `BrightIdUserRegistryContract.setSettings()`
 
 
 ## Resources
