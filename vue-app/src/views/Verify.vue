@@ -136,7 +136,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import QRCode from 'qrcode'
-import { getBrightIdLink, getBrightIdUniversalLink, registerUser, selfSponsor, sponsorUser } from '@/api/bright-id'
+import { getBrightIdLink, getBrightIdUniversalLink, registerUser } from '@/api/bright-id'
 import { getProofSnapshot, getProofMerkle, registerUserSnapshot, registerUserMerkle } from '@/api/user'
 import Transaction from '@/components/Transaction.vue'
 import Loader from '@/components/Loader.vue'
@@ -145,11 +145,11 @@ import { waitForTransaction } from '@/utils/contracts'
 import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
-import { UserRegistryType, isBrightIdRequired, brightIdSponsorUrl, userRegistryType } from '@/api/core'
+import { UserRegistryType, isBrightIdRequired, userRegistryType } from '@/api/core'
 import { assert } from '@/utils/assert'
 
 interface VerificationStep {
-  page: 'connect' | 'registration' | 'sponsorship'
+  page: 'connect' | 'registration'
 }
 
 function getVerificationSteps(): Array<VerificationStep> {

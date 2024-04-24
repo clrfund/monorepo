@@ -72,10 +72,8 @@ export const maxDecimals = Number(import.meta.env.VUE_APP_MAX_DECIMAL || 1)
 // the number of records per batch in the `pending submissions` export file
 export const exportBatchSize = Number(import.meta.env.VITE_EXPORT_BATCH_SIZE) || 60
 
-// BrightId sponsorhip stuff, set these parameters to automatically sponsor user using the brightId URL
-export const brightIdSponsorKey = import.meta.env.VITE_BRIGHTID_SPONSOR_KEY
+// BrightId url for querying user verification
 export const brightIdNodeUrl = import.meta.env.VITE_BRIGHTID_NODE_URL || 'https://brightid.clr.fund/brightid/v6'
-export const brightIdSponsorUrl = import.meta.env.VITE_BRIGHTID_SPONSOR_API_URL
 
 // wait for data to sync with the subgraph
 export const MAX_WAIT_DEPTH = Number(import.meta.env.VITE_MAX_WAIT_DEPTH) || 15
