@@ -39,7 +39,7 @@ export default {
       url: 'http://127.0.0.1:8555',
       gasLimit: GAS_LIMIT,
     } as any,
-    goerli: {
+    sepolia: {
       url: process.env.JSONRPC_HTTP_URL || 'http://127.0.0.1:8545',
       accounts,
     },
@@ -67,10 +67,6 @@ export default {
       url: process.env.JSONRPC_HTTP_URL || 'https://sepolia.optimism.io',
       accounts,
     },
-    sepolia: {
-      url: process.env.JSONRPC_HTTP_URL || 'http://127.0.0.1:8545',
-      accounts,
-    },
     'mantle-testnet': {
       url: process.env.JSONRPC_HTTP_URL || 'https://rpc.testnet.mantle.xyz',
       accounts,
@@ -89,6 +85,7 @@ export default {
         process.env.OPTIMISMSCAN_API_KEY || 'YOUR_OPTIMISMSCAN_API_KEY',
       'optimism-sepolia':
         process.env.OPTIMISMSCAN_API_KEY || 'YOUR_OPTIMISMSCAN_API_KEY',
+      sepolia: process.env.ETHERSCAN_API_KEY || 'YOUR_ETHERSCAN_API_KEY',
     },
     customChains: [
       {
