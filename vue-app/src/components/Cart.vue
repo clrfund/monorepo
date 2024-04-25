@@ -484,9 +484,9 @@ const errorMessage = computed<string | null>(() => {
   if (!currentUser.value) return t('dynamic.cart.error.connect_wallet')
   if (isBrightIdRequired.value) return t('dynamic.cart.error.need_to_setup_brightid')
   if (!currentUser.value.isRegistered) {
-    return userRegistryType === UserRegistryType.SIMPLE
-      ? t('dynamic.cart.error.user_not_registered', { operator })
-      : t('dynamic.cart.error.need_to_register')
+    return isUserRegistrationRequired
+      ? t('dynamic.cart.error.need_to_register')
+      : t('dynamic.cart.error.user_not_registered', { operator })
   }
   if (!isFormValid()) return t('dynamic.cart.error.invalid_contribution_amount')
   if (cart.value.length > MAX_CART_SIZE)
