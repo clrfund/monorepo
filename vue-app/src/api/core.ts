@@ -45,6 +45,7 @@ export enum UserRegistryType {
   SIMPLE = 'simple',
   SNAPSHOT = 'snapshot',
   MERKLE = 'merkle',
+  SEMAPHORE = 'semaphore',
 }
 
 if (!Object.values(UserRegistryType).includes(userRegistryType as UserRegistryType)) {
@@ -92,7 +93,11 @@ export const showComplianceRequirement = /^yes$/i.test(import.meta.env.VITE_SHOW
 
 export const isBrightIdRequired = userRegistryType === 'brightid'
 export const isOptimisticRecipientRegistry = recipientRegistryType === 'optimistic'
-export const isUserRegistrationRequired = userRegistryType !== UserRegistryType.SIMPLE
+export const isUserRegistrationRequired = [
+  UserRegistryType.BRIGHT_ID,
+  UserRegistryType.MERKLE,
+  UserRegistryType.SNAPSHOT,
+].includes(userRegistryType)
 
 // Try to get the next scheduled start date
 const nextStartDate = import.meta.env.VITE_NEXT_ROUND_START_DATE
