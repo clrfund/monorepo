@@ -13,7 +13,7 @@ export function handlePublishMessage(event: PublishMessage): void {
     return
   }
 
-  let pollEntityId = event.transaction.to!.toHex()
+  let pollEntityId = event.address
   let poll = Poll.load(pollEntityId)
   if (poll == null) {
     log.error('Error: handlePublishMessage failed poll not found {}', [
