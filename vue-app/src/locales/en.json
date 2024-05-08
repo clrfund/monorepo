@@ -1070,8 +1070,8 @@
     "div18": "Contributors",
     "div19": "legend",
     "div20": "RTD ROUND",
-    "div21": "Check out all the events and join them {link}!",
-    "linkDevcon": "here",
+    "div21": "{link}",
+    "linkDevcon": "Check out all the events and join them here!",
     "pluralism": "s",
     "more": "More on"
   },

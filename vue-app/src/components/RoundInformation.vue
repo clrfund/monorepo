@@ -476,6 +476,10 @@ const blockExplorer = computed(() => ({
   line-height: 120%;
   margin: 0;
 }
+.link-here {
+  text-decoration: underline;
+  color: var(--text-color);
+}
 .verified-container {
   align-self: flex-end;
 }
