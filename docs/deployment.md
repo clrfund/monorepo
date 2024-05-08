@@ -162,6 +162,8 @@ VITE_GOOGLE_SPREADSHEET_ID=
 
 ```
 
+Note: if VITE_SUBGRAPH_URL is not set, the app will try to get the round information from the vue-app/src/rounds.json file which can be generated using the `hardhat export-round` command.
+
 ##### Setup the netlify functions
 
 1. Set the `functions directory` to `vue-app/dist/lambda`.

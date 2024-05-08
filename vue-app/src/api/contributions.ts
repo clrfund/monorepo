@@ -1,4 +1,4 @@
-import { Contract, FixedNumber, parseUnits, id } from 'ethers'
+import { Contract, FixedNumber, parseUnits, id, AbiCoder } from 'ethers'
 import type { TransactionResponse, Signer } from 'ethers'
 import { Keypair, PubKey, PrivKey, Message, Command } from '@clrfund/common'
 
@@ -81,16 +81,17 @@ export async function getContributionAmount(fundingRoundAddress: string, contrib
   if (!fundingRoundAddress) {
     return 0n
   }
-  const data = await sdk.GetContributionsAmount({
-    fundingRoundAddress: fundingRoundAddress.toLowerCase(),
-    contributorAddress: contributorAddress.toLowerCase(),
-  })
-
-  if (!data.contributions.length) {
+  const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
+  try {
+    const abiCoder = AbiCoder.defaultAbiCoder()
+    const userData = abiCoder.encode(['address'], [contributorAddress])
+    const voiceCredits = await fundingRound.getVoiceCredits(contributorAddress, userData)
+    const voiceCreditFactor = await fundingRound.voiceCreditFactor()
+    return BigInt(voiceCredits) * BigInt(voiceCreditFactor)
+  } catch {
+    // ignore error as older contract does not expose the contributors info
     return 0n
   }
-
-  return BigInt(data.contributions[0].amount)
 }
 
 export async function getTotalContributed(fundingRoundAddress: string): Promise<{ count: number; amount: bigint }> {

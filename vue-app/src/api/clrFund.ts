@@ -1,5 +1,7 @@
-import { clrfundContractAddress, clrFundContract } from './core'
+import { clrfundContractAddress, clrFundContract, isActiveApp, provider } from './core'
 import sdk from '@/graphql/sdk'
+import { ERC20 } from './abi'
+import { Contract } from 'ethers'
 
 export interface ClrFund {
   nativeTokenAddress: string
@@ -19,19 +21,27 @@ export async function getClrFundInfo() {
   let recipientRegistryAddress = ''
 
   try {
-    const data = await sdk.GetClrFundInfo({
-      clrFundAddress: clrfundContractAddress.toLowerCase(),
-    })
+    if (isActiveApp) {
+      const data = await sdk.GetClrFundInfo({
+        clrFundAddress: clrfundContractAddress.toLowerCase(),
+      })
+      const nativeTokenInfo = data.clrFund?.nativeTokenInfo
+      if (nativeTokenInfo) {
+        nativeTokenAddress = nativeTokenInfo.tokenAddress || ''
+        nativeTokenSymbol = nativeTokenInfo.symbol || ''
+        nativeTokenDecimals = Number(nativeTokenInfo.decimals) || 0
+      }
 
-    const nativeTokenInfo = data.clrFund?.nativeTokenInfo
-    if (nativeTokenInfo) {
-      nativeTokenAddress = nativeTokenInfo.tokenAddress || ''
-      nativeTokenSymbol = nativeTokenInfo.symbol || ''
-      nativeTokenDecimals = Number(nativeTokenInfo.decimals) || 0
+      userRegistryAddress = data.clrFund?.contributorRegistryAddress || ''
+      recipientRegistryAddress = data.clrFund?.recipientRegistryAddress || ''
+    } else {
+      nativeTokenAddress = await clrFundContract.nativeToken()
+      const nativeTokenContract = new Contract(nativeTokenAddress, ERC20, provider)
+      nativeTokenSymbol = await nativeTokenContract.symbol()
+      nativeTokenDecimals = await nativeTokenContract.decimals()
+      userRegistryAddress = await clrFundContract.userRegistry()
+      recipientRegistryAddress = await clrFundContract.recipientRegistry()
     }
-
-    userRegistryAddress = data.clrFund?.contributorRegistryAddress || ''
-    recipientRegistryAddress = data.clrFund?.recipientRegistryAddress || ''
   } catch (err) {
     /* eslint-disable-next-line no-console */
     console.error('Failed GetClrFundInfo', err)
