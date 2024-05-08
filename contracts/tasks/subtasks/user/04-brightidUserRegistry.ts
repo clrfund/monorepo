@@ -10,6 +10,10 @@ import { EContracts } from '../../../utils/types'
 const subtask = Subtask.getInstance()
 const storage = ContractStorage.getInstance()
 
+// @TODO remove this on the next major release when the sponsor contract is removed
+// Hardcode with a dummy address for now
+const BRIGHTID_SPONSOR = '0xC7c81634Dac2de4E7f2Ba407B638ff003ce4534C'
+
 /**
  * Deploy step registration and task itself
  */
@@ -58,15 +62,7 @@ subtask
       'verifier'
     )
 
-    let sponsor = subtask.tryGetConfigField<string>(
-      EContracts.BrightIdUserRegistry,
-      'sponsor'
-    )
-    if (!sponsor) {
-      sponsor = storage.mustGetAddress(EContracts.BrightIdSponsor, network)
-    }
-
-    const args = [encodeBytes32String(context), verifier, sponsor]
+    const args = [encodeBytes32String(context), verifier, BRIGHTID_SPONSOR]
     const brightidUserRegistryContract = await subtask.deployContract(
       EContracts.BrightIdUserRegistry,
       { signer: deployer, args }

@@ -56,30 +56,6 @@
       </div>
       <div class="form-area">
         <div class="application">
-          <div v-if="currentPage === 'sponsorship'">
-            <h2 class="step-title">{{ $t('verify.get_sponsored_header') }}</h2>
-            <p>
-              {{ $t('verify.get_sponsored_text') }}
-            </p>
-            <div class="transaction">
-              <div>
-                <div class="row row-gap">
-                  <button
-                    type="button"
-                    class="btn-action btn-block"
-                    @click="selfSponsorAndWait"
-                    :disabled="selfSponsorTxHash.length !== 0 || loadingTx"
-                  >
-                    {{ $t('verify.get_sponsored_cta') }}
-                  </button>
-                  <button type="button" class="btn-secondary btn-block" @click="skipSponsorship">
-                    {{ $t('verify.skip_sponsorship') }}
-                  </button>
-                </div>
-                <div class="error" v-if="sponsorTxError">{{ sponsorTxError }}</div>
-              </div>
-            </div>
-          </div>
           <div v-if="currentPage === 'connect'">
             <h2 class="step-title">{{ $t('verify.h2_1') }}</h2>
             <p>
@@ -88,16 +64,8 @@
             <p>
               {{ $t('verify.click_next') }}
             </p>
-            <transaction
-              class="transaction"
-              v-if="autoSponsorError"
-              :display-close-btn="false"
-              hash=""
-              :error="autoSponsorError"
-            >
-            </transaction>
             <div class="qr">
-              <loader v-if="!appLink && !autoSponsorError"></loader>
+              <loader v-if="!appLink"></loader>
               <div class="instructions" v-if="appLink">
                 <p class="desktop" v-if="appLinkQrCode">
                   {{ $t('verify.p4') }}
@@ -124,14 +92,6 @@
                   </em>
                 </p>
                 <div class="row row-gap qr-code">
-                  <button
-                    v-if="showBackToSponsorshipButton"
-                    type="button"
-                    class="btn-action btn-block"
-                    @click="backToSponsorship"
-                  >
-                    {{ $t('verify.previous') }}
-                  </button>
                   <button type="button" class="btn-secondary btn-block" @click="checkVerificationStatus">
                     {{ $t('verify.next') }}
                   </button>
@@ -176,7 +136,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import QRCode from 'qrcode'
-import { getBrightIdLink, getBrightIdUniversalLink, registerUser, selfSponsor, sponsorUser } from '@/api/bright-id'
+import { getBrightIdLink, getBrightIdUniversalLink, registerUser } from '@/api/bright-id'
 import { getProofSnapshot, getProofMerkle, registerUserSnapshot, registerUserMerkle } from '@/api/user'
 import Transaction from '@/components/Transaction.vue'
 import Loader from '@/components/Loader.vue'
@@ -185,19 +145,17 @@ import { waitForTransaction } from '@/utils/contracts'
 import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
-import { UserRegistryType, isBrightIdRequired, brightIdSponsorUrl, userRegistryType } from '@/api/core'
+import { UserRegistryType, isBrightIdRequired, userRegistryType } from '@/api/core'
 import { assert } from '@/utils/assert'
 
 interface VerificationStep {
-  page: 'connect' | 'registration' | 'sponsorship'
+  page: 'connect' | 'registration'
 }
 
 function getVerificationSteps(): Array<VerificationStep> {
   switch (userRegistryType) {
     case UserRegistryType.BRIGHT_ID:
-      return brightIdSponsorUrl
-        ? [{ page: 'connect' }, { page: 'registration' }]
-        : [{ page: 'sponsorship' }, { page: 'connect' }, { page: 'registration' }]
+      return [{ page: 'connect' }, { page: 'registration' }]
     default:
       return [{ page: 'registration' }]
   }
@@ -224,11 +182,7 @@ const registrationTxError = ref('')
 const notAuthorized = ref(false)
 const loadingTx = ref(false)
 const gettingProof = ref(false)
-const isSponsoring = ref(!brightIdSponsorUrl)
 const showVerificationStatus = ref(false)
-const autoSponsorError = ref('')
-const sponsorTxError = ref('')
-const selfSponsorTxHash = ref('')
 
 const brightId = computed(() => currentUser.value?.brightId)
 
@@ -236,9 +190,6 @@ const currentStep = computed(() => {
   if (isBrightIdRequired) {
     if (!brightId.value) {
       return 0
-    }
-    if (isSponsoring.value) {
-      return stepNumbers['sponsorship']
     }
     if (!brightId.value.isVerified) {
       return stepNumbers['connect']
@@ -254,19 +205,6 @@ const currentStep = computed(() => {
 const currentPage = computed(() => {
   return steps[currentStep.value].page
 })
-
-// if the sponsor url is not defined, we are doing self sponsorship, show the button
-// to allow users to go back to that page
-const showBackToSponsorshipButton = !brightIdSponsorUrl
-
-function backToSponsorship() {
-  isSponsoring.value = true
-  showVerificationStatus.value = false
-}
-
-function skipSponsorship() {
-  isSponsoring.value = false
-}
 
 async function checkVerificationStatus() {
   showVerificationStatus.value = false
@@ -295,24 +233,8 @@ onMounted(async () => {
   // mounted
   if (isBrightIdRequired && currentUser.value && !brightId.value?.isVerified) {
     const walletAddress = currentUser.value.walletAddress
-    // send sponsorship request if automatic sponsoring is enabled
-    if (brightIdSponsorUrl) {
-      try {
-        const res = await sponsorUser(walletAddress)
-        if (!res.hash) {
-          autoSponsorError.value = res.error ? res.error : JSON.stringify(res)
-          return
-        }
-      } catch (err) {
-        const errorMessage = (err as Error).message
-        autoSponsorError.value =
-          'Unable to sponsor user. Make sure the brightId node is setup correctly.' + errorMessage
-        return
-      }
-    }
 
     // Present app link and QR code
-
     appLink.value = getBrightIdUniversalLink(walletAddress)
     const qrcodeLink = getBrightIdLink(walletAddress)
     QRCode.toDataURL(qrcodeLink, (error, url: string) => {
@@ -328,26 +250,6 @@ watch(currentUser, () => {
     router.replace({ name: 'verify' })
   }
 })
-
-async function selfSponsorAndWait() {
-  if (!userRegistryAddress.value) {
-    sponsorTxError.value = 'Missing the user registry address'
-    return
-  }
-
-  const signer = await userStore.getSigner()
-  loadingTx.value = true
-  sponsorTxError.value = ''
-
-  try {
-    await waitForTransaction(selfSponsor(userRegistryAddress.value, signer), hash => (selfSponsorTxHash.value = hash))
-    isSponsoring.value = false
-  } catch (error) {
-    sponsorTxError.value = (error as Error).message
-  } finally {
-    loadingTx.value = false
-  }
-}
 
 async function register() {
   const signer = await userStore.getSigner()
@@ -418,8 +320,6 @@ function isStepUnlocked(step: number): boolean {
 
   const stepName = steps[step].page
   switch (stepName) {
-    case 'sponsorship':
-      return !isSponsoring.value
     case 'connect':
       return !!currentUser.value?.brightId?.isVerified
     case 'registration':
