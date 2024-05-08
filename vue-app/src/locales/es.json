@@ -659,6 +659,7 @@
     "hero": {
       "title": "¡Envía tus proyectos favoritos a la Luna!",
       "subtitle": "Cada proyecto al que contribuyas obtiene una parte de financiamiento adicional.",
+      "link": "",
       "info": "Cómo funciona"
     },
     "callout": {
@@ -1070,6 +1071,7 @@
     "div19": "leyenda",
     "div20": "Sin ronda programada",
     "div21": "Aún no hemos programado una ronda de financiamiento. ¡Mantente atento/a!",
+    "linkDevcon": "",
     "pluralism": "s",
     "more": "Más"
   },

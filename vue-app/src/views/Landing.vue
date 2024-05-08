@@ -10,9 +10,13 @@
         <div>
           <div class="hero-content">
             <h1>{{ $t('landing.hero.title') }}</h1>
-            <div id="subtitle" class="subtitle">
-              {{ $t('landing.hero.subtitle') }}
-            </div>
+            <i18n-t id="subtitle" class="subtitle" keypath="landing.hero.subtitle" tag="div" scope="global">
+              <template v-slot:link>
+                <links class="link-here" to="https://devcon.org/en/road-to-devcon/" hideArrow>{{
+                  $t('landing.hero.link')
+                }}</links>
+              </template>
+            </i18n-t>
             <div class="btn-group">
               <links v-if="leaderboardRoute" class="btn-action" :to="leaderboardRoute">
                 {{ $t('landing.button.leaderboard') }}
@@ -284,6 +288,11 @@ ol li::before {
     width: 100%;
     margin: 0.5rem 0;
   }
+}
+.link-here {
+  text-decoration: underline;
+  margin-bottom: 1rem;
+  color: var(--text-secondary);
 }
 .link-li {
   text-decoration: underline;

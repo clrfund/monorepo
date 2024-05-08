@@ -657,13 +657,14 @@
       "leaderboard": "View Results"
     },
     "hero": {
-      "title": "Send your favorite projects to the moon!",
-      "subtitle": "Every project you contribute to gets a portion of extra funding.",
+      "title": "Join the Road to Devcon and support Ethereum communities in Southeast Asia!",
+      "subtitle": "Every community you contribute to gets a portion of extra funding. Check out all the events and join them {link}!",
+      "link": "here",
       "info": "How it works"
     },
     "callout": {
-      "title": "Join the funding round",
-      "paragraph": "Add your project to the next funding round. If you're working on anything related to public goods, you can join in.",
+      "title": "Join the Road to Devcon funding round",
+      "paragraph": "If your community is a Road to Devcon grantee, you can join the funding round.",
       "action": "Add project",
       "deadline": "to join"
     },
@@ -1068,8 +1069,9 @@
     "div17": "Contributions total",
     "div18": "Contributors",
     "div19": "legend",
-    "div20": "No scheduled round",
-    "div21": "We haven't yet scheduled a funding round. Stay tuned!",
+    "div20": "RTD ROUND",
+    "div21": "Check out all the events and join them {link}!",
+    "linkDevcon": "here",
     "pluralism": "s",
     "more": "More on"
   },
