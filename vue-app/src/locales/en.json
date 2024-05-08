@@ -658,8 +658,8 @@
     },
     "hero": {
       "title": "Join the Road to Devcon and support Ethereum communities in Southeast Asia!",
-      "subtitle": "Every community you contribute to gets a portion of extra funding. Check out all the events and join them {link}!",
-      "link": "here",
+      "subtitle": "Every community you contribute to gets a portion of extra funding. {link}",
+      "link": "Check out all the events and join them here!",
       "info": "How it works"
     },
     "callout": {
