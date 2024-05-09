@@ -6,7 +6,12 @@ import { genRandomSalt } from 'maci-crypto'
 import { Keypair } from '@clrfund/common'
 
 import { TREE_ARITY, ZERO_ADDRESS, UNIT } from '../utils/constants'
-import { getGasUsage, getEventArg, deployContract } from '../utils/contracts'
+import {
+  getGasUsage,
+  getEventArg,
+  deployContract,
+  getContractAt,
+} from '../utils/contracts'
 import { deployPoseidonLibraries, deployMaciFactory } from '../utils/testutils'
 import { MaciParameters } from '../utils/maciParameters'
 import { HardhatEthersSigner } from '@nomicfoundation/hardhat-ethers/signers'
@@ -15,6 +20,7 @@ import {
   ClrFundDeployer,
   FundingRoundFactory,
   MACIFactory,
+  Poll,
 } from '../typechain-types'
 import { EContracts } from '../utils/types'
 
@@ -318,7 +324,11 @@ describe('Clr fund deployer', async () => {
         'pollAddr'
       )
 
-      const poll = await ethers.getContractAt('Poll', pollAddress.poll)
+      const poll = await getContractAt<Poll>(
+        EContracts.Poll,
+        pollAddress.poll,
+        ethers
+      )
       const roundCoordinatorPubKey = await poll.coordinatorPubKey()
       expect(roundCoordinatorPubKey.x).to.equal(coordinatorPubKey.x)
       expect(roundCoordinatorPubKey.y).to.equal(coordinatorPubKey.y)

@@ -12,6 +12,7 @@ import {
   Poll,
   Tally,
 } from '../../typechain-types'
+import { getContractAt } from '../../utils/contracts'
 
 /** A list of functions to get contract constructor arguments from the contract */
 const ConstructorArgumentsGetters: Record<
@@ -89,10 +90,11 @@ async function getPollConstructorArguments(
   address: string,
   ethers: HardhatEthersHelpers
 ): Promise<Array<unknown>> {
-  const pollContract = (await ethers.getContractAt(
+  const pollContract = await getContractAt<Poll>(
     EContracts.Poll,
-    address
-  )) as BaseContract as Poll
+    address,
+    ethers
+  )
 
   const [, duration] = await pollContract.getDeployTimeAndDuration()
   const [maxValues, treeDepths, coordinatorPubKey, extContracts] =

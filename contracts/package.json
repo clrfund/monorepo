@@ -18,7 +18,7 @@
     "@openzeppelin/contracts": "4.9.0",
     "@pinata/sdk": "^2.1.0",
     "dotenv": "^8.2.0",
-    "maci-contracts": "0.0.0-ci.153326b",
+    "maci-contracts": "1.2.0",
     "solidity-rlp": "2.0.8"
   },
   "devDependencies": {
@@ -41,7 +41,7 @@
     "ipfs-only-hash": "^2.0.1",
     "maci-circuits": "^1.2.0",
     "maci-cli": "^1.2.0",
-    "maci-domainobjs": "0.0.0-ci.153326b",
+    "maci-domainobjs": "1.2.0",
     "mocha": "^10.2.0",
     "solidity-coverage": "^0.8.1",
     "ts-node": "^10.9.2",

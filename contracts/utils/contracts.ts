@@ -27,7 +27,7 @@ export async function deployContract<T extends BaseContract>(
   options?: DeployContractOptions & { args?: unknown[]; quiet?: boolean }
 ): Promise<T> {
   const args = options?.args || []
-  const contractName = String(name).includes('Poseidon') ? ':' + name : name
+  const contractName = getQualifiedContractName(name)
   const contract = await ethers.deployContract(contractName, args, options)
   await contract.waitForDeployment()
 
@@ -116,4 +116,46 @@ export async function getCurrentFundingRoundContract(
 
   return fundingRoundContract as BaseContract as FundingRound
 }
+
+/**
+ * Return the fully qualified contract name for Poll and PollFactory
+ * since there is a local copy and another in the maci-contracts
+ * otherwise return the name of the contract
+ * @param name The contract name
+ * @returns The qualified contract name
+ */
+export function getQualifiedContractName(name: EContracts): string {
+  let contractName = String(name)
+  if (contractName.includes('Poseidon')) {
+    contractName = `:${name}`
+  }
+  if (name === EContracts.PollFactory) {
+    contractName = 'contracts/maci/PollFactory.sol:PollFactory'
+  }
+  if (name === EContracts.Poll) {
+    contractName = 'contracts/maci/Poll.sol:Poll'
+  }
+  return contractName
+}
+
+/**
+ * Get a contract
+ * @param name Name of the contract
+ * @param address The contract address
+ * @param ethers Hardhat ethers handle
+ * @param signers The signer
+ * @returns contract
+ */
+export async function getContractAt<T extends BaseContract>(
+  name: EContracts,
+  address: string,
+  ethers: HardhatEthersHelpers,
+  signer?: Signer
+): Promise<T> {
+  const contractName = getQualifiedContractName(name)
+  const contract = await ethers.getContractAt(contractName, address, signer)
+
+  return contract as BaseContract as T
+}
+
 export { getEventArg }
