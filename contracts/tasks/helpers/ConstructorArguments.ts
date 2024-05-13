@@ -12,7 +12,7 @@ import {
   Poll,
   Tally,
 } from '../../typechain-types'
-import { getContractAt } from '../../utils/contracts'
+import { getContractAt, getQualifiedContractName } from '../../utils/contracts'
 
 /** A list of functions to get contract constructor arguments from the contract */
 const ConstructorArgumentsGetters: Record<
@@ -312,7 +312,8 @@ export class ConstructorArguments {
     address: string,
     ethers: HardhatEthersHelpers
   ): Promise<Array<unknown>> {
-    const contractArtifact = this.hre.artifacts.readArtifactSync(name)
+    const qualifiedName = getQualifiedContractName(name)
+    const contractArtifact = this.hre.artifacts.readArtifactSync(qualifiedName)
     const contractInterface = new Interface(contractArtifact.abi)
     if (contractInterface.deploy.inputs.length === 0) {
       // no argument

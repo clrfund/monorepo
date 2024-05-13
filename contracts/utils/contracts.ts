@@ -124,15 +124,13 @@ export async function getCurrentFundingRoundContract(
  * @param name The contract name
  * @returns The qualified contract name
  */
-export function getQualifiedContractName(name: EContracts): string {
+export function getQualifiedContractName(name: EContracts | string): string {
   let contractName = String(name)
   if (contractName.includes('Poseidon')) {
     contractName = `:${name}`
-  }
-  if (name === EContracts.PollFactory) {
+  } else if (name === EContracts.PollFactory) {
     contractName = 'contracts/maci/PollFactory.sol:PollFactory'
-  }
-  if (name === EContracts.Poll) {
+  } else if (name === EContracts.Poll) {
     contractName = 'contracts/maci/Poll.sol:Poll'
   }
   return contractName
