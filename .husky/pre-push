@@ -11,4 +11,4 @@ export VITE_RECIPIENT_REGISTRY_TYPE=simple
 export VITE_USER_REGISTRY_TYPE=simple
 export VITE_WALLET_CONNECT_PROJECT_ID=1
 
-yarn test:format && yarn test:web && yarn test:lint-i18n
+yarn test:format && yarn test:common && yarn test:web && yarn test:lint-i18n
