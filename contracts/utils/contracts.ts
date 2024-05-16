@@ -12,7 +12,7 @@ import {
 } from '@nomicfoundation/hardhat-ethers/types'
 import { VkRegistry, FundingRound } from '../typechain-types'
 import { MaciParameters } from './maciParameters'
-import { IVerifyingKeyStruct } from 'maci-contracts'
+import { EMode, IVerifyingKeyStruct } from 'maci-contracts'
 
 /**
  * Deploy a contract
@@ -54,6 +54,7 @@ export async function setVerifyingKeys(
     params.treeDepths.messageTreeDepth,
     params.treeDepths.voteOptionTreeDepth,
     messageBatchSize,
+    EMode.QV,
     params.processVk.asContractParam() as IVerifyingKeyStruct,
     params.tallyVk.asContractParam() as IVerifyingKeyStruct
   )
@@ -128,10 +129,6 @@ export function getQualifiedContractName(name: EContracts | string): string {
   let contractName = String(name)
   if (contractName.includes('Poseidon')) {
     contractName = `:${name}`
-  } else if (name === EContracts.PollFactory) {
-    contractName = 'contracts/maci/PollFactory.sol:PollFactory'
-  } else if (name === EContracts.Poll) {
-    contractName = 'contracts/maci/Poll.sol:Poll'
   }
   return contractName
 }

@@ -54,10 +54,6 @@ export class DeployPollPollAddrStruct extends ethereum.Tuple {
   get tally(): Address {
     return this[2].toAddress();
   }
-
-  get subsidy(): Address {
-    return this[3].toAddress();
-  }
 }
 
 export class OwnershipTransferred extends ethereum.Event {
@@ -127,10 +123,6 @@ export class MACI__deployPollResultPollAddrStruct extends ethereum.Tuple {
 
   get tally(): Address {
     return this[2].toAddress();
-  }
-
-  get subsidy(): Address {
-    return this[3].toAddress();
   }
 }
 
@@ -298,18 +290,18 @@ export class MACI extends ethereum.SmartContract {
     _coordinatorPubKey: MACI__deployPollInput_coordinatorPubKeyStruct,
     _verifier: Address,
     _vkRegistry: Address,
-    useSubsidy: boolean,
+    _mode: i32,
   ): MACI__deployPollResultPollAddrStruct {
     let result = super.call(
       "deployPoll",
-      "deployPoll(uint256,(uint8,uint8,uint8,uint8),(uint256,uint256),address,address,bool):((address,address,address,address))",
+      "deployPoll(uint256,(uint8,uint8,uint8,uint8),(uint256,uint256),address,address,uint8):((address,address,address))",
       [
         ethereum.Value.fromUnsignedBigInt(_duration),
         ethereum.Value.fromTuple(_treeDepths),
         ethereum.Value.fromTuple(_coordinatorPubKey),
         ethereum.Value.fromAddress(_verifier),
         ethereum.Value.fromAddress(_vkRegistry),
-        ethereum.Value.fromBoolean(useSubsidy),
+        ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(_mode)),
       ],
     );
 
@@ -324,18 +316,18 @@ export class MACI extends ethereum.SmartContract {
     _coordinatorPubKey: MACI__deployPollInput_coordinatorPubKeyStruct,
     _verifier: Address,
     _vkRegistry: Address,
-    useSubsidy: boolean,
+    _mode: i32,
   ): ethereum.CallResult<MACI__deployPollResultPollAddrStruct> {
     let result = super.tryCall(
       "deployPoll",
-      "deployPoll(uint256,(uint8,uint8,uint8,uint8),(uint256,uint256),address,address,bool):((address,address,address,address))",
+      "deployPoll(uint256,(uint8,uint8,uint8,uint8),(uint256,uint256),address,address,uint8):((address,address,address))",
       [
         ethereum.Value.fromUnsignedBigInt(_duration),
         ethereum.Value.fromTuple(_treeDepths),
         ethereum.Value.fromTuple(_coordinatorPubKey),
         ethereum.Value.fromAddress(_verifier),
         ethereum.Value.fromAddress(_vkRegistry),
-        ethereum.Value.fromBoolean(useSubsidy),
+        ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(_mode)),
       ],
     );
     if (result.reverted) {
@@ -831,25 +823,6 @@ export class MACI extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toI32());
   }
 
-  subsidyFactory(): Address {
-    let result = super.call("subsidyFactory", "subsidyFactory():(address)", []);
-
-    return result[0].toAddress();
-  }
-
-  try_subsidyFactory(): ethereum.CallResult<Address> {
-    let result = super.tryCall(
-      "subsidyFactory",
-      "subsidyFactory():(address)",
-      [],
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
   subtreesMerged(): boolean {
     let result = super.call("subtreesMerged", "subtreesMerged():(bool)", []);
 
@@ -925,24 +898,20 @@ export class ConstructorCall__Inputs {
     return this._call.inputValues[2].value.toAddress();
   }
 
-  get _subsidyFactory(): Address {
+  get _signUpGatekeeper(): Address {
     return this._call.inputValues[3].value.toAddress();
   }
 
-  get _signUpGatekeeper(): Address {
+  get _initialVoiceCreditProxy(): Address {
     return this._call.inputValues[4].value.toAddress();
   }
 
-  get _initialVoiceCreditProxy(): Address {
+  get _topupCredit(): Address {
     return this._call.inputValues[5].value.toAddress();
   }
 
-  get _topupCredit(): Address {
-    return this._call.inputValues[6].value.toAddress();
-  }
-
   get _stateTreeDepth(): i32 {
-    return this._call.inputValues[7].value.toI32();
+    return this._call.inputValues[6].value.toI32();
   }
 }
 
@@ -995,8 +964,8 @@ export class DeployPollCall__Inputs {
     return this._call.inputValues[4].value.toAddress();
   }
 
-  get useSubsidy(): boolean {
-    return this._call.inputValues[5].value.toBoolean();
+  get _mode(): i32 {
+    return this._call.inputValues[5].value.toI32();
   }
 }
 
@@ -1053,10 +1022,6 @@ export class DeployPollCallPollAddrStruct extends ethereum.Tuple {
 
   get tally(): Address {
     return this[2].toAddress();
-  }
-
-  get subsidy(): Address {
-    return this[3].toAddress();
   }
 }
 

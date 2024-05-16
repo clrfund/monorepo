@@ -17,11 +17,8 @@ function genPrivKey(hash: string): PrivKey {
   for (let counter = 1; pubKey === null; counter++) {
     try {
       const privKey = new PrivKey(rawPrivKey)
-      const keypair = new Keypair(privKey)
-
       // this will throw 'Invalid public key' if key is not on the Baby Jubjub elliptic curve
-      keypair.pubKey.serialize()
-
+      const keypair = new Keypair(privKey)
       pubKey = keypair.pubKey
     } catch {
       const data = concat([toBeArray(rawPrivKey), toBeArray(counter)])

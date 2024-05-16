@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import { Keypair, PubKey } from '../keypair'
 import { Wallet, sha256, randomBytes } from 'ethers'
 
-describe.only('keypair', function () {
+describe('keypair', function () {
   for (let i = 0; i < 10; i++) {
     it(`should generate key ${i} from seed successfully`, function () {
       const wallet = Wallet.createRandom()
@@ -14,7 +14,8 @@ describe.only('keypair', function () {
   }
 
   it('should throw if pubKey is invalid', () => {
-    const pubKey = new PubKey([1n, 1n])
-    expect(() => pubKey.serialize()).to.throw('Invalid public key')
+    expect(() => {
+      new PubKey([1n, 1n])
+    }).to.throw('PubKey not on curve')
   })
 })

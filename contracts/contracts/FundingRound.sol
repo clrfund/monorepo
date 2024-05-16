@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity 0.8.10;
+pragma solidity 0.8.20;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
@@ -15,7 +15,7 @@ import {SignUpGatekeeper} from 'maci-contracts/contracts/gatekeepers/SignUpGatek
 import {InitialVoiceCreditProxy} from 'maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
 import {CommonUtilities} from 'maci-contracts/contracts/utilities/CommonUtilities.sol';
 import {SnarkCommon} from 'maci-contracts/contracts/crypto/SnarkCommon.sol';
-import {ITallySubsidyFactory} from 'maci-contracts/contracts/interfaces/ITallySubsidyFactory.sol';
+import {ITallyFactory} from 'maci-contracts/contracts/interfaces/ITallyFactory.sol';
 import {IMessageProcessorFactory} from 'maci-contracts/contracts/interfaces/IMPFactory.sol';
 import {IClrFund} from './interfaces/IClrFund.sol';
 import {IMACIFactory} from './interfaces/IMACIFactory.sol';
@@ -25,7 +25,7 @@ import './userRegistry/IUserRegistry.sol';
 import './recipientRegistry/IRecipientRegistry.sol';
 
 contract FundingRound is
-  Ownable,
+  Ownable(msg.sender),
   SignUpGatekeeper,
   InitialVoiceCreditProxy,
   DomainObjs,
@@ -221,10 +221,10 @@ contract FundingRound is
     address vkRegistry = address(tally.vkRegistry());
 
     IMessageProcessorFactory messageProcessorFactory = maci.messageProcessorFactory();
-    ITallySubsidyFactory tallyFactory = maci.tallyFactory();
+    ITallyFactory tallyFactory = maci.tallyFactory();
 
-    address mp = messageProcessorFactory.deploy(verifier, vkRegistry, address(poll), coordinator);
-    address newTally = tallyFactory.deploy(verifier, vkRegistry, address(poll), mp, coordinator);
+    address mp = messageProcessorFactory.deploy(verifier, vkRegistry, address(poll), coordinator, Mode.QV);
+    address newTally = tallyFactory.deploy(verifier, vkRegistry, address(poll), mp, coordinator, Mode.QV);
     _setTally(newTally);
   }
 
