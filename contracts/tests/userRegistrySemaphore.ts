@@ -66,7 +66,10 @@ describe('Semaphore User Registry', () => {
       const registryAsUser = registry.connect(user) as Contract
       await expect(
         registryAsUser.addUser(user.address, semaphoreId)
-      ).to.be.revertedWith('Ownable: caller is not the owner')
+      ).to.be.revertedWithCustomError(
+        registryAsUser,
+        'OwnableUnauthorizedAccount'
+      )
     })
 
     it('allows owner to remove user', async () => {
@@ -88,8 +91,11 @@ describe('Semaphore User Registry', () => {
       const semaphoreId = 1
       await registry.addUser(user.address, semaphoreId)
       const registryAsUser = registry.connect(user) as Contract
-      await expect(registryAsUser.removeUser(user.address)).to.be.revertedWith(
-        'Ownable: caller is not the owner'
+      await expect(
+        registryAsUser.removeUser(user.address)
+      ).to.be.revertedWithCustomError(
+        registryAsUser,
+        'OwnableUnauthorizedAccount'
       )
     })
 

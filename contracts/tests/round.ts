@@ -249,7 +249,7 @@ describe('Funding Round', () => {
     it('requires approval', async () => {
       await expect(
         fundingRoundAsContributor.contribute(userPubKey, contributionAmount)
-      ).to.be.revertedWith('ERC20: insufficient allowance')
+      ).to.be.revertedWithCustomError(token, 'ERC20InsufficientAllowance')
     })
 
     it('rejects contributions from unverified users', async () => {
@@ -750,7 +750,10 @@ describe('Funding Round', () => {
           newResultCommitment,
           perVOSpentVoiceCreditsHash
         )
-      ).to.be.revertedWith('Ownable: caller is not the owner')
+      ).to.be.revertedWithCustomError(
+        fundingRoundAsCoordinator,
+        'OwnableUnauthorizedAccount'
+      )
     })
   })
 
@@ -811,8 +814,11 @@ describe('Funding Round', () => {
       const fundingRoundAsCoordinator = fundingRound.connect(
         coordinator
       ) as Contract
-      await expect(fundingRoundAsCoordinator.cancel()).to.be.revertedWith(
-        'Ownable: caller is not the owner'
+      await expect(
+        fundingRoundAsCoordinator.cancel()
+      ).to.be.revertedWithCustomError(
+        fundingRoundAsCoordinator,
+        'OwnableUnauthorizedAccount'
       )
     })
   })

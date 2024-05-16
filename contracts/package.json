@@ -36,7 +36,7 @@
     "@types/mocha": "^10.0.6",
     "chai": "4",
     "ethers": "^6.12.1",
-    "hardhat": "^2.19.4",
+    "hardhat": "^2.22.3",
     "hardhat-contract-sizer": "^2.10.0",
     "hardhat-gas-reporter": "^1.0.8",
     "ipfs-only-hash": "^2.0.1",
