@@ -18,7 +18,7 @@
     "@openzeppelin/contracts": "5.0.2",
     "@pinata/sdk": "^2.1.0",
     "dotenv": "^8.2.0",
-    "maci-contracts": "1.2.1",
+    "maci-contracts": "1.2.2",
     "solidity-rlp": "2.0.8"
   },
   "devDependencies": {
@@ -41,9 +41,9 @@
     "hardhat-gas-reporter": "^1.0.8",
     "ipfs-only-hash": "^2.0.1",
     "lowdb": "1.0.0",
-    "maci-circuits": "1.2.1",
-    "maci-cli": "1.2.1",
-    "maci-domainobjs": "1.2.1",
+    "maci-circuits": "1.2.2",
+    "maci-cli": "1.2.2",
+    "maci-domainobjs": "1.2.2",
     "mocha": "^10.2.0",
     "solidity-coverage": "^0.8.1",
     "ts-node": "^10.9.2",
