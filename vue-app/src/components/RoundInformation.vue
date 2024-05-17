@@ -250,9 +250,15 @@
               <div class="round-info-title">{{ $t('roundInfo.div20') }}</div>
             </div>
           </div>
-          <div class="round-announcement-info">
-            {{ $t('roundInfo.div21') }}
-          </div>
+          <i18n-t class="round-announcement-info" keypath="roundInfo.div21" tag="div" scope="global">
+            <template v-slot:link>
+              <span>
+                <links class="link-here" to="https://devcon.org/en/road-to-devcon/" hideArrow>{{
+                  $t('roundInfo.linkDevcon')
+                }}</links>
+              </span>
+            </template>
+          </i18n-t>
         </div>
         <div class="round-value-info">
           <div class="round-info-sub-item">
@@ -469,6 +475,10 @@ const blockExplorer = computed(() => ({
 .round-title {
   line-height: 120%;
   margin: 0;
+}
+.link-here {
+  text-decoration: underline;
+  color: var(--text-color);
 }
 .verified-container {
   align-self: flex-end;
