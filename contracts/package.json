@@ -40,7 +40,6 @@
     "hardhat-contract-sizer": "^2.10.0",
     "hardhat-gas-reporter": "^1.0.8",
     "ipfs-only-hash": "^2.0.1",
-    "lowdb": "1.0.0",
     "maci-circuits": "1.2.2",
     "maci-cli": "1.2.2",
     "maci-domainobjs": "1.2.2",

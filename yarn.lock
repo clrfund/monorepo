@@ -14520,7 +14520,7 @@ loupe@^2.3.6:
   dependencies:
     get-func-name "^2.0.1"
 
-lowdb@1.0.0, lowdb@^1.0.0:
+lowdb@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/lowdb/-/lowdb-1.0.0.tgz#5243be6b22786ccce30e50c9a33eac36b20c8064"
   integrity sha512-2+x8esE/Wb9SQ1F9IHaYWfsC9FIecLOPrK4g17FGEayjUWH172H6nwicRovGvSE2CPZouc2MCIqCI7h9d+GftQ==
