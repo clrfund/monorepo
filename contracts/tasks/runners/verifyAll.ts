@@ -286,7 +286,7 @@ task('verify-all', 'Verify contracts listed in storage')
   .addOptionalParam('clrfund', 'The ClrFund contract address')
   .addFlag('force', 'Ignore verified status')
   .setAction(async ({ clrfund }, hre) => {
-    const { ethers, config, network } = hre
+    const { ethers, network } = hre
 
     const storage = ContractStorage.getInstance()
     const clrfundContractAddress =
