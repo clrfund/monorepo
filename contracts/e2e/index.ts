@@ -16,11 +16,7 @@ import {
   DEFAULT_GET_LOG_BATCH_SIZE,
   DEFAULT_SR_QUEUE_OPS,
 } from '../utils/constants'
-import {
-  getContractAt,
-  getEventArg,
-  getQualifiedContractName,
-} from '../utils/contracts'
+import { getContractAt, getEventArg } from '../utils/contracts'
 import { deployPoseidonLibraries, deployMaciFactory } from '../utils/testutils'
 import { getIpfsHash } from '../utils/ipfs'
 import {
@@ -37,7 +33,7 @@ import { DEFAULT_CIRCUIT } from '../utils/circuits'
 import { MaciParameters } from '../utils/maciParameters'
 import { existsSync, mkdirSync } from 'fs'
 import path from 'path'
-import { FundingRound, Poll } from '../typechain-types'
+import { FundingRound } from '../typechain-types'
 import { JSONFile } from '../utils/JSONFile'
 import { EContracts } from '../utils/types'
 import { getTalyFilePath } from '../utils/misc'
@@ -398,7 +394,6 @@ describe('End-to-end Tests', function () {
     await proveOnChain({
       pollId,
       proofDir: genProofArgs.outputDir,
-      subsidyEnabled: false,
       maciAddress,
       messageProcessorAddress,
       tallyAddress,
@@ -418,7 +413,6 @@ describe('End-to-end Tests', function () {
       await proveOnChain({
         pollId,
         proofDir: genProofArgs.outputDir,
-        subsidyEnabled: false,
         maciAddress,
         messageProcessorAddress,
         tallyAddress,

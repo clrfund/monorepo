@@ -16,9 +16,6 @@ contract MACICommon {
   struct Factories {
     address pollFactory;
     address tallyFactory;
-    // subsidyFactory is not currently used, it's just a place holder here
-    address subsidyFactory;
     address messageProcessorFactory;
   }
-
 }

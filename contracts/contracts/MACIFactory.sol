@@ -41,7 +41,6 @@ contract MACIFactory is Ownable(msg.sender), Params, SnarkCommon, DomainObjs, MA
   error InvalidVkRegistry();
   error InvalidPollFactory();
   error InvalidTallyFactory();
-  error InvalidSubsidyFactory();
   error InvalidMessageProcessorFactory();
   error InvalidVerifier();
 

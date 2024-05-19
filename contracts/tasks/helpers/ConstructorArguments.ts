@@ -70,7 +70,6 @@ async function getMaciConstructorArguments(
     maci.pollFactory(),
     maci.messageProcessorFactory(),
     maci.tallyFactory(),
-    maci.subsidyFactory(),
     maci.signUpGatekeeper(),
     maci.initialVoiceCreditProxy(),
     maci.topupCredit(),

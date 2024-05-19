@@ -128,8 +128,6 @@ export async function deployMaciFactory({
   const factories = {
     pollFactory: pollFactory.target,
     tallyFactory: tallyFactory.target,
-    // subsidy is not currently used
-    subsidyFactory: ZERO_ADDRESS,
     messageProcessorFactory: messageProcessorFactory.target,
   }
 

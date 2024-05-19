@@ -90,7 +90,6 @@ task('prove-on-chain', 'Prove on chain with the MACI proofs')
     await proveOnChain({
       pollId,
       proofDir,
-      subsidyEnabled: false,
       maciAddress,
       messageProcessorAddress,
       tallyAddress,
