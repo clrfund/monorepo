@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@openzeppelin/merkle-tree": "^1.0.5",
-    "ethers": "^6.11.1",
+    "ethers": "^6.12.1",
     "maci-crypto": "1.2.2",
     "maci-domainobjs": "1.2.2"
   },
