@@ -15,6 +15,7 @@ import {
 } from '../../../typechain-types'
 import { ContractTransactionResponse } from 'ethers'
 import { ISubtaskParams } from '../../helpers/types'
+import { EMode } from 'maci-contracts'
 
 const subtask = Subtask.getInstance()
 const storage = ContractStorage.getInstance()
@@ -69,7 +70,6 @@ async function registerMaci(
     maciContract.pollFactory(),
     maciContract.messageProcessorFactory(),
     maciContract.tallyFactory(),
-    maciContract.subsidyFactory(),
     maciContract.signUpGatekeeper(),
     maciContract.initialVoiceCreditProxy(),
     maciContract.topupCredit(),
@@ -180,7 +180,7 @@ async function registerTallyAndMessageProcessor(
     tallyContract.vkRegistry(),
   ])
 
-  let args = [verifier, vkRegistry, poll, mp]
+  let args = [verifier, vkRegistry, poll, mp, EMode.QV]
   await storage.register({
     id: EContracts.Tally,
     contract: tallyContract,
@@ -189,7 +189,7 @@ async function registerTallyAndMessageProcessor(
     tx,
   })
 
-  args = [verifier, vkRegistry, poll]
+  args = [verifier, vkRegistry, poll, EMode.QV]
   await storage.register({
     id: EContracts.MessageProcessor,
     contract: messageProcessorContract,

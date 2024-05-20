@@ -89,7 +89,10 @@ describe('MACI factory', () => {
       coordinatorMaciFactory.setMaciParameters(
         ...maciParameters.asContractParam()
       )
-    ).to.be.revertedWith('Ownable: caller is not the owner')
+    ).to.be.revertedWithCustomError(
+      coordinatorMaciFactory,
+      'OwnableUnauthorizedAccount'
+    )
   })
 
   it('deploys MACI', async () => {

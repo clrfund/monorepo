@@ -12,6 +12,7 @@ import {
   Poll,
   Tally,
 } from '../../typechain-types'
+import { getContractAt, getQualifiedContractName } from '../../utils/contracts'
 
 /** A list of functions to get contract constructor arguments from the contract */
 const ConstructorArgumentsGetters: Record<
@@ -69,7 +70,6 @@ async function getMaciConstructorArguments(
     maci.pollFactory(),
     maci.messageProcessorFactory(),
     maci.tallyFactory(),
-    maci.subsidyFactory(),
     maci.signUpGatekeeper(),
     maci.initialVoiceCreditProxy(),
     maci.topupCredit(),
@@ -89,10 +89,11 @@ async function getPollConstructorArguments(
   address: string,
   ethers: HardhatEthersHelpers
 ): Promise<Array<unknown>> {
-  const pollContract = (await ethers.getContractAt(
+  const pollContract = await getContractAt<Poll>(
     EContracts.Poll,
-    address
-  )) as BaseContract as Poll
+    address,
+    ethers
+  )
 
   const [, duration] = await pollContract.getDeployTimeAndDuration()
   const [maxValues, treeDepths, coordinatorPubKey, extContracts] =
@@ -310,7 +311,8 @@ export class ConstructorArguments {
     address: string,
     ethers: HardhatEthersHelpers
   ): Promise<Array<unknown>> {
-    const contractArtifact = this.hre.artifacts.readArtifactSync(name)
+    const qualifiedName = getQualifiedContractName(name)
+    const contractArtifact = this.hre.artifacts.readArtifactSync(qualifiedName)
     const contractInterface = new Interface(contractArtifact.abi)
     if (contractInterface.deploy.inputs.length === 0) {
       // no argument

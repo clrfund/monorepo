@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.10;
+pragma solidity 0.8.20;
 
 /*
  * These imports are just for hardhat to find the contracts for deployment
@@ -9,5 +9,4 @@ pragma solidity ^0.8.10;
 import {Poll} from 'maci-contracts/contracts/Poll.sol';
 import {PollFactory} from 'maci-contracts/contracts/PollFactory.sol';
 import {TallyFactory} from 'maci-contracts/contracts/TallyFactory.sol';
-import {SubsidyFactory} from 'maci-contracts/contracts/SubsidyFactory.sol';
 import {MessageProcessorFactory} from 'maci-contracts/contracts/MessageProcessorFactory.sol';

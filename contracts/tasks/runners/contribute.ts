@@ -11,7 +11,7 @@
 import { Keypair, createMessage, Message, PubKey } from '@clrfund/common'
 
 import { UNIT } from '../../utils/constants'
-import { getEventArg } from '../../utils/contracts'
+import { getContractAt, getEventArg } from '../../utils/contracts'
 import type { FundingRound, ERC20, Poll } from '../../typechain-types'
 import { task } from 'hardhat/config'
 import { EContracts } from '../../utils/types'
@@ -98,9 +98,10 @@ task('contribute', 'Contribute to a funding round').setAction(
 
     const pollId = await fundingRound.pollId()
     const pollAddress = await fundingRound.poll()
-    const pollContract = await ethers.getContractAt(
+    const pollContract = await getContractAt<Poll>(
       EContracts.Poll,
-      pollAddress
+      pollAddress,
+      ethers
     )
 
     const rawCoordinatorPubKey = await pollContract.coordinatorPubKey()

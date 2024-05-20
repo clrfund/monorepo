@@ -23,7 +23,7 @@ import {
   verify,
 } from 'maci-cli'
 
-import { getTalyFilePath, isPathExist } from './misc'
+import { isPathExist } from './misc'
 import { getCircuitFiles } from './circuits'
 import { FundingRound } from '../typechain-types'
 
@@ -303,7 +303,7 @@ export async function mergeMaciSubtrees({
 
   await mergeMessages({
     pollId,
-    maciContractAddress: maciAddress,
+    maciAddress,
     numQueueOps,
     signer,
     quiet,
@@ -311,7 +311,7 @@ export async function mergeMaciSubtrees({
 
   await mergeSignups({
     pollId,
-    maciContractAddress: maciAddress,
+    maciAddress,
     numQueueOps,
     signer,
     quiet,

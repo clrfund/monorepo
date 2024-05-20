@@ -20,11 +20,6 @@
           },
           {
             "internalType": "address",
-            "name": "subsidyFactory",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
             "name": "messageProcessorFactory",
             "type": "address"
           }
@@ -54,11 +49,6 @@
   },
   {
     "inputs": [],
-    "name": "InvalidSubsidyFactory",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "InvalidTallyFactory",
     "type": "error"
   },
@@ -75,6 +65,28 @@
   {
     "inputs": [],
     "name": "NotInitialized",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnableInvalidOwner",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "OwnableUnauthorizedAccount",
     "type": "error"
   },
   {
@@ -224,11 +236,6 @@
             "internalType": "address",
             "name": "tally",
             "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "subsidy",
-            "type": "address"
           }
         ],
         "internalType": "struct MACI.PollContracts",
@@ -251,11 +258,6 @@
       {
         "internalType": "address",
         "name": "tallyFactory",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "subsidyFactory",
         "type": "address"
       },
       {

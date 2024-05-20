@@ -119,7 +119,7 @@ export default {
     disambiguatePaths: false,
   },
   solidity: {
-    version: '0.8.10',
+    version: '0.8.20',
     settings: {
       optimizer: {
         enabled: true,
@@ -128,7 +128,6 @@ export default {
     },
     overrides: {
       'contracts/FundingRoundFactory.sol': {
-        version: '0.8.10',
         settings: {
           optimizer: {
             enabled: true,
@@ -137,7 +136,6 @@ export default {
         },
       },
       'contracts/FundingRound.sol': {
-        version: '0.8.10',
         settings: {
           optimizer: {
             enabled: true,
@@ -146,7 +144,6 @@ export default {
         },
       },
       'contracts/recipientRegistry/OptimisticRecipientRegistry.sol': {
-        version: '0.8.10',
         settings: {
           optimizer: {
             enabled: true,
@@ -155,7 +152,6 @@ export default {
         },
       },
       'contracts/userRegistry/SimpleUserRegistry.sol': {
-        version: '0.8.10',
         settings: {
           optimizer: {
             enabled: true,
@@ -164,7 +160,6 @@ export default {
         },
       },
       'contracts/userRegistry/BrightIdUserRegistry.sol': {
-        version: '0.8.10',
         settings: {
           optimizer: {
             enabled: true,

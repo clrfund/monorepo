@@ -21,7 +21,7 @@ import {
   VOICE_CREDIT_FACTOR,
   ALPHA_PRECISION,
 } from '../utils/constants'
-import { getEventArg, getGasUsage } from '../utils/contracts'
+import { getContractAt, getEventArg, getGasUsage } from '../utils/contracts'
 import {
   bnSqrt,
   createMessage,
@@ -34,6 +34,7 @@ import { deployTestFundingRound } from '../utils/testutils'
 // ethStaker test vectors for Quadratic Funding with alpha
 import smallTallyTestData from './data/testTallySmall.json'
 import { FundingRound } from '../typechain-types'
+import { EContracts } from '../utils/types'
 
 const newResultCommitment = hexlify(randomBytes(32))
 const perVOSpentVoiceCreditsHash = hexlify(randomBytes(32))
@@ -136,7 +137,12 @@ describe('Funding Round', () => {
     maciAddress = await fundingRound.maci()
     maci = await ethers.getContractAt('MACI', maciAddress)
     const pollAddress = await fundingRound.poll()
-    poll = await ethers.getContractAt('Poll', pollAddress, deployer)
+    poll = await getContractAt<Contract>(
+      EContracts.Poll,
+      pollAddress,
+      ethers,
+      deployer
+    )
     pollId = await fundingRound.pollId()
 
     const treeDepths = await poll.treeDepths()
@@ -243,7 +249,7 @@ describe('Funding Round', () => {
     it('requires approval', async () => {
       await expect(
         fundingRoundAsContributor.contribute(userPubKey, contributionAmount)
-      ).to.be.revertedWith('ERC20: insufficient allowance')
+      ).to.be.revertedWithCustomError(token, 'ERC20InsufficientAllowance')
     })
 
     it('rejects contributions from unverified users', async () => {
@@ -744,7 +750,10 @@ describe('Funding Round', () => {
           newResultCommitment,
           perVOSpentVoiceCreditsHash
         )
-      ).to.be.revertedWith('Ownable: caller is not the owner')
+      ).to.be.revertedWithCustomError(
+        fundingRoundAsCoordinator,
+        'OwnableUnauthorizedAccount'
+      )
     })
   })
 
@@ -805,8 +814,11 @@ describe('Funding Round', () => {
       const fundingRoundAsCoordinator = fundingRound.connect(
         coordinator
       ) as Contract
-      await expect(fundingRoundAsCoordinator.cancel()).to.be.revertedWith(
-        'Ownable: caller is not the owner'
+      await expect(
+        fundingRoundAsCoordinator.cancel()
+      ).to.be.revertedWithCustomError(
+        fundingRoundAsCoordinator,
+        'OwnableUnauthorizedAccount'
       )
     })
   })

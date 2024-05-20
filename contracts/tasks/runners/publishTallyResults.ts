@@ -24,10 +24,12 @@ import { FundingRound, Poll } from '../../typechain-types'
 import { HardhatEthersHelpers } from '@nomicfoundation/hardhat-ethers/types'
 import { EContracts } from '../../utils/types'
 import { Subtask } from '../helpers/Subtask'
-import { getCurrentFundingRoundContract } from '../../utils/contracts'
+import {
+  getContractAt,
+  getCurrentFundingRoundContract,
+} from '../../utils/contracts'
 import { getTalyFilePath } from '../../utils/misc'
 import { ContractStorage } from '../helpers/ContractStorage'
-import { PINATA_PINNING_URL } from '../../utils/constants'
 
 /**
  * Publish the tally IPFS hash on chain if it's not already published
@@ -92,7 +94,11 @@ async function getRecipientTreeDepth(
   ethers: HardhatEthersHelpers
 ): Promise<number> {
   const pollAddress = await fundingRoundContract.poll()
-  const pollContract = await ethers.getContractAt(EContracts.Poll, pollAddress)
+  const pollContract = await getContractAt<Poll>(
+    EContracts.Poll,
+    pollAddress,
+    ethers
+  )
   const treeDepths = await (pollContract as BaseContract as Poll).treeDepths()
   const voteOptionTreeDepth = treeDepths.voteOptionTreeDepth
   return getNumber(voteOptionTreeDepth)

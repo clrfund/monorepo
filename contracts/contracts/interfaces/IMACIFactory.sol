@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.10;
+pragma solidity 0.8.20;
 
 import {IVkRegistry} from 'maci-contracts/contracts/interfaces/IVkRegistry.sol';
 import {IVerifier} from 'maci-contracts/contracts/interfaces/IVerifier.sol';

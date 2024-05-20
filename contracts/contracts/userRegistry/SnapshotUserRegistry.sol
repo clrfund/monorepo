@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.10;
+pragma solidity 0.8.20;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
 
@@ -14,7 +14,7 @@ import {StateProofVerifier} from '../utils/cryptography/StateProofVerifier.sol';
  * @dev A user registry that verifies users based on ownership of a token
  * at a specific block snapshot
  */
-contract SnapshotUserRegistry is Ownable, IUserRegistry {
+contract SnapshotUserRegistry is Ownable(msg.sender), IUserRegistry {
   using RLPReader for RLPReader.RLPItem;
   using RLPReader for bytes;
 

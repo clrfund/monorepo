@@ -9,6 +9,7 @@ import { EContracts } from './types'
 import { Libraries } from 'hardhat/types'
 import { MACIFactory, VkRegistry } from '../typechain-types'
 import { ZERO_ADDRESS } from './constants'
+import { EMode } from 'maci-contracts'
 
 /**
  * Deploy a mock contract with the given contract name
@@ -127,8 +128,6 @@ export async function deployMaciFactory({
   const factories = {
     pollFactory: pollFactory.target,
     tallyFactory: tallyFactory.target,
-    // subsidy is not currently used
-    subsidyFactory: ZERO_ADDRESS,
     messageProcessorFactory: messageProcessorFactory.target,
   }
 
@@ -236,7 +235,6 @@ export async function deployTestFundingRound(
       factories.pollFactory,
       factories.messageProcessorFactory,
       factories.tallyFactory,
-      factories.subsidyFactory,
       fundingRound.target,
       fundingRound.target,
       topupToken.target,
@@ -254,8 +252,7 @@ export async function deployTestFundingRound(
     coordinatorPubKey.asContractParam(),
     mockVerifier.target,
     vkRegistry.target,
-    // pass false to not deploy the subsidy contract
-    false
+    EMode.QV
   )
   const pollAddr = await getEventArg(
     deployPollTx,

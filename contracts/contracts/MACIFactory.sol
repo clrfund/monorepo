@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.10;
+pragma solidity 0.8.20;
 
 import {MACI} from 'maci-contracts/contracts/MACI.sol';
 import {IPollFactory} from 'maci-contracts/contracts/interfaces/IPollFactory.sol';
-import {ITallySubsidyFactory} from 'maci-contracts/contracts/interfaces/ITallySubsidyFactory.sol';
+import {ITallyFactory} from 'maci-contracts/contracts/interfaces/ITallyFactory.sol';
 import {IMessageProcessorFactory} from 'maci-contracts/contracts/interfaces/IMPFactory.sol';
 import {SignUpGatekeeper} from 'maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol';
 import {InitialVoiceCreditProxy} from 'maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
@@ -17,7 +17,7 @@ import {Params} from 'maci-contracts/contracts/utilities/Params.sol';
 import {DomainObjs} from 'maci-contracts/contracts/utilities/DomainObjs.sol';
 import {MACICommon} from './MACICommon.sol';
 
-contract MACIFactory is Ownable, Params, SnarkCommon, DomainObjs, MACICommon {
+contract MACIFactory is Ownable(msg.sender), Params, SnarkCommon, DomainObjs, MACICommon {
 
   // Verifying Key Registry containing circuit parameters
   VkRegistry public vkRegistry;
@@ -41,7 +41,6 @@ contract MACIFactory is Ownable, Params, SnarkCommon, DomainObjs, MACICommon {
   error InvalidVkRegistry();
   error InvalidPollFactory();
   error InvalidTallyFactory();
-  error InvalidSubsidyFactory();
   error InvalidMessageProcessorFactory();
   error InvalidVerifier();
 
@@ -135,7 +134,8 @@ contract MACIFactory is Ownable, Params, SnarkCommon, DomainObjs, MACICommon {
       _stateTreeDepth,
       _treeDepths.messageTreeDepth,
       _treeDepths.voteOptionTreeDepth,
-      messageBatchSize)
+      messageBatchSize,
+      Mode.QV)
     ) {
       revert ProcessVkNotSet();
     }
@@ -143,7 +143,8 @@ contract MACIFactory is Ownable, Params, SnarkCommon, DomainObjs, MACICommon {
     if (!vkRegistry.hasTallyVk(
       _stateTreeDepth,
       _treeDepths.intStateTreeDepth,
-      _treeDepths.voteOptionTreeDepth)
+      _treeDepths.voteOptionTreeDepth,
+      Mode.QV)
     ) {
       revert TallyVkNotSet();
     }
@@ -175,7 +176,8 @@ contract MACIFactory is Ownable, Params, SnarkCommon, DomainObjs, MACICommon {
       stateTreeDepth,
       treeDepths.messageTreeDepth,
       treeDepths.voteOptionTreeDepth,
-      messageBatchSize)
+      messageBatchSize,
+      Mode.QV)
     ) {
       revert ProcessVkNotSet();
     }
@@ -183,7 +185,8 @@ contract MACIFactory is Ownable, Params, SnarkCommon, DomainObjs, MACICommon {
     if (!vkRegistry.hasTallyVk(
       stateTreeDepth,
       treeDepths.intStateTreeDepth,
-      treeDepths.voteOptionTreeDepth)
+      treeDepths.voteOptionTreeDepth,
+      Mode.QV)
     ) {
       revert TallyVkNotSet();
     }
@@ -191,8 +194,7 @@ contract MACIFactory is Ownable, Params, SnarkCommon, DomainObjs, MACICommon {
     _maci = new MACI(
       IPollFactory(factories.pollFactory),
       IMessageProcessorFactory(factories.messageProcessorFactory),
-      ITallySubsidyFactory(factories.tallyFactory),
-      ITallySubsidyFactory(factories.subsidyFactory),
+      ITallyFactory(factories.tallyFactory),
       signUpGatekeeper,
       initialVoiceCreditProxy,
       TopupCredit(topupCredit),
@@ -205,8 +207,7 @@ contract MACIFactory is Ownable, Params, SnarkCommon, DomainObjs, MACICommon {
       coordinatorPubKey,
       address(verifier),
       address(vkRegistry),
-      // pass false to not deploy the subsidy contract
-      false
+      Mode.QV
     );
 
     // transfer ownership to coordinator to run the tally scripts

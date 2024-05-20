@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.10;
+pragma solidity 0.8.20;
 
 /**
  * @dev a contract that holds common MACI structures
@@ -16,9 +16,6 @@ contract MACICommon {
   struct Factories {
     address pollFactory;
     address tallyFactory;
-    // subsidyFactory is not currently used, it's just a place holder here
-    address subsidyFactory;
     address messageProcessorFactory;
   }
-
 }

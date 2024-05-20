@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.10;
+pragma solidity 0.8.20;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
 
@@ -9,7 +9,7 @@ import './BaseRecipientRegistry.sol';
 /**
  * @dev Recipient registry with permissioned execution of registrations and removals.
  */
-contract PermissionedRecipientRegistry is Ownable, BaseRecipientRegistry {
+contract PermissionedRecipientRegistry is Ownable(msg.sender), BaseRecipientRegistry {
 
   // Enums
   enum RequestType {

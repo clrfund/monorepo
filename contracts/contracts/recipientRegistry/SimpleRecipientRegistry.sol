@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.10;
+pragma solidity 0.8.20;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
 
@@ -9,7 +9,7 @@ import './BaseRecipientRegistry.sol';
 /**
  * @dev A simple recipient registry managed by a trusted entity.
  */
-contract SimpleRecipientRegistry is Ownable, BaseRecipientRegistry {
+contract SimpleRecipientRegistry is Ownable(msg.sender), BaseRecipientRegistry {
 
   // Events
   event RecipientAdded(

@@ -42,6 +42,7 @@
     "test:contracts": "yarn workspace @clrfund/contracts run test",
     "test:e2e": "yarn workspace @clrfund/contracts run e2e",
     "test:web": "yarn workspace @clrfund/vue-app run test",
+    "test:common": "yarn workspace @clrfund/common run test",
     "test:format": "yarn prettier --check",
     "test:lint-i18n": "echo yarn workspace @clrfund/vue-app run test:lint-i18n --ci",
     "deploy:subgraph": "yarn workspace @clrfund/subgraph run deploy",
