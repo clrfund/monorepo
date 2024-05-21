@@ -85,6 +85,9 @@ type FundingRound @entity {
   messageTreeDepth: Int
   voteOptionTreeDepth: Int
 
+  maxMessages: BigInt
+  maxVoteOptions: BigInt
+
   coordinatorPubKeyX: BigInt
   coordinatorPubKeyY: BigInt
   coordinator: Bytes

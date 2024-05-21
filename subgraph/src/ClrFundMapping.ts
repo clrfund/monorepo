@@ -289,6 +289,12 @@ export function handleRoundStarted(event: RoundStarted): void {
       fundingRound.voteOptionTreeDepth = treeDepths.value.value3
     }
 
+    let maxValues = pollContract.try_maxValues()
+    if (!maxValues.reverted) {
+      fundingRound.maxMessages = maxValues.value.value0
+      fundingRound.maxVoteOptions = maxValues.value.value1
+    }
+
     let coordinatorPubKey = pollContract.try_coordinatorPubKey()
     if (!coordinatorPubKey.reverted) {
       fundingRound.coordinatorPubKeyX = coordinatorPubKey.value.value0

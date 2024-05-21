@@ -17,6 +17,7 @@ export type Scalars = {
   BigInt: any;
   Bytes: any;
   Int8: any;
+  Timestamp: any;
 };
 
 export enum Aggregation_Interval {
@@ -334,6 +335,8 @@ export enum ClrFund_OrderBy {
   CurrentRoundMaci = 'currentRound__maci',
   CurrentRoundMaciTxHash = 'currentRound__maciTxHash',
   CurrentRoundMatchingPoolSize = 'currentRound__matchingPoolSize',
+  CurrentRoundMaxMessages = 'currentRound__maxMessages',
+  CurrentRoundMaxVoteOptions = 'currentRound__maxVoteOptions',
   CurrentRoundMessageTreeDepth = 'currentRound__messageTreeDepth',
   CurrentRoundNativeToken = 'currentRound__nativeToken',
   CurrentRoundPollAddress = 'currentRound__pollAddress',
@@ -503,6 +506,8 @@ export enum Contribution_OrderBy {
   FundingRoundMaci = 'fundingRound__maci',
   FundingRoundMaciTxHash = 'fundingRound__maciTxHash',
   FundingRoundMatchingPoolSize = 'fundingRound__matchingPoolSize',
+  FundingRoundMaxMessages = 'fundingRound__maxMessages',
+  FundingRoundMaxVoteOptions = 'fundingRound__maxVoteOptions',
   FundingRoundMessageTreeDepth = 'fundingRound__messageTreeDepth',
   FundingRoundNativeToken = 'fundingRound__nativeToken',
   FundingRoundPollAddress = 'fundingRound__pollAddress',
@@ -1031,6 +1036,8 @@ export enum Donation_OrderBy {
   FundingRoundMaci = 'fundingRound__maci',
   FundingRoundMaciTxHash = 'fundingRound__maciTxHash',
   FundingRoundMatchingPoolSize = 'fundingRound__matchingPoolSize',
+  FundingRoundMaxMessages = 'fundingRound__maxMessages',
+  FundingRoundMaxVoteOptions = 'fundingRound__maxVoteOptions',
   FundingRoundMessageTreeDepth = 'fundingRound__messageTreeDepth',
   FundingRoundNativeToken = 'fundingRound__nativeToken',
   FundingRoundPollAddress = 'fundingRound__pollAddress',
@@ -1070,6 +1077,8 @@ export type FundingRound = {
   maci: Maybe<Scalars['Bytes']>;
   maciTxHash: Maybe<Scalars['Bytes']>;
   matchingPoolSize: Maybe<Scalars['BigInt']>;
+  maxMessages: Maybe<Scalars['BigInt']>;
+  maxVoteOptions: Maybe<Scalars['BigInt']>;
   messageTreeDepth: Maybe<Scalars['Int']>;
   messages: Maybe<Array<Message>>;
   nativeToken: Maybe<Scalars['Bytes']>;
@@ -1303,6 +1312,22 @@ export type FundingRound_Filter = {
   matchingPoolSize_lte: InputMaybe<Scalars['BigInt']>;
   matchingPoolSize_not: InputMaybe<Scalars['BigInt']>;
   matchingPoolSize_not_in: InputMaybe<Array<Scalars['BigInt']>>;
+  maxMessages: InputMaybe<Scalars['BigInt']>;
+  maxMessages_gt: InputMaybe<Scalars['BigInt']>;
+  maxMessages_gte: InputMaybe<Scalars['BigInt']>;
+  maxMessages_in: InputMaybe<Array<Scalars['BigInt']>>;
+  maxMessages_lt: InputMaybe<Scalars['BigInt']>;
+  maxMessages_lte: InputMaybe<Scalars['BigInt']>;
+  maxMessages_not: InputMaybe<Scalars['BigInt']>;
+  maxMessages_not_in: InputMaybe<Array<Scalars['BigInt']>>;
+  maxVoteOptions: InputMaybe<Scalars['BigInt']>;
+  maxVoteOptions_gt: InputMaybe<Scalars['BigInt']>;
+  maxVoteOptions_gte: InputMaybe<Scalars['BigInt']>;
+  maxVoteOptions_in: InputMaybe<Array<Scalars['BigInt']>>;
+  maxVoteOptions_lt: InputMaybe<Scalars['BigInt']>;
+  maxVoteOptions_lte: InputMaybe<Scalars['BigInt']>;
+  maxVoteOptions_not: InputMaybe<Scalars['BigInt']>;
+  maxVoteOptions_not_in: InputMaybe<Array<Scalars['BigInt']>>;
   messageTreeDepth: InputMaybe<Scalars['Int']>;
   messageTreeDepth_gt: InputMaybe<Scalars['Int']>;
   messageTreeDepth_gte: InputMaybe<Scalars['Int']>;
@@ -1524,6 +1549,8 @@ export enum FundingRound_OrderBy {
   Maci = 'maci',
   MaciTxHash = 'maciTxHash',
   MatchingPoolSize = 'matchingPoolSize',
+  MaxMessages = 'maxMessages',
+  MaxVoteOptions = 'maxVoteOptions',
   MessageTreeDepth = 'messageTreeDepth',
   Messages = 'messages',
   NativeToken = 'nativeToken',
@@ -1728,6 +1755,8 @@ export enum Message_OrderBy {
   FundingRoundMaci = 'fundingRound__maci',
   FundingRoundMaciTxHash = 'fundingRound__maciTxHash',
   FundingRoundMatchingPoolSize = 'fundingRound__matchingPoolSize',
+  FundingRoundMaxMessages = 'fundingRound__maxMessages',
+  FundingRoundMaxVoteOptions = 'fundingRound__maxVoteOptions',
   FundingRoundMessageTreeDepth = 'fundingRound__messageTreeDepth',
   FundingRoundNativeToken = 'fundingRound__nativeToken',
   FundingRoundPollAddress = 'fundingRound__pollAddress',
@@ -1832,6 +1861,8 @@ export enum Poll_OrderBy {
   FundingRoundMaci = 'fundingRound__maci',
   FundingRoundMaciTxHash = 'fundingRound__maciTxHash',
   FundingRoundMatchingPoolSize = 'fundingRound__matchingPoolSize',
+  FundingRoundMaxMessages = 'fundingRound__maxMessages',
+  FundingRoundMaxVoteOptions = 'fundingRound__maxVoteOptions',
   FundingRoundMessageTreeDepth = 'fundingRound__messageTreeDepth',
   FundingRoundNativeToken = 'fundingRound__nativeToken',
   FundingRoundPollAddress = 'fundingRound__pollAddress',
@@ -1955,6 +1986,8 @@ export enum PublicKey_OrderBy {
   FundingRoundMaci = 'fundingRound__maci',
   FundingRoundMaciTxHash = 'fundingRound__maciTxHash',
   FundingRoundMatchingPoolSize = 'fundingRound__matchingPoolSize',
+  FundingRoundMaxMessages = 'fundingRound__maxMessages',
+  FundingRoundMaxVoteOptions = 'fundingRound__maxVoteOptions',
   FundingRoundMessageTreeDepth = 'fundingRound__messageTreeDepth',
   FundingRoundNativeToken = 'fundingRound__nativeToken',
   FundingRoundPollAddress = 'fundingRound__pollAddress',
@@ -3223,7 +3256,7 @@ export type GetRoundInfoQueryVariables = Exact<{
 }>;
 
 
-export type GetRoundInfoQuery = { __typename?: 'Query', fundingRound: { __typename?: 'FundingRound', id: string, maci: any | null, pollId: any | null, pollAddress: any | null, recipientRegistryAddress: any | null, contributorRegistryAddress: any | null, voiceCreditFactor: any | null, isFinalized: boolean | null, isCancelled: boolean | null, contributorCount: any, totalSpent: any | null, matchingPoolSize: any | null, startTime: any | null, signUpDeadline: any | null, votingDeadline: any | null, coordinatorPubKeyX: any | null, coordinatorPubKeyY: any | null, stateTreeDepth: number | null, messageTreeDepth: number | null, voteOptionTreeDepth: number | null, nativeTokenInfo: { __typename?: 'Token', tokenAddress: any | null, symbol: string | null, decimals: any | null } | null } | null };
+export type GetRoundInfoQuery = { __typename?: 'Query', fundingRound: { __typename?: 'FundingRound', id: string, maci: any | null, pollId: any | null, pollAddress: any | null, recipientRegistryAddress: any | null, contributorRegistryAddress: any | null, voiceCreditFactor: any | null, isFinalized: boolean | null, isCancelled: boolean | null, contributorCount: any, totalSpent: any | null, matchingPoolSize: any | null, startTime: any | null, signUpDeadline: any | null, votingDeadline: any | null, coordinatorPubKeyX: any | null, coordinatorPubKeyY: any | null, maxMessages: any | null, maxVoteOptions: any | null, stateTreeDepth: number | null, messageTreeDepth: number | null, voteOptionTreeDepth: number | null, nativeTokenInfo: { __typename?: 'Token', tokenAddress: any | null, symbol: string | null, decimals: any | null } | null } | null };
 
 export type GetRoundsQueryVariables = Exact<{
   clrFundAddress: Scalars['String'];
@@ -3436,6 +3469,8 @@ export const GetRoundInfoDocument = gql`
     votingDeadline
     coordinatorPubKeyX
     coordinatorPubKeyY
+    maxMessages
+    maxVoteOptions
     stateTreeDepth
     messageTreeDepth
     voteOptionTreeDepth

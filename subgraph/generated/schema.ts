@@ -1020,6 +1020,40 @@ export class FundingRound extends Entity {
     this.set("voteOptionTreeDepth", Value.fromI32(value));
   }
 
+  get maxMessages(): BigInt | null {
+    let value = this.get("maxMessages");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set maxMessages(value: BigInt | null) {
+    if (!value) {
+      this.unset("maxMessages");
+    } else {
+      this.set("maxMessages", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
+  get maxVoteOptions(): BigInt | null {
+    let value = this.get("maxVoteOptions");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set maxVoteOptions(value: BigInt | null) {
+    if (!value) {
+      this.unset("maxVoteOptions");
+    } else {
+      this.set("maxVoteOptions", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
   get coordinatorPubKeyX(): BigInt | null {
     let value = this.get("coordinatorPubKeyX");
     if (!value || value.kind == ValueKind.NULL) {
