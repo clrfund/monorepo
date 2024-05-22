@@ -131,7 +131,10 @@ function createOrUpdateClrFund(
   let recipientRegistryAddress = clrFundContract.recipientRegistry()
   let recipientRegistryId = recipientRegistryAddress.toHexString()
   let recipientRegistry = RecipientRegistry.load(recipientRegistryId)
-  if (!recipientRegistry) {
+  if (recipientRegistry) {
+    recipientRegistry.clrFund = clrFundId
+    recipientRegistry.save()
+  } else {
     createRecipientRegistry(recipientRegistryAddress)
   }
 
