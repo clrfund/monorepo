@@ -227,21 +227,6 @@ export class MACIFactory extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toI32());
   }
 
-  TREE_ARITY(): BigInt {
-    let result = super.call("TREE_ARITY", "TREE_ARITY():(uint256)", []);
-
-    return result[0].toBigInt();
-  }
-
-  try_TREE_ARITY(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall("TREE_ARITY", "TREE_ARITY():(uint256)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
   deployMaci(
     signUpGatekeeper: Address,
     initialVoiceCreditProxy: Address,
@@ -342,23 +327,40 @@ export class MACIFactory extends ethereum.SmartContract {
     );
   }
 
-  getMessageBatchSize(messageTreeSubDepth: i32): BigInt {
+  maxRecipients(): BigInt {
+    let result = super.call("maxRecipients", "maxRecipients():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_maxRecipients(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "maxRecipients",
+      "maxRecipients():(uint256)",
+      [],
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  messageBatchSize(): BigInt {
     let result = super.call(
-      "getMessageBatchSize",
-      "getMessageBatchSize(uint8):(uint256)",
-      [ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(messageTreeSubDepth))],
+      "messageBatchSize",
+      "messageBatchSize():(uint256)",
+      [],
     );
 
     return result[0].toBigInt();
   }
 
-  try_getMessageBatchSize(
-    messageTreeSubDepth: i32,
-  ): ethereum.CallResult<BigInt> {
+  try_messageBatchSize(): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
-      "getMessageBatchSize",
-      "getMessageBatchSize(uint8):(uint256)",
-      [ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(messageTreeSubDepth))],
+      "messageBatchSize",
+      "messageBatchSize():(uint256)",
+      [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -658,9 +660,17 @@ export class SetMaciParametersCall__Inputs {
     return this._call.inputValues[0].value.toI32();
   }
 
+  get _messageBatchSize(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+
+  get _maxRecipients(): BigInt {
+    return this._call.inputValues[2].value.toBigInt();
+  }
+
   get _treeDepths(): SetMaciParametersCall_treeDepthsStruct {
     return changetype<SetMaciParametersCall_treeDepthsStruct>(
-      this._call.inputValues[1].value.toTuple(),
+      this._call.inputValues[3].value.toTuple(),
     );
   }
 }

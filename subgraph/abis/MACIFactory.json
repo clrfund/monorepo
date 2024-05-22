@@ -39,6 +39,16 @@
   },
   {
     "inputs": [],
+    "name": "InvalidMaxRecipients",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidMessageBatchSize",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "InvalidMessageProcessorFactory",
     "type": "error"
   },
@@ -60,6 +70,11 @@
   {
     "inputs": [],
     "name": "InvalidVkRegistry",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidVoteOptionTreeDepth",
     "type": "error"
   },
   {
@@ -97,6 +112,11 @@
   {
     "inputs": [],
     "name": "TallyVkNotSet",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "VoteOptionTreeDepthNotSet",
     "type": "error"
   },
   {
@@ -145,19 +165,6 @@
         "internalType": "uint8",
         "name": "",
         "type": "uint8"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "TREE_ARITY",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -270,22 +277,29 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint8",
-        "name": "messageTreeSubDepth",
-        "type": "uint8"
-      }
-    ],
-    "name": "getMessageBatchSize",
+    "inputs": [],
+    "name": "maxRecipients",
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "_messageBatchSize",
+        "name": "",
         "type": "uint256"
       }
     ],
-    "stateMutability": "pure",
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "messageBatchSize",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -314,6 +328,16 @@
         "internalType": "uint8",
         "name": "_stateTreeDepth",
         "type": "uint8"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_messageBatchSize",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_maxRecipients",
+        "type": "uint256"
       },
       {
         "components": [

@@ -153,6 +153,7 @@ describe('Funding Round', () => {
     await tally.mock.tallyBatchNum.returns(1)
     await tally.mock.verifyTallyResult.returns(true)
     await tally.mock.verifySpentVoiceCredits.returns(true)
+    await tally.mock.isTallied.returns(true)
 
     tokenAsContributor = token.connect(contributor) as Contract
     fundingRoundAsCoordinator = fundingRound.connect(
@@ -695,6 +696,7 @@ describe('Funding Round', () => {
         userKeypair.pubKey.asContractParam(),
         totalContributions
       )
+      await tally.mock.isTallied.returns(false)
       await time.increase(roundDuration)
 
       await mergeMaciSubtrees({ maciAddress, pollId, signer: deployer })
@@ -1494,7 +1496,7 @@ describe('Funding Round', () => {
     })
 
     it('prevents adding tally results if maci has not completed tallying', async function () {
-      await tally.mock.tallyBatchNum.returns(0)
+      await tally.mock.isTallied.returns(false)
       await expect(
         addTallyResultsBatch(
           fundingRoundAsCoordinator,
@@ -1506,7 +1508,7 @@ describe('Funding Round', () => {
     })
 
     it('prevents adding batches of tally results if maci has not completed tallying', async function () {
-      await tally.mock.tallyBatchNum.returns(0)
+      await tally.mock.isTallied.returns(false)
       await expect(
         addTallyResultsBatch(
           fundingRoundAsCoordinator,

@@ -29,6 +29,8 @@ contract MACIFactory is Ownable(msg.sender), Params, SnarkCommon, DomainObjs, MA
   // circuit parameters
   uint8 public stateTreeDepth;
   TreeDepths public treeDepths;
+  uint256 public messageBatchSize;
+  uint256 public maxRecipients;
 
   // Events
   event MaciParametersChanged();
@@ -38,11 +40,15 @@ contract MACIFactory is Ownable(msg.sender), Params, SnarkCommon, DomainObjs, MA
   error NotInitialized();
   error ProcessVkNotSet();
   error TallyVkNotSet();
+  error VoteOptionTreeDepthNotSet();
   error InvalidVkRegistry();
   error InvalidPollFactory();
   error InvalidTallyFactory();
   error InvalidMessageProcessorFactory();
   error InvalidVerifier();
+  error InvalidMaxRecipients();
+  error InvalidMessageBatchSize();
+  error InvalidVoteOptionTreeDepth();
 
   constructor(
     address _vkRegistry,
@@ -58,14 +64,6 @@ contract MACIFactory is Ownable(msg.sender), Params, SnarkCommon, DomainObjs, MA
     vkRegistry = VkRegistry(_vkRegistry);
     factories = _factories;
     verifier = Verifier(_verifier);
-  }
-
-  /**
-   * @dev calculate the message batch size
-   */
-  function getMessageBatchSize(uint8 messageTreeSubDepth) public pure
-    returns(uint256 _messageBatchSize) {
-      _messageBatchSize = TREE_ARITY ** messageTreeSubDepth;
   }
 
   /**
@@ -122,13 +120,19 @@ contract MACIFactory is Ownable(msg.sender), Params, SnarkCommon, DomainObjs, MA
    */
   function setMaciParameters(
     uint8 _stateTreeDepth,
+    uint256 _messageBatchSize,
+    uint256 _maxRecipients,
     TreeDepths calldata _treeDepths
   )
     public
     onlyOwner
   {
+    if (_treeDepths.voteOptionTreeDepth == 0) revert InvalidVoteOptionTreeDepth();
+    if (_maxRecipients == 0) revert InvalidMaxRecipients();
+    if (_messageBatchSize == 0) revert InvalidMessageBatchSize();
 
-    uint256 messageBatchSize = getMessageBatchSize(_treeDepths.messageTreeSubDepth);
+    messageBatchSize = _messageBatchSize;
+    maxRecipients = _maxRecipients;
 
     if (!vkRegistry.hasProcessVk(
       _stateTreeDepth,
@@ -155,6 +159,7 @@ contract MACIFactory is Ownable(msg.sender), Params, SnarkCommon, DomainObjs, MA
     emit MaciParametersChanged();
   }
 
+
   /**
     * @dev Deploy new MACI instance.
     */
@@ -170,8 +175,6 @@ contract MACIFactory is Ownable(msg.sender), Params, SnarkCommon, DomainObjs, MA
     external
     returns (MACI _maci, MACI.PollContracts memory _pollContracts)
   {
-    uint256 messageBatchSize = getMessageBatchSize(treeDepths.messageTreeSubDepth);
-
     if (!vkRegistry.hasProcessVk(
       stateTreeDepth,
       treeDepths.messageTreeDepth,

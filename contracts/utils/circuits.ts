@@ -4,9 +4,7 @@
 // the EmptyBallotRoots.sol published in MACI npm package is hardcoded for stateTreeDepth = 6
 
 import path from 'path'
-
-// This should match MACI.TREE_ARITY in the contract
-const TREE_ARITY = 5
+import { MACI_TREE_ARITY } from '@clrfund/common'
 
 export const DEFAULT_CIRCUIT = 'micro'
 
@@ -65,11 +63,11 @@ export const CIRCUITS: { [name: string]: CircuitInfo } = {
       // maxMessages and maxVoteOptions are calculated using treeArity = 5 as seen in the following code:
       // https://github.com/privacy-scaling-explorations/maci/blob/master/contracts/contracts/Poll.sol#L115
       // treeArity ** messageTreeDepth
-      maxMessages: BigInt(TREE_ARITY ** 9),
+      maxMessages: BigInt(MACI_TREE_ARITY ** 9),
       // treeArity ** voteOptionTreeDepth
-      maxVoteOptions: BigInt(TREE_ARITY ** 3),
+      maxVoteOptions: BigInt(MACI_TREE_ARITY ** 3),
     },
-    messageBatchSize: BigInt(TREE_ARITY ** 2),
+    messageBatchSize: BigInt(MACI_TREE_ARITY ** 2),
   },
 }
 

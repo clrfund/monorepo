@@ -8,7 +8,6 @@ import { OptimisticRecipientRegistry as RecipientRegistryTemplate } from '../gen
  * Create the recipient registry entity
  */
 export function createRecipientRegistry(
-  clrFundId: string,
   recipientRegistryAddress: Address
 ): RecipientRegistry {
   let recipientRegistryId = recipientRegistryAddress.toHexString()
@@ -41,7 +40,6 @@ export function createRecipientRegistry(
   if (!owner.reverted) {
     recipientRegistry.owner = owner.value
   }
-  recipientRegistry.clrFund = clrFundId
   recipientRegistry.save()
 
   return recipientRegistry
@@ -56,22 +54,7 @@ export function loadRecipientRegistry(
   let recipientRegistryId = address.toHexString()
   let recipientRegistry = RecipientRegistry.load(recipientRegistryId)
   if (!recipientRegistry) {
-    let recipientRegistryContract = RecipientRegistryContract.bind(address)
-    let controller = recipientRegistryContract.try_controller()
-    if (!controller.reverted) {
-      // Recipient registry's controller must be the ClrFund contract
-      let clrFundId = controller.value.toHexString()
-      let clrFund = ClrFund.load(clrFundId)
-      if (clrFund) {
-        /* This is our registry, create it */
-        recipientRegistry = createRecipientRegistry(clrFund.id, address)
-
-        // update factory
-        clrFund.recipientRegistry = recipientRegistryId
-        clrFund.recipientRegistryAddress = address
-        clrFund.save()
-      }
-    }
+    recipientRegistry = createRecipientRegistry(address)
   }
 
   return recipientRegistry
