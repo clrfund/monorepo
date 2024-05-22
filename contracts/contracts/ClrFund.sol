@@ -63,6 +63,12 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
   error MaxRecipientsNotSet();
   error NotInitialized();
 
+  modifier maciFactoryInitialized() {
+    if (address(maciFactory) == address(0)) revert InvalidMaciFactory();
+    if (maciFactory.maxRecipients() == 0) revert MaxRecipientsNotSet();
+    _;
+  }
+
 
   /**
    * @dev Initialize clrfund instance with MACI factory and round factory
@@ -142,25 +148,19 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
   }
 
   /**
-   * @dev Set the max recipients in the recipient registry
-   */
-  function _setMaxRecipients() private {
-    if (address(maciFactory) == address(0)) revert NotInitialized();
-    if (maciFactory.maxRecipients() == 0) revert MaxRecipientsNotSet();
-    recipientRegistry.setMaxRecipients(maciFactory.maxRecipients());
-  }
-
-  /**
     * @dev Set recipient registry.
     * @param _recipientRegistry Address of a recipient registry.
     */
   function setRecipientRegistry(IRecipientRegistry _recipientRegistry)
     external
     onlyOwner
+    maciFactoryInitialized
   {
 
     recipientRegistry = _recipientRegistry;
-    _setMaxRecipients();
+
+    // Make sure that the max number of recipients is set correctly
+    recipientRegistry.setMaxRecipients(maciFactory.maxRecipients());
 
     emit RecipientRegistryChanged(address(_recipientRegistry));
   }
@@ -215,6 +215,7 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
   )
     external
     onlyOwner
+    maciFactoryInitialized
   {
     IFundingRound currentRound = getCurrentRound();
     if (address(currentRound) != address(0) && !currentRound.isFinalized()) {
@@ -224,7 +225,7 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
     if (address(recipientRegistry) == address(0)) revert RecipientRegistryNotSet();
 
     // Make sure that the max number of recipients is set correctly
-    _setMaxRecipients();
+    recipientRegistry.setMaxRecipients(maciFactory.maxRecipients());
 
     // Deploy funding round and MACI contracts
     address newRound = roundFactory.deploy(duration, address(this));
