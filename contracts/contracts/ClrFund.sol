@@ -60,8 +60,14 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
   error InvalidFundingRoundFactory();
   error InvalidMaciFactory();
   error RecipientRegistryNotSet();
+  error MaxRecipientsNotSet();
   error NotInitialized();
-  error VoteOptionTreeDepthNotSet();
+
+  modifier maciFactoryInitialized() {
+    if (address(maciFactory) == address(0)) revert InvalidMaciFactory();
+    if (maciFactory.maxRecipients() == 0) revert MaxRecipientsNotSet();
+    _;
+  }
 
 
   /**
@@ -129,20 +135,6 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
   }
 
   /**
-   * @dev Get the maximum recipients allowed in the recipient registry
-   */
-  function getMaxRecipients() public view returns (uint256 _maxRecipients) {
-    TreeDepths memory treeDepths = maciFactory.treeDepths();
-    if (treeDepths.voteOptionTreeDepth == 0) revert VoteOptionTreeDepthNotSet();
-
-    uint256 maxVoteOption = maciFactory.TREE_ARITY() ** treeDepths.voteOptionTreeDepth;
-
-    // -1 because the first slot of the recipients array is not used
-    // and maxRecipients is used to generate 0 based index to the array
-    _maxRecipients = maxVoteOption - 1;
-  }
-
-  /**
     * @dev Set registry of verified users.
     * @param _userRegistry Address of a user registry.
     */
@@ -162,10 +154,13 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
   function setRecipientRegistry(IRecipientRegistry _recipientRegistry)
     external
     onlyOwner
+    maciFactoryInitialized
   {
+
     recipientRegistry = _recipientRegistry;
-    uint256 maxRecipients = getMaxRecipients();
-    recipientRegistry.setMaxRecipients(maxRecipients);
+
+    // Make sure that the max number of recipients is set correctly
+    recipientRegistry.setMaxRecipients(maciFactory.maxRecipients());
 
     emit RecipientRegistryChanged(address(_recipientRegistry));
   }
@@ -220,6 +215,7 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
   )
     external
     onlyOwner
+    maciFactoryInitialized
   {
     IFundingRound currentRound = getCurrentRound();
     if (address(currentRound) != address(0) && !currentRound.isFinalized()) {
@@ -229,8 +225,7 @@ contract ClrFund is OwnableUpgradeable, DomainObjs, Params {
     if (address(recipientRegistry) == address(0)) revert RecipientRegistryNotSet();
 
     // Make sure that the max number of recipients is set correctly
-    uint256 maxRecipients = getMaxRecipients();
-    recipientRegistry.setMaxRecipients(maxRecipients);
+    recipientRegistry.setMaxRecipients(maciFactory.maxRecipients());
 
     // Deploy funding round and MACI contracts
     address newRound = roundFactory.deploy(duration, address(this));

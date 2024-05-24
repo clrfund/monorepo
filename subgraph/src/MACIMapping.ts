@@ -21,7 +21,7 @@ import { makePublicKeyId } from './PublicKey'
 // - contract.verifier(...)
 
 export function handleSignUp(event: SignUp): void {
-  let fundingRoundAddress = event.transaction.to!
+  let fundingRoundAddress = event.address
   let fundingRoundId = fundingRoundAddress.toHex()
 
   let publicKeyId = makePublicKeyId(

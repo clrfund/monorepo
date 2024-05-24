@@ -26,6 +26,28 @@
     "type": "constructor"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "target",
+        "type": "address"
+      }
+    ],
+    "name": "AddressEmptyCode",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "AddressInsufficientBalance",
+    "type": "error"
+  },
+  {
     "inputs": [],
     "name": "AlreadyContributed",
     "type": "error"
@@ -43,6 +65,11 @@
   {
     "inputs": [],
     "name": "EmptyTallyHash",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "FailedInnerCall",
     "type": "error"
   },
   {
@@ -143,6 +170,11 @@
   },
   {
     "inputs": [],
+    "name": "NoSignUps",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "NoVoiceCredits",
     "type": "error"
   },
@@ -164,6 +196,28 @@
   {
     "inputs": [],
     "name": "OnlyMaciCanRegisterVoters",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnableInvalidOwner",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "OwnableUnauthorizedAccount",
     "type": "error"
   },
   {
@@ -189,6 +243,17 @@
   {
     "inputs": [],
     "name": "RoundNotFinalized",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      }
+    ],
+    "name": "SafeERC20FailedOperation",
     "type": "error"
   },
   {
@@ -397,19 +462,6 @@
         "internalType": "uint8",
         "name": "",
         "type": "uint8"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "TREE_ARITY",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -890,11 +942,6 @@
           {
             "internalType": "address",
             "name": "tally",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "subsidy",
             "type": "address"
           }
         ],

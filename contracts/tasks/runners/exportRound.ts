@@ -227,7 +227,6 @@ async function getRoundInfo(
         await pollContract.getDeployTimeAndDuration()
       startTime = getNumber(roundStartTime)
       signUpDuration = roundDuration
-      votingDuration = roundDuration
       endTime = startTime + getNumber(roundDuration)
 
       pollId = await roundContract.pollId()

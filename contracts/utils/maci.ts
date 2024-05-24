@@ -7,7 +7,7 @@ import {
   hash5,
   hash3,
   hashLeftRight,
-  LEAVES_PER_NODE,
+  MACI_TREE_ARITY,
   genTallyResultCommitment,
   Keypair,
   Tally as TallyData,
@@ -50,7 +50,7 @@ export function getTallyResultProof(
   const resultTree = new IncrementalQuinTree(
     recipientTreeDepth,
     BigInt(0),
-    LEAVES_PER_NODE,
+    MACI_TREE_ARITY,
     hash5
   )
   for (const leaf of tally.results.tally) {

@@ -169,13 +169,21 @@ export type DeployTestFundingRoundOutput = {
  * @param deployer singer for the contract deployment
  * @returns all the deployed objects in DeployTestFundingRoundOutput
  */
-export async function deployTestFundingRound(
-  tokenSupply: bigint,
-  coordinatorAddress: string,
-  coordinatorPubKey: PubKey,
-  roundDuration: number,
+export async function deployTestFundingRound({
+  stateTreeDepth,
+  tokenSupply,
+  coordinatorAddress,
+  coordinatorPubKey,
+  roundDuration,
+  deployer,
+}: {
+  stateTreeDepth?: number
+  tokenSupply: bigint
+  coordinatorAddress: string
+  coordinatorPubKey: PubKey
+  roundDuration: number
   deployer: Signer
-): Promise<DeployTestFundingRoundOutput> {
+}): Promise<DeployTestFundingRoundOutput> {
   const token = await ethers.deployContract(
     EContracts.AnyOldERC20Token,
     [tokenSupply],
@@ -208,6 +216,12 @@ export async function deployTestFundingRound(
   })
 
   const maciParameters = MaciParameters.mock()
+
+  // use the stateTreeDepth from input
+  if (stateTreeDepth != undefined) {
+    maciParameters.stateTreeDepth = stateTreeDepth
+  }
+
   const maciFactory = await deployMaciFactory({
     libraries,
     ethers,

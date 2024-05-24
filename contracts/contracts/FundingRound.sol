@@ -66,6 +66,7 @@ contract FundingRound is
   error TallyHashNotPublished();
   error IncompleteTallyResults(uint256 total, uint256 actual);
   error NoVotes();
+  error NoSignUps();
   error MaciNotSet();
   error PollNotSet();
   error InvalidMaci();
@@ -173,19 +174,6 @@ contract FundingRound is
    */
   function isAddressZero(address addressValue) public pure returns (bool) {
     return (addressValue == address(0));
-  }
-
-  /**
-   * @dev Have the votes been tallied
-   */
-  function isTallied() private view returns (bool) {
-    (uint256 numSignUps, ) = poll.numSignUpsAndMessages();
-    (uint8 intStateTreeDepth, , , ) = poll.treeDepths();
-    uint256 tallyBatchSize = TREE_ARITY ** uint256(intStateTreeDepth);
-    uint256 tallyBatchNum = tally.tallyBatchNum();
-    uint256 totalTallied = tallyBatchNum * tallyBatchSize;
-
-    return numSignUps > 0 && totalTallied >= numSignUps;
   }
 
   /**
@@ -470,18 +458,18 @@ contract FundingRound is
 
     _votingPeriodOver(poll);
 
-    if (!isTallied()) {
+    if (!tally.isTallied()) {
       revert VotesNotTallied();
     }
+
     if (bytes(tallyHash).length == 0) {
       revert TallyHashNotPublished();
     }
 
     // make sure we have received all the tally results
-    (,,, uint8 voteOptionTreeDepth) = poll.treeDepths();
-    uint256 totalResults = uint256(TREE_ARITY) ** uint256(voteOptionTreeDepth);
-    if ( totalTallyResults != totalResults ) {
-      revert IncompleteTallyResults(totalResults, totalTallyResults);
+    (, uint256 maxVoteOptions) = poll.maxValues();
+    if (totalTallyResults != maxVoteOptions) {
+      revert IncompleteTallyResults(maxVoteOptions, totalTallyResults);
     }
 
     // If nobody voted, the round should be cancelled to avoid locking of matching funds
@@ -493,7 +481,6 @@ contract FundingRound is
     if (!verified) {
       revert IncorrectSpentVoiceCredits();
     }
-
 
     totalSpent = _totalSpent;
     // Total amount of spent voice credits is the size of the pool of direct rewards.
@@ -675,9 +662,15 @@ contract FundingRound is
   {
     if (isAddressZero(address(maci))) revert MaciNotSet();
 
-    if (!isTallied()) {
+    if (maci.numSignUps() == 0) {
+      // no sign ups, so no tally results
+      revert NoSignUps();
+    }
+
+    if (!tally.isTallied()) {
       revert VotesNotTallied();
     }
+
     if (isFinalized) {
       revert RoundAlreadyFinalized();
     }
