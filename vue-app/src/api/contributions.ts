@@ -177,29 +177,28 @@ function getMaciMessage(type: any, data: any[] | null): Message {
 
 /**
  * Get the latest set of vote messages submitted by contributor
- * @param fundingRoundAddress Funding round contract address
+ * @param maciAddress MACI contract address
  * @param contributorKey Contributor key used to encrypt messages
  * @param coordinatorPubKey Coordinator public key
  * @returns MACI messages
  */
 export async function getContributorMessages({
-  fundingRoundAddress,
+  maciAddress,
   contributorKey,
   coordinatorPubKey,
   contributorAddress,
 }: {
-  fundingRoundAddress: string
+  maciAddress: string
   contributorKey: Keypair
   coordinatorPubKey: PubKey
   contributorAddress: string
 }): Promise<Message[]> {
-  if (!fundingRoundAddress) {
+  if (!maciAddress) {
     return []
   }
 
-  const key = getPubKeyId(fundingRoundAddress, contributorKey.pubKey)
+  const key = getPubKeyId(maciAddress, contributorKey.pubKey)
   const result = await sdk.GetContributorMessages({
-    fundingRoundAddress: fundingRoundAddress.toLowerCase(),
     pubKey: key,
     contributorAddress: contributorAddress.toLowerCase(),
   })

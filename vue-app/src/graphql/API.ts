@@ -3147,7 +3147,6 @@ export type GetContributorIndexQueryVariables = Exact<{
 export type GetContributorIndexQuery = { __typename?: 'Query', publicKeys: Array<{ __typename?: 'PublicKey', id: string, stateIndex: any | null }> };
 
 export type GetContributorMessagesQueryVariables = Exact<{
-  fundingRoundAddress: Scalars['String'];
   pubKey: Scalars['String'];
   contributorAddress: Scalars['Bytes'];
 }>;
@@ -3280,9 +3279,9 @@ export const GetContributorIndexDocument = gql`
 }
     `;
 export const GetContributorMessagesDocument = gql`
-    query GetContributorMessages($fundingRoundAddress: String!, $pubKey: String!, $contributorAddress: Bytes!) {
+    query GetContributorMessages($pubKey: String!, $contributorAddress: Bytes!) {
   messages(
-    where: {fundingRound: $fundingRoundAddress, publicKey: $pubKey, submittedBy: $contributorAddress}
+    where: {publicKey: $pubKey, submittedBy: $contributorAddress}
     first: 1000
     orderBy: blockNumber
     orderDirection: desc
