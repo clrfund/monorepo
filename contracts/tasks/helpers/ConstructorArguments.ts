@@ -150,6 +150,7 @@ async function getTallyConstructorArguments(
     tallyContract.vkRegistry(),
     tallyContract.poll(),
     tallyContract.messageProcessor(),
+    tallyContract.mode(),
   ])
 
   return args
@@ -174,6 +175,7 @@ async function getMessageProcessorConstructorArguments(
     messageProcesor.verifier(),
     messageProcesor.vkRegistry(),
     messageProcesor.poll(),
+    messageProcesor.mode(),
   ])
 
   return args
