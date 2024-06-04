@@ -27,13 +27,13 @@ export interface Contributor {
 
 /**
  * get the id of the subgraph public key entity from the pubKey value
- * @param fundingRoundAddress funding round address
+ * @param maciAddress MACI address
  * @param pubKey MACI public key
  * @returns the id for the subgraph public key entity
  */
-function getPubKeyId(fundingRoundAddress = '', pubKey: PubKey): string {
+function getPubKeyId(maciAddress = '', pubKey: PubKey): string {
   const pubKeyPair = pubKey.asContractParam()
-  return id(fundingRoundAddress.toLowerCase() + '.' + pubKeyPair.x + '.' + pubKeyPair.y)
+  return id(maciAddress.toLowerCase() + '.' + pubKeyPair.x + '.' + pubKeyPair.y)
 }
 
 export function getCartStorageKey(roundAddress: string): string {
@@ -141,17 +141,16 @@ export function isContributionAmountValid(value: string, currentRound: RoundInfo
 
 /**
  *  Get the MACI contributor state index
- * @param fundingRoundAddress Funding round contract address
+ * @param maciAddress MACI contract address
  * @param pubKey Contributor public key
  * @returns Contributor stateIndex returned from MACI
  */
-export async function getContributorIndex(fundingRoundAddress: string, pubKey: PubKey): Promise<number | null> {
-  if (!fundingRoundAddress) {
+export async function getContributorIndex(maciAddress: string, pubKey: PubKey): Promise<number | null> {
+  if (!maciAddress) {
     return null
   }
-  const id = getPubKeyId(fundingRoundAddress, pubKey)
+  const id = getPubKeyId(maciAddress, pubKey)
   const data = await sdk.GetContributorIndex({
-    fundingRoundAddress: fundingRoundAddress.toLowerCase(),
     publicKeyId: id,
   })
 
