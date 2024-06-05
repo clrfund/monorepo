@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.10;
+pragma solidity 0.8.20;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
 
@@ -13,7 +13,7 @@ import {MerkleProof} from '../utils/cryptography/MerkleProof.sol';
  * a successful verification against the merkle root set by
  * the funding round coordinator.
  */
-contract MerkleUserRegistry is Ownable, IUserRegistry {
+contract MerkleUserRegistry is Ownable(msg.sender), IUserRegistry {
 
   // verified users grouped by merkleRoot
   // merkleRoot -> user -> status

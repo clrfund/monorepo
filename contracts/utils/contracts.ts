@@ -2,6 +2,7 @@ import {
   BaseContract,
   ContractTransactionResponse,
   TransactionResponse,
+  Signer,
 } from 'ethers'
 import { getEventArg } from '@clrfund/common'
 import { EContracts } from './types'
@@ -9,9 +10,9 @@ import {
   DeployContractOptions,
   HardhatEthersHelpers,
 } from '@nomicfoundation/hardhat-ethers/types'
-import { VkRegistry } from '../typechain-types'
+import { VkRegistry, FundingRound } from '../typechain-types'
 import { MaciParameters } from './maciParameters'
-import { IVerifyingKeyStruct } from 'maci-contracts'
+import { EMode, IVerifyingKeyStruct } from 'maci-contracts'
 
 /**
  * Deploy a contract
@@ -26,7 +27,7 @@ export async function deployContract<T extends BaseContract>(
   options?: DeployContractOptions & { args?: unknown[]; quiet?: boolean }
 ): Promise<T> {
   const args = options?.args || []
-  const contractName = String(name).includes('Poseidon') ? ':' + name : name
+  const contractName = getQualifiedContractName(name)
   const contract = await ethers.deployContract(contractName, args, options)
   await contract.waitForDeployment()
 
@@ -53,6 +54,7 @@ export async function setVerifyingKeys(
     params.treeDepths.messageTreeDepth,
     params.treeDepths.voteOptionTreeDepth,
     messageBatchSize,
+    EMode.QV,
     params.processVk.asContractParam() as IVerifyingKeyStruct,
     params.tallyVk.asContractParam() as IVerifyingKeyStruct
   )
@@ -87,6 +89,68 @@ export async function getTxFee(
   const receipt = await transaction.wait()
   // effectiveGasPrice was introduced by EIP1559
   return receipt ? BigInt(receipt.gasUsed) * BigInt(receipt.gasPrice) : 0n
+}
+
+/**
+ * Return the current funding round contract handle
+ * @param clrfund ClrFund contract address
+ * @param signer Signer who will interact with the funding round contract
+ * @param hre Hardhat runtime environment
+ */
+export async function getCurrentFundingRoundContract(
+  clrfund: string,
+  signer: Signer,
+  ethers: HardhatEthersHelpers
+): Promise<FundingRound> {
+  const clrfundContract = await ethers.getContractAt(
+    EContracts.ClrFund,
+    clrfund,
+    signer
+  )
+
+  const fundingRound = await clrfundContract.getCurrentRound()
+  const fundingRoundContract = await ethers.getContractAt(
+    EContracts.FundingRound,
+    fundingRound,
+    signer
+  )
+
+  return fundingRoundContract as BaseContract as FundingRound
+}
+
+/**
+ * Return the fully qualified contract name for Poll and PollFactory
+ * since there is a local copy and another in the maci-contracts
+ * otherwise return the name of the contract
+ * @param name The contract name
+ * @returns The qualified contract name
+ */
+export function getQualifiedContractName(name: EContracts | string): string {
+  let contractName = String(name)
+  if (contractName.includes('Poseidon')) {
+    contractName = `:${name}`
+  }
+  return contractName
+}
+
+/**
+ * Get a contract
+ * @param name Name of the contract
+ * @param address The contract address
+ * @param ethers Hardhat ethers handle
+ * @param signers The signer
+ * @returns contract
+ */
+export async function getContractAt<T extends BaseContract>(
+  name: EContracts,
+  address: string,
+  ethers: HardhatEthersHelpers,
+  signer?: Signer
+): Promise<T> {
+  const contractName = getQualifiedContractName(name)
+  const contract = await ethers.getContractAt(contractName, address, signer)
+
+  return contract as BaseContract as T
 }
 
 export { getEventArg }

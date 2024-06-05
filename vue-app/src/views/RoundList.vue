@@ -45,7 +45,7 @@ import { DateTime } from 'luxon'
 const rounds = ref<Round[]>([])
 
 onMounted(async () => {
-  rounds.value = (await getRounds()).reverse()
+  rounds.value = await getRounds()
 })
 </script>
 

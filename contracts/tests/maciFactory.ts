@@ -1,4 +1,4 @@
-import { artifacts, ethers, config } from 'hardhat'
+import { artifacts, ethers } from 'hardhat'
 import { Contract, TransactionResponse } from 'ethers'
 import { expect } from 'chai'
 import { deployMockContract, MockContract } from '@clrfund/waffle-mock-contract'
@@ -89,7 +89,10 @@ describe('MACI factory', () => {
       coordinatorMaciFactory.setMaciParameters(
         ...maciParameters.asContractParam()
       )
-    ).to.be.revertedWith('Ownable: caller is not the owner')
+    ).to.be.revertedWithCustomError(
+      coordinatorMaciFactory,
+      'OwnableUnauthorizedAccount'
+    )
   })
 
   it('deploys MACI', async () => {

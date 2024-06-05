@@ -44,19 +44,30 @@ subtask
       clrfundContract.coordinatorPubKey(),
     ])
 
-    const currentPubKey = new PubKey([coordinatorPubKey.x, coordinatorPubKey.y])
+    // if the coordinator has not been set in the clrfund contract
+    // use allowInvalid option to prevent it from throwing in new PubKey()
+    const allowInvalid = true
+    const currentPubKey = new PubKey(
+      [coordinatorPubKey.x, coordinatorPubKey.y],
+      allowInvalid
+    )
     const newPrivKey = PrivKey.deserialize(coordinatorMacisk)
     const newKeypair = new Keypair(newPrivKey)
 
     const normalizedCurrentCoordinator = getAddress(currentCoordinator)
     const normalizedNewCoordinator = getAddress(coordinatorAddress)
-    console.log('Current coordinator', normalizedCurrentCoordinator)
-    console.log('    New coordinator', normalizedNewCoordinator)
+    console.log('Current coordinator:', normalizedCurrentCoordinator)
+    console.log('    New coordinator:', normalizedNewCoordinator)
 
-    const serializedCurrentPubKey = currentPubKey.serialize()
+    let serializedCurrentPubKey = 'Not set'
+    try {
+      serializedCurrentPubKey = currentPubKey.serialize()
+    } catch {
+      // if the public key was not set, serialize will throw.
+    }
     const serializedNewPubKey = newKeypair.pubKey.serialize()
-    console.log('Current MACI key', serializedCurrentPubKey)
-    console.log('    New MACI key', serializedNewPubKey)
+    console.log('Current MACI key:', serializedCurrentPubKey)
+    console.log('    New MACI key:', serializedNewPubKey)
     console.log()
 
     if (

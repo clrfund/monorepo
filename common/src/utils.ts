@@ -12,7 +12,9 @@ import { Keypair } from './keypair'
 import { Tally } from './tally'
 import { bnSqrt } from './math'
 
-const LEAVES_PER_NODE = 5
+// This has to match the MACI TREE_ARITY at:
+// github.com/privacy-scaling-explorations/maci/blob/0c18913d4c84bfa9fbfd66dc017e338df9fdda96/contracts/contracts/MACI.sol#L31
+export const MACI_TREE_ARITY = 5
 
 export function createMessage(
   userStateIndex: number,
@@ -65,7 +67,7 @@ export function getRecipientClaimData(
   const spentTree = new IncrementalQuinTree(
     recipientTreeDepth,
     BigInt(0),
-    LEAVES_PER_NODE,
+    MACI_TREE_ARITY,
     hash5
   )
   for (const leaf of tally.perVOSpentVoiceCredits.tally) {
@@ -94,6 +96,15 @@ export function getRecipientClaimData(
   ]
 }
 
+/**
+ * Returns the maximum MACI users allowed by the state tree
+ * @param stateTreeDepth MACI state tree depth
+ * @returns the maximum number of contributors allowed by MACI circuit
+ */
+export function getMaxContributors(stateTreeDepth: number): number {
+  return MACI_TREE_ARITY ** stateTreeDepth - 1
+}
+
 export {
   genTallyResultCommitment,
   Message,
@@ -103,5 +114,4 @@ export {
   hash2,
   hash3,
   hashLeftRight,
-  LEAVES_PER_NODE,
 }

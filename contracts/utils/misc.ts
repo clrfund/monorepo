@@ -20,6 +20,29 @@ export function getMaciStateFilePath(directory: string) {
 }
 
 /**
+ * Return the proof output directory
+ * @param directory The root directory
+ * @param network The network
+ * @param roundAddress  The funding round contract address
+ * @returns The proofs output directory
+ */
+export function getProofDirForRound(
+  directory: string,
+  network: string,
+  roundAddress: string
+) {
+  try {
+    return path.join(
+      directory,
+      network.toLowerCase(),
+      roundAddress.toLowerCase()
+    )
+  } catch {
+    return directory
+  }
+}
+
+/**
  * Check if the path exist
  * @param path The path to check for existence
  * @returns true if the path exists
@@ -29,10 +52,9 @@ export function isPathExist(path: string): boolean {
 }
 
 /**
- * Returns the directory of the path
- * @param file The file path
- * @returns The directory of the file
+ * Create a directory
+ * @param directory The directory to create
  */
-export function getDirname(file: string): string {
-  return path.dirname(file)
+export function makeDirectory(directory: string): void {
+  fs.mkdirSync(directory, { recursive: true })
 }

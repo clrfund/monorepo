@@ -1,4 +1,4 @@
-import { Contract, FixedNumber, parseUnits, id } from 'ethers'
+import { Contract, FixedNumber, parseUnits, id, AbiCoder } from 'ethers'
 import type { TransactionResponse, Signer } from 'ethers'
 import { Keypair, PubKey, PrivKey, Message, Command } from '@clrfund/common'
 
@@ -27,13 +27,13 @@ export interface Contributor {
 
 /**
  * get the id of the subgraph public key entity from the pubKey value
- * @param fundingRoundAddress funding round address
+ * @param maciAddress MACI address
  * @param pubKey MACI public key
  * @returns the id for the subgraph public key entity
  */
-function getPubKeyId(fundingRoundAddress = '', pubKey: PubKey): string {
+function getPubKeyId(maciAddress = '', pubKey: PubKey): string {
   const pubKeyPair = pubKey.asContractParam()
-  return id(fundingRoundAddress.toLowerCase() + '.' + pubKeyPair.x + '.' + pubKeyPair.y)
+  return id(maciAddress.toLowerCase() + '.' + pubKeyPair.x + '.' + pubKeyPair.y)
 }
 
 export function getCartStorageKey(roundAddress: string): string {
@@ -81,16 +81,17 @@ export async function getContributionAmount(fundingRoundAddress: string, contrib
   if (!fundingRoundAddress) {
     return 0n
   }
-  const data = await sdk.GetContributionsAmount({
-    fundingRoundAddress: fundingRoundAddress.toLowerCase(),
-    contributorAddress: contributorAddress.toLowerCase(),
-  })
-
-  if (!data.contributions.length) {
+  const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
+  try {
+    const abiCoder = AbiCoder.defaultAbiCoder()
+    const userData = abiCoder.encode(['address'], [contributorAddress])
+    const voiceCredits = await fundingRound.getVoiceCredits(contributorAddress, userData)
+    const voiceCreditFactor = await fundingRound.voiceCreditFactor()
+    return BigInt(voiceCredits) * BigInt(voiceCreditFactor)
+  } catch {
+    // ignore error as older contract does not expose the contributors info
     return 0n
   }
-
-  return BigInt(data.contributions[0].amount)
 }
 
 export async function getTotalContributed(fundingRoundAddress: string): Promise<{ count: number; amount: bigint }> {
@@ -140,17 +141,16 @@ export function isContributionAmountValid(value: string, currentRound: RoundInfo
 
 /**
  *  Get the MACI contributor state index
- * @param fundingRoundAddress Funding round contract address
+ * @param maciAddress MACI contract address
  * @param pubKey Contributor public key
  * @returns Contributor stateIndex returned from MACI
  */
-export async function getContributorIndex(fundingRoundAddress: string, pubKey: PubKey): Promise<number | null> {
-  if (!fundingRoundAddress) {
+export async function getContributorIndex(maciAddress: string, pubKey: PubKey): Promise<number | null> {
+  if (!maciAddress) {
     return null
   }
-  const id = getPubKeyId(fundingRoundAddress, pubKey)
+  const id = getPubKeyId(maciAddress, pubKey)
   const data = await sdk.GetContributorIndex({
-    fundingRoundAddress: fundingRoundAddress.toLowerCase(),
     publicKeyId: id,
   })
 
@@ -177,29 +177,28 @@ function getMaciMessage(type: any, data: any[] | null): Message {
 
 /**
  * Get the latest set of vote messages submitted by contributor
- * @param fundingRoundAddress Funding round contract address
+ * @param maciAddress MACI contract address
  * @param contributorKey Contributor key used to encrypt messages
  * @param coordinatorPubKey Coordinator public key
  * @returns MACI messages
  */
 export async function getContributorMessages({
-  fundingRoundAddress,
+  maciAddress,
   contributorKey,
   coordinatorPubKey,
   contributorAddress,
 }: {
-  fundingRoundAddress: string
+  maciAddress: string
   contributorKey: Keypair
   coordinatorPubKey: PubKey
   contributorAddress: string
 }): Promise<Message[]> {
-  if (!fundingRoundAddress) {
+  if (!maciAddress) {
     return []
   }
 
-  const key = getPubKeyId(fundingRoundAddress, contributorKey.pubKey)
+  const key = getPubKeyId(maciAddress, contributorKey.pubKey)
   const result = await sdk.GetContributorMessages({
-    fundingRoundAddress: fundingRoundAddress.toLowerCase(),
     pubKey: key,
     contributorAddress: contributorAddress.toLowerCase(),
   })

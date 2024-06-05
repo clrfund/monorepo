@@ -31,18 +31,14 @@ jobs:
         node-version: ${{ env.NODE_VERSION }}
     - name: Checkout source code
       uses: actions/checkout@v3
-    - name: Install dependencies
+    - name: Create new version
       run: |
         # use https to avoid error: unable to connect to github.com
         git config --global url."https://".insteadOf git://
-        yarn && yarn build
-    - name: setup git config
-      run: |
         # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
         git config user.name "GitHub Actions Bot"
         git config user.email "<>"
-    - name: Create new version
-      run: |
+        yarn && yarn build
         echo "Version: ${{ github.event.inputs.version }}" 
         cd contracts
         npm version ${{ github.event.inputs.version }}

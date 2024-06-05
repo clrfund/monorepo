@@ -16,7 +16,7 @@ import {
   DEFAULT_GET_LOG_BATCH_SIZE,
   DEFAULT_SR_QUEUE_OPS,
 } from '../utils/constants'
-import { getEventArg } from '../utils/contracts'
+import { getContractAt, getEventArg } from '../utils/contracts'
 import { deployPoseidonLibraries, deployMaciFactory } from '../utils/testutils'
 import { getIpfsHash } from '../utils/ipfs'
 import {
@@ -36,6 +36,7 @@ import path from 'path'
 import { FundingRound } from '../typechain-types'
 import { JSONFile } from '../utils/JSONFile'
 import { EContracts } from '../utils/types'
+import { getTalyFilePath } from '../utils/misc'
 
 type VoteData = { recipientIndex: number; voiceCredits: bigint }
 type ClaimData = { [index: number]: bigint }
@@ -269,7 +270,11 @@ describe('End-to-end Tests', function () {
 
     pollId = await fundingRound.pollId()
     const pollAddress = await fundingRound.poll()
-    pollContract = await ethers.getContractAt(EContracts.Poll, pollAddress)
+    pollContract = await getContractAt<Contract>(
+      EContracts.Poll,
+      pollAddress,
+      ethers
+    )
 
     await mine()
   })
@@ -359,6 +364,8 @@ describe('End-to-end Tests', function () {
       mkdirSync(outputDir, { recursive: true })
     }
 
+    const tallyFile = getTalyFilePath(outputDir)
+
     // past an end block that's later than the MACI start block
     const genProofArgs = getGenProofArgs({
       maciAddress,
@@ -368,6 +375,7 @@ describe('End-to-end Tests', function () {
       circuitType: circuit,
       circuitDirectory,
       outputDir,
+      tallyFile,
       blocksPerBatch: DEFAULT_GET_LOG_BATCH_SIZE,
       maciTxHash: maciTransactionHash,
       signer: coordinator,
@@ -386,7 +394,6 @@ describe('End-to-end Tests', function () {
     await proveOnChain({
       pollId,
       proofDir: genProofArgs.outputDir,
-      subsidyEnabled: false,
       maciAddress,
       messageProcessorAddress,
       tallyAddress,
@@ -406,7 +413,6 @@ describe('End-to-end Tests', function () {
       await proveOnChain({
         pollId,
         proofDir: genProofArgs.outputDir,
-        subsidyEnabled: false,
         maciAddress,
         messageProcessorAddress,
         tallyAddress,

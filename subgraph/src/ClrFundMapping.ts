@@ -132,8 +132,10 @@ function createOrUpdateClrFund(
   let recipientRegistryId = recipientRegistryAddress.toHexString()
   let recipientRegistry = RecipientRegistry.load(recipientRegistryId)
   if (!recipientRegistry) {
-    createRecipientRegistry(clrFundId, recipientRegistryAddress)
+    recipientRegistry = createRecipientRegistry(recipientRegistryAddress)
   }
+  recipientRegistry.clrFund = clrFundId
+  recipientRegistry.save()
 
   let contributorRegistryAddress = clrFundContract.userRegistry()
   let contributorRegistryId = contributorRegistryAddress.toHexString()
@@ -287,6 +289,12 @@ export function handleRoundStarted(event: RoundStarted): void {
     if (!treeDepths.reverted) {
       fundingRound.messageTreeDepth = treeDepths.value.value2
       fundingRound.voteOptionTreeDepth = treeDepths.value.value3
+    }
+
+    let maxValues = pollContract.try_maxValues()
+    if (!maxValues.reverted) {
+      fundingRound.maxMessages = maxValues.value.value0
+      fundingRound.maxVoteOptions = maxValues.value.value1
     }
 
     let coordinatorPubKey = pollContract.try_coordinatorPubKey()

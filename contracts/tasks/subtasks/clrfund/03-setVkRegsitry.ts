@@ -3,6 +3,7 @@ import { setVerifyingKeys } from '../../../utils/contracts'
 import { MaciParameters } from '../../../utils/maciParameters'
 import { Subtask } from '../../helpers/Subtask'
 import { EContracts, ISubtaskParams } from '../../helpers/types'
+import { EMode } from 'maci-contracts'
 
 const subtask = Subtask.getInstance()
 
@@ -39,13 +40,15 @@ subtask
       stateTreeDepth,
       messageTreeDepth,
       voteOptionTreeDepth,
-      messageBatchSize
+      messageBatchSize,
+      EMode.QV
     )
 
     const hasTallyVk = await vkRegistryContract.hasTallyVk(
       stateTreeDepth,
       intStateTreeDepth,
-      voteOptionTreeDepth
+      voteOptionTreeDepth,
+      EMode.QV
     )
 
     if (incremental) {

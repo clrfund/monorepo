@@ -21,11 +21,11 @@ import { makePublicKeyId } from './PublicKey'
 // - contract.verifier(...)
 
 export function handleSignUp(event: SignUp): void {
-  let fundingRoundAddress = event.transaction.to!
-  let fundingRoundId = fundingRoundAddress.toHex()
+  let maciAddress = event.address
+  let maciId = maciAddress.toHex()
 
   let publicKeyId = makePublicKeyId(
-    fundingRoundId,
+    maciId,
     event.params._userPubKeyX,
     event.params._userPubKeyY
   )
@@ -39,14 +39,7 @@ export function handleSignUp(event: SignUp): void {
   publicKey.y = event.params._userPubKeyY
   publicKey.stateIndex = event.params._stateIndex
   publicKey.voiceCreditBalance = event.params._voiceCreditBalance
-
-  let fundingRound = FundingRound.load(fundingRoundId)
-  if (fundingRound == null) {
-    log.error('Error: handleSignUp failed, fundingRound not registered', [])
-    return
-  }
-
-  publicKey.fundingRound = fundingRoundId
+  publicKey.maci = maciId
   publicKey.save()
 
   log.info('SignUp', [])

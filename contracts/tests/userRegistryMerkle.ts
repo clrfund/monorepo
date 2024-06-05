@@ -39,7 +39,10 @@ describe('Merkle User Registry', () => {
     const registryAsUser = registry.connect(signers[user1.address]) as Contract
     await expect(
       registryAsUser.setMerkleRoot(randomBytes(32), 'non owner')
-    ).to.be.revertedWith('Ownable: caller is not the owner')
+    ).to.be.revertedWithCustomError(
+      registryAsUser,
+      'OwnableUnauthorizedAccount'
+    )
   })
 
   describe('registration', () => {

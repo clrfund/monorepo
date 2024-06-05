@@ -721,6 +721,7 @@
     "tooltip2": "{chain} 链上钱包余额",
     "h2_3": "项目",
     "div1": "正在审核",
+    "withdraw_button": "取回 {contribution} {tokenSymbol}",
     "btn2_1": "预览",
     "btn2_2": "查看",
     "div2": "您尚未提交任何项目"
@@ -805,15 +806,10 @@
     "p7": "为了防止受贿和欺诈，您需要将您的钱包地址添加到智能合约注册表中。完成后，您就可以参加筹款活动了！",
     "btn": " 成为捐赠者",
     "next": "下一步",
-    "previous": "前一步",
     "copy_link": "复制",
     "verification_status": "您的钱包地址没有连接到 BrightID 的户口。 这可能需要几分钟的时间，稍等候后点击按钮再试。",
     "getting_proof": "正在获取验证证明...",
-    "not_authorized": "您没有权限注册",
-    "skip_sponsorship": "跳过",
-    "get_sponsored_header": "赞助",
-    "get_sponsored_text": "您需要一个赞助令牌才能为 BrightID 认证。这有助于支持 BrightID 作为去中心化平台。您只需这样做一次, 就可以应用任何 BrightID APPS。检查 BrightID 移动应用程序，看看您是否受到赞助。如果没有，请点击按钮提交赞助请求。如果您已受到赞助，您可跳过这一步。",
-    "get_sponsored_cta": "赞助"
+    "not_authorized": "您没有权限注册"
   },
   "verifyLanding": {
     "h1": "证明您只使用一个帐户",
@@ -893,7 +889,6 @@
     "div8": "匹配池",
     "div9": "剩余的将会加入匹配池",
     "div10": "平均分配 {contribution} {tokenSymbol}",
-    "button1": "取回 {contribution} {tokenSymbol}",
     "div11": "不可以",
     "div11_if2": "重新分配",
     "div11_if3": "捐赠",

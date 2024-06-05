@@ -22,6 +22,8 @@ query GetRoundInfo($fundingRoundAddress: ID!) {
     votingDeadline
     coordinatorPubKeyX
     coordinatorPubKeyY
+    maxMessages
+    maxVoteOptions
     stateTreeDepth
     messageTreeDepth
     voteOptionTreeDepth

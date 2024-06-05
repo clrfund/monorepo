@@ -4,7 +4,7 @@
  * Modified from https://github.com/lidofinance/curve-merkle-oracle/blob/main/contracts/MerklePatriciaProofVerifier.sol
  * git commit hash 1033b3e84142317ffd8f366b52e489d5eb49c73f
  */
-pragma solidity ^0.8.10;
+pragma solidity 0.8.20;
 
 import {RLPReader} from 'solidity-rlp/contracts/RLPReader.sol';
 

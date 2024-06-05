@@ -31,13 +31,13 @@ export class ContractVerifier {
    */
   async verify(
     address: string,
-    constructorArguments: string,
+    constructorArguments: unknown[],
     libraries?: string,
     contract?: string
   ): Promise<[boolean, string]> {
     const params: IVerificationSubtaskArgs = {
       address,
-      constructorArguments: JSON.parse(constructorArguments) as unknown[],
+      constructorArguments,
       contract,
     }
 
@@ -50,7 +50,7 @@ export class ContractVerifier {
       .run('verify:verify', params)
       .then(() => '')
       .catch((err: Error) => {
-        if (err.message === 'Contract source code already verified') {
+        if (err.message && err.message.match(/already verified/i)) {
           return ''
         }
 

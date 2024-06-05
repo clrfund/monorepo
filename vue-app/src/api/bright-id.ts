@@ -2,7 +2,7 @@ import { Contract, encodeBytes32String, toUtf8Bytes, decodeBase64, encodeBase64 
 import type { TransactionResponse, Signer } from 'ethers'
 
 import { BrightIdUserRegistry } from './abi'
-import { brightIdSponsorKey, brightIdNodeUrl } from './core'
+import { brightIdNodeUrl } from './core'
 import nacl from 'tweetnacl'
 
 const BRIGHTID_APP_URL = 'https://app.brightid.org'
@@ -42,55 +42,6 @@ export interface Verification {
   sig: { r: string; s: string; v: number }
   timestamp: number
   app: string
-}
-
-export interface Sponsorship {
-  timestamp: number
-  app: string
-  appHasAuthorized: boolean
-  spendRequested: boolean
-}
-
-type AppData = {
-  id: string
-  name: string
-  context?: string
-  verification: string
-  verifications?: string[]
-  verificationsUrl: string
-  logo?: string
-  url?: string
-  assignedSponsorships?: number
-  unusedSponsorships?: number
-  testing?: boolean
-  idAsHex?: boolean
-  usingBlindSig?: boolean
-  verificationExpirationLength?: number
-  sponsorPublicKey?: string
-  nodeUrl?: string
-  soulbound: boolean
-  callbackUrl?: string
-}
-
-type SponsorOperation = {
-  name: string
-  app: string
-  appUserId: string
-  timestamp: number
-  v: number
-  sig?: string
-}
-
-type SponsorData = {
-  hash?: string
-  error?: string
-}
-
-export async function selfSponsor(registryAddress: string, signer: Signer): Promise<TransactionResponse> {
-  const registry = new Contract(registryAddress, BrightIdUserRegistry, signer)
-  const userAddress = await signer.getAddress()
-  const transaction = await registry.sponsor(userAddress)
-  return transaction
 }
 
 // This link is for generating QR code
@@ -165,130 +116,4 @@ export async function getBrightId(contextId: string): Promise<BrightId> {
     }
   }
   return brightId
-}
-
-/**
- * Get the unused sponsorship amount
- * @param context - the context to retrieve unused sponsorships for
- *
- * @returns Returns the number of sponsorships available to the specified `context`
- */
-async function unusedSponsorships(context: string): Promise<number> {
-  const endpoint = `${NODE_URL}/apps/${context}`
-  const response = await fetch(endpoint)
-  const json = await response.json()
-
-  if (json['errorMessage']) {
-    throw new Error(JSON.stringify(json))
-  }
-
-  const data = json['data'] as AppData
-  return data.unusedSponsorships || 0
-}
-
-/**
- * Call the BrightID sponsor operation endpoint to put a sponsorship request for the user
- * @param userAddress user wallet address
- * @returns sponsporship result or error
- */
-export async function brightIdSponsor(userAddress: string): Promise<SponsorData> {
-  const endpoint = `${NODE_URL}/operations`
-
-  if (!brightIdSponsorKey) {
-    return { error: 'BrightId sponsor key not set' }
-  }
-
-  const sponsorships = await unusedSponsorships(CONTEXT)
-  if (typeof sponsorships === 'number' && sponsorships < 1) {
-    return { error: 'BrightID sponsorships not available' }
-  }
-
-  if (typeof sponsorships !== 'number') {
-    return { error: 'Invalid BrightID sponsorship' }
-  }
-
-  const timestamp = Date.now()
-
-  // these fields must be in alphabetical because
-  // BrightID nodes use 'fast-json-stable-stringify' that sorts fields
-  const op: SponsorOperation = {
-    app: CONTEXT,
-    appUserId: userAddress,
-    name: 'Sponsor',
-    timestamp,
-    v: 6,
-  }
-
-  const message = JSON.stringify(op)
-  const arrayedMessage = toUtf8Bytes(message)
-  const arrayedKey = decodeBase64(brightIdSponsorKey)
-  const signature = nacl.sign.detached(arrayedMessage, arrayedKey)
-  op.sig = encodeBase64(signature)
-
-  const res = await fetch(endpoint, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(op),
-  })
-  const json = await res.json()
-
-  if (json['error']) {
-    if (canIgnoreError(json.errorNum)) {
-      // sponsorship already sent recently, ignore this error
-      return { hash: '0x0' }
-    }
-    return { error: json['errorMessage'] }
-  } else {
-    return json['data']
-  }
-}
-
-/**
- * Call the netlify function to invoke the BrightId sponsor api
- * @param userAddress user wallet address
- * @returns sponsorship data or error
- */
-async function netlifySponsor(userAddress: string): Promise<SponsorData> {
-  const res = await fetch('/.netlify/functions/sponsor', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ userAddress }),
-  })
-
-  const json = await res.json()
-  if (res.status === 200) {
-    return json
-  }
-
-  if (res.status === 400 && canIgnoreError(json.errorNum)) {
-    return { hash: '0x0' }
-  }
-
-  // return the error
-  return json
-}
-
-/**
- * Sponsor a BrightID user using the sponsorship api
- * @param userAddress user wallet address
- * @returns sponsporship result or error
- */
-export async function sponsorUser(userAddress: string): Promise<SponsorData> {
-  if (brightIdSponsorKey) {
-    return brightIdSponsor(userAddress)
-  }
-
-  try {
-    return await netlifySponsor(userAddress)
-  } catch (err) {
-    if (err instanceof Error) {
-      return { error: (err as Error).message }
-    } else {
-      return { error: 'Unknown sponsorhip error' }
-    }
-  }
 }

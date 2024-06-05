@@ -1,9 +1,9 @@
-import { Contract, toNumber, getAddress, hexlify, randomBytes } from 'ethers'
+import { Contract, getAddress, hexlify, randomBytes, getNumber } from 'ethers'
 import { DateTime } from 'luxon'
-import { PubKey } from '@clrfund/common'
+import { PubKey, type Tally, getMaxContributors } from '@clrfund/common'
 
 import { FundingRound, Poll } from './abi'
-import { provider, clrFundContract } from './core'
+import { provider, clrFundContract, isActiveApp } from './core'
 import { getTotalContributed } from './contributions'
 import { isVoidedRound } from './rounds'
 import sdk from '@/graphql/sdk'
@@ -38,6 +38,7 @@ export interface RoundInfo {
   messages: number
   blogUrl?: string
   network?: string
+  tally?: Tally
 }
 
 export interface TimeLeft {
@@ -97,7 +98,7 @@ export function toRoundInfo(data: any, network: string): RoundInfo {
     nativeTokenDecimals,
     voiceCreditFactor,
     status,
-    startTime: DateTime.fromSeconds(data.startTime),
+    startTime: DateTime.fromSeconds(Number(data.startTime)),
     signUpDeadline: DateTime.fromSeconds(Number(data.startTime) + Number(data.signUpDuration)),
     votingDeadline: DateTime.fromSeconds(
       Number(data.startTime) + Number(data.signUpDuration) + Number(data.votingDuration),
@@ -121,6 +122,16 @@ export async function getLeaderboardRoundInfo(fundingRoundAddress: string, netwo
   let round: RoundInfo | null = null
   try {
     round = toRoundInfo(data.round, network)
+
+    round.tally = {
+      provider: data.tally.provider,
+      maci: data.tally.maci,
+      pollId: data.pollId,
+      newTallyCommitment: data.tally.newTallyCommitment,
+      results: data.tally.results,
+      totalSpentVoiceCredits: data.tally.totalSpentVoiceCredits ?? data.tally.totalVoiceCredits,
+      perVOSpentVoiceCredits: data.tally.perVOSpentVoiceCredits ?? data.tally.totalVoiceCreditsPerVoteOption,
+    }
   } catch (err) {
     /* eslint-disable-next-line no-console */
     console.warn(`Failed map leaderboard round info`, err)
@@ -138,6 +149,11 @@ export async function getRoundInfo(
   if (cachedRound && isSameAddress(roundAddress, cachedRound.fundingRoundAddress)) {
     // the requested round matches the cached round, quick return
     return cachedRound
+  }
+
+  if (!isActiveApp) {
+    // static app should use the exported round information from rounds.json
+    return null
   }
 
   const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
@@ -158,8 +174,9 @@ export async function getRoundInfo(
     isFinalized,
     isCancelled,
     stateTreeDepth,
-    messageTreeDepth,
     voteOptionTreeDepth,
+    maxMessages: maxMessagesBigInt,
+    maxVoteOptions: maxVoteOptionsBigInt,
     startTime: startTimeInSeconds,
     signUpDeadline: signUpDeadlineInSeconds,
     votingDeadline: votingDeadlineInSeconds,
@@ -177,8 +194,8 @@ export async function getRoundInfo(
   const nativeTokenSymbol = data.fundingRound.nativeTokenInfo?.symbol || ''
   const nativeTokenDecimals = Number(data.fundingRound.nativeTokenInfo?.decimals || '')
 
-  const maxContributors = stateTreeDepth ? 2 ** stateTreeDepth - 1 : 0
-  const maxMessages = messageTreeDepth ? 2 ** messageTreeDepth - 1 : 0
+  const maxContributors = getMaxContributors(stateTreeDepth || 0)
+  const maxMessages = getNumber(maxMessagesBigInt) || 0
   const now = DateTime.local()
   const startTime = DateTime.fromSeconds(Number(startTimeInSeconds || 0))
   const signUpDeadline = DateTime.fromSeconds(Number(signUpDeadlineInSeconds || 0))
@@ -201,9 +218,10 @@ export async function getRoundInfo(
     contributions = contributionsInfo.amount
     matchingPool = await clrFundContract.getMatchingFunds(nativeTokenAddress)
   } else {
-    if (now < signUpDeadline && contributors < maxContributors) {
+    if (now < votingDeadline && contributors < maxContributors) {
       status = RoundStatus.Contributing
     } else if (now < votingDeadline) {
+      // Too many contributors, do not allow new contributors, allow reallocation only
       status = RoundStatus.Reallocating
     } else {
       status = RoundStatus.Tallying
@@ -215,6 +233,10 @@ export async function getRoundInfo(
 
   const totalFunds = matchingPool + contributions
 
+  // recipient 0 is reserved, so maxRecipients is 1 fewer than the maxVoteOptions
+  const maxVoteOptions = getNumber(maxVoteOptionsBigInt)
+  const maxRecipients = maxVoteOptions > 0 ? maxVoteOptions - 1 : 0
+
   return {
     fundingRoundAddress,
     recipientRegistryAddress: getAddress(recipientRegistryAddress),
@@ -223,7 +245,7 @@ export async function getRoundInfo(
     pollId: BigInt(pollId || 0),
     recipientTreeDepth: voteOptionTreeDepth || 1,
     maxContributors,
-    maxRecipients: voteOptionTreeDepth ? 5 ** voteOptionTreeDepth - 1 : 0,
+    maxRecipients,
     maxMessages,
     coordinatorPubKey,
     nativeTokenAddress: getAddress(nativeTokenAddress),
@@ -238,6 +260,6 @@ export async function getRoundInfo(
     matchingPool,
     contributions,
     contributors,
-    messages: toNumber(messages),
+    messages: getNumber(messages),
   }
 }

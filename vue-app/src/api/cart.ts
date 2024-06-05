@@ -17,15 +17,14 @@ export async function getCommittedCart(
   encryptionKey: string,
   contributorAddress: string,
 ): Promise<CartItem[]> {
-  const { coordinatorPubKey, fundingRoundAddress, voiceCreditFactor, nativeTokenDecimals, recipientRegistryAddress } =
-    round
+  const { coordinatorPubKey, maciAddress, voiceCreditFactor, nativeTokenDecimals, recipientRegistryAddress } = round
 
   const encKeypair = await Keypair.createFromSeed(encryptionKey)
 
   const sharedKey = Keypair.genEcdhSharedKey(encKeypair.privKey, coordinatorPubKey)
 
   const messages = await getContributorMessages({
-    fundingRoundAddress,
+    maciAddress,
     contributorKey: encKeypair,
     coordinatorPubKey,
     contributorAddress,

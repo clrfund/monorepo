@@ -17,6 +17,7 @@ export type Scalars = {
   BigInt: any;
   Bytes: any;
   Int8: any;
+  Timestamp: any;
 };
 
 export enum Aggregation_Interval {
@@ -334,6 +335,8 @@ export enum ClrFund_OrderBy {
   CurrentRoundMaci = 'currentRound__maci',
   CurrentRoundMaciTxHash = 'currentRound__maciTxHash',
   CurrentRoundMatchingPoolSize = 'currentRound__matchingPoolSize',
+  CurrentRoundMaxMessages = 'currentRound__maxMessages',
+  CurrentRoundMaxVoteOptions = 'currentRound__maxVoteOptions',
   CurrentRoundMessageTreeDepth = 'currentRound__messageTreeDepth',
   CurrentRoundNativeToken = 'currentRound__nativeToken',
   CurrentRoundPollAddress = 'currentRound__pollAddress',
@@ -503,6 +506,8 @@ export enum Contribution_OrderBy {
   FundingRoundMaci = 'fundingRound__maci',
   FundingRoundMaciTxHash = 'fundingRound__maciTxHash',
   FundingRoundMatchingPoolSize = 'fundingRound__matchingPoolSize',
+  FundingRoundMaxMessages = 'fundingRound__maxMessages',
+  FundingRoundMaxVoteOptions = 'fundingRound__maxVoteOptions',
   FundingRoundMessageTreeDepth = 'fundingRound__messageTreeDepth',
   FundingRoundNativeToken = 'fundingRound__nativeToken',
   FundingRoundPollAddress = 'fundingRound__pollAddress',
@@ -532,7 +537,6 @@ export type Contributor = {
   id: Scalars['ID'];
   lastUpdatedAt: Maybe<Scalars['String']>;
   verifiedTimeStamp: Maybe<Scalars['String']>;
-  votes: Maybe<Array<Vote>>;
 };
 
 
@@ -551,15 +555,6 @@ export type ContributorFundingRoundsArgs = {
   orderDirection: InputMaybe<OrderDirection>;
   skip?: InputMaybe<Scalars['Int']>;
   where: InputMaybe<FundingRound_Filter>;
-};
-
-
-export type ContributorVotesArgs = {
-  first?: InputMaybe<Scalars['Int']>;
-  orderBy: InputMaybe<Vote_OrderBy>;
-  orderDirection: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']>;
-  where: InputMaybe<Vote_Filter>;
 };
 
 export type ContributorRegistry = {
@@ -824,7 +819,6 @@ export type Contributor_Filter = {
   verifiedTimeStamp_not_starts_with_nocase: InputMaybe<Scalars['String']>;
   verifiedTimeStamp_starts_with: InputMaybe<Scalars['String']>;
   verifiedTimeStamp_starts_with_nocase: InputMaybe<Scalars['String']>;
-  votes_: InputMaybe<Vote_Filter>;
 };
 
 export enum Contributor_OrderBy {
@@ -840,8 +834,7 @@ export enum Contributor_OrderBy {
   FundingRounds = 'fundingRounds',
   Id = 'id',
   LastUpdatedAt = 'lastUpdatedAt',
-  VerifiedTimeStamp = 'verifiedTimeStamp',
-  Votes = 'votes'
+  VerifiedTimeStamp = 'verifiedTimeStamp'
 }
 
 export type Coordinator = {
@@ -1043,6 +1036,8 @@ export enum Donation_OrderBy {
   FundingRoundMaci = 'fundingRound__maci',
   FundingRoundMaciTxHash = 'fundingRound__maciTxHash',
   FundingRoundMatchingPoolSize = 'fundingRound__matchingPoolSize',
+  FundingRoundMaxMessages = 'fundingRound__maxMessages',
+  FundingRoundMaxVoteOptions = 'fundingRound__maxVoteOptions',
   FundingRoundMessageTreeDepth = 'fundingRound__messageTreeDepth',
   FundingRoundNativeToken = 'fundingRound__nativeToken',
   FundingRoundPollAddress = 'fundingRound__pollAddress',
@@ -1082,6 +1077,8 @@ export type FundingRound = {
   maci: Maybe<Scalars['Bytes']>;
   maciTxHash: Maybe<Scalars['Bytes']>;
   matchingPoolSize: Maybe<Scalars['BigInt']>;
+  maxMessages: Maybe<Scalars['BigInt']>;
+  maxVoteOptions: Maybe<Scalars['BigInt']>;
   messageTreeDepth: Maybe<Scalars['Int']>;
   messages: Maybe<Array<Message>>;
   nativeToken: Maybe<Scalars['Bytes']>;
@@ -1100,7 +1097,6 @@ export type FundingRound = {
   totalVotes: Maybe<Scalars['BigInt']>;
   voiceCreditFactor: Maybe<Scalars['BigInt']>;
   voteOptionTreeDepth: Maybe<Scalars['Int']>;
-  votes: Maybe<Array<Vote>>;
   votingDeadline: Maybe<Scalars['BigInt']>;
 };
 
@@ -1138,15 +1134,6 @@ export type FundingRoundRecipientsArgs = {
   orderDirection: InputMaybe<OrderDirection>;
   skip?: InputMaybe<Scalars['Int']>;
   where: InputMaybe<Recipient_Filter>;
-};
-
-
-export type FundingRoundVotesArgs = {
-  first?: InputMaybe<Scalars['Int']>;
-  orderBy: InputMaybe<Vote_OrderBy>;
-  orderDirection: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']>;
-  where: InputMaybe<Vote_Filter>;
 };
 
 export type FundingRound_Filter = {
@@ -1325,6 +1312,22 @@ export type FundingRound_Filter = {
   matchingPoolSize_lte: InputMaybe<Scalars['BigInt']>;
   matchingPoolSize_not: InputMaybe<Scalars['BigInt']>;
   matchingPoolSize_not_in: InputMaybe<Array<Scalars['BigInt']>>;
+  maxMessages: InputMaybe<Scalars['BigInt']>;
+  maxMessages_gt: InputMaybe<Scalars['BigInt']>;
+  maxMessages_gte: InputMaybe<Scalars['BigInt']>;
+  maxMessages_in: InputMaybe<Array<Scalars['BigInt']>>;
+  maxMessages_lt: InputMaybe<Scalars['BigInt']>;
+  maxMessages_lte: InputMaybe<Scalars['BigInt']>;
+  maxMessages_not: InputMaybe<Scalars['BigInt']>;
+  maxMessages_not_in: InputMaybe<Array<Scalars['BigInt']>>;
+  maxVoteOptions: InputMaybe<Scalars['BigInt']>;
+  maxVoteOptions_gt: InputMaybe<Scalars['BigInt']>;
+  maxVoteOptions_gte: InputMaybe<Scalars['BigInt']>;
+  maxVoteOptions_in: InputMaybe<Array<Scalars['BigInt']>>;
+  maxVoteOptions_lt: InputMaybe<Scalars['BigInt']>;
+  maxVoteOptions_lte: InputMaybe<Scalars['BigInt']>;
+  maxVoteOptions_not: InputMaybe<Scalars['BigInt']>;
+  maxVoteOptions_not_in: InputMaybe<Array<Scalars['BigInt']>>;
   messageTreeDepth: InputMaybe<Scalars['Int']>;
   messageTreeDepth_gt: InputMaybe<Scalars['Int']>;
   messageTreeDepth_gte: InputMaybe<Scalars['Int']>;
@@ -1500,7 +1503,6 @@ export type FundingRound_Filter = {
   voteOptionTreeDepth_lte: InputMaybe<Scalars['Int']>;
   voteOptionTreeDepth_not: InputMaybe<Scalars['Int']>;
   voteOptionTreeDepth_not_in: InputMaybe<Array<Scalars['Int']>>;
-  votes_: InputMaybe<Vote_Filter>;
   votingDeadline: InputMaybe<Scalars['BigInt']>;
   votingDeadline_gt: InputMaybe<Scalars['BigInt']>;
   votingDeadline_gte: InputMaybe<Scalars['BigInt']>;
@@ -1547,6 +1549,8 @@ export enum FundingRound_OrderBy {
   Maci = 'maci',
   MaciTxHash = 'maciTxHash',
   MatchingPoolSize = 'matchingPoolSize',
+  MaxMessages = 'maxMessages',
+  MaxVoteOptions = 'maxVoteOptions',
   MessageTreeDepth = 'messageTreeDepth',
   Messages = 'messages',
   NativeToken = 'nativeToken',
@@ -1579,7 +1583,6 @@ export enum FundingRound_OrderBy {
   TotalVotes = 'totalVotes',
   VoiceCreditFactor = 'voiceCreditFactor',
   VoteOptionTreeDepth = 'voteOptionTreeDepth',
-  Votes = 'votes',
   VotingDeadline = 'votingDeadline'
 }
 
@@ -1590,6 +1593,7 @@ export type Message = {
   fundingRound: Maybe<FundingRound>;
   id: Scalars['ID'];
   msgType: Scalars['BigInt'];
+  poll: Maybe<Poll>;
   publicKey: Maybe<PublicKey>;
   submittedBy: Maybe<Scalars['Bytes']>;
   timestamp: Maybe<Scalars['String']>;
@@ -1652,6 +1656,27 @@ export type Message_Filter = {
   msgType_not: InputMaybe<Scalars['BigInt']>;
   msgType_not_in: InputMaybe<Array<Scalars['BigInt']>>;
   or: InputMaybe<Array<InputMaybe<Message_Filter>>>;
+  poll: InputMaybe<Scalars['String']>;
+  poll_: InputMaybe<Poll_Filter>;
+  poll_contains: InputMaybe<Scalars['String']>;
+  poll_contains_nocase: InputMaybe<Scalars['String']>;
+  poll_ends_with: InputMaybe<Scalars['String']>;
+  poll_ends_with_nocase: InputMaybe<Scalars['String']>;
+  poll_gt: InputMaybe<Scalars['String']>;
+  poll_gte: InputMaybe<Scalars['String']>;
+  poll_in: InputMaybe<Array<Scalars['String']>>;
+  poll_lt: InputMaybe<Scalars['String']>;
+  poll_lte: InputMaybe<Scalars['String']>;
+  poll_not: InputMaybe<Scalars['String']>;
+  poll_not_contains: InputMaybe<Scalars['String']>;
+  poll_not_contains_nocase: InputMaybe<Scalars['String']>;
+  poll_not_ends_with: InputMaybe<Scalars['String']>;
+  poll_not_ends_with_nocase: InputMaybe<Scalars['String']>;
+  poll_not_in: InputMaybe<Array<Scalars['String']>>;
+  poll_not_starts_with: InputMaybe<Scalars['String']>;
+  poll_not_starts_with_nocase: InputMaybe<Scalars['String']>;
+  poll_starts_with: InputMaybe<Scalars['String']>;
+  poll_starts_with_nocase: InputMaybe<Scalars['String']>;
   publicKey: InputMaybe<Scalars['String']>;
   publicKey_: InputMaybe<PublicKey_Filter>;
   publicKey_contains: InputMaybe<Scalars['String']>;
@@ -1730,6 +1755,8 @@ export enum Message_OrderBy {
   FundingRoundMaci = 'fundingRound__maci',
   FundingRoundMaciTxHash = 'fundingRound__maciTxHash',
   FundingRoundMatchingPoolSize = 'fundingRound__matchingPoolSize',
+  FundingRoundMaxMessages = 'fundingRound__maxMessages',
+  FundingRoundMaxVoteOptions = 'fundingRound__maxVoteOptions',
   FundingRoundMessageTreeDepth = 'fundingRound__messageTreeDepth',
   FundingRoundNativeToken = 'fundingRound__nativeToken',
   FundingRoundPollAddress = 'fundingRound__pollAddress',
@@ -1747,8 +1774,11 @@ export enum Message_OrderBy {
   FundingRoundVotingDeadline = 'fundingRound__votingDeadline',
   Id = 'id',
   MsgType = 'msgType',
+  Poll = 'poll',
+  PollId = 'poll__id',
   PublicKey = 'publicKey',
   PublicKeyId = 'publicKey__id',
+  PublicKeyMaci = 'publicKey__maci',
   PublicKeyStateIndex = 'publicKey__stateIndex',
   PublicKeyVoiceCreditBalance = 'publicKey__voiceCreditBalance',
   PublicKeyX = 'publicKey__x',
@@ -1764,19 +1794,15 @@ export enum OrderDirection {
   Desc = 'desc'
 }
 
-export type PublicKey = {
-  __typename?: 'PublicKey';
-  fundingRound: Maybe<FundingRound>;
+export type Poll = {
+  __typename?: 'Poll';
+  fundingRound: FundingRound;
   id: Scalars['ID'];
   messages: Maybe<Array<Message>>;
-  stateIndex: Maybe<Scalars['BigInt']>;
-  voiceCreditBalance: Maybe<Scalars['BigInt']>;
-  x: Scalars['BigInt'];
-  y: Scalars['BigInt'];
 };
 
 
-export type PublicKeyMessagesArgs = {
+export type PollMessagesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   orderBy: InputMaybe<Message_OrderBy>;
   orderDirection: InputMaybe<OrderDirection>;
@@ -1784,10 +1810,10 @@ export type PublicKeyMessagesArgs = {
   where: InputMaybe<Message_Filter>;
 };
 
-export type PublicKey_Filter = {
+export type Poll_Filter = {
   /** Filter for the block changed event. */
   _change_block: InputMaybe<BlockChangedFilter>;
-  and: InputMaybe<Array<InputMaybe<PublicKey_Filter>>>;
+  and: InputMaybe<Array<InputMaybe<Poll_Filter>>>;
   fundingRound: InputMaybe<Scalars['String']>;
   fundingRound_: InputMaybe<FundingRound_Filter>;
   fundingRound_contains: InputMaybe<Scalars['String']>;
@@ -1817,6 +1843,98 @@ export type PublicKey_Filter = {
   id_lte: InputMaybe<Scalars['ID']>;
   id_not: InputMaybe<Scalars['ID']>;
   id_not_in: InputMaybe<Array<Scalars['ID']>>;
+  messages_: InputMaybe<Message_Filter>;
+  or: InputMaybe<Array<InputMaybe<Poll_Filter>>>;
+};
+
+export enum Poll_OrderBy {
+  FundingRound = 'fundingRound',
+  FundingRoundContributorCount = 'fundingRound__contributorCount',
+  FundingRoundContributorRegistryAddress = 'fundingRound__contributorRegistryAddress',
+  FundingRoundCoordinator = 'fundingRound__coordinator',
+  FundingRoundCoordinatorPubKeyX = 'fundingRound__coordinatorPubKeyX',
+  FundingRoundCoordinatorPubKeyY = 'fundingRound__coordinatorPubKeyY',
+  FundingRoundCreatedAt = 'fundingRound__createdAt',
+  FundingRoundId = 'fundingRound__id',
+  FundingRoundIsCancelled = 'fundingRound__isCancelled',
+  FundingRoundIsFinalized = 'fundingRound__isFinalized',
+  FundingRoundLastUpdatedAt = 'fundingRound__lastUpdatedAt',
+  FundingRoundMaci = 'fundingRound__maci',
+  FundingRoundMaciTxHash = 'fundingRound__maciTxHash',
+  FundingRoundMatchingPoolSize = 'fundingRound__matchingPoolSize',
+  FundingRoundMaxMessages = 'fundingRound__maxMessages',
+  FundingRoundMaxVoteOptions = 'fundingRound__maxVoteOptions',
+  FundingRoundMessageTreeDepth = 'fundingRound__messageTreeDepth',
+  FundingRoundNativeToken = 'fundingRound__nativeToken',
+  FundingRoundPollAddress = 'fundingRound__pollAddress',
+  FundingRoundPollId = 'fundingRound__pollId',
+  FundingRoundRecipientCount = 'fundingRound__recipientCount',
+  FundingRoundRecipientRegistryAddress = 'fundingRound__recipientRegistryAddress',
+  FundingRoundSignUpDeadline = 'fundingRound__signUpDeadline',
+  FundingRoundStartTime = 'fundingRound__startTime',
+  FundingRoundStateTreeDepth = 'fundingRound__stateTreeDepth',
+  FundingRoundTallyHash = 'fundingRound__tallyHash',
+  FundingRoundTotalSpent = 'fundingRound__totalSpent',
+  FundingRoundTotalVotes = 'fundingRound__totalVotes',
+  FundingRoundVoiceCreditFactor = 'fundingRound__voiceCreditFactor',
+  FundingRoundVoteOptionTreeDepth = 'fundingRound__voteOptionTreeDepth',
+  FundingRoundVotingDeadline = 'fundingRound__votingDeadline',
+  Id = 'id',
+  Messages = 'messages'
+}
+
+export type PublicKey = {
+  __typename?: 'PublicKey';
+  id: Scalars['ID'];
+  maci: Scalars['String'];
+  messages: Maybe<Array<Message>>;
+  stateIndex: Maybe<Scalars['BigInt']>;
+  voiceCreditBalance: Maybe<Scalars['BigInt']>;
+  x: Scalars['BigInt'];
+  y: Scalars['BigInt'];
+};
+
+
+export type PublicKeyMessagesArgs = {
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy: InputMaybe<Message_OrderBy>;
+  orderDirection: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where: InputMaybe<Message_Filter>;
+};
+
+export type PublicKey_Filter = {
+  /** Filter for the block changed event. */
+  _change_block: InputMaybe<BlockChangedFilter>;
+  and: InputMaybe<Array<InputMaybe<PublicKey_Filter>>>;
+  id: InputMaybe<Scalars['ID']>;
+  id_gt: InputMaybe<Scalars['ID']>;
+  id_gte: InputMaybe<Scalars['ID']>;
+  id_in: InputMaybe<Array<Scalars['ID']>>;
+  id_lt: InputMaybe<Scalars['ID']>;
+  id_lte: InputMaybe<Scalars['ID']>;
+  id_not: InputMaybe<Scalars['ID']>;
+  id_not_in: InputMaybe<Array<Scalars['ID']>>;
+  maci: InputMaybe<Scalars['String']>;
+  maci_contains: InputMaybe<Scalars['String']>;
+  maci_contains_nocase: InputMaybe<Scalars['String']>;
+  maci_ends_with: InputMaybe<Scalars['String']>;
+  maci_ends_with_nocase: InputMaybe<Scalars['String']>;
+  maci_gt: InputMaybe<Scalars['String']>;
+  maci_gte: InputMaybe<Scalars['String']>;
+  maci_in: InputMaybe<Array<Scalars['String']>>;
+  maci_lt: InputMaybe<Scalars['String']>;
+  maci_lte: InputMaybe<Scalars['String']>;
+  maci_not: InputMaybe<Scalars['String']>;
+  maci_not_contains: InputMaybe<Scalars['String']>;
+  maci_not_contains_nocase: InputMaybe<Scalars['String']>;
+  maci_not_ends_with: InputMaybe<Scalars['String']>;
+  maci_not_ends_with_nocase: InputMaybe<Scalars['String']>;
+  maci_not_in: InputMaybe<Array<Scalars['String']>>;
+  maci_not_starts_with: InputMaybe<Scalars['String']>;
+  maci_not_starts_with_nocase: InputMaybe<Scalars['String']>;
+  maci_starts_with: InputMaybe<Scalars['String']>;
+  maci_starts_with_nocase: InputMaybe<Scalars['String']>;
   messages_: InputMaybe<Message_Filter>;
   or: InputMaybe<Array<InputMaybe<PublicKey_Filter>>>;
   stateIndex: InputMaybe<Scalars['BigInt']>;
@@ -1854,36 +1972,8 @@ export type PublicKey_Filter = {
 };
 
 export enum PublicKey_OrderBy {
-  FundingRound = 'fundingRound',
-  FundingRoundContributorCount = 'fundingRound__contributorCount',
-  FundingRoundContributorRegistryAddress = 'fundingRound__contributorRegistryAddress',
-  FundingRoundCoordinator = 'fundingRound__coordinator',
-  FundingRoundCoordinatorPubKeyX = 'fundingRound__coordinatorPubKeyX',
-  FundingRoundCoordinatorPubKeyY = 'fundingRound__coordinatorPubKeyY',
-  FundingRoundCreatedAt = 'fundingRound__createdAt',
-  FundingRoundId = 'fundingRound__id',
-  FundingRoundIsCancelled = 'fundingRound__isCancelled',
-  FundingRoundIsFinalized = 'fundingRound__isFinalized',
-  FundingRoundLastUpdatedAt = 'fundingRound__lastUpdatedAt',
-  FundingRoundMaci = 'fundingRound__maci',
-  FundingRoundMaciTxHash = 'fundingRound__maciTxHash',
-  FundingRoundMatchingPoolSize = 'fundingRound__matchingPoolSize',
-  FundingRoundMessageTreeDepth = 'fundingRound__messageTreeDepth',
-  FundingRoundNativeToken = 'fundingRound__nativeToken',
-  FundingRoundPollAddress = 'fundingRound__pollAddress',
-  FundingRoundPollId = 'fundingRound__pollId',
-  FundingRoundRecipientCount = 'fundingRound__recipientCount',
-  FundingRoundRecipientRegistryAddress = 'fundingRound__recipientRegistryAddress',
-  FundingRoundSignUpDeadline = 'fundingRound__signUpDeadline',
-  FundingRoundStartTime = 'fundingRound__startTime',
-  FundingRoundStateTreeDepth = 'fundingRound__stateTreeDepth',
-  FundingRoundTallyHash = 'fundingRound__tallyHash',
-  FundingRoundTotalSpent = 'fundingRound__totalSpent',
-  FundingRoundTotalVotes = 'fundingRound__totalVotes',
-  FundingRoundVoiceCreditFactor = 'fundingRound__voiceCreditFactor',
-  FundingRoundVoteOptionTreeDepth = 'fundingRound__voteOptionTreeDepth',
-  FundingRoundVotingDeadline = 'fundingRound__votingDeadline',
   Id = 'id',
+  Maci = 'maci',
   Messages = 'messages',
   StateIndex = 'stateIndex',
   VoiceCreditBalance = 'voiceCreditBalance',
@@ -1911,6 +2001,8 @@ export type Query = {
   fundingRounds: Array<FundingRound>;
   message: Maybe<Message>;
   messages: Array<Message>;
+  poll: Maybe<Poll>;
+  polls: Array<Poll>;
   publicKey: Maybe<PublicKey>;
   publicKeys: Array<PublicKey>;
   recipient: Maybe<Recipient>;
@@ -1919,8 +2011,6 @@ export type Query = {
   recipients: Array<Recipient>;
   token: Maybe<Token>;
   tokens: Array<Token>;
-  vote: Maybe<Vote>;
-  votes: Array<Vote>;
 };
 
 
@@ -2073,6 +2163,24 @@ export type QueryMessagesArgs = {
 };
 
 
+export type QueryPollArgs = {
+  block: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryPollsArgs = {
+  block: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy: InputMaybe<Poll_OrderBy>;
+  orderDirection: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where: InputMaybe<Poll_Filter>;
+};
+
+
 export type QueryPublicKeyArgs = {
   block: InputMaybe<Block_Height>;
   id: Scalars['ID'];
@@ -2142,24 +2250,6 @@ export type QueryTokensArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where: InputMaybe<Token_Filter>;
-};
-
-
-export type QueryVoteArgs = {
-  block: InputMaybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type QueryVotesArgs = {
-  block: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']>;
-  orderBy: InputMaybe<Vote_OrderBy>;
-  orderDirection: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where: InputMaybe<Vote_Filter>;
 };
 
 export type Recipient = {
@@ -2635,6 +2725,8 @@ export type Subscription = {
   fundingRounds: Array<FundingRound>;
   message: Maybe<Message>;
   messages: Array<Message>;
+  poll: Maybe<Poll>;
+  polls: Array<Poll>;
   publicKey: Maybe<PublicKey>;
   publicKeys: Array<PublicKey>;
   recipient: Maybe<Recipient>;
@@ -2643,8 +2735,6 @@ export type Subscription = {
   recipients: Array<Recipient>;
   token: Maybe<Token>;
   tokens: Array<Token>;
-  vote: Maybe<Vote>;
-  votes: Array<Vote>;
 };
 
 
@@ -2797,6 +2887,24 @@ export type SubscriptionMessagesArgs = {
 };
 
 
+export type SubscriptionPollArgs = {
+  block: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionPollsArgs = {
+  block: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy: InputMaybe<Poll_OrderBy>;
+  orderDirection: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where: InputMaybe<Poll_Filter>;
+};
+
+
 export type SubscriptionPublicKeyArgs = {
   block: InputMaybe<Block_Height>;
   id: Scalars['ID'];
@@ -2866,24 +2974,6 @@ export type SubscriptionTokensArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where: InputMaybe<Token_Filter>;
-};
-
-
-export type SubscriptionVoteArgs = {
-  block: InputMaybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionVotesArgs = {
-  block: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']>;
-  orderBy: InputMaybe<Vote_OrderBy>;
-  orderDirection: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where: InputMaybe<Vote_Filter>;
 };
 
 export type Token = {
@@ -2998,127 +3088,6 @@ export enum Token_OrderBy {
   TokenAddress = 'tokenAddress'
 }
 
-export type Vote = {
-  __typename?: 'Vote';
-  contributor: Maybe<Contributor>;
-  fundingRound: Maybe<FundingRound>;
-  id: Scalars['ID'];
-  secret: Maybe<Scalars['Boolean']>;
-  voterAddress: Maybe<Scalars['Bytes']>;
-};
-
-export type Vote_Filter = {
-  /** Filter for the block changed event. */
-  _change_block: InputMaybe<BlockChangedFilter>;
-  and: InputMaybe<Array<InputMaybe<Vote_Filter>>>;
-  contributor: InputMaybe<Scalars['String']>;
-  contributor_: InputMaybe<Contributor_Filter>;
-  contributor_contains: InputMaybe<Scalars['String']>;
-  contributor_contains_nocase: InputMaybe<Scalars['String']>;
-  contributor_ends_with: InputMaybe<Scalars['String']>;
-  contributor_ends_with_nocase: InputMaybe<Scalars['String']>;
-  contributor_gt: InputMaybe<Scalars['String']>;
-  contributor_gte: InputMaybe<Scalars['String']>;
-  contributor_in: InputMaybe<Array<Scalars['String']>>;
-  contributor_lt: InputMaybe<Scalars['String']>;
-  contributor_lte: InputMaybe<Scalars['String']>;
-  contributor_not: InputMaybe<Scalars['String']>;
-  contributor_not_contains: InputMaybe<Scalars['String']>;
-  contributor_not_contains_nocase: InputMaybe<Scalars['String']>;
-  contributor_not_ends_with: InputMaybe<Scalars['String']>;
-  contributor_not_ends_with_nocase: InputMaybe<Scalars['String']>;
-  contributor_not_in: InputMaybe<Array<Scalars['String']>>;
-  contributor_not_starts_with: InputMaybe<Scalars['String']>;
-  contributor_not_starts_with_nocase: InputMaybe<Scalars['String']>;
-  contributor_starts_with: InputMaybe<Scalars['String']>;
-  contributor_starts_with_nocase: InputMaybe<Scalars['String']>;
-  fundingRound: InputMaybe<Scalars['String']>;
-  fundingRound_: InputMaybe<FundingRound_Filter>;
-  fundingRound_contains: InputMaybe<Scalars['String']>;
-  fundingRound_contains_nocase: InputMaybe<Scalars['String']>;
-  fundingRound_ends_with: InputMaybe<Scalars['String']>;
-  fundingRound_ends_with_nocase: InputMaybe<Scalars['String']>;
-  fundingRound_gt: InputMaybe<Scalars['String']>;
-  fundingRound_gte: InputMaybe<Scalars['String']>;
-  fundingRound_in: InputMaybe<Array<Scalars['String']>>;
-  fundingRound_lt: InputMaybe<Scalars['String']>;
-  fundingRound_lte: InputMaybe<Scalars['String']>;
-  fundingRound_not: InputMaybe<Scalars['String']>;
-  fundingRound_not_contains: InputMaybe<Scalars['String']>;
-  fundingRound_not_contains_nocase: InputMaybe<Scalars['String']>;
-  fundingRound_not_ends_with: InputMaybe<Scalars['String']>;
-  fundingRound_not_ends_with_nocase: InputMaybe<Scalars['String']>;
-  fundingRound_not_in: InputMaybe<Array<Scalars['String']>>;
-  fundingRound_not_starts_with: InputMaybe<Scalars['String']>;
-  fundingRound_not_starts_with_nocase: InputMaybe<Scalars['String']>;
-  fundingRound_starts_with: InputMaybe<Scalars['String']>;
-  fundingRound_starts_with_nocase: InputMaybe<Scalars['String']>;
-  id: InputMaybe<Scalars['ID']>;
-  id_gt: InputMaybe<Scalars['ID']>;
-  id_gte: InputMaybe<Scalars['ID']>;
-  id_in: InputMaybe<Array<Scalars['ID']>>;
-  id_lt: InputMaybe<Scalars['ID']>;
-  id_lte: InputMaybe<Scalars['ID']>;
-  id_not: InputMaybe<Scalars['ID']>;
-  id_not_in: InputMaybe<Array<Scalars['ID']>>;
-  or: InputMaybe<Array<InputMaybe<Vote_Filter>>>;
-  secret: InputMaybe<Scalars['Boolean']>;
-  secret_in: InputMaybe<Array<Scalars['Boolean']>>;
-  secret_not: InputMaybe<Scalars['Boolean']>;
-  secret_not_in: InputMaybe<Array<Scalars['Boolean']>>;
-  voterAddress: InputMaybe<Scalars['Bytes']>;
-  voterAddress_contains: InputMaybe<Scalars['Bytes']>;
-  voterAddress_gt: InputMaybe<Scalars['Bytes']>;
-  voterAddress_gte: InputMaybe<Scalars['Bytes']>;
-  voterAddress_in: InputMaybe<Array<Scalars['Bytes']>>;
-  voterAddress_lt: InputMaybe<Scalars['Bytes']>;
-  voterAddress_lte: InputMaybe<Scalars['Bytes']>;
-  voterAddress_not: InputMaybe<Scalars['Bytes']>;
-  voterAddress_not_contains: InputMaybe<Scalars['Bytes']>;
-  voterAddress_not_in: InputMaybe<Array<Scalars['Bytes']>>;
-};
-
-export enum Vote_OrderBy {
-  Contributor = 'contributor',
-  ContributorContributorAddress = 'contributor__contributorAddress',
-  ContributorCreatedAt = 'contributor__createdAt',
-  ContributorId = 'contributor__id',
-  ContributorLastUpdatedAt = 'contributor__lastUpdatedAt',
-  ContributorVerifiedTimeStamp = 'contributor__verifiedTimeStamp',
-  FundingRound = 'fundingRound',
-  FundingRoundContributorCount = 'fundingRound__contributorCount',
-  FundingRoundContributorRegistryAddress = 'fundingRound__contributorRegistryAddress',
-  FundingRoundCoordinator = 'fundingRound__coordinator',
-  FundingRoundCoordinatorPubKeyX = 'fundingRound__coordinatorPubKeyX',
-  FundingRoundCoordinatorPubKeyY = 'fundingRound__coordinatorPubKeyY',
-  FundingRoundCreatedAt = 'fundingRound__createdAt',
-  FundingRoundId = 'fundingRound__id',
-  FundingRoundIsCancelled = 'fundingRound__isCancelled',
-  FundingRoundIsFinalized = 'fundingRound__isFinalized',
-  FundingRoundLastUpdatedAt = 'fundingRound__lastUpdatedAt',
-  FundingRoundMaci = 'fundingRound__maci',
-  FundingRoundMaciTxHash = 'fundingRound__maciTxHash',
-  FundingRoundMatchingPoolSize = 'fundingRound__matchingPoolSize',
-  FundingRoundMessageTreeDepth = 'fundingRound__messageTreeDepth',
-  FundingRoundNativeToken = 'fundingRound__nativeToken',
-  FundingRoundPollAddress = 'fundingRound__pollAddress',
-  FundingRoundPollId = 'fundingRound__pollId',
-  FundingRoundRecipientCount = 'fundingRound__recipientCount',
-  FundingRoundRecipientRegistryAddress = 'fundingRound__recipientRegistryAddress',
-  FundingRoundSignUpDeadline = 'fundingRound__signUpDeadline',
-  FundingRoundStartTime = 'fundingRound__startTime',
-  FundingRoundStateTreeDepth = 'fundingRound__stateTreeDepth',
-  FundingRoundTallyHash = 'fundingRound__tallyHash',
-  FundingRoundTotalSpent = 'fundingRound__totalSpent',
-  FundingRoundTotalVotes = 'fundingRound__totalVotes',
-  FundingRoundVoiceCreditFactor = 'fundingRound__voiceCreditFactor',
-  FundingRoundVoteOptionTreeDepth = 'fundingRound__voteOptionTreeDepth',
-  FundingRoundVotingDeadline = 'fundingRound__votingDeadline',
-  Id = 'id',
-  Secret = 'secret',
-  VoterAddress = 'voterAddress'
-}
-
 export type _Block_ = {
   __typename?: '_Block_';
   /** The hash of the block */
@@ -3171,7 +3140,6 @@ export type GetContributionsAmountQueryVariables = Exact<{
 export type GetContributionsAmountQuery = { __typename?: 'Query', contributions: Array<{ __typename?: 'Contribution', amount: any | null }> };
 
 export type GetContributorIndexQueryVariables = Exact<{
-  fundingRoundAddress: Scalars['String'];
   publicKeyId: Scalars['ID'];
 }>;
 
@@ -3179,7 +3147,6 @@ export type GetContributorIndexQueryVariables = Exact<{
 export type GetContributorIndexQuery = { __typename?: 'Query', publicKeys: Array<{ __typename?: 'PublicKey', id: string, stateIndex: any | null }> };
 
 export type GetContributorMessagesQueryVariables = Exact<{
-  fundingRoundAddress: Scalars['String'];
   pubKey: Scalars['String'];
   contributorAddress: Scalars['Bytes'];
 }>;
@@ -3257,9 +3224,11 @@ export type GetRoundInfoQueryVariables = Exact<{
 }>;
 
 
-export type GetRoundInfoQuery = { __typename?: 'Query', fundingRound: { __typename?: 'FundingRound', id: string, maci: any | null, pollId: any | null, pollAddress: any | null, recipientRegistryAddress: any | null, contributorRegistryAddress: any | null, voiceCreditFactor: any | null, isFinalized: boolean | null, isCancelled: boolean | null, contributorCount: any, totalSpent: any | null, matchingPoolSize: any | null, startTime: any | null, signUpDeadline: any | null, votingDeadline: any | null, coordinatorPubKeyX: any | null, coordinatorPubKeyY: any | null, stateTreeDepth: number | null, messageTreeDepth: number | null, voteOptionTreeDepth: number | null, nativeTokenInfo: { __typename?: 'Token', tokenAddress: any | null, symbol: string | null, decimals: any | null } | null } | null };
+export type GetRoundInfoQuery = { __typename?: 'Query', fundingRound: { __typename?: 'FundingRound', id: string, maci: any | null, pollId: any | null, pollAddress: any | null, recipientRegistryAddress: any | null, contributorRegistryAddress: any | null, voiceCreditFactor: any | null, isFinalized: boolean | null, isCancelled: boolean | null, contributorCount: any, totalSpent: any | null, matchingPoolSize: any | null, startTime: any | null, signUpDeadline: any | null, votingDeadline: any | null, coordinatorPubKeyX: any | null, coordinatorPubKeyY: any | null, maxMessages: any | null, maxVoteOptions: any | null, stateTreeDepth: number | null, messageTreeDepth: number | null, voteOptionTreeDepth: number | null, nativeTokenInfo: { __typename?: 'Token', tokenAddress: any | null, symbol: string | null, decimals: any | null } | null } | null };
 
-export type GetRoundsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetRoundsQueryVariables = Exact<{
+  clrFundAddress: Scalars['String'];
+}>;
 
 
 export type GetRoundsQuery = { __typename?: 'Query', fundingRounds: Array<{ __typename?: 'FundingRound', id: string, isFinalized: boolean | null, isCancelled: boolean | null, startTime: any | null, votingDeadline: any | null }> };
@@ -3302,17 +3271,17 @@ export const GetContributionsAmountDocument = gql`
 }
     `;
 export const GetContributorIndexDocument = gql`
-    query GetContributorIndex($fundingRoundAddress: String!, $publicKeyId: ID!) {
-  publicKeys(where: {id: $publicKeyId, fundingRound: $fundingRoundAddress}) {
+    query GetContributorIndex($publicKeyId: ID!) {
+  publicKeys(where: {id: $publicKeyId}) {
     id
     stateIndex
   }
 }
     `;
 export const GetContributorMessagesDocument = gql`
-    query GetContributorMessages($fundingRoundAddress: String!, $pubKey: String!, $contributorAddress: Bytes!) {
+    query GetContributorMessages($pubKey: String!, $contributorAddress: Bytes!) {
   messages(
-    where: {fundingRound: $fundingRoundAddress, publicKey: $pubKey, submittedBy: $contributorAddress}
+    where: {publicKey: $pubKey, submittedBy: $contributorAddress}
     first: 1000
     orderBy: blockNumber
     orderDirection: desc
@@ -3468,6 +3437,8 @@ export const GetRoundInfoDocument = gql`
     votingDeadline
     coordinatorPubKeyX
     coordinatorPubKeyY
+    maxMessages
+    maxVoteOptions
     stateTreeDepth
     messageTreeDepth
     voteOptionTreeDepth
@@ -3475,8 +3446,12 @@ export const GetRoundInfoDocument = gql`
 }
     `;
 export const GetRoundsDocument = gql`
-    query GetRounds {
-  fundingRounds(orderBy: startTime, orderDirection: asc) {
+    query GetRounds($clrFundAddress: String!) {
+  fundingRounds(
+    where: {clrFund: $clrFundAddress}
+    orderBy: startTime
+    orderDirection: desc
+  ) {
     id
     isFinalized
     isCancelled
@@ -3553,7 +3528,7 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     GetRoundInfo(variables: GetRoundInfoQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRoundInfoQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRoundInfoQuery>(GetRoundInfoDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetRoundInfo', 'query');
     },
-    GetRounds(variables?: GetRoundsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRoundsQuery> {
+    GetRounds(variables: GetRoundsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRoundsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRoundsQuery>(GetRoundsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetRounds', 'query');
     },
     GetTokenInfo(variables: GetTokenInfoQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetTokenInfoQuery> {

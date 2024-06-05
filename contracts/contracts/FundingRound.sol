@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity 0.8.10;
+pragma solidity 0.8.20;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
@@ -15,7 +15,7 @@ import {SignUpGatekeeper} from 'maci-contracts/contracts/gatekeepers/SignUpGatek
 import {InitialVoiceCreditProxy} from 'maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
 import {CommonUtilities} from 'maci-contracts/contracts/utilities/CommonUtilities.sol';
 import {SnarkCommon} from 'maci-contracts/contracts/crypto/SnarkCommon.sol';
-import {ITallySubsidyFactory} from 'maci-contracts/contracts/interfaces/ITallySubsidyFactory.sol';
+import {ITallyFactory} from 'maci-contracts/contracts/interfaces/ITallyFactory.sol';
 import {IMessageProcessorFactory} from 'maci-contracts/contracts/interfaces/IMPFactory.sol';
 import {IClrFund} from './interfaces/IClrFund.sol';
 import {IMACIFactory} from './interfaces/IMACIFactory.sol';
@@ -25,7 +25,7 @@ import './userRegistry/IUserRegistry.sol';
 import './recipientRegistry/IRecipientRegistry.sol';
 
 contract FundingRound is
-  Ownable,
+  Ownable(msg.sender),
   SignUpGatekeeper,
   InitialVoiceCreditProxy,
   DomainObjs,
@@ -66,6 +66,7 @@ contract FundingRound is
   error TallyHashNotPublished();
   error IncompleteTallyResults(uint256 total, uint256 actual);
   error NoVotes();
+  error NoSignUps();
   error MaciNotSet();
   error PollNotSet();
   error InvalidMaci();
@@ -176,19 +177,6 @@ contract FundingRound is
   }
 
   /**
-   * @dev Have the votes been tallied
-   */
-  function isTallied() private view returns (bool) {
-    (uint256 numSignUps, ) = poll.numSignUpsAndMessages();
-    (uint8 intStateTreeDepth, , , ) = poll.treeDepths();
-    uint256 tallyBatchSize = TREE_ARITY ** uint256(intStateTreeDepth);
-    uint256 tallyBatchNum = tally.tallyBatchNum();
-    uint256 totalTallied = tallyBatchNum * tallyBatchSize;
-
-    return numSignUps > 0 && totalTallied >= numSignUps;
-  }
-
-  /**
   * @dev Set the tally contract
   * @param _tally The tally contract address
   */
@@ -221,10 +209,10 @@ contract FundingRound is
     address vkRegistry = address(tally.vkRegistry());
 
     IMessageProcessorFactory messageProcessorFactory = maci.messageProcessorFactory();
-    ITallySubsidyFactory tallyFactory = maci.tallyFactory();
+    ITallyFactory tallyFactory = maci.tallyFactory();
 
-    address mp = messageProcessorFactory.deploy(verifier, vkRegistry, address(poll), coordinator);
-    address newTally = tallyFactory.deploy(verifier, vkRegistry, address(poll), mp, coordinator);
+    address mp = messageProcessorFactory.deploy(verifier, vkRegistry, address(poll), coordinator, Mode.QV);
+    address newTally = tallyFactory.deploy(verifier, vkRegistry, address(poll), mp, coordinator, Mode.QV);
     _setTally(newTally);
   }
 
@@ -470,18 +458,18 @@ contract FundingRound is
 
     _votingPeriodOver(poll);
 
-    if (!isTallied()) {
+    if (!tally.isTallied()) {
       revert VotesNotTallied();
     }
+
     if (bytes(tallyHash).length == 0) {
       revert TallyHashNotPublished();
     }
 
     // make sure we have received all the tally results
-    (,,, uint8 voteOptionTreeDepth) = poll.treeDepths();
-    uint256 totalResults = uint256(TREE_ARITY) ** uint256(voteOptionTreeDepth);
-    if ( totalTallyResults != totalResults ) {
-      revert IncompleteTallyResults(totalResults, totalTallyResults);
+    (, uint256 maxVoteOptions) = poll.maxValues();
+    if (totalTallyResults != maxVoteOptions) {
+      revert IncompleteTallyResults(maxVoteOptions, totalTallyResults);
     }
 
     // If nobody voted, the round should be cancelled to avoid locking of matching funds
@@ -493,7 +481,6 @@ contract FundingRound is
     if (!verified) {
       revert IncorrectSpentVoiceCredits();
     }
-
 
     totalSpent = _totalSpent;
     // Total amount of spent voice credits is the size of the pool of direct rewards.
@@ -675,9 +662,15 @@ contract FundingRound is
   {
     if (isAddressZero(address(maci))) revert MaciNotSet();
 
-    if (!isTallied()) {
+    if (maci.numSignUps() == 0) {
+      // no sign ups, so no tally results
+      revert NoSignUps();
+    }
+
+    if (!tally.isTallied()) {
       revert VotesNotTallied();
     }
+
     if (isFinalized) {
       revert RoundAlreadyFinalized();
     }

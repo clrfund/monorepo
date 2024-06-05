@@ -14,12 +14,14 @@
 import { task, types } from 'hardhat/config'
 import { Contract, formatUnits, getNumber } from 'ethers'
 import { Ipfs } from '../../utils/ipfs'
-import { Project, Round, RoundFileContent } from '../../utils/types'
+import { EContracts, Project, Round, RoundFileContent } from '../../utils/types'
 import { RecipientRegistryLogProcessor } from '../../utils/RecipientRegistryLogProcessor'
-import { getRecipientAddressAbi } from '../../utils/abi'
+import { getRecipientAddressAbi, MaciV0Abi } from '../../utils/abi'
 import { JSONFile } from '../../utils/JSONFile'
 import path from 'path'
 import fs from 'fs'
+import { getContractAt } from '../../utils/contracts'
+import { Poll } from '../../typechain-types'
 
 type RoundListEntry = {
   network: string
@@ -39,19 +41,6 @@ function roundFileName(directory: string, address: string): string {
 
 function roundListFileName(directory: string): string {
   return path.join(directory, 'rounds.json')
-}
-
-function getEtherscanApiKey(config: any, network: string): string {
-  let etherscanApiKey = ''
-  if (config.etherscan?.apiKey) {
-    if (typeof config.etherscan.apiKey === 'string') {
-      etherscanApiKey = config.etherscan.apiKey
-    } else {
-      etherscanApiKey = config.etherscan.apiKey[network]
-    }
-  }
-
-  return etherscanApiKey
 }
 
 function roundMapKey(round: RoundListEntry): string {
@@ -76,7 +65,10 @@ async function updateRoundList(filePath: string, round: RoundListEntry) {
   const rounds: RoundListEntry[] = Array.from(roundMap.values())
 
   // sort in ascending start time order
-  rounds.sort((round1, round2) => round1.startTime - round2.startTime)
+  rounds.sort(
+    (round1, round2) =>
+      getNumber(round1.startTime) - getNumber(round2.startTime)
+  )
   JSONFile.write(filePath, rounds)
   console.log('Finished writing to', filePath)
 }
@@ -137,7 +129,11 @@ async function mergeRecipientTally({
     }
 
     const tallyResult = tally.results.tally[i]
-    const spentVoiceCredits = tally.perVOSpentVoiceCredits.tally[i]
+
+    // In MACI V1, totalVoiceCreditsPerVoteOption is called perVOSpentVoiceCredits
+    const spentVoiceCredits = tally.perVOSpentVoiceCredits
+      ? tally.perVOSpentVoiceCredits.tally[i]
+      : tally.totalVoiceCreditsPerVoteOption.tally[i]
     const formattedDonationAmount = formatUnits(
       BigInt(spentVoiceCredits) * BigInt(voiceCreditFactor),
       nativeTokenDecimals
@@ -222,12 +218,15 @@ async function getRoundInfo(
 
   try {
     if (pollAddress) {
-      const pollContract = await ethers.getContractAt('Poll', pollAddress)
+      const pollContract = await getContractAt<Poll>(
+        EContracts.Poll,
+        pollAddress,
+        ethers
+      )
       const [roundStartTime, roundDuration] =
         await pollContract.getDeployTimeAndDuration()
       startTime = getNumber(roundStartTime)
       signUpDuration = roundDuration
-      votingDuration = roundDuration
       endTime = startTime + getNumber(roundDuration)
 
       pollId = await roundContract.pollId()
@@ -237,7 +236,7 @@ async function getRoundInfo(
       maxMessages = maxValues.maxMessages
       maxRecipients = maxValues.maxVoteOptions
     } else {
-      const maci = await ethers.getContractAt('MACI', maciAddress)
+      const maci = await ethers.getContractAt(MaciV0Abi, maciAddress)
       startTime = await maci.signUpTimestamp().catch(toZero)
       signUpDuration = await maci.signUpDurationSeconds().catch(toZero)
       votingDuration = await maci.votingDurationSeconds().catch(toZero)
@@ -352,11 +351,6 @@ task('export-round', 'Export round data for the leaderboard')
       console.log('Processing on ', network.name)
       console.log('Funding round address', roundAddress)
 
-      const etherscanApiKey = getEtherscanApiKey(config, network.name)
-      if (!etherscanApiKey) {
-        throw new Error('Etherscan API key not set')
-      }
-
       const outputSubDir = path.join(outputDir, network.name)
       try {
         fs.statSync(outputSubDir)
@@ -383,7 +377,7 @@ task('export-round', 'Export round data for the leaderboard')
         endBlock,
         blocksPerBatch,
         network: network.name,
-        etherscanApiKey,
+        config,
       })
 
       console.log('Parsing logs...')

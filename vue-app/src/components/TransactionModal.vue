@@ -1,5 +1,5 @@
 <template>
-  <vue-final-modal class="modal-container" background="interactive">
+  <base-modal>
     <div class="modal-body">
       <transaction
         :hash="txHash"
@@ -17,13 +17,11 @@
         {{ $t('transactionModal.button1') }}
       </button>
     </div>
-  </vue-final-modal>
+  </base-modal>
 </template>
 
 <script setup lang="ts">
 import type { TransactionResponse } from 'ethers'
-// @ts-ignore
-import { VueFinalModal } from 'vue-final-modal'
 import Transaction from '@/components/Transaction.vue'
 import { waitForTransaction } from '@/utils/contracts'
 

@@ -721,6 +721,7 @@
     "tooltip2": "Balance of wallet on {chain} chain",
     "h2_3": "Projects",
     "div1": "Under review",
+    "withdraw_button": "Withdraw {contribution} {tokenSymbol}",
     "btn2_1": "Preview",
     "btn2_2": "View",
     "div2": "You haven't submitted any projects"
@@ -805,15 +806,10 @@
     "p7": "To protect the round from bribery and fraud, you need to add your wallet address to a smart contract registry. Once you’re done, you can join the funding round!",
     "btn": " Become a contributor",
     "next": "Next",
-    "previous": "Previous",
     "copy_link": "Copy Link",
     "verification_status": "Your wallet address is not linked with BrightID. It may take a few minutes to verify the connection, please wait and click the button later to check the status.",
     "getting_proof": "Retrieving the verification proof...",
-    "not_authorized": "You are not authorized to register",
-    "skip_sponsorship": "Skip",
-    "get_sponsored_header": "Get sponsored",
-    "get_sponsored_text": "You need a sponsorship token to connect your wallet address with BrightID. This helps support BrightID as a decentralized platform. You’ll only ever need to do this once and it covers you for any other app that works with BrightID. Check the BrightID mobile app to see if you're sponsored. Get sponsored by submitting a sponsorship transaction or skip to the next step.",
-    "get_sponsored_cta": "Get Sponsored"
+    "not_authorized": "You are not authorized to register"
   },
   "verifyLanding": {
     "h1": "Prove you’re only using one account",
@@ -893,7 +889,6 @@
     "div8": "Matching pool",
     "div9": "Remaining funds go to matching pool",
     "div10": "Split {contribution} {tokenSymbol} evenly",
-    "button1": "Withdraw {contribution} {tokenSymbol}",
     "div11": "Can't",
     "div11_if2": "reallocate",
     "div11_if3": "contribute",
