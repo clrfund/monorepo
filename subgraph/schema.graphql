@@ -37,7 +37,7 @@ type Message @entity {
 
 type PublicKey @entity {
   id: ID!
-  fundingRound: FundingRound
+  maci: String!
   messages: [Message!] @derivedFrom(field: "publicKey")
   x: BigInt!
   y: BigInt!

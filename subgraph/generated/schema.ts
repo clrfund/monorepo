@@ -551,21 +551,17 @@ export class PublicKey extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get fundingRound(): string | null {
-    let value = this.get("fundingRound");
+  get maci(): string {
+    let value = this.get("maci");
     if (!value || value.kind == ValueKind.NULL) {
-      return null;
+      throw new Error("Cannot return null for a required field.");
     } else {
       return value.toString();
     }
   }
 
-  set fundingRound(value: string | null) {
-    if (!value) {
-      this.unset("fundingRound");
-    } else {
-      this.set("fundingRound", Value.fromString(<string>value));
-    }
+  set maci(value: string) {
+    this.set("maci", Value.fromString(value));
   }
 
   get messages(): MessageLoader {
