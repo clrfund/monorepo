@@ -18,20 +18,20 @@ import fs from 'fs'
 
 /**
  * Download the IPFS file with the ipfsHash to the output directory
- * @param baseUrl IPFS gateway base url
+ * @param gateway IPFS gateway url
  * @param ipfsHash IPFS hash of the file to download
  * @param outputDir The directory to store the downloaded file
  */
 async function download({
-  baseUrl,
+  gateway,
   ipfsHash,
   outputDir,
 }: {
-  baseUrl: string
+  gateway: string
   ipfsHash: string
   outputDir: string
 }) {
-  const url = new URL(ipfsHash, baseUrl)
+  const url = new URL(`ipfs/${ipfsHash}`, gateway)
   const req = new FetchRequest(url.href)
   const res = await req.send()
   if (res.hasBody()) {
@@ -61,12 +61,12 @@ task('export-images', 'Export project logo images')
 
     for (let i = 0; i < images.length; i++) {
       await download({
-        baseUrl: gateway,
+        gateway,
         ipfsHash: images[i].bannerImageHash,
         outputDir,
       })
       await download({
-        baseUrl: gateway,
+        gateway,
         ipfsHash: images[i].thumbnailImageHash,
         outputDir,
       })
