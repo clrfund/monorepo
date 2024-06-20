@@ -666,6 +666,8 @@
     "callout": {
       "title": "参加筹款",
       "paragraph": "将您的项目添加到下一个筹款活动。如果您正在从事与公共产品相关的任何工作，您都可以参加。",
+      "brightid_link": "",
+      "verification_link": "",
       "action": "添加项目",
       "deadline": "参加"
     },
@@ -822,6 +824,8 @@
     "li1_link2": "Android",
     "join": "参加 ",
     "brightid_party_link": "BrightId 派对",
+    "or": "",
+    "custom_verify_link": "",
     "get_verified": " 以得到验证",
     "li_wallet": "一个以太坊钱包。",
     "unitap_gas_tokens": "您可从 ",
