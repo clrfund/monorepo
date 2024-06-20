@@ -1151,7 +1151,7 @@
     },
     "criteria": {
       "devcon_sea": {
-        "tagline": "Devcon grantee",
+        "tagline": "Road to Devcon grantee",
         "description": "Your community must be a Road to Devcon grantee"
       },
       "free_open_source": {
