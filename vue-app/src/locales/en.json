@@ -1117,7 +1117,15 @@
   "recipientProfile": {
     "not_found": "Recipient not found!"
   },
+  "xShareButton": {
+    "label": "Share your contributions on {x}"
+  },
   "dynamic": {
+    "socialMedia": {
+      "x": {
+        "text": "I just supported my favorite SEA communities with {'@'}clrfund in the {'@'}EFDevcon round! \n\nYou can do too here: {appUrl}"
+      }
+    },
     "appLink": {
       "getStarted": "Get Started",
       "leaderboard": "View Results"

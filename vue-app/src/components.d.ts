@@ -66,5 +66,6 @@ declare module '@vue/runtime-core' {
     WalletWidget: typeof import('./components/WalletWidget.vue')['default']
     Warning: typeof import('./components/Warning.vue')['default']
     WithdrawalModal: typeof import('./components/WithdrawalModal.vue')['default']
+    XShareButton: typeof import('./components/XShareButton.vue')['default']
   }
 }
