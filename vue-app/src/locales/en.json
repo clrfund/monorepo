@@ -664,10 +664,12 @@
       "info": "How it works"
     },
     "callout": {
-      "title": "Join the Road to Devcon funding round",
-      "paragraph": "If your community is a Road to Devcon grantee, you can join the funding round.",
-      "action": "Add project",
-      "deadline": "to join"
+      "title": "Ready to contribute to your favorite projects?",
+      "paragraph": "You'll need a verified BrightID to prove that you are using only one account. Join a {verificationParty} or a {brightidParty} to get verified.",
+      "brightid_link": "BrightID party",
+      "verification_link": "verification party",
+      "action": "Set up BrightId",
+      "deadline": "to contribute"
     },
     "how": {
       "title": "Every donation is amplified by the matching pool.",
@@ -822,6 +824,8 @@
     "li1_link2": "Android",
     "join": "Join a ",
     "brightid_party_link": "BrightId party",
+    "or": "or a",
+    "custom_verify_link": "Devcon SEA verification party",
     "get_verified": " to get verified",
     "li_wallet": "An Ethereum wallet, with some funds for transaction gas.",
     "unitap_gas_tokens": "You may be able to get some free gas tokens from ",
@@ -1146,6 +1150,10 @@
       }
     },
     "criteria": {
+      "devcon_sea": {
+        "tagline": "Road to Devcon grantee",
+        "description": "Your community must be a Road to Devcon grantee"
+      },
       "free_open_source": {
         "tagline": "Free and open source",
         "description": "Your project must be free to use and any code associated with your project should be available to anyone under an open source license."

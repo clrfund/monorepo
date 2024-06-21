@@ -666,6 +666,8 @@
     "callout": {
       "title": "Únete a la ronda de financiamiento",
       "paragraph": "Agrega tu proyecto a la próxima ronda de financiamiento. Si estás trabajando en algo relacionado con bienes públicos, puedes unirte.",
+      "brightid_link": "",
+      "verification_link": "",
       "action": "Agregar proyecto",
       "deadline": "para unirse"
     },
@@ -823,6 +825,8 @@
     "join": "Unirse a una fiesta de ",
     "brightid_party_link": "BrightId",
     "get_verified": " para ser verificado",
+    "or": "",
+    "custom_verify_link": "",
     "li_wallet": "Una billetera de Ethereum, con suficiente gas para transacciones.",
     "unitap_gas_tokens": "Puede que puedas obtener algunos tokens de gas gratis de ",
     "unitap_link": "Unitap",

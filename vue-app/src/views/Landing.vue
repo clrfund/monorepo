@@ -32,16 +32,21 @@
               </div>
             </div>
           </div>
-          <div class="apply-callout" v-if="isRoundJoinPhase && !isRecipientRegistryFull">
+          <div class="apply-callout" v-if="isRoundContributionPhase">
             <div class="column">
               <h2>{{ $t('landing.callout.title') }}</h2>
-              <p>
-                {{ $t('landing.callout.paragraph') }}
-              </p>
+              <i18n-t keypath="landing.callout.paragraph" tag="p" scope="global">
+                <template v-slot:verificationParty>
+                  <links to="https://zcal.co/i/WimAUuL6">{{ $t('landing.callout.verification_link') }}</links>
+                </template>
+                <template v-slot:brightidParty>
+                  <links to="https://meet.brightid.org">{{ $t('landing.callout.brightid_link') }}</links>
+                </template>
+              </i18n-t>
               <div class="button-group">
-                <links to="/join" class="btn-primary w100">{{ $t('landing.callout.action') }}</links>
-                <div v-if="recipientJoinDeadline">
-                  <time-left unitClass="none" :date="recipientJoinDeadline" />
+                <links to="/verify" class="btn-primary w100">{{ $t('landing.callout.action') }}</links>
+                <div v-if="currentRound?.signUpDeadline">
+                  <time-left unitClass="none" :date="currentRound?.signUpDeadline" />
                   {{ $t('landing.callout.deadline') }}
                 </div>
               </div>
@@ -104,7 +109,7 @@
               <b>{{ $t('landing.req.bright') }}</b>
             </p>
           </div>
-          <links to="/about/sybil-resistance" class="btn-primary">{{ $t('landing.req.bright-cta') }}</links>
+          <links to="/verify" class="btn-primary">{{ $t('landing.req.bright-cta') }}</links>
         </div>
       </div>
       <div class="section-header">
@@ -187,15 +192,8 @@ import { getAssetsUrl } from '@/utils/url'
 import { isSameAddress } from '@/utils/accounts'
 
 const appStore = useAppStore()
-const {
-  operator,
-  isRoundJoinPhase,
-  recipientJoinDeadline,
-  isRecipientRegistryFull,
-  currentRound,
-  currentRoundAddress,
-  isAppReady,
-} = storeToRefs(appStore)
+const { operator, recipientJoinDeadline, isRoundContributionPhase, currentRound, currentRoundAddress, isAppReady } =
+  storeToRefs(appStore)
 
 function scrollToHowItWorks() {
   document.getElementById('section-how-it-works')?.scrollIntoView({ behavior: 'smooth' })

@@ -5,6 +5,10 @@ export interface Criterion {
 
 const CRITERIA: Criterion[] = [
   {
+    emoji: '🚀',
+    translationKey: 'devcon_sea',
+  },
+  {
     emoji: '🤲',
     translationKey: 'free_open_source',
   },

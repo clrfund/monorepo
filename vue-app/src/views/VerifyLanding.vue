@@ -35,6 +35,8 @@
             <li>
               {{ $t('verifyLanding.join') }}
               <links to="https://meet.brightid.org">{{ $t('verifyLanding.brightid_party_link') }}</links>
+              {{ $t('verifyLanding.or') }}
+              <links to="https://zcal.co/i/WimAUuL6">{{ $t('verifyLanding.custom_verify_link') }}</links>
               {{ $t('verifyLanding.get_verified') }}
             </li>
             <li>
