@@ -1130,7 +1130,7 @@
   "dynamic": {
     "socialMedia": {
       "x": {
-        "text": "¡Acabo de apoyar mis proyectos favoritos con {'@'}clrfund! \n\nTú también puedes hacerlo aquí: {appUrl}"
+        "text": "¡Acabo de apoyar mis proyectos favoritos con {'@'}clrfund! \n\nTú también puedes hacerlo aquí: "
       }
     },
     "appLink": {

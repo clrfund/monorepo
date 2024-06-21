@@ -11,12 +11,10 @@
 <script setup>
 import { useI18n } from 'vue-i18n'
 import { getAssetsUrl } from '@/utils/url'
-import { useRoute } from 'vue-router'
 
 const { t } = useI18n()
-const route = useRoute()
 
-const encodedText = computed(() => encodeURIComponent(t('dynamic.socialMedia.x.text', { appUrl: route.url })))
+const encodedText = computed(() => encodeURIComponent(t('dynamic.socialMedia.x.text')))
 const postUrl = computed(() => `https://twitter.com/share?text=${encodedText.value}`)
 
 const xLogo = computed(() => {

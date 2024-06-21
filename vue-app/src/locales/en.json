@@ -1130,7 +1130,7 @@
   "dynamic": {
     "socialMedia": {
       "x": {
-        "text": "I just supported my favorite SEA communities with {'@'}clrfund in the {'@'}EFDevcon round! \n\nYou can do too here: {appUrl}"
+        "text": "I just supported my favorite SEA communities with {'@'}clrfund in the {'@'}EFDevcon round! \n\nYou can do too here: "
       }
     },
     "appLink": {
