@@ -40,7 +40,7 @@
             <transaction-receipt :hash="hash" />
           </div>
           <x-share-button />
-          <div class="btn-info" @click="redirectToProjects()">
+          <div class="btn-primary" @click="redirectToProjects()">
             {{ $t('transactionSuccess.btn') }}
           </div>
         </div>
