@@ -1125,7 +1125,7 @@
     "not_found": "Recipient not found!"
   },
   "xShareButton": {
-    "label": "Share your contributions on {x}"
+    "label": "Share on {x}"
   },
   "dynamic": {
     "socialMedia": {

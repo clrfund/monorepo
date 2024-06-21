@@ -1124,7 +1124,15 @@
   "recipientProfile": {
     "not_found": "未找到收赠人!"
   },
+  "xShareButton": {
+    "label": "在 {x} 上分享"
+  },
   "dynamic": {
+    "socialMedia": {
+      "x": {
+        "text": "我剛剛通過 {'@'}clrfund 支持了我的最愛項目！\n\n你也可以在這裡做到：{appUrl}"
+      }
+    },
     "appLink": {
       "getStarted": "开始吧！",
       "leaderboard": "排行榜"
