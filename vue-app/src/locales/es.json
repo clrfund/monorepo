@@ -1124,7 +1124,15 @@
   "recipientProfile": {
     "not_found": "Destinatario no encontrado!"
   },
+  "xShareButton": {
+    "label": "Compartir en {x}"
+  },
   "dynamic": {
+    "socialMedia": {
+      "x": {
+        "text": "¡Acabo de apoyar mis proyectos favoritos con {'@'}clrfund! \n\nTú también puedes hacerlo aquí: "
+      }
+    },
     "appLink": {
       "getStarted": "Comenzar",
       "leaderboard": "Ver resultados"

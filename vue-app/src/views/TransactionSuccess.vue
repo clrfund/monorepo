@@ -39,7 +39,8 @@
           <div class="receipt" v-if="$route.params.hash">
             <transaction-receipt :hash="hash" />
           </div>
-          <div class="btn-info" @click="redirectToProjects()">
+          <x-share-button />
+          <div class="btn-primary" @click="redirectToProjects()">
             {{ $t('transactionSuccess.btn') }}
           </div>
         </div>
