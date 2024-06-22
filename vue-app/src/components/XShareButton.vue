@@ -14,8 +14,10 @@ import { getAssetsUrl } from '@/utils/url'
 
 const { t } = useI18n()
 
-const encodedText = computed(() => encodeURIComponent(t('dynamic.socialMedia.x.text')))
-const postUrl = computed(() => `https://twitter.com/share?text=${encodedText.value}`)
+const encodedText = computed(() =>
+  encodeURIComponent(t('dynamic.socialMedia.x.text', { appUrl: window.location.origin })),
+)
+const postUrl = computed(() => `https://twitter.com/intent/tweet?text=${encodedText.value}`)
 
 const xLogo = computed(() => {
   return getAssetsUrl('x-logo.svg')
