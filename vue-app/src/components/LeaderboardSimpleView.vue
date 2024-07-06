@@ -49,7 +49,6 @@
 import type { LeaderboardProject } from '@/api/projects'
 import type { RoundInfo } from '@/api/round'
 import { formatAmount } from '@/utils/amounts'
-import { getStaticAssetsUrlByIpfsHash, getIpfsUrl } from '@/utils/url'
 
 interface Props {
   project: LeaderboardProject

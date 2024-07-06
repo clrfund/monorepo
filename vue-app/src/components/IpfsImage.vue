@@ -4,7 +4,7 @@
 </template>
 
 <script setup lang="ts">
-import { getIpfsUrl, getStaticAssetsUrlByIpfsHash } from '@/utils/url'
+import { getIpfsUrl, getStaticUrlByIpfsHash } from '@/utils/url'
 
 interface Props {
   class?: string
@@ -16,7 +16,7 @@ const isStaticImageBroken = ref(false)
 
 const props = defineProps<Props>()
 
-const staticImageSrc = computed(() => getStaticAssetsUrlByIpfsHash(props.src) || '')
+const staticImageSrc = computed(() => getStaticUrlByIpfsHash(props.src) || '')
 const imageSrc = computed(() => getIpfsUrl(props.src) || '')
 
 function handleBrokenStaticImage() {

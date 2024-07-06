@@ -4,8 +4,8 @@ export function getAssetsUrl(path) {
   return new URL(`/src/assets/${path}`, import.meta.url).href
 }
 
-export function getStaticAssetsUrlByIpfsHash(hash): string | null {
-  return hash ? `/assets/ipfs/${hash}` : null
+export function getStaticUrlByIpfsHash(hash): string | null {
+  return hash ? `/ipfs/${hash}` : null
 }
 
 export function getIpfsUrl(hash): string | null {
