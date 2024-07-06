@@ -3,7 +3,7 @@
     <div>
       <links :to="projectRoute">
         <div class="project-image">
-          <img :src="projectImageUrl || ''" :alt="project.name" />
+          <ipfs-image :src="props.project.bannerImageHash || ''" :alt="project.name" />
           <div v-if="project.category" class="tag">
             {{ $t(categoryLocaleKey(project.category)) }}
           </div>
@@ -37,6 +37,7 @@ import { useRoute, type RouteLocationRaw } from 'vue-router'
 import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { isActiveApp } from '@/api/core'
+import IpfsImage from './IpfsImage.vue'
 
 const route = useRoute()
 const appStore = useAppStore()
@@ -53,16 +54,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 const descriptionHtml = computed<string>(() => {
   return markdown.renderInline(props.project.description)
-})
-
-const projectImageUrl = computed<string | null>(() => {
-  if (typeof props.project.bannerImageUrl !== 'undefined') {
-    return props.project.bannerImageUrl
-  }
-  if (typeof props.project.imageUrl !== 'undefined') {
-    return props.project.imageUrl
-  }
-  return null
 })
 
 const inCart = computed<boolean>(() => {

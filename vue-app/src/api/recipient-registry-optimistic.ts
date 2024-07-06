@@ -70,8 +70,8 @@ export enum RequestStatus {
 interface RecipientMetadata {
   name: string
   description: string
-  imageUrl: string
-  thumbnailImageUrl: string
+  imageHash: string
+  thumbnailImageHash: string
 }
 
 export interface Request {
@@ -155,10 +155,8 @@ export async function getRequests(registryInfo: RegistryInfo, registryAddress: s
       metadata = {
         name,
         description,
-        imageUrl: `${ipfsGatewayUrl}/ipfs/${imageHash}`,
-        thumbnailImageUrl: thumbnailImageHash
-          ? `${ipfsGatewayUrl}/ipfs/${thumbnailImageHash}`
-          : `${ipfsGatewayUrl}/ipfs/${imageHash}`,
+        imageHash: imageHash,
+        thumbnailImageHash: thumbnailImageHash,
       }
     }
 
@@ -213,9 +211,6 @@ function decodeProject(recipient: Partial<Recipient>): Project {
 
   const metadata = JSON.parse(recipient.recipientMetadata || '')
 
-  // imageUrl is the legacy form property - fall back to this if bannerImageHash or thumbnailImageHash don't exist
-  const imageUrl = `${ipfsGatewayUrl}/ipfs/${metadata.imageHash}`
-
   let requester
   if (recipient.requester) {
     requester = recipient.requester
@@ -227,7 +222,6 @@ function decodeProject(recipient: Partial<Recipient>): Project {
     requester,
     name: metadata.name,
     description: metadata.description,
-    imageUrl,
     // Only unregistered project can have invalid index 0
     index: 0,
     isHidden: false,
@@ -246,8 +240,8 @@ function decodeProject(recipient: Partial<Recipient>): Project {
     websiteUrl: metadata.websiteUrl,
     twitterUrl: metadata.twitterUrl,
     discordUrl: metadata.discordUrl,
-    bannerImageUrl: metadata.bannerImageHash ? `${ipfsGatewayUrl}/ipfs/${metadata.bannerImageHash}` : imageUrl,
-    thumbnailImageUrl: metadata.thumbnailImageHash ? `${ipfsGatewayUrl}/ipfs/${metadata.thumbnailImageHash}` : imageUrl,
+    bannerImageHash: metadata.bannerImageHash || metadata.imageHash,
+    thumbnailImageHash: metadata.thumbnailImageHash || metadata.imageHash,
   }
 }
 

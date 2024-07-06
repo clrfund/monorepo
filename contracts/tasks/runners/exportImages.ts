@@ -12,8 +12,8 @@
  */
 
 import { task } from 'hardhat/config'
-import { FetchRequest } from 'ethers'
 import { isPathExist, makeDirectory } from '../../utils/misc'
+import { getIpfsContent } from '@clrfund/common'
 import fs from 'fs'
 
 /**
@@ -31,11 +31,11 @@ async function download({
   ipfsHash: string
   outputDir: string
 }) {
-  const url = new URL(`ipfs/${ipfsHash}`, gateway)
-  const req = new FetchRequest(url.href)
-  const res = await req.send()
+  if (!ipfsHash) return
+
+  const res = await getIpfsContent(ipfsHash, gateway)
   if (res.hasBody()) {
-    console.log('Downloading', ipfsHash)
+    console.log('Downloaded', ipfsHash)
     fs.writeFileSync(`${outputDir}/${ipfsHash}`, res.body)
   }
 }
