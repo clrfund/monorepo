@@ -36,6 +36,7 @@ declare module '@vue/runtime-core' {
     Info: typeof import('./components/Info.vue')['default']
     InputButton: typeof import('./components/InputButton.vue')['default']
     IpfsCopyWidget: typeof import('./components/IpfsCopyWidget.vue')['default']
+    IpfsImage: typeof import('./components/IpfsImage.vue')['default']
     IpfsImageUpload: typeof import('./components/IpfsImageUpload.vue')['default']
     LayoutSteps: typeof import('./components/LayoutSteps.vue')['default']
     LeaderboardDetailView: typeof import('./components/LeaderboardDetailView.vue')['default']

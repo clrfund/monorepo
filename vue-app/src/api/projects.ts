@@ -14,9 +14,8 @@ export interface LeaderboardProject {
   id: string // Address or another ID depending on registry implementation
   name: string
   index: number
-  bannerImageUrl?: string
-  thumbnailImageUrl?: string
-  imageUrl?: string
+  bannerImageHash?: string
+  thumbnailImageHash?: string
   allocatedAmount: bigint
   votes: bigint
   donation: bigint
@@ -39,9 +38,8 @@ export interface Project {
   websiteUrl?: string
   twitterUrl?: string
   discordUrl?: string
-  bannerImageUrl?: string
-  thumbnailImageUrl?: string
-  imageUrl?: string // TODO remove
+  bannerImageHash?: string
+  thumbnailImageHash?: string
   index: number
   isHidden: boolean // Hidden from the list (does not participate in round)
   isLocked: boolean // Visible, but contributions are not allowed
@@ -134,17 +132,13 @@ export async function getProjectByIndex(
     metadata = {}
   }
 
-  const thumbnailImageUrl = metadata.thumbnailImageHash
-    ? `${ipfsGatewayUrl}/ipfs/${metadata.thumbnailImageHash}`
-    : `${ipfsGatewayUrl}/ipfs/${metadata.imageUrl}`
-
   return {
     id: recipient.id,
     address: recipient.recipientAddress || '',
     name: metadata.name,
     description: metadata.description,
     tagline: metadata.tagline,
-    thumbnailImageUrl,
+    thumbnailImageHash: metadata.thumbnailImageHash || metadata.imageHash,
     index: recipient.recipientIndex,
   }
 }
@@ -182,12 +176,12 @@ export async function getRecipientIdByHash(transactionHash: string): Promise<str
 }
 
 export function toLeaderboardProject(project: any): LeaderboardProject {
-  const imageUrl = `${ipfsGatewayUrl}/ipfs/${project.metadata.imageHash || project.metadata.thumbnailImageHash}`
   return {
     id: project.id,
     name: project.name,
     index: getNumber(project.recipientIndex),
-    imageUrl,
+    thumbnailImageHash: project.metadata.thumbnailImageHash || project.metadata.imageHash,
+    bannerImageHash: project.metadata.bannerImageHash,
     allocatedAmount: BigInt(project.allocatedAmount || '0'),
     votes: BigInt(project.tallyResult || '0'),
     donation: BigInt(project.spentVoiceCredits || '0'),
@@ -207,10 +201,8 @@ export async function getLeaderboardProject(
   const project = data.projects.find(project => project.id === projectId)
 
   const metadata = project.metadata
-  const thumbnailHash = metadata.thumbnailImageHash || metadata.imageHash
-  const thumbnailImageUrl = thumbnailHash ? `${ipfsGatewayUrl}/ipfs/${thumbnailHash}` : undefined
-  const bannerHash = metadata.bannerImageHash || metadata.imageHash
-  const bannerImageUrl = bannerHash ? `${ipfsGatewayUrl}/ipfs/${bannerHash}` : undefined
+  const thumbnailImageHash = metadata.thumbnailImageHash || metadata.imageHash
+  const bannerImageHash = metadata.bannerImageHash || metadata.imageHash
 
   return {
     id: project.id,
@@ -228,8 +220,8 @@ export async function getLeaderboardProject(
     websiteUrl: metadata.websiteUrl,
     twitterUrl: metadata.twitterUrl,
     discordUrl: metadata.discordUrl,
-    thumbnailImageUrl,
-    bannerImageUrl,
+    thumbnailImageHash,
+    bannerImageHash,
     index: project.recipientIndex,
     isHidden: false, // always show leaderboard project
     isLocked: true, // Visible, but contributions are not allowed
@@ -254,8 +246,8 @@ export function formToProjectInterface(data: RecipientApplicationData): Project 
     websiteUrl: links.website,
     twitterUrl: links.twitter,
     discordUrl: links.discord,
-    bannerImageUrl: `${ipfsGatewayUrl}/ipfs/${image.bannerHash}`,
-    thumbnailImageUrl: `${ipfsGatewayUrl}/ipfs/${image.thumbnailHash}`,
+    bannerImageHash: image.bannerHash,
+    thumbnailImageHash: image.thumbnailHash,
     index: 0,
     isHidden: false,
     isLocked: true,
@@ -284,8 +276,8 @@ export function staticDataToProjectInterface(project: any): Project {
     websiteUrl: project.metadata.websiteUrl,
     twitterUrl: project.metadata.twitterUrl,
     discordUrl: project.discordUrl,
-    bannerImageUrl: `${ipfsGatewayUrl}/ipfs/${project.metadata.bannerImageHash}`,
-    thumbnailImageUrl: `${ipfsGatewayUrl}/ipfs/${project.metadata.thumbnailImageHash}`,
+    bannerImageHash: project.metadata.bannerImageHash,
+    thumbnailImageHash: project.metadata.thumbnailImageHash,
     index: project.recipientIndex,
     isHidden: project.state !== 'Accepted',
     isLocked: false,

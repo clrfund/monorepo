@@ -1,8 +1,7 @@
 query GetContributorIndex(
-  $fundingRoundAddress: String!
   $publicKeyId: ID!
 ) {
-   publicKeys(where: {id: $publicKeyId, fundingRound: $fundingRoundAddress}) {
+   publicKeys(where: {id: $publicKeyId}) {
     id
     stateIndex
   }

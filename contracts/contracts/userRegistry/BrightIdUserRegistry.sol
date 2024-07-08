@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.10;
+pragma solidity 0.8.20;
 
 import './IUserRegistry.sol';
 import './BrightIdSponsor.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 
-contract BrightIdUserRegistry is Ownable, IUserRegistry {
+contract BrightIdUserRegistry is Ownable(msg.sender), IUserRegistry {
     string private constant ERROR_NEWER_VERIFICATION = 'NEWER VERIFICATION REGISTERED BEFORE';
     string private constant ERROR_NOT_AUTHORIZED = 'NOT AUTHORIZED';
     string private constant ERROR_INVALID_VERIFIER = 'INVALID VERIFIER';

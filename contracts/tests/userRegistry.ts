@@ -44,8 +44,11 @@ describe('Simple User Registry', () => {
 
     it('allows only owner to add users', async () => {
       const registryAsUser = registry.connect(user) as Contract
-      await expect(registryAsUser.addUser(user.address)).to.be.revertedWith(
-        'Ownable: caller is not the owner'
+      await expect(
+        registryAsUser.addUser(user.address)
+      ).to.be.revertedWithCustomError(
+        registryAsUser,
+        'OwnableUnauthorizedAccount'
       )
     })
 
@@ -66,8 +69,11 @@ describe('Simple User Registry', () => {
     it('allows only owner to remove users', async () => {
       await registry.addUser(user.address)
       const registryAsUser = registry.connect(user) as Contract
-      await expect(registryAsUser.removeUser(user.address)).to.be.revertedWith(
-        'Ownable: caller is not the owner'
+      await expect(
+        registryAsUser.removeUser(user.address)
+      ).to.be.revertedWithCustomError(
+        registryAsUser,
+        'OwnableUnauthorizedAccount'
       )
     })
   })

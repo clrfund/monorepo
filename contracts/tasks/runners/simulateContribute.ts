@@ -1,11 +1,12 @@
 /**
- * Contribute to a funding round. This script is mainly used by e2e testing
- * All the input used by the script comes from the state.json file
+ * Simulate contributions to a funding round. This script is mainly used for testing.
  *
  * Sample usage:
- *  yarn hardhat contribute --network <network>
+ *  yarn hardhat simulate-contribute --count <number of contributors> \
+ *   --fund <fund for transaction fee> --network <network>
  *
  * Make sure deployed-contracts.json exists with the funding round address
+ * Make sure to use a token with mint() function like 0x65bc8dd04808d99cf8aa6749f128d55c2051edde
  */
 
 import { Keypair, createMessage, Message, PubKey } from '@clrfund/common'
@@ -13,10 +14,16 @@ import { Keypair, createMessage, Message, PubKey } from '@clrfund/common'
 import { UNIT } from '../../utils/constants'
 import { getContractAt, getEventArg } from '../../utils/contracts'
 import type { FundingRound, ERC20, Poll } from '../../typechain-types'
-import { task } from 'hardhat/config'
+import { task, types } from 'hardhat/config'
 import { EContracts } from '../../utils/types'
 import { ContractStorage } from '../helpers/ContractStorage'
+import { parseEther, Wallet } from 'ethers'
 
+const tokenAbi = [
+  'function mint(address,uint256)',
+  'function transfer(address,uint256)',
+  'function approve(address,uint256)',
+]
 /**
  * Cast a vote by the contributor
  *
@@ -55,7 +62,7 @@ async function vote(
   nonce += 1
   // Vote
   for (const recipientIndex of [1, 2]) {
-    const votes = BigInt(voiceCredits) / BigInt(4)
+    const votes = BigInt(voiceCredits) / BigInt(2)
     const [message, encPubKey] = createMessage(
       stateIndex,
       newContributorKeypair,
@@ -81,11 +88,15 @@ async function vote(
   }
 }
 
-task('contribute', 'Contribute to a funding round').setAction(
-  async (_, { ethers, network }) => {
-    const [deployer, , , , , , , , , , , , contributor1, contributor2] =
-      await ethers.getSigners()
+task('simulate-contribute', 'Contribute to a funding round')
+  .addParam('count', 'Number of contributors to simulate', 70, types.int)
+  .addParam('fund', 'Number of contributors to simulate', '0.01')
+  .setAction(async ({ count, fund }, { ethers, network }) => {
+    // gas for transactions
+    const value = parseEther(fund)
+    const contributionAmount = UNIT
 
+    const [deployer] = await ethers.getSigners()
     const storage = ContractStorage.getInstance()
     const fundingRoundContractAddress = storage.mustGetAddress(
       EContracts.FundingRound,
@@ -111,10 +122,7 @@ task('contribute', 'Contribute to a funding round').setAction(
     ])
 
     const tokenAddress = await fundingRound.nativeToken()
-    const token = await ethers.getContractAt(
-      EContracts.AnyOldERC20Token,
-      tokenAddress
-    )
+    const token = await ethers.getContractAt(tokenAbi, tokenAddress)
 
     const maciAddress = await fundingRound.maci()
     const maci = await ethers.getContractAt(EContracts.MACI, maciAddress)
@@ -125,22 +133,26 @@ task('contribute', 'Contribute to a funding round').setAction(
       userRegistryAddress
     )
 
-    const contributionAmount = (UNIT * BigInt(16)) / BigInt(10)
+    for (let i = 0; i < count; i++) {
+      const contributor = Wallet.createRandom(ethers.provider)
 
-    for (const contributor of [contributor1, contributor2]) {
-      const contributorAddress = await contributor.getAddress()
-
-      let tx = await userRegistry.addUser(contributorAddress)
+      let tx = await userRegistry.addUser(contributor.address)
       let receipt = await tx.wait()
       if (receipt.status !== 1) {
         throw new Error(`Failed to add user to the user registry`)
       }
 
       // transfer token to contributor first
-      tx = await token.transfer(contributorAddress, contributionAmount)
+      tx = await token.mint(contributor.address, contributionAmount)
       receipt = await tx.wait()
       if (receipt.status !== 1) {
-        throw new Error(`Failed to transfer token for ${contributorAddress}`)
+        throw new Error(`Failed to mint token for ${contributor.address}`)
+      }
+
+      tx = await deployer.sendTransaction({ value, to: contributor.address })
+      receipt = await tx.wait()
+      if (receipt.status !== 1) {
+        throw new Error(`Failed to fund ${contributor.address}`)
       }
 
       const contributorKeypair = new Keypair()
@@ -180,7 +192,9 @@ task('contribute', 'Contribute to a funding round').setAction(
       )
 
       console.log(
-        `Contributor ${contributorAddress} registered. State index: ${stateIndex}. Voice credits: ${voiceCredits.toString()}.`
+        `Contributor ${
+          contributor.address
+        } registered. State index: ${stateIndex}. Voice credits: ${voiceCredits.toString()}.`
       )
 
       const pollContractAsContributor = pollContract.connect(
@@ -195,7 +209,6 @@ task('contribute', 'Contribute to a funding round').setAction(
         voiceCredits,
         pollContractAsContributor
       )
-      console.log(`Contributor ${contributorAddress} voted.`)
+      console.log(`Contributor ${contributor.address} voted.`)
     }
-  }
-)
+  })

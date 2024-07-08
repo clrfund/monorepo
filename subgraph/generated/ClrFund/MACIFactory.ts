@@ -76,10 +76,6 @@ export class MACIFactory__deployMaciResult_pollContractsStruct extends ethereum.
   get tally(): Address {
     return this[2].toAddress();
   }
-
-  get subsidy(): Address {
-    return this[3].toAddress();
-  }
 }
 
 export class MACIFactory__deployMaciResult {
@@ -124,18 +120,11 @@ export class MACIFactory__factoriesResult {
   value0: Address;
   value1: Address;
   value2: Address;
-  value3: Address;
 
-  constructor(
-    value0: Address,
-    value1: Address,
-    value2: Address,
-    value3: Address,
-  ) {
+  constructor(value0: Address, value1: Address, value2: Address) {
     this.value0 = value0;
     this.value1 = value1;
     this.value2 = value2;
-    this.value3 = value3;
   }
 
   toMap(): TypedMap<string, ethereum.Value> {
@@ -143,7 +132,6 @@ export class MACIFactory__factoriesResult {
     map.set("value0", ethereum.Value.fromAddress(this.value0));
     map.set("value1", ethereum.Value.fromAddress(this.value1));
     map.set("value2", ethereum.Value.fromAddress(this.value2));
-    map.set("value3", ethereum.Value.fromAddress(this.value3));
     return map;
   }
 
@@ -155,12 +143,8 @@ export class MACIFactory__factoriesResult {
     return this.value1;
   }
 
-  getSubsidyFactory(): Address {
-    return this.value2;
-  }
-
   getMessageProcessorFactory(): Address {
-    return this.value3;
+    return this.value2;
   }
 }
 
@@ -243,21 +227,6 @@ export class MACIFactory extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toI32());
   }
 
-  TREE_ARITY(): BigInt {
-    let result = super.call("TREE_ARITY", "TREE_ARITY():(uint256)", []);
-
-    return result[0].toBigInt();
-  }
-
-  try_TREE_ARITY(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall("TREE_ARITY", "TREE_ARITY():(uint256)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
   deployMaci(
     signUpGatekeeper: Address,
     initialVoiceCreditProxy: Address,
@@ -269,7 +238,7 @@ export class MACIFactory extends ethereum.SmartContract {
   ): MACIFactory__deployMaciResult {
     let result = super.call(
       "deployMaci",
-      "deployMaci(address,address,address,uint256,address,(uint256,uint256),address):(address,(address,address,address,address))",
+      "deployMaci(address,address,address,uint256,address,(uint256,uint256),address):(address,(address,address,address))",
       [
         ethereum.Value.fromAddress(signUpGatekeeper),
         ethereum.Value.fromAddress(initialVoiceCreditProxy),
@@ -300,7 +269,7 @@ export class MACIFactory extends ethereum.SmartContract {
   ): ethereum.CallResult<MACIFactory__deployMaciResult> {
     let result = super.tryCall(
       "deployMaci",
-      "deployMaci(address,address,address,uint256,address,(uint256,uint256),address):(address,(address,address,address,address))",
+      "deployMaci(address,address,address,uint256,address,(uint256,uint256),address):(address,(address,address,address))",
       [
         ethereum.Value.fromAddress(signUpGatekeeper),
         ethereum.Value.fromAddress(initialVoiceCreditProxy),
@@ -328,7 +297,7 @@ export class MACIFactory extends ethereum.SmartContract {
   factories(): MACIFactory__factoriesResult {
     let result = super.call(
       "factories",
-      "factories():(address,address,address,address)",
+      "factories():(address,address,address)",
       [],
     );
 
@@ -336,14 +305,13 @@ export class MACIFactory extends ethereum.SmartContract {
       result[0].toAddress(),
       result[1].toAddress(),
       result[2].toAddress(),
-      result[3].toAddress(),
     );
   }
 
   try_factories(): ethereum.CallResult<MACIFactory__factoriesResult> {
     let result = super.tryCall(
       "factories",
-      "factories():(address,address,address,address)",
+      "factories():(address,address,address)",
       [],
     );
     if (result.reverted) {
@@ -355,28 +323,44 @@ export class MACIFactory extends ethereum.SmartContract {
         value[0].toAddress(),
         value[1].toAddress(),
         value[2].toAddress(),
-        value[3].toAddress(),
       ),
     );
   }
 
-  getMessageBatchSize(messageTreeSubDepth: i32): BigInt {
+  maxRecipients(): BigInt {
+    let result = super.call("maxRecipients", "maxRecipients():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_maxRecipients(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "maxRecipients",
+      "maxRecipients():(uint256)",
+      [],
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  messageBatchSize(): BigInt {
     let result = super.call(
-      "getMessageBatchSize",
-      "getMessageBatchSize(uint8):(uint256)",
-      [ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(messageTreeSubDepth))],
+      "messageBatchSize",
+      "messageBatchSize():(uint256)",
+      [],
     );
 
     return result[0].toBigInt();
   }
 
-  try_getMessageBatchSize(
-    messageTreeSubDepth: i32,
-  ): ethereum.CallResult<BigInt> {
+  try_messageBatchSize(): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
-      "getMessageBatchSize",
-      "getMessageBatchSize(uint8):(uint256)",
-      [ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(messageTreeSubDepth))],
+      "messageBatchSize",
+      "messageBatchSize():(uint256)",
+      [],
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -534,12 +518,8 @@ export class ConstructorCall_factoriesStruct extends ethereum.Tuple {
     return this[1].toAddress();
   }
 
-  get subsidyFactory(): Address {
-    return this[2].toAddress();
-  }
-
   get messageProcessorFactory(): Address {
-    return this[3].toAddress();
+    return this[2].toAddress();
   }
 }
 
@@ -631,10 +611,6 @@ export class DeployMaciCall_pollContractsStruct extends ethereum.Tuple {
   get tally(): Address {
     return this[2].toAddress();
   }
-
-  get subsidy(): Address {
-    return this[3].toAddress();
-  }
 }
 
 export class RenounceOwnershipCall extends ethereum.Call {
@@ -684,9 +660,17 @@ export class SetMaciParametersCall__Inputs {
     return this._call.inputValues[0].value.toI32();
   }
 
+  get _messageBatchSize(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+
+  get _maxRecipients(): BigInt {
+    return this._call.inputValues[2].value.toBigInt();
+  }
+
   get _treeDepths(): SetMaciParametersCall_treeDepthsStruct {
     return changetype<SetMaciParametersCall_treeDepthsStruct>(
-      this._call.inputValues[1].value.toTuple(),
+      this._call.inputValues[3].value.toTuple(),
     );
   }
 }

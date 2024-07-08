@@ -48,8 +48,6 @@ subtask
     const factories = {
       pollFactory: pollFactoryContractAddress,
       tallyFactory: tallyFactoryContractAddress,
-      // subsidy is not currently used
-      subsidyFactory: ZERO_ADDRESS,
       messageProcessorFactory: messageProcessorFactoryContractAddress,
     }
 

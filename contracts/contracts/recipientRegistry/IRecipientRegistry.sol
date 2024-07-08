@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.10;
+pragma solidity 0.8.20;
 
 /**
  * @dev Interface of the recipient registry.
@@ -17,6 +17,7 @@ pragma solidity ^0.8.10;
  */
 interface IRecipientRegistry {
 
+  function maxRecipients() external returns (uint256);
   function setMaxRecipients(uint256 _maxRecipients) external returns (bool);
 
   function getRecipientAddress(uint256 _index, uint256 _startBlock, uint256 _endBlock) external view returns (address);

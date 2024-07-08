@@ -16,11 +16,6 @@
     "OptimisticRecipientRegistry": {
       "challengePeriodSeconds": 9007199254740990,
       "deposit": "0.001"
-    },
-    "BrightIdUserRegistry": {
-      "deploy": false,
-      "context": "clrfund-arbitrum-goerli",
-      "verifier": "0xdbf0b2ee9887fe11934789644096028ed3febe9c"
     }
   },
   "arbitrum-sepolia": {
@@ -43,8 +38,7 @@
     },
     "BrightIdUserRegistry": {
       "context": "clrfund-arbitrum-goerli",
-      "verifier": "0xdbf0b2ee9887fe11934789644096028ed3febe9c",
-      "sponsor": "0xC7c81634Dac2de4E7f2Ba407B638ff003ce4534C"
+      "verifier": "0xdbf0b2ee9887fe11934789644096028ed3febe9c"
     }
   }
 }

@@ -1,6 +1,6 @@
 export enum ChainId {
   MAINNET = 1,
-  GOERLI = 5,
+  SEPOLIA = 11155111,
   HARDHAT = 31337,
   ARBITRUM_ONE = 42161,
   ARBITRUM_RINKEBY = 421611,
@@ -15,6 +15,7 @@ export enum ChainId {
 export type ChainInfo = {
   [chainId in ChainId]: {
     label: string
+    name: string
     currency: string
     logo: string
     isLayer2: boolean
@@ -29,6 +30,7 @@ export type ChainInfo = {
 export const CHAIN_INFO: ChainInfo = {
   [ChainId.MAINNET]: {
     label: 'Mainnet',
+    name: 'mainnet',
     currency: 'ETH',
     logo: 'eth.svg',
     isLayer2: false,
@@ -36,17 +38,19 @@ export const CHAIN_INFO: ChainInfo = {
     explorerLogo: 'etherscan.svg',
     explorerLabel: 'Etherscan',
   },
-  [ChainId.GOERLI]: {
-    label: 'Goerli',
+  [ChainId.SEPOLIA]: {
+    label: 'Sepolia',
+    name: 'sepolia',
     currency: 'ETH',
     logo: 'eth.svg',
     isLayer2: false,
-    explorer: 'https://goerli.etherscan.io',
+    explorer: 'https://sepolia.etherscan.io',
     explorerLogo: 'etherscan.svg',
     explorerLabel: 'Etherscan',
   },
   [ChainId.HARDHAT]: {
     label: 'Arbitrum Hardhat',
+    name: 'hardhat',
     currency: 'AETH',
     logo: 'arbitrum.svg',
     isLayer2: true,
@@ -58,6 +62,7 @@ export const CHAIN_INFO: ChainInfo = {
   },
   [ChainId.ARBITRUM_ONE]: {
     label: 'Arbitrum',
+    name: 'arbitrum',
     currency: 'AETH',
     logo: 'arbitrum.svg',
     isLayer2: true,
@@ -69,6 +74,7 @@ export const CHAIN_INFO: ChainInfo = {
   },
   [ChainId.ARBITRUM_RINKEBY]: {
     label: 'Arbitrum Rinkeby',
+    name: 'arbitrum-rinkeby',
     currency: 'AETH',
     logo: 'arbitrum.svg',
     isLayer2: true,
@@ -80,6 +86,7 @@ export const CHAIN_INFO: ChainInfo = {
   },
   [ChainId.ARBITRUM_GOERLI]: {
     label: 'Arbitrum Goerli',
+    name: 'arbitrum-goerli',
     currency: 'AETH',
     logo: 'arbitrum.svg',
     isLayer2: true,
@@ -91,6 +98,7 @@ export const CHAIN_INFO: ChainInfo = {
   },
   [ChainId.ARBITRUM_SEPOLIA]: {
     label: 'Arbitrum Sepolia',
+    name: 'arbitrum-sepolia',
     currency: 'AETH',
     logo: 'arbitrum.svg',
     isLayer2: true,
@@ -102,6 +110,7 @@ export const CHAIN_INFO: ChainInfo = {
   },
   [ChainId.OPTIMISM]: {
     label: 'Optimism',
+    name: 'optimism',
     currency: 'OETH',
     logo: 'optimism.svg',
     isLayer2: true,
@@ -113,6 +122,7 @@ export const CHAIN_INFO: ChainInfo = {
   },
   [ChainId.OPTIMISM_SEPOLIA]: {
     label: 'Optimism Sepolia',
+    name: 'optimism-sepolia',
     currency: 'OETH',
     logo: 'optimism.svg',
     isLayer2: true,
@@ -124,6 +134,7 @@ export const CHAIN_INFO: ChainInfo = {
   },
   [ChainId.XDAI]: {
     label: 'xDai',
+    name: 'xdai',
     currency: 'xDai',
     logo: 'xdai.svg',
     isLayer2: false,
@@ -135,6 +146,7 @@ export const CHAIN_INFO: ChainInfo = {
   },
   [ChainId.POLYGON]: {
     label: 'Polygon',
+    name: 'polygon',
     currency: 'MATIC',
     logo: 'polygon.svg',
     isLayer2: false,

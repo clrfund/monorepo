@@ -55,7 +55,7 @@ import { computed } from 'vue'
 import BrightIdWidget from '@/components/BrightIdWidget.vue'
 import Links from '@/components/Links.vue'
 
-import { userRegistryType, UserRegistryType, isBrightIdRequired } from '@/api/core'
+import { isUserRegistrationRequired, isBrightIdRequired } from '@/api/core'
 import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
@@ -69,7 +69,7 @@ const hasStartedVerification = computed(
 )
 const showUserVerification = computed(() => {
   return (
-    userRegistryType !== UserRegistryType.SIMPLE &&
+    isUserRegistrationRequired &&
     currentRound.value &&
     currentUser.value?.isRegistered !== undefined &&
     !currentUser.value.isRegistered

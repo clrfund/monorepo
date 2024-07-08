@@ -39,7 +39,7 @@ function decodeTcrItemData(
   address: string
   name: string
   description: string
-  imageUrl: string
+  imageHash: string
 } {
   // Disable console.error to ignore parser errors
   /* eslint-disable no-console */
@@ -52,7 +52,7 @@ function decodeTcrItemData(
     address: decodedMetadata[1] as string,
     name: decodedMetadata[0] as string,
     description: decodedMetadata[3] as string,
-    imageUrl: `${ipfsGatewayUrl}${decodedMetadata[2]}`,
+    imageHash: decodedMetadata[2] as string,
   }
 }
 

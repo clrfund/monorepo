@@ -69,8 +69,8 @@
       <div class="projects-section">
         <h2>{{ $t('profile.h2_3') }}</h2>
         <div v-if="projects.length > 0" class="project-list">
-          <div class="project-item" v-for="{ id, name, thumbnailImageUrl, isHidden, isLocked } of projects" :key="id">
-            <img :src="thumbnailImageUrl" alt="thumbnail" class="project-thumbnail" />
+          <div class="project-item" v-for="{ id, name, thumbnailImageHash, isHidden, isLocked } of projects" :key="id">
+            <ipfs-image :src="thumbnailImageHash" alt="thumbnail" class="project-thumbnail" />
             <div class="project-details">
               <div class="project-name">
                 {{ name }}
@@ -110,7 +110,6 @@ import { getTokenLogo } from '@/utils/tokens'
 import { useAppStore, useUserStore, useRecipientStore, useWalletStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
-import { getLeaderboardData } from '@/api/leaderboard'
 import { formatAmount } from '@/utils/amounts'
 
 import WithdrawalModal from '@/components/WithdrawalModal.vue'

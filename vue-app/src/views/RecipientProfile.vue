@@ -4,7 +4,7 @@
     {{ $t('recipientProfile.not_found') }}
   </div>
   <div v-else class="project-page">
-    <img class="project-image" :src="recipient.bannerImageUrl" :alt="recipient.name" />
+    <ipfs-image class="project-image" :src="recipient.bannerImageHash" :alt="recipient.name" />
     <div class="about">
       <h1 class="project-name" :title="addressName" :project-index="recipient.index">
         <span> {{ recipient.name }} </span>

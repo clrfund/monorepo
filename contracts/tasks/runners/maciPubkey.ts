@@ -4,7 +4,6 @@
  *
  * Usage: hardhat maci-pubkey --macisk <secret key>
  */
-import { id } from 'ethers'
 import { task } from 'hardhat/config'
 import { PubKey, PrivKey, Keypair } from '@clrfund/common'
 
@@ -26,8 +25,5 @@ task('maci-pubkey', 'Get the serialized MACI public key')
       }
       const pubKey = new PubKey([BigInt(x), BigInt(y)])
       console.log(`Public Key: ${pubKey.serialize()}`)
-
-      const subgraphId = id(x + '.' + y)
-      console.log(`Subgraph id: ${subgraphId}`)
     }
   })

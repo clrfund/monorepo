@@ -5,15 +5,7 @@ import { FundingRound, Poll, Message, PublicKey } from '../generated/schema'
 import { makePublicKeyId } from './PublicKey'
 
 export function handlePublishMessage(event: PublishMessage): void {
-  if (!event.transaction.to) {
-    log.error(
-      'Error: handlePublishMessage failed fundingRound not registered',
-      []
-    )
-    return
-  }
-
-  let pollEntityId = event.transaction.to!.toHex()
+  let pollEntityId = event.address.toHex()
   let poll = Poll.load(pollEntityId)
   if (poll == null) {
     log.error('Error: handlePublishMessage failed poll not found {}', [
@@ -25,11 +17,23 @@ export function handlePublishMessage(event: PublishMessage): void {
   let fundingRoundId = poll.fundingRound
   if (!fundingRoundId) {
     log.error(
-      'Error: handlePublishMessage failed poll {} missing funding round',
+      'Error: handlePublishMessage failed poll {} missing funding round id',
       [pollEntityId]
     )
     return
   }
+
+  let fundingRound = FundingRound.load(fundingRoundId)
+  if (!fundingRound) {
+    log.error(
+      'Error: handlePublishMessage failed poll {} missing funding round entity',
+      [pollEntityId]
+    )
+    return
+  }
+
+  let maci = fundingRound.maci
+  let maciId = maci ? maci.toHex() : ''
 
   let messageID =
     event.transaction.hash.toHexString() +
@@ -45,7 +49,7 @@ export function handlePublishMessage(event: PublishMessage): void {
   message.submittedBy = event.transaction.from
 
   let publicKeyId = makePublicKeyId(
-    fundingRoundId,
+    maciId,
     event.params._encPubKey.x,
     event.params._encPubKey.y
   )
@@ -56,8 +60,7 @@ export function handlePublishMessage(event: PublishMessage): void {
     let publicKey = new PublicKey(publicKeyId)
     publicKey.x = event.params._encPubKey.x
     publicKey.y = event.params._encPubKey.y
-    publicKey.fundingRound = fundingRoundId
-
+    publicKey.maci = maciId
     publicKey.save()
   }
 

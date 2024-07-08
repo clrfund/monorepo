@@ -16,7 +16,7 @@ import {
   DEFAULT_GET_LOG_BATCH_SIZE,
   DEFAULT_SR_QUEUE_OPS,
 } from '../utils/constants'
-import { getEventArg } from '../utils/contracts'
+import { getContractAt, getEventArg } from '../utils/contracts'
 import { deployPoseidonLibraries, deployMaciFactory } from '../utils/testutils'
 import { getIpfsHash } from '../utils/ipfs'
 import {
@@ -270,7 +270,11 @@ describe('End-to-end Tests', function () {
 
     pollId = await fundingRound.pollId()
     const pollAddress = await fundingRound.poll()
-    pollContract = await ethers.getContractAt(EContracts.Poll, pollAddress)
+    pollContract = await getContractAt<Contract>(
+      EContracts.Poll,
+      pollAddress,
+      ethers
+    )
 
     await mine()
   })
@@ -390,7 +394,6 @@ describe('End-to-end Tests', function () {
     await proveOnChain({
       pollId,
       proofDir: genProofArgs.outputDir,
-      subsidyEnabled: false,
       maciAddress,
       messageProcessorAddress,
       tallyAddress,
@@ -410,7 +413,6 @@ describe('End-to-end Tests', function () {
       await proveOnChain({
         pollId,
         proofDir: genProofArgs.outputDir,
-        subsidyEnabled: false,
         maciAddress,
         messageProcessorAddress,
         tallyAddress,
