@@ -55,8 +55,9 @@ task('export-images', 'Export project logo images')
     const round = JSON.parse(data)
     const projects = round.projects
     const images = projects.map((project: any) => {
-      const { bannerImageHash, thumbnailImageHash } = project.metadata
-      return { bannerImageHash, thumbnailImageHash }
+      const { bannerImageHash, thumbnailImageHash, imageHash } =
+        project.metadata
+      return { bannerImageHash, thumbnailImageHash, imageHash }
     })
 
     for (let i = 0; i < images.length; i++) {
@@ -68,6 +69,11 @@ task('export-images', 'Export project logo images')
       await download({
         gateway,
         ipfsHash: images[i].thumbnailImageHash,
+        outputDir,
+      })
+      await download({
+        gateway,
+        ipfsHash: images[i].imageHash,
         outputDir,
       })
     }
