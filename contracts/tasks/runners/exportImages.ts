@@ -15,6 +15,7 @@ import { task } from 'hardhat/config'
 import { isPathExist, makeDirectory } from '../../utils/misc'
 import { getIpfsContent } from '@clrfund/common'
 import fs from 'fs'
+import { dirname } from 'path'
 
 /**
  * Download the IPFS file with the ipfsHash to the output directory
@@ -36,7 +37,13 @@ async function download({
   const res = await getIpfsContent(ipfsHash, gateway)
   if (res.hasBody()) {
     console.log('Downloaded', ipfsHash)
-    fs.writeFileSync(`${outputDir}/${ipfsHash}`, res.body)
+    const path = `${outputDir}/${ipfsHash}`
+    const folder = dirname(path)
+    if (!isPathExist(folder)) {
+      makeDirectory(folder)
+    }
+
+    fs.writeFileSync(path, res.body)
   }
 }
 
@@ -46,10 +53,6 @@ task('export-images', 'Export project logo images')
   .addParam('gateway', 'The IPFS gateway url')
   .setAction(async ({ outputDir, roundFile, gateway }) => {
     console.log('Starting to download from ipfs')
-
-    if (!isPathExist(outputDir)) {
-      makeDirectory(outputDir)
-    }
 
     const data = fs.readFileSync(roundFile, { encoding: 'utf-8' })
     const round = JSON.parse(data)
