@@ -7,7 +7,7 @@ import {
   hash5,
   hash3,
   hashLeftRight,
-  LEAVES_PER_NODE,
+  MACI_TREE_ARITY,
   genTallyResultCommitment,
   Keypair,
   Tally as TallyData,
@@ -23,7 +23,7 @@ import {
   verify,
 } from 'maci-cli'
 
-import { getTalyFilePath, isPathExist } from './misc'
+import { isPathExist } from './misc'
 import { getCircuitFiles } from './circuits'
 import { FundingRound } from '../typechain-types'
 
@@ -50,7 +50,7 @@ export function getTallyResultProof(
   const resultTree = new IncrementalQuinTree(
     recipientTreeDepth,
     BigInt(0),
-    LEAVES_PER_NODE,
+    MACI_TREE_ARITY,
     hash5
   )
   for (const leaf of tally.results.tally) {
@@ -303,7 +303,7 @@ export async function mergeMaciSubtrees({
 
   await mergeMessages({
     pollId,
-    maciContractAddress: maciAddress,
+    maciAddress,
     numQueueOps,
     signer,
     quiet,
@@ -311,7 +311,7 @@ export async function mergeMaciSubtrees({
 
   await mergeSignups({
     pollId,
-    maciContractAddress: maciAddress,
+    maciAddress,
     numQueueOps,
     signer,
     quiet,

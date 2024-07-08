@@ -3,7 +3,7 @@ import { Contract, BigNumberish } from 'ethers'
 import { VerifyingKey } from 'maci-domainobjs'
 import { extractVk } from 'maci-circuits'
 import { CIRCUITS, getCircuitFiles } from './circuits'
-import { TREE_ARITY } from './constants'
+import { MACI_TREE_ARITY } from '@clrfund/common'
 import { Params } from '../typechain-types/contracts/MACIFactory'
 
 type TreeDepths = {
@@ -36,15 +36,28 @@ export class MaciParameters {
    * @returns message batch size
    */
   getMessageBatchSize(): number {
-    return TREE_ARITY ** this.treeDepths.messageTreeSubDepth
+    return MACI_TREE_ARITY ** this.treeDepths.messageTreeSubDepth
+  }
+
+  /**
+   * Calculate the maximum recipients allowed by the MACI circuit
+   * @returns maximum recipient count
+   */
+  getMaxRecipients(): number {
+    // -1 because recipients is 0 index based and the 0th slot is reserved
+    return MACI_TREE_ARITY ** this.treeDepths.voteOptionTreeDepth - 1
   }
 
   asContractParam(): [
     _stateTreeDepth: BigNumberish,
+    _messageBatchSize: BigNumberish,
+    _maxRecipients: BigNumberish,
     _treeDepths: Params.TreeDepthsStruct,
   ] {
     return [
       this.stateTreeDepth,
+      this.getMessageBatchSize(),
+      this.getMaxRecipients(),
       {
         intStateTreeDepth: this.treeDepths.intStateTreeDepth,
         messageTreeSubDepth: this.treeDepths.messageTreeSubDepth,

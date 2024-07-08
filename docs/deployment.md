@@ -24,13 +24,6 @@ Note: select the `hex address (ONLY)` option to identify users and the `meet` ve
 
 Once the app is registered, you will get an appId which will be set to `BRIGHTID_CONTEXT` when deploying the contracts in later steps.
 
-### Setup BrightID sponsorship keys
-
-1. Generate sponsorship signing keys here: https://tweetnacl.js.org/#/sign
-2. Provide the public key to BrightID support through their discord channel: https://discord.gg/QW7ThZ5K4V
-3. Save the private key for setting up the clrfund user interface in environment variable: `VITE_BRIGHTID_SPONSOR_KEY`
-
-
 ## Deploy Contracts
 
 Goto the `contracts` folder.
@@ -161,8 +154,6 @@ VITE_SUBGRAPH_URL=
 VITE_CLRFUND_ADDRESS=
 VITE_USER_REGISTRY_TYPE=
 VITE_BRIGHTID_CONTEXT=
-VITE_BRIGHTID_SPONSOR_KEY=
-VITE_BRIGHTID_SPONSOR_API_URL=https://brightid.clr.fund/brightid/v6/operations
 VITE_RECIPIENT_REGISTRY_TYPE=
 
 # see google-sheets.md for instruction on how to set these
@@ -178,10 +169,6 @@ Note: if VITE_SUBGRAPH_URL is not set, the app will try to get the round informa
 1. Set the `functions directory` to `vue-app/dist/lambda`.
 
 See [How to set netlify function directory](https://docs.netlify.com/functions/optional-configuration/?fn-language=ts)
-
-2. Set environment variable: `AWS_LAMBDA_JS_RUNTIME=nodejs18.x`
-
-This environment variable is needed for the `sponsor.js` function. If not set, it will throw error `fetch not found`.
 
 
 #### Deploy on IPFS

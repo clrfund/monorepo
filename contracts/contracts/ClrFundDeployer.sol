@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity 0.8.10;
+pragma solidity 0.8.20;
 
 import {MACIFactory} from './MACIFactory.sol';
 import {ClrFund} from './ClrFund.sol';
@@ -9,7 +9,7 @@ import {SignUpGatekeeper} from "maci-contracts/contracts/gatekeepers/SignUpGatek
 import {InitialVoiceCreditProxy} from "maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol";
 import {Ownable} from '@openzeppelin/contracts/access/Ownable.sol';
 
-contract ClrFundDeployer is CloneFactory, Ownable {
+contract ClrFundDeployer is CloneFactory, Ownable(msg.sender) {
   address public clrfundTemplate;
   address public maciFactory;
   address public roundFactory;

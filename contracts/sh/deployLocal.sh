@@ -26,4 +26,4 @@ export COORDINATOR_MACISK=$(echo "${MACI_KEYPAIR}" | grep -o "macisk.*$")
 yarn hardhat new-clrfund --network ${NETWORK}
  
 # deploy a new funding round
-yarn hardhat new-round --network ${NETWORK}
+yarn hardhat new-round --network ${NETWORK} --round-duration 3600

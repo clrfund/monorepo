@@ -14,12 +14,14 @@
 import { task, types } from 'hardhat/config'
 import { Contract, formatUnits, getNumber } from 'ethers'
 import { Ipfs } from '../../utils/ipfs'
-import { Project, Round, RoundFileContent } from '../../utils/types'
+import { EContracts, Project, Round, RoundFileContent } from '../../utils/types'
 import { RecipientRegistryLogProcessor } from '../../utils/RecipientRegistryLogProcessor'
 import { getRecipientAddressAbi, MaciV0Abi } from '../../utils/abi'
 import { JSONFile } from '../../utils/JSONFile'
 import path from 'path'
 import fs from 'fs'
+import { getContractAt } from '../../utils/contracts'
+import { Poll } from '../../typechain-types'
 
 type RoundListEntry = {
   network: string
@@ -216,12 +218,15 @@ async function getRoundInfo(
 
   try {
     if (pollAddress) {
-      const pollContract = await ethers.getContractAt('Poll', pollAddress)
+      const pollContract = await getContractAt<Poll>(
+        EContracts.Poll,
+        pollAddress,
+        ethers
+      )
       const [roundStartTime, roundDuration] =
         await pollContract.getDeployTimeAndDuration()
       startTime = getNumber(roundStartTime)
       signUpDuration = roundDuration
-      votingDuration = roundDuration
       endTime = startTime + getNumber(roundDuration)
 
       pollId = await roundContract.pollId()

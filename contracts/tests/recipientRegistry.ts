@@ -154,7 +154,10 @@ describe('Simple Recipient Registry', async () => {
       const registryAsRecipient = registry.connect(recipient) as Contract
       await expect(
         registryAsRecipient.addRecipient(recipientAddress, metadata)
-      ).to.be.revertedWith('Ownable: caller is not the owner')
+      ).to.be.revertedWithCustomError(
+        registryAsRecipient,
+        'OwnableUnauthorizedAccount'
+      )
     })
 
     it('should not accept zero-address as recipient address', async () => {
@@ -218,7 +221,10 @@ describe('Simple Recipient Registry', async () => {
       const registryAsRecipient = registry.connect(recipient) as Contract
       await expect(
         registryAsRecipient.removeRecipient(recipientId)
-      ).to.be.revertedWith('Ownable: caller is not the owner')
+      ).to.be.revertedWithCustomError(
+        registryAsRecipient,
+        'OwnableUnauthorizedAccount'
+      )
     })
 
     it('reverts if recipient is not in registry', async () => {
@@ -762,7 +768,7 @@ describe('Optimistic recipient registry', () => {
           recipientId,
           requester.address
         )
-      ).to.be.revertedWith('Ownable: caller is not the owner')
+      ).to.be.revertedWithCustomError(registry, 'OwnableUnauthorizedAccount')
     })
 
     it('should not allow to challenge resolved request', async () => {

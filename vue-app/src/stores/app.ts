@@ -458,7 +458,7 @@ export const useAppStore = defineStore('app', {
       }
 
       const contributorKeypair = Keypair.createFromSeed(userStore.currentUser.encryptionKey)
-      const stateIndex = await getContributorIndex(this.currentRound.fundingRoundAddress, contributorKeypair.pubKey)
+      const stateIndex = await getContributorIndex(this.currentRound.maciAddress, contributorKeypair.pubKey)
 
       if (!stateIndex) {
         // if no contributor index, user has not contributed

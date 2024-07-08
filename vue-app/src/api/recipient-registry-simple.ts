@@ -6,6 +6,7 @@ import { provider, ipfsGatewayUrl } from './core'
 import type { Project } from './projects'
 import type { RegistryInfo, RecipientApplicationData } from './types'
 import { formToRecipientData } from './recipient'
+import { getNumber } from 'ethers'
 
 function decodeRecipientAdded(event: EventLog): Project {
   const args = event.args as any
@@ -28,7 +29,7 @@ function decodeRecipientAdded(event: EventLog): Project {
     discordUrl: metadata.discordUrl,
     bannerImageUrl: `${ipfsGatewayUrl}/ipfs/${metadata.bannerImageHash}`,
     thumbnailImageUrl: `${ipfsGatewayUrl}/ipfs/${metadata.thumbnailImageHash}`,
-    index: args._index.toNumber(),
+    index: getNumber(args._index),
     isHidden: false,
     isLocked: false,
   }

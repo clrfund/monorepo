@@ -5,7 +5,7 @@
  *  yarn hardhat claim --recipient <recipient-index> --network <network>
  */
 
-import { getEventArg } from '../../utils/contracts'
+import { getContractAt, getEventArg } from '../../utils/contracts'
 import { getRecipientClaimData } from '@clrfund/common'
 import { JSONFile } from '../../utils/JSONFile'
 import {
@@ -17,6 +17,7 @@ import { getNumber } from 'ethers'
 import { task, types } from 'hardhat/config'
 import { EContracts } from '../../utils/types'
 import { ContractStorage } from '../helpers/ContractStorage'
+import { Poll } from 'maci-contracts/build/typechain-types'
 
 task('claim', 'Claim funnds for test recipients')
   .addOptionalParam('roundAddress', 'Funding round contract address')
@@ -64,7 +65,11 @@ task('claim', 'Claim funnds for test recipients')
       const pollAddress = await fundingRoundContract.poll()
       console.log('pollAddress', pollAddress)
 
-      const poll = await ethers.getContractAt(EContracts.Poll, pollAddress)
+      const poll = await getContractAt<Poll>(
+        EContracts.Poll,
+        pollAddress,
+        ethers
+      )
       const treeDepths = await poll.treeDepths()
       const recipientTreeDepth = getNumber(treeDepths.voteOptionTreeDepth)
 

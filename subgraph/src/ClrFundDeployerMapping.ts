@@ -5,7 +5,7 @@ import { ClrFundDeployer, ClrFund } from '../generated/schema'
 import { ClrFund as ClrFundTemplate } from '../generated/templates'
 
 export function handleNewInstance(event: NewInstance): void {
-  let clrfundDeployerAddress = event.transaction.to!
+  let clrfundDeployerAddress = event.address
   let clrfundDeployerId = clrfundDeployerAddress.toHex()
 
   let clrFundDeployer = ClrFundDeployer.load(clrfundDeployerId)

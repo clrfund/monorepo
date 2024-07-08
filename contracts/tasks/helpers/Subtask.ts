@@ -18,7 +18,7 @@ import type {
   HardhatRuntimeEnvironment,
 } from 'hardhat/types'
 
-import { deployContract } from '../../utils/contracts'
+import { deployContract, getQualifiedContractName } from '../../utils/contracts'
 import { EContracts } from '../../utils/types'
 import { ContractStorage } from './ContractStorage'
 import {
@@ -527,7 +527,8 @@ export class Subtask {
     const contractAddress =
       address || this.storage.mustGetAddress(name, this.hre.network.name)
 
-    const { abi } = await this.hre.artifacts.readArtifact(name.toString())
+    const qualifiedName = getQualifiedContractName(name)
+    const { abi } = await this.hre.artifacts.readArtifact(qualifiedName)
 
     return new BaseContract(contractAddress, abi, deployer) as T
   }

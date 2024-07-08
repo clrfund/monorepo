@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.10;
+pragma solidity 0.8.20;
 
 import {IVkRegistry} from 'maci-contracts/contracts/interfaces/IVkRegistry.sol';
 import {IVerifier} from 'maci-contracts/contracts/interfaces/IVerifier.sol';
@@ -28,10 +28,7 @@ interface IMACIFactory {
   function stateTreeDepth() external view returns (uint8);
   function treeDepths() external view returns (Params.TreeDepths memory);
 
-  function getMessageBatchSize(uint8 _messageTreeSubDepth) external pure
-    returns(uint256 _messageBatchSize);
-
-  function TREE_ARITY() external pure returns (uint256);
+  function maxRecipients() external view returns (uint256);
 
   function deployMaci(
     SignUpGatekeeper signUpGatekeeper,

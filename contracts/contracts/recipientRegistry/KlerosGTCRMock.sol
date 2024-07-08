@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.10;
+pragma solidity 0.8.20;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
 
@@ -9,7 +9,7 @@ import '@openzeppelin/contracts/access/Ownable.sol';
  *  This contract is a curated registry for any types of items. Just like a TCR contract it features the request-challenge protocol and appeal fees crowdfunding.
  *  Adapted from https://github.com/kleros/tcr/blob/v2.0.0/contracts/GeneralizedTCR.sol
  */
-contract KlerosGTCRMock is Ownable {
+contract KlerosGTCRMock is Ownable(msg.sender) {
 
   enum Status {
     Absent, // The item is not in the registry.
