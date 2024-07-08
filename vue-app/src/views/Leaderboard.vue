@@ -77,8 +77,8 @@ onMounted(async () => {
   const network = getRouteParamValue(route.params.network)
   const data = await loadLeaderboard(address, network)
 
-  // redirect to projects view if not finalized or no static round data for leaderboard
-  if (!data?.projects) {
+  // redirect to projects view if no tally data or no static round data for leaderboard
+  if (!data?.projects || !data?.tally) {
     router.push({ name: 'round' })
     return
   }
@@ -88,7 +88,7 @@ onMounted(async () => {
       .filter(project => project.state != 'Removed')
       .map(project => toLeaderboardProject(project))
       .sort((p1: LeaderboardProject, p2: LeaderboardProject) => {
-        const diff = p2.allocatedAmount - p1.allocatedAmount
+        const diff = BigInt(p2.allocatedAmount || 0) - BigInt(p1.allocatedAmount || 0)
         if (diff === BigInt(0)) return 0
         if (diff > BigInt(0)) return 1
         return -1
