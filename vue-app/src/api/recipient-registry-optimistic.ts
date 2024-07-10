@@ -5,14 +5,14 @@ import { chain, clrFundContract } from '@/api/core'
 
 import { OptimisticRecipientRegistry } from './abi'
 import { provider, ipfsGatewayUrl } from './core'
-import type { Project } from './projects'
+import { staticDataToProjectInterface, type Project } from './projects'
 import sdk from '@/graphql/sdk'
 import type { GetProjectQuery, GetRecipientsQuery, Recipient } from '@/graphql/API'
 import { hasDateElapsed } from '@/utils/dates'
 import type { RegistryInfo, RecipientApplicationData } from './types'
 import { formToRecipientData } from './recipient'
 import { isSameAddress } from '@/utils/accounts'
-import { getLeaderboardData } from './leaderboard'
+import { findStaticRound } from './round'
 
 async function getRegistryInfo(registryAddress: string): Promise<RegistryInfo> {
   const registry = new Contract(registryAddress, OptimisticRecipientRegistry, provider)
@@ -132,6 +132,22 @@ function mapRequestStatus(request: RecipientRequestData): RequestStatus {
 }
 
 /**
+ * Map the recipient state from static round data to request status
+ * @param state Recipient state: Active, Rejected, Removed
+ * @returns Request status
+ */
+function staticStateToRequestStatus(state: string): RequestStatus {
+  switch (state) {
+    case 'Accepted':
+      return RequestStatus.Executed
+    case 'Rejected':
+      return RequestStatus.Rejected
+    default:
+      return RequestStatus.Removed
+  }
+}
+
+/**
  * Try to get the recipients from the static round data
  * @param registryAddress The recipient registry address
  * @returns The recipient application requests
@@ -141,7 +157,7 @@ async function tryGetRecipientsStatically(registryAddress: string): Promise<Requ
 
   try {
     const fundingRoundAddress = await clrFundContract.getCurrentRound()
-    const fundingRoundInfo = await getLeaderboardData(fundingRoundAddress)
+    const fundingRoundInfo = await findStaticRound(fundingRoundAddress)
     if (isSameAddress(fundingRoundInfo?.round?.recipientRegistryAddress, registryAddress)) {
       if (fundingRoundInfo?.projects) {
         requests = fundingRoundInfo.projects.map(project => {
@@ -156,7 +172,7 @@ async function tryGetRecipientsStatically(registryAddress: string): Promise<Requ
           return {
             transactionHash: '', // transaction hash not available in the static data
             type: RequestType.Registration,
-            status: project.state as RequestStatus,
+            status: staticStateToRequestStatus(project.state),
             acceptanceDate: DateTime.fromISO(project.createdAt),
             recipientId: project.id,
             recipient: project.recipientAddress,
@@ -371,6 +387,34 @@ export async function getProjects(registryAddress: string, startTime?: number, e
 }
 
 /**
+ * Find the project from the static round file
+ * @param projectId The project id
+ * @param filter Filter the project if it's deleted
+ */
+async function findStaticProject(projectId: string, filter: boolean): Promise<Project | null> {
+  let project: Project | null = null
+  try {
+    const fundingRoundAddress = await clrFundContract.getCurrentRound()
+    const network = chain.label.toLowerCase()
+    const round = await findStaticRound(fundingRoundAddress, network)
+    if (round?.projects) {
+      const staticProject = round.projects.find(project => project.id === projectId)
+      if (staticProject) {
+        project = staticDataToProjectInterface(staticProject)
+        if (filter && project.isHidden) {
+          project = null
+        }
+      }
+    }
+  } catch {
+    // return not found on error
+    return null
+  }
+
+  return project
+}
+
+/**
  * Get project information
  *
  * @param recipientId recipient id
@@ -388,7 +432,7 @@ export async function getProject(recipientId: string, filter = true): Promise<Pr
       recipientId,
     })
   } catch {
-    return null
+    return findStaticProject(recipientId, filter)
   }
 
   if (!data.recipients.length) {

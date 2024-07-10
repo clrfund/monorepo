@@ -7,7 +7,7 @@ import SimpleRegistry from './recipient-registry-simple'
 import OptimisticRegistry from './recipient-registry-optimistic'
 import KlerosRegistry from './recipient-registry-kleros'
 import sdk from '@/graphql/sdk'
-import { getLeaderboardData } from '@/api/leaderboard'
+import { findStaticRound } from '@/api/round'
 import type { RecipientApplicationData } from '@/api/types'
 import type { GetRecipientByIndexQuery } from '@/graphql/API'
 
@@ -205,7 +205,7 @@ export async function getLeaderboardProject(
   projectId: string,
   network: string,
 ): Promise<Project | null> {
-  const data = await getLeaderboardData(roundAddress, network)
+  const data = await findStaticRound(roundAddress, network)
   if (!data) {
     return null
   }
@@ -277,7 +277,7 @@ export function staticDataToProjectInterface(project: any): Project {
   return {
     id: project.id,
     address: project.recipientAddress,
-    name: project.metadata.name,
+    name: project.metadata.name || project.name,
     tagline: project.metadata.tagline,
     description: project.metadata.description,
     category: project.metadata.category,
@@ -297,20 +297,4 @@ export function staticDataToProjectInterface(project: any): Project {
     isHidden: project.state !== 'Accepted',
     isLocked: false,
   }
-}
-
-/**
- * Get the list of projects for a static round
- * @param roundAddress The funding round contract address
- * @param network The network
- * @returns Array of projects
- */
-export async function getProjectsForStaticRound(roundAddress: string, network: string): Promise<Project[]> {
-  const data = await getLeaderboardData(roundAddress, network)
-  if (!data) {
-    return []
-  }
-
-  const projects = data.projects.map(staticDataToProjectInterface)
-  return projects
 }

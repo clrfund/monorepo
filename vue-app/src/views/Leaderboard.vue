@@ -46,10 +46,9 @@
 import { useAppStore } from '@/stores'
 import { useRouter, useRoute } from 'vue-router'
 import type { RoundInfo } from '@/api/round'
-import { toRoundInfo } from '@/api/round'
+import { toRoundInfo, findStaticRound } from '@/api/round'
 import type { LeaderboardProject } from '@/api/projects'
 import { toLeaderboardProject } from '@/api/projects'
-import { getLeaderboardData } from '@/api/leaderboard'
 import { getRouteParamValue } from '@/utils/route'
 
 const router = useRouter()
@@ -63,7 +62,7 @@ const appStore = useAppStore()
 const { showSimpleLeaderboard } = storeToRefs(appStore)
 
 async function loadLeaderboard(address: string, network: string) {
-  const data = await getLeaderboardData(address, network)
+  const data = await findStaticRound(address, network)
   return data
 }
 

@@ -10,8 +10,13 @@ import sdk from '@/graphql/sdk'
 
 import { isSameAddress } from '@/utils/accounts'
 import { Keypair } from '@clrfund/common'
-import { getLeaderboardData } from '@/api/leaderboard'
 import { staticDataToProjectInterface } from './projects'
+import staticRounds from '@/rounds/rounds.json'
+
+type StaticRoundRecord = {
+  address: string
+  network: string
+}
 
 export interface RoundInfo {
   fundingRoundAddress: string
@@ -57,6 +62,37 @@ export enum RoundStatus {
   Finalized = 'Finalized',
   Cancelled = 'Cancelled',
 }
+
+function isSameNetwork(network1 = '', network2 = ''): boolean {
+  return network1.toLowerCase() === network2.toLowerCase()
+}
+
+/**
+ * Find the funding round address from the static round index file
+ * @param roundAddress The funding round address
+ * @param network The network name
+ * @returns The static round data
+ */
+export async function findStaticRound(roundAddress: string, network?: string) {
+  const rounds = staticRounds as StaticRoundRecord[]
+  const checkNetwork = Boolean(network)
+
+  const found = rounds.find((r: StaticRoundRecord) => {
+    return isSameAddress(r.address, roundAddress) && (!checkNetwork || isSameNetwork(network, r.network))
+  })
+
+  if (!found) {
+    return null
+  }
+
+  const data = await import(`../rounds/${found.network}/${found.address}.json`)
+  if (!data.round) {
+    data.round = {}
+  }
+  data.round.network = found.network
+  return data
+}
+
 //TODO: update to take ClrFund address as a parameter, default to env. variable
 export async function getCurrentRound(): Promise<string | null> {
   const fundingRoundAddress = await clrFundContract.getCurrentRound()
@@ -116,7 +152,7 @@ export function toRoundInfo(data: any): RoundInfo {
 }
 
 export async function getStaticRoundInfo(fundingRoundAddress: string, network?: string): Promise<RoundInfo | null> {
-  const data = await getLeaderboardData(fundingRoundAddress, network)
+  const data = await findStaticRound(fundingRoundAddress, network)
   if (!data) {
     return null
   }

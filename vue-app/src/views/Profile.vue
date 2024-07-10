@@ -104,7 +104,7 @@ import Loader from '@/components/Loader.vue'
 import FundsNeededWarning from '@/components/FundsNeededWarning.vue'
 
 import { userRegistryType, UserRegistryType, chain } from '@/api/core'
-import { type Project, getProjects, getProjectsForStaticRound } from '@/api/projects'
+import { type Project, getProjects } from '@/api/projects'
 import { isSameAddress } from '@/utils/accounts'
 import { getTokenLogo } from '@/utils/tokens'
 import { useAppStore, useUserStore, useRecipientStore, useWalletStore } from '@/stores'
