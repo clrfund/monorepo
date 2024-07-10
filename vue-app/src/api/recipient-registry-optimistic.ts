@@ -1,7 +1,7 @@
 import { Contract, toNumber, isHexString, ContractTransactionResponse } from 'ethers'
 import type { TransactionResponse, Signer } from 'ethers'
 import { DateTime } from 'luxon'
-import { chain } from '@/api/core'
+import { chain, clrFundContract } from '@/api/core'
 
 import { OptimisticRecipientRegistry } from './abi'
 import { provider, ipfsGatewayUrl } from './core'
@@ -11,6 +11,8 @@ import type { GetProjectQuery, GetRecipientsQuery, Recipient } from '@/graphql/A
 import { hasDateElapsed } from '@/utils/dates'
 import type { RegistryInfo, RecipientApplicationData } from './types'
 import { formToRecipientData } from './recipient'
+import { isSameAddress } from '@/utils/accounts'
+import { getLeaderboardData } from './leaderboard'
 
 async function getRegistryInfo(registryAddress: string): Promise<RegistryInfo> {
   const registry = new Contract(registryAddress, OptimisticRecipientRegistry, provider)
@@ -129,6 +131,48 @@ function mapRequestStatus(request: RecipientRequestData): RequestStatus {
   return status
 }
 
+/**
+ * Try to get the recipients from the static round data
+ * @param registryAddress The recipient registry address
+ * @returns The recipient application requests
+ */
+async function tryGetRecipientsStatically(registryAddress: string): Promise<Request[]> {
+  let requests: Request[] = []
+
+  try {
+    const fundingRoundAddress = await clrFundContract.getCurrentRound()
+    const fundingRoundInfo = await getLeaderboardData(fundingRoundAddress)
+    if (isSameAddress(fundingRoundInfo?.round?.recipientRegistryAddress, registryAddress)) {
+      if (fundingRoundInfo?.projects) {
+        requests = fundingRoundInfo.projects.map(project => {
+          let metadata = project.metadata
+          try {
+            if (typeof metadata === 'string') {
+              metadata = JSON.parse(project.metadata || '{}')
+            }
+          } catch (e) {
+            metadata = { name: project.name }
+          }
+          return {
+            transactionHash: '', // transaction hash not available in the static data
+            type: RequestType.Registration,
+            status: project.state as RequestStatus,
+            acceptanceDate: DateTime.fromISO(project.createdAt),
+            recipientId: project.id,
+            recipient: project.recipientAddress,
+            metadata,
+            requester: project.requester,
+          }
+        })
+      }
+    }
+  } catch {
+    requests = []
+  }
+
+  return requests
+}
+
 export async function getRequests(registryInfo: RegistryInfo, registryAddress: string): Promise<Request[]> {
   let data: GetRecipientsQuery
   try {
@@ -136,7 +180,7 @@ export async function getRequests(registryInfo: RegistryInfo, registryAddress: s
       registryAddress: registryAddress.toLowerCase(),
     })
   } catch {
-    return []
+    return tryGetRecipientsStatically(registryAddress)
   }
 
   if (!data.recipients.length) {
