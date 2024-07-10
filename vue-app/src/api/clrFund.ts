@@ -20,12 +20,27 @@ export async function getClrFundInfo() {
   let userRegistryAddress = ''
   let recipientRegistryAddress = ''
 
-  nativeTokenAddress = await clrFundContract.nativeToken().catch(() => '')
-  const nativeTokenContract = new Contract(nativeTokenAddress, ERC20, provider)
-  nativeTokenSymbol = await nativeTokenContract.symbol().catch(() => '')
-  nativeTokenDecimals = await nativeTokenContract.decimals().catch(() => 0)
-  userRegistryAddress = await clrFundContract.userRegistry().catch(() => '')
-  recipientRegistryAddress = await clrFundContract.recipientRegistry().catch(() => '')
+  try {
+    const data = await sdk.GetClrFundInfo({
+      clrFundAddress: clrfundContractAddress.toLowerCase(),
+    })
+    const nativeTokenInfo = data.clrFund?.nativeTokenInfo
+    if (nativeTokenInfo) {
+      nativeTokenAddress = nativeTokenInfo.tokenAddress || ''
+      nativeTokenSymbol = nativeTokenInfo.symbol || ''
+      nativeTokenDecimals = Number(nativeTokenInfo.decimals) || 0
+    }
+
+    userRegistryAddress = data.clrFund?.contributorRegistryAddress || ''
+    recipientRegistryAddress = data.clrFund?.recipientRegistryAddress || ''
+  } catch (err) {
+    nativeTokenAddress = await clrFundContract.nativeToken().catch(() => '')
+    const nativeTokenContract = new Contract(nativeTokenAddress, ERC20, provider)
+    nativeTokenSymbol = await nativeTokenContract.symbol().catch(() => '')
+    nativeTokenDecimals = await nativeTokenContract.decimals().catch(() => nativeTokenDecimals)
+    userRegistryAddress = await clrFundContract.userRegistry().catch(() => '')
+    recipientRegistryAddress = await clrFundContract.recipientRegistry().catch(() => '')
+  }
 
   try {
     matchingPool = await getMatchingFunds(nativeTokenAddress)

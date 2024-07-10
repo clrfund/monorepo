@@ -1,12 +1,15 @@
 import { GraphQLClient } from 'graphql-request'
 
 import { SUBGRAPH_ENDPOINT } from '@/api/core'
-import { getSdk } from './API'
+import { getSdk, type SdkFunctionWrapper } from './API'
 
 const client = new GraphQLClient(SUBGRAPH_ENDPOINT)
 
-function getQuerySdk() {
-  return SUBGRAPH_ENDPOINT ? getSdk(client) : {}
+const wrapper: SdkFunctionWrapper = (action, _operationName, _operationType) => {
+  if (!SUBGRAPH_ENDPOINT) {
+    throw new Error('Subgraph not available')
+  }
+  return action()
 }
 
-export default getQuerySdk()
+export default getSdk(client, wrapper)
