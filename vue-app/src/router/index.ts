@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
-import { isUserRegistrationRequired, isOptimisticRecipientRegistry, isActiveApp } from '@/api/core'
+import { isUserRegistrationRequired, isOptimisticRecipientRegistry } from '@/api/core'
 
 const Landing = () => import('@/views/Landing.vue')
 const JoinLanding = () => import('@/views/JoinLanding.vue')
@@ -262,7 +262,7 @@ if (isUserRegistrationRequired) {
   )
 }
 
-if (isOptimisticRecipientRegistry && isActiveApp) {
+if (isOptimisticRecipientRegistry) {
   routes.push({
     path: '/recipients',
     name: 'recipients',

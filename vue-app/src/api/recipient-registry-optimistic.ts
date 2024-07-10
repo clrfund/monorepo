@@ -1,5 +1,5 @@
 import { Contract, toNumber, isHexString, ContractTransactionResponse } from 'ethers'
-import type { TransactionResponse, TransactionReceipt, Signer } from 'ethers'
+import type { TransactionResponse, Signer } from 'ethers'
 import { DateTime } from 'luxon'
 import { chain } from '@/api/core'
 
@@ -7,7 +7,7 @@ import { OptimisticRecipientRegistry } from './abi'
 import { provider, ipfsGatewayUrl } from './core'
 import type { Project } from './projects'
 import sdk from '@/graphql/sdk'
-import type { Recipient } from '@/graphql/API'
+import type { GetProjectQuery, GetRecipientsQuery, Recipient } from '@/graphql/API'
 import { hasDateElapsed } from '@/utils/dates'
 import type { RegistryInfo, RecipientApplicationData } from './types'
 import { formToRecipientData } from './recipient'
@@ -130,9 +130,14 @@ function mapRequestStatus(request: RecipientRequestData): RequestStatus {
 }
 
 export async function getRequests(registryInfo: RegistryInfo, registryAddress: string): Promise<Request[]> {
-  const data = await sdk.GetRecipients({
-    registryAddress: registryAddress.toLowerCase(),
-  })
+  let data: GetRecipientsQuery
+  try {
+    data = await sdk.GetRecipients({
+      registryAddress: registryAddress.toLowerCase(),
+    })
+  } catch {
+    return []
+  }
 
   if (!data.recipients.length) {
     return []
@@ -252,9 +257,14 @@ function decodeProject(recipient: Partial<Recipient>): Project {
 }
 
 export async function getProjects(registryAddress: string, startTime?: number, endTime?: number): Promise<Project[]> {
-  const data = await sdk.GetRecipients({
-    registryAddress: registryAddress.toLowerCase(),
-  })
+  let data: GetRecipientsQuery
+  try {
+    data = await sdk.GetRecipients({
+      registryAddress: registryAddress.toLowerCase(),
+    })
+  } catch {
+    return []
+  }
 
   if (!data.recipients.length) {
     return []
@@ -328,9 +338,14 @@ export async function getProject(recipientId: string, filter = true): Promise<Pr
     return null
   }
 
-  const data = await sdk.GetProject({
-    recipientId,
-  })
+  let data: GetProjectQuery
+  try {
+    data = await sdk.GetProject({
+      recipientId,
+    })
+  } catch {
+    return null
+  }
 
   if (!data.recipients.length) {
     // Project does not exist

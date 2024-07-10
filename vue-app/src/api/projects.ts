@@ -9,6 +9,7 @@ import KlerosRegistry from './recipient-registry-kleros'
 import sdk from '@/graphql/sdk'
 import { getLeaderboardData } from '@/api/leaderboard'
 import type { RecipientApplicationData } from '@/api/types'
+import type { GetRecipientByIndexQuery } from '@/graphql/API'
 
 export interface LeaderboardProject {
   id: string // Address or another ID depending on registry implementation
@@ -117,10 +118,15 @@ export async function getProjectByIndex(
   registryAddress: string,
   recipientIndex: number,
 ): Promise<Partial<Project> | null> {
-  const result = await sdk.GetRecipientByIndex({
-    registryAddress: registryAddress.toLowerCase(),
-    recipientIndex,
-  })
+  let result: GetRecipientByIndexQuery
+  try {
+    result = await sdk.GetRecipientByIndex({
+      registryAddress: registryAddress.toLowerCase(),
+      recipientIndex,
+    })
+  } catch {
+    return null
+  }
 
   if (!result.recipients.length) {
     return null
@@ -186,7 +192,7 @@ export function toLeaderboardProject(project: any): LeaderboardProject {
   return {
     id: project.id,
     name: project.name,
-    index: getNumber(project.recipientIndex),
+    index: getNumber(project.recipientIndex || 0),
     imageUrl,
     allocatedAmount: BigInt(project.allocatedAmount || '0'),
     votes: BigInt(project.tallyResult || '0'),
@@ -284,6 +290,7 @@ export function staticDataToProjectInterface(project: any): Project {
     websiteUrl: project.metadata.websiteUrl,
     twitterUrl: project.metadata.twitterUrl,
     discordUrl: project.discordUrl,
+    imageUrl: `${ipfsGatewayUrl}/ipfs/${project.metadata.imageHash}`,
     bannerImageUrl: `${ipfsGatewayUrl}/ipfs/${project.metadata.bannerImageHash}`,
     thumbnailImageUrl: `${ipfsGatewayUrl}/ipfs/${project.metadata.thumbnailImageHash}`,
     index: project.recipientIndex,

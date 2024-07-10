@@ -79,7 +79,7 @@ onMounted(async () => {
 
   // redirect to projects view if no tally data or no static round data for leaderboard
   if (!data?.projects || !data?.tally) {
-    router.push({ name: 'round' })
+    router.push({ name: 'round', params: { address } })
     return
   }
 
@@ -98,7 +98,7 @@ onMounted(async () => {
   }
 
   try {
-    round.value = toRoundInfo(data.round, network)
+    round.value = toRoundInfo(data.round)
   } catch (e) {
     console.log('Error converting to round info', e)
   }

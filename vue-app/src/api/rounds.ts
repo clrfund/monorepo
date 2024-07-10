@@ -1,7 +1,7 @@
 import sdk from '@/graphql/sdk'
 import extraRounds from '@/rounds/rounds.json'
 import { getNumber } from 'ethers'
-import { chain, voidedRounds, isActiveApp, clrfundContractAddress } from './core'
+import { chain, voidedRounds, clrfundContractAddress, SUBGRAPH_ENDPOINT } from './core'
 
 export interface Round {
   index: number
@@ -26,13 +26,9 @@ function toRoundId({ network, address }: { network: string; address: string }): 
  */
 export async function getRounds(): Promise<Round[]> {
   let data
-  if (isActiveApp) {
-    try {
-      data = await sdk.GetRounds({ clrFundAddress: clrfundContractAddress.toLowerCase() })
-    } catch {
-      data = { fundingRounds: [] }
-    }
-  } else {
+  try {
+    data = await sdk.GetRounds({ clrFundAddress: clrfundContractAddress.toLowerCase() })
+  } catch {
     data = { fundingRounds: [] }
   }
 
