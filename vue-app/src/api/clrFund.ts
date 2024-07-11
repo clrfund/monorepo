@@ -43,7 +43,9 @@ export async function getClrFundInfo() {
   }
 
   try {
-    matchingPool = await getMatchingFunds(nativeTokenAddress)
+    if (nativeTokenAddress) {
+      matchingPool = await getMatchingFunds(nativeTokenAddress)
+    }
   } catch (err) {
     /* eslint-disable-next-line no-console */
     console.error('Failed to get matching pool', err)
