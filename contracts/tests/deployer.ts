@@ -1,20 +1,27 @@
-import { ethers, config, artifacts } from 'hardhat'
+import { ethers, artifacts } from 'hardhat'
 import { time } from '@nomicfoundation/hardhat-network-helpers'
 import { expect } from 'chai'
 import { BaseContract, Contract } from 'ethers'
 import { genRandomSalt } from 'maci-crypto'
-import { Keypair } from '@clrfund/common'
+import { Keypair, MACI_TREE_ARITY } from '@clrfund/common'
 
-import { TREE_ARITY, ZERO_ADDRESS, UNIT } from '../utils/constants'
-import { getGasUsage, getEventArg, deployContract } from '../utils/contracts'
+import { ZERO_ADDRESS, UNIT } from '../utils/constants'
+import {
+  getGasUsage,
+  getEventArg,
+  deployContract,
+  getContractAt,
+} from '../utils/contracts'
 import { deployPoseidonLibraries, deployMaciFactory } from '../utils/testutils'
 import { MaciParameters } from '../utils/maciParameters'
 import { HardhatEthersSigner } from '@nomicfoundation/hardhat-ethers/signers'
 import {
   ClrFund,
   ClrFundDeployer,
+  FundingRound,
   FundingRoundFactory,
   MACIFactory,
+  Poll,
 } from '../typechain-types'
 import { EContracts } from '../utils/types'
 
@@ -193,7 +200,8 @@ describe('Clr fund deployer', async () => {
       expect(await recipientRegistry.controller()).to.equal(clrfund.target)
       const params = MaciParameters.mock()
       expect(await recipientRegistry.maxRecipients()).to.equal(
-        BigInt(TREE_ARITY) ** BigInt(params.treeDepths.voteOptionTreeDepth) -
+        BigInt(MACI_TREE_ARITY) **
+          BigInt(params.treeDepths.voteOptionTreeDepth) -
           BigInt(1)
       )
     })
@@ -318,7 +326,11 @@ describe('Clr fund deployer', async () => {
         'pollAddr'
       )
 
-      const poll = await ethers.getContractAt('Poll', pollAddress.poll)
+      const poll = await getContractAt<Poll>(
+        EContracts.Poll,
+        pollAddress.poll,
+        ethers
+      )
       const roundCoordinatorPubKey = await poll.coordinatorPubKey()
       expect(roundCoordinatorPubKey.x).to.equal(coordinatorPubKey.x)
       expect(roundCoordinatorPubKey.y).to.equal(coordinatorPubKey.y)
@@ -443,6 +455,14 @@ describe('Clr fund deployer', async () => {
         contributionAmount
       )
       await clrfund.deployNewRound(roundDuration)
+      const roundAddress = await clrfund.getCurrentRound()
+      const roundContract = (await getContractAt(
+        EContracts.FundingRound,
+        roundAddress,
+        ethers,
+        coordinator
+      )) as FundingRound
+      await roundContract.publishTallyHash('xxx')
       await time.increase(roundDuration)
       await expect(
         clrfund.transferMatchingFunds(
@@ -451,11 +471,19 @@ describe('Clr fund deployer', async () => {
           resultsCommitment,
           perVOVoiceCreditCommitment
         )
-      ).to.be.revertedWithCustomError(roundInterface, 'VotesNotTallied')
+      ).to.be.revertedWithCustomError(roundInterface, 'IncompleteTallyResults')
     })
 
     it('allows owner to finalize round even without matching funds', async () => {
       await clrfund.deployNewRound(roundDuration)
+      const roundAddress = await clrfund.getCurrentRound()
+      const roundContract = (await getContractAt(
+        EContracts.FundingRound,
+        roundAddress,
+        ethers,
+        coordinator
+      )) as FundingRound
+      await roundContract.publishTallyHash('xxx')
       await time.increase(roundDuration)
       await expect(
         clrfund.transferMatchingFunds(
@@ -464,7 +492,7 @@ describe('Clr fund deployer', async () => {
           resultsCommitment,
           perVOVoiceCreditCommitment
         )
-      ).to.be.revertedWithCustomError(roundInterface, 'VotesNotTallied')
+      ).to.be.revertedWithCustomError(roundInterface, 'IncompleteTallyResults')
     })
 
     it('pulls funds from funding source', async () => {
@@ -475,7 +503,15 @@ describe('Clr fund deployer', async () => {
       )
       await clrfund.addFundingSource(deployer.address) // Doesn't have tokens
       await clrfund.deployNewRound(roundDuration)
+      const roundAddress = await clrfund.getCurrentRound()
+      const roundContract = (await getContractAt(
+        EContracts.FundingRound,
+        roundAddress,
+        ethers,
+        coordinator
+      )) as FundingRound
       await time.increase(roundDuration)
+      await roundContract.publishTallyHash('xxx')
       await expect(
         clrfund.transferMatchingFunds(
           totalSpent,
@@ -483,7 +519,7 @@ describe('Clr fund deployer', async () => {
           resultsCommitment,
           perVOVoiceCreditCommitment
         )
-      ).to.be.revertedWithCustomError(roundInterface, 'VotesNotTallied')
+      ).to.be.revertedWithCustomError(roundInterface, 'IncompleteTallyResults')
     })
 
     it('pulls funds from funding source if allowance is greater than balance', async () => {
@@ -493,7 +529,15 @@ describe('Clr fund deployer', async () => {
         contributionAmount * 2n
       )
       await clrfund.deployNewRound(roundDuration)
+      const roundAddress = await clrfund.getCurrentRound()
+      const roundContract = (await getContractAt(
+        EContracts.FundingRound,
+        roundAddress,
+        ethers,
+        coordinator
+      )) as FundingRound
       await time.increase(roundDuration)
+      await roundContract.publishTallyHash('xxx')
       await expect(
         clrfund.transferMatchingFunds(
           totalSpent,
@@ -501,7 +545,7 @@ describe('Clr fund deployer', async () => {
           resultsCommitment,
           perVOVoiceCreditCommitment
         )
-      ).to.be.revertedWithCustomError(roundInterface, 'VotesNotTallied')
+      ).to.be.revertedWithCustomError(roundInterface, 'IncompleteTallyResults')
     })
 
     it('allows only owner to finalize round', async () => {

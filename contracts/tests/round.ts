@@ -10,9 +10,11 @@ import {
   randomBytes,
   hexlify,
   toNumber,
+  Wallet,
+  TransactionResponse,
 } from 'ethers'
 import { genRandomSalt } from 'maci-crypto'
-import { Keypair } from '@clrfund/common'
+import { getMaxContributors, Keypair, MACI_TREE_ARITY } from '@clrfund/common'
 import { time } from '@nomicfoundation/hardhat-network-helpers'
 
 import {
@@ -21,7 +23,7 @@ import {
   VOICE_CREDIT_FACTOR,
   ALPHA_PRECISION,
 } from '../utils/constants'
-import { getEventArg, getGasUsage } from '../utils/contracts'
+import { getContractAt, getEventArg, getGasUsage } from '../utils/contracts'
 import {
   bnSqrt,
   createMessage,
@@ -29,11 +31,15 @@ import {
   getRecipientClaimData,
   mergeMaciSubtrees,
 } from '../utils/maci'
-import { deployTestFundingRound } from '../utils/testutils'
+import {
+  deployTestFundingRound,
+  DeployTestFundingRoundOutput,
+} from '../utils/testutils'
 
 // ethStaker test vectors for Quadratic Funding with alpha
 import smallTallyTestData from './data/testTallySmall.json'
-import { FundingRound } from '../typechain-types'
+import { AnyOldERC20Token, FundingRound } from '../typechain-types'
+import { EContracts } from '../utils/types'
 
 const newResultCommitment = hexlify(randomBytes(32))
 const perVOSpentVoiceCreditsHash = hexlify(randomBytes(32))
@@ -63,6 +69,33 @@ function calcAllocationAmount(tally: string, voiceCredit: string): bigint {
 
   const allocation = quadratic + linear
   return allocation / ALPHA_PRECISION
+}
+
+/**
+ * Simulate contribution by a random user
+ * @param contracts list of contracts returned from the deployTestFundingRound function
+ * @param deployer the account that owns the contracts
+ * @returns contribute transaction response
+ */
+async function contributeByRandomUser(
+  contracts: DeployTestFundingRoundOutput,
+  deployer: HardhatEthersSigner
+): Promise<TransactionResponse> {
+  const amount = ethers.parseEther('0.1')
+  const keypair = new Keypair()
+  const user = Wallet.createRandom(ethers.provider)
+  await contracts.token.transfer(user.address, amount)
+  await deployer.sendTransaction({ to: user.address, value: amount })
+  const tokenAsUser = contracts.token.connect(user) as AnyOldERC20Token
+  await tokenAsUser.approve(contracts.fundingRound.target, amount)
+  const fundingRoundAsUser = contracts.fundingRound.connect(
+    user
+  ) as FundingRound
+  const tx = await fundingRoundAsUser.contribute(
+    keypair.pubKey.asContractParam(),
+    amount
+  )
+  return tx
 }
 
 describe('Funding Round', () => {
@@ -100,13 +133,13 @@ describe('Funding Round', () => {
 
   beforeEach(async () => {
     const tokenInitialSupply = UNIT * BigInt(1000000)
-    const deployed = await deployTestFundingRound(
-      tokenInitialSupply + budget,
-      coordinator.address,
-      coordinatorPubKey,
+    const deployed = await deployTestFundingRound({
+      tokenSupply: tokenInitialSupply + budget,
+      coordinatorAddress: coordinator.address,
+      coordinatorPubKey: coordinatorPubKey,
       roundDuration,
-      deployer
-    )
+      deployer,
+    })
     token = deployed.token
     fundingRound = deployed.fundingRound
     userRegistry = deployed.mockUserRegistry
@@ -114,12 +147,13 @@ describe('Funding Round', () => {
     tally = deployed.mockTally
     const mockVerifier = deployed.mockVerifier
 
-    // make the verifier to alwasy returns true
+    // make the verifier to always returns true
     await mockVerifier.mock.verify.returns(true)
     await userRegistry.mock.isVerifiedUser.returns(true)
     await tally.mock.tallyBatchNum.returns(1)
     await tally.mock.verifyTallyResult.returns(true)
     await tally.mock.verifySpentVoiceCredits.returns(true)
+    await tally.mock.isTallied.returns(true)
 
     tokenAsContributor = token.connect(contributor) as Contract
     fundingRoundAsCoordinator = fundingRound.connect(
@@ -136,7 +170,12 @@ describe('Funding Round', () => {
     maciAddress = await fundingRound.maci()
     maci = await ethers.getContractAt('MACI', maciAddress)
     const pollAddress = await fundingRound.poll()
-    poll = await ethers.getContractAt('Poll', pollAddress, deployer)
+    poll = await getContractAt<Contract>(
+      EContracts.Poll,
+      pollAddress,
+      ethers,
+      deployer
+    )
     pollId = await fundingRound.pollId()
 
     const treeDepths = await poll.treeDepths()
@@ -199,8 +238,34 @@ describe('Funding Round', () => {
       ).to.equal(expectedVoiceCredits)
     })
 
+    it('calculates max contributors correctly', async () => {
+      const stateTreeDepth = toNumber(await maci.stateTreeDepth())
+      const maxUsers = MACI_TREE_ARITY ** stateTreeDepth - 1
+      expect(getMaxContributors(stateTreeDepth)).to.eq(maxUsers)
+    })
+
     it('limits the number of contributors', async () => {
-      // TODO: add test later
+      // use a smaller stateTreeDepth to run the test faster
+      const stateTreeDepth = 1
+      const contracts = await deployTestFundingRound({
+        stateTreeDepth,
+        tokenSupply: UNIT * BigInt(1000000),
+        coordinatorAddress: coordinator.address,
+        coordinatorPubKey,
+        roundDuration,
+        deployer,
+      })
+      await contracts.mockUserRegistry.mock.isVerifiedUser.returns(true)
+
+      const maxUsers = getMaxContributors(stateTreeDepth)
+      for (let i = 0; i < maxUsers; i++) {
+        await contributeByRandomUser(contracts, deployer)
+      }
+
+      // this should throw TooManySignups
+      await expect(
+        contributeByRandomUser(contracts, deployer)
+      ).to.be.revertedWithCustomError(maci, 'TooManySignups')
     })
 
     it('rejects contributions if funding round has been finalized', async () => {
@@ -243,7 +308,7 @@ describe('Funding Round', () => {
     it('requires approval', async () => {
       await expect(
         fundingRoundAsContributor.contribute(userPubKey, contributionAmount)
-      ).to.be.revertedWith('ERC20: insufficient allowance')
+      ).to.be.revertedWithCustomError(token, 'ERC20InsufficientAllowance')
     })
 
     it('rejects contributions from unverified users', async () => {
@@ -631,6 +696,7 @@ describe('Funding Round', () => {
         userKeypair.pubKey.asContractParam(),
         totalContributions
       )
+      await tally.mock.isTallied.returns(false)
       await time.increase(roundDuration)
 
       await mergeMaciSubtrees({ maciAddress, pollId, signer: deployer })
@@ -744,7 +810,10 @@ describe('Funding Round', () => {
           newResultCommitment,
           perVOSpentVoiceCreditsHash
         )
-      ).to.be.revertedWith('Ownable: caller is not the owner')
+      ).to.be.revertedWithCustomError(
+        fundingRoundAsCoordinator,
+        'OwnableUnauthorizedAccount'
+      )
     })
   })
 
@@ -805,8 +874,11 @@ describe('Funding Round', () => {
       const fundingRoundAsCoordinator = fundingRound.connect(
         coordinator
       ) as Contract
-      await expect(fundingRoundAsCoordinator.cancel()).to.be.revertedWith(
-        'Ownable: caller is not the owner'
+      await expect(
+        fundingRoundAsCoordinator.cancel()
+      ).to.be.revertedWithCustomError(
+        fundingRoundAsCoordinator,
+        'OwnableUnauthorizedAccount'
       )
     })
   })
@@ -1424,7 +1496,7 @@ describe('Funding Round', () => {
     })
 
     it('prevents adding tally results if maci has not completed tallying', async function () {
-      await tally.mock.tallyBatchNum.returns(0)
+      await tally.mock.isTallied.returns(false)
       await expect(
         addTallyResultsBatch(
           fundingRoundAsCoordinator,
@@ -1436,7 +1508,7 @@ describe('Funding Round', () => {
     })
 
     it('prevents adding batches of tally results if maci has not completed tallying', async function () {
-      await tally.mock.tallyBatchNum.returns(0)
+      await tally.mock.isTallied.returns(false)
       await expect(
         addTallyResultsBatch(
           fundingRoundAsCoordinator,

@@ -551,21 +551,17 @@ export class PublicKey extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get fundingRound(): string | null {
-    let value = this.get("fundingRound");
+  get maci(): string {
+    let value = this.get("maci");
     if (!value || value.kind == ValueKind.NULL) {
-      return null;
+      throw new Error("Cannot return null for a required field.");
     } else {
       return value.toString();
     }
   }
 
-  set fundingRound(value: string | null) {
-    if (!value) {
-      this.unset("fundingRound");
-    } else {
-      this.set("fundingRound", Value.fromString(<string>value));
-    }
+  set maci(value: string) {
+    this.set("maci", Value.fromString(value));
   }
 
   get messages(): MessageLoader {
@@ -1018,6 +1014,40 @@ export class FundingRound extends Entity {
 
   set voteOptionTreeDepth(value: i32) {
     this.set("voteOptionTreeDepth", Value.fromI32(value));
+  }
+
+  get maxMessages(): BigInt | null {
+    let value = this.get("maxMessages");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set maxMessages(value: BigInt | null) {
+    if (!value) {
+      this.unset("maxMessages");
+    } else {
+      this.set("maxMessages", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
+  get maxVoteOptions(): BigInt | null {
+    let value = this.get("maxVoteOptions");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set maxVoteOptions(value: BigInt | null) {
+    if (!value) {
+      this.unset("maxVoteOptions");
+    } else {
+      this.set("maxVoteOptions", Value.fromBigInt(<BigInt>value));
+    }
   }
 
   get coordinatorPubKeyX(): BigInt | null {

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.10;
+pragma solidity 0.8.20;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
 
@@ -9,7 +9,7 @@ import './IUserRegistry.sol';
 /**
  * @dev A simple user registry managed by a trusted entity.
  */
-contract SimpleUserRegistry is Ownable, IUserRegistry {
+contract SimpleUserRegistry is Ownable(msg.sender), IUserRegistry {
 
   mapping(address => bool) private users;
 

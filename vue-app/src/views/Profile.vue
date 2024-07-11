@@ -103,19 +103,18 @@ import CopyButton from '@/components/CopyButton.vue'
 import Loader from '@/components/Loader.vue'
 import FundsNeededWarning from '@/components/FundsNeededWarning.vue'
 
-import { userRegistryType, UserRegistryType, chain, isActiveApp } from '@/api/core'
-import { type Project, getProjects, getProjectsForStaticRound } from '@/api/projects'
+import { userRegistryType, UserRegistryType, chain } from '@/api/core'
+import { type Project, getProjects } from '@/api/projects'
 import { isSameAddress } from '@/utils/accounts'
 import { getTokenLogo } from '@/utils/tokens'
 import { useAppStore, useUserStore, useRecipientStore, useWalletStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
-import { getLeaderboardData } from '@/api/leaderboard'
 import { formatAmount } from '@/utils/amounts'
 
 import WithdrawalModal from '@/components/WithdrawalModal.vue'
 import { useModal } from 'vue-final-modal'
-import { RoundStatus } from '@/api/round'
+import { RoundStatus, getRoundInfo } from '@/api/round'
 
 interface Props {
   balance: string
@@ -179,19 +178,24 @@ watch(recipientRegistryAddress, () => loadProjects())
 
 async function loadProjects(): Promise<void> {
   isLoading.value = true
-  let _projects: Project[] = []
+  let _projects: Project[] | undefined = undefined
 
-  if (isActiveApp) {
-    if (!recipientRegistryAddress.value) return
+  if (!recipientRegistryAddress.value) return
+
+  const currentRoundAddress = currentRound.value?.fundingRoundAddress
+  if (currentRoundAddress) {
+    const round = await getRoundInfo(currentRoundAddress, currentRound.value)
+    if (round?.projects) {
+      _projects = round.projects
+    }
+  }
+
+  if (!_projects) {
     _projects = await getProjects(
       recipientRegistryAddress.value,
       currentRound.value?.startTime.toSeconds(),
       currentRound.value?.votingDeadline.toSeconds(),
     )
-  } else {
-    const currentRoundAddress = currentRound.value?.fundingRoundAddress || ''
-    const network = currentRound.value?.network || ''
-    _projects = await getProjectsForStaticRound(currentRoundAddress, network)
   }
 
   const userProjects: Project[] = _projects.filter(

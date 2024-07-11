@@ -8,6 +8,7 @@ import { clrFundContract, provider } from './core'
 import type { Project } from './projects'
 import sdk from '@/graphql/sdk'
 import { Transaction } from '@/utils/transaction'
+import type { GetContributorIndexQuery, GetContributorMessagesQuery, GetTotalContributedQuery } from '@/graphql/API'
 
 export const DEFAULT_CONTRIBUTION_AMOUNT = 5
 export const MAX_CONTRIBUTION_AMOUNT = 10000 // See FundingRound.sol
@@ -27,13 +28,13 @@ export interface Contributor {
 
 /**
  * get the id of the subgraph public key entity from the pubKey value
- * @param fundingRoundAddress funding round address
+ * @param maciAddress MACI address
  * @param pubKey MACI public key
  * @returns the id for the subgraph public key entity
  */
-function getPubKeyId(fundingRoundAddress = '', pubKey: PubKey): string {
+function getPubKeyId(maciAddress = '', pubKey: PubKey): string {
   const pubKeyPair = pubKey.asContractParam()
-  return id(fundingRoundAddress.toLowerCase() + '.' + pubKeyPair.x + '.' + pubKeyPair.y)
+  return id(maciAddress.toLowerCase() + '.' + pubKeyPair.x + '.' + pubKeyPair.y)
 }
 
 export function getCartStorageKey(roundAddress: string): string {
@@ -99,9 +100,14 @@ export async function getTotalContributed(fundingRoundAddress: string): Promise<
   const nativeToken = new Contract(nativeTokenAddress, ERC20, provider)
   const balance = await nativeToken.balanceOf(fundingRoundAddress)
 
-  const data = await sdk.GetTotalContributed({
-    fundingRoundAddress: fundingRoundAddress.toLowerCase(),
-  })
+  let data: GetTotalContributedQuery
+  try {
+    data = await sdk.GetTotalContributed({
+      fundingRoundAddress: fundingRoundAddress.toLowerCase(),
+    })
+  } catch {
+    return { count: 0, amount: 0n }
+  }
 
   if (!data.fundingRound?.contributorCount) {
     return { count: 0, amount: 0n }
@@ -141,19 +147,24 @@ export function isContributionAmountValid(value: string, currentRound: RoundInfo
 
 /**
  *  Get the MACI contributor state index
- * @param fundingRoundAddress Funding round contract address
+ * @param maciAddress MACI contract address
  * @param pubKey Contributor public key
  * @returns Contributor stateIndex returned from MACI
  */
-export async function getContributorIndex(fundingRoundAddress: string, pubKey: PubKey): Promise<number | null> {
-  if (!fundingRoundAddress) {
+export async function getContributorIndex(maciAddress: string, pubKey: PubKey): Promise<number | null> {
+  if (!maciAddress) {
     return null
   }
-  const id = getPubKeyId(fundingRoundAddress, pubKey)
-  const data = await sdk.GetContributorIndex({
-    fundingRoundAddress: fundingRoundAddress.toLowerCase(),
-    publicKeyId: id,
-  })
+
+  let data: GetContributorIndexQuery
+  try {
+    const id = getPubKeyId(maciAddress, pubKey)
+    data = await sdk.GetContributorIndex({
+      publicKeyId: id,
+    })
+  } catch {
+    return null
+  }
 
   if (data.publicKeys.length === 0) {
     return null
@@ -178,32 +189,36 @@ function getMaciMessage(type: any, data: any[] | null): Message {
 
 /**
  * Get the latest set of vote messages submitted by contributor
- * @param fundingRoundAddress Funding round contract address
+ * @param maciAddress MACI contract address
  * @param contributorKey Contributor key used to encrypt messages
  * @param coordinatorPubKey Coordinator public key
  * @returns MACI messages
  */
 export async function getContributorMessages({
-  fundingRoundAddress,
+  maciAddress,
   contributorKey,
   coordinatorPubKey,
   contributorAddress,
 }: {
-  fundingRoundAddress: string
+  maciAddress: string
   contributorKey: Keypair
   coordinatorPubKey: PubKey
   contributorAddress: string
 }): Promise<Message[]> {
-  if (!fundingRoundAddress) {
+  if (!maciAddress) {
     return []
   }
 
-  const key = getPubKeyId(fundingRoundAddress, contributorKey.pubKey)
-  const result = await sdk.GetContributorMessages({
-    fundingRoundAddress: fundingRoundAddress.toLowerCase(),
-    pubKey: key,
-    contributorAddress: contributorAddress.toLowerCase(),
-  })
+  let result: GetContributorMessagesQuery
+  try {
+    const key = getPubKeyId(maciAddress, contributorKey.pubKey)
+    result = await sdk.GetContributorMessages({
+      pubKey: key,
+      contributorAddress: contributorAddress.toLowerCase(),
+    })
+  } catch {
+    return []
+  }
 
   if (!(result.messages && result.messages.length)) {
     return []

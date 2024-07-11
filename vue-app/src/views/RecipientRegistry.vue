@@ -183,10 +183,6 @@ function isAccepted(request: Request): boolean {
   return request.status === RequestStatus.Accepted
 }
 
-function isRejected(request: Request): boolean {
-  return request.status === RequestStatus.Rejected
-}
-
 function isExecuted(request: Request): boolean {
   return request.status === RequestStatus.Executed
 }

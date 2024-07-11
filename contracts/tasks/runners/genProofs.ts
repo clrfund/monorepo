@@ -187,7 +187,7 @@ task('gen-proofs', 'Generate MACI proofs offchain')
           quiet,
           outputPath: maciStateFile,
           pollId,
-          maciContractAddress: maciAddress,
+          maciAddress,
           coordinatorPrivateKey: coordinatorMacisk,
           ethereumProvider: providerUrl,
           transactionHash: maciTxHash,

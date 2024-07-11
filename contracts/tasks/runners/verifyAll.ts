@@ -16,6 +16,7 @@ import { BaseContract } from 'ethers'
 import { HardhatEthersHelpers } from '@nomicfoundation/hardhat-ethers/types'
 import { ZERO_ADDRESS } from '../../utils/constants'
 import { ConstructorArguments } from '../helpers/ConstructorArguments'
+import { getContractAt } from '../../utils/contracts'
 
 type ContractInfo = {
   name: string
@@ -138,6 +139,8 @@ async function getContractList(
   clrfund: string,
   ethers: HardhatEthersHelpers
 ): Promise<ContractInfo[]> {
+  const userRegistries = new Set<string>()
+  const recipientRegistries = new Set<string>()
   const contractList: ContractInfo[] = [
     {
       name: EContracts.ClrFund,
@@ -145,10 +148,11 @@ async function getContractList(
     },
   ]
 
-  const clrfundContract = (await ethers.getContractAt(
+  const clrfundContract = await getContractAt<ClrFund>(
     EContracts.ClrFund,
-    clrfund
-  )) as BaseContract as ClrFund
+    clrfund,
+    ethers
+  )
 
   const fundingRoundFactoryAddress = await clrfundContract.roundFactory()
   if (fundingRoundFactoryAddress !== ZERO_ADDRESS) {
@@ -190,6 +194,16 @@ async function getContractList(
       name: EContracts.MessageProcessorFactory,
       address: factories.messageProcessorFactory,
     })
+  }
+
+  const userRegistryAddress = await clrfundContract.userRegistry()
+  if (userRegistryAddress !== ZERO_ADDRESS) {
+    userRegistries.add(userRegistryAddress)
+  }
+
+  const recipientRegistryAddress = await clrfundContract.recipientRegistry()
+  if (recipientRegistryAddress !== ZERO_ADDRESS) {
+    recipientRegistries.add(recipientRegistryAddress)
   }
 
   const fundingRoundAddress = await clrfundContract.getCurrentRound()
@@ -255,25 +269,30 @@ async function getContractList(
     // User Registry
     const userRegistryAddress = await fundingRound.userRegistry()
     if (userRegistryAddress !== ZERO_ADDRESS) {
-      const name = await getUserRegistryName(userRegistryAddress, ethers)
-      contractList.push({
-        name,
-        address: userRegistryAddress,
-      })
+      userRegistries.add(userRegistryAddress)
     }
 
     // Recipient Registry
     const recipientRegistryAddress = await fundingRound.recipientRegistry()
     if (recipientRegistryAddress !== ZERO_ADDRESS) {
-      const name = await getRecipientRegistryName(
-        recipientRegistryAddress,
-        ethers
-      )
-      contractList.push({
-        name,
-        address: recipientRegistryAddress,
-      })
+      recipientRegistries.add(recipientRegistryAddress)
     }
+  }
+
+  for (const address of userRegistries) {
+    const name = await getUserRegistryName(address, ethers)
+    contractList.push({
+      name,
+      address,
+    })
+  }
+
+  for (const address of recipientRegistries) {
+    const name = await getRecipientRegistryName(address, ethers)
+    contractList.push({
+      name,
+      address,
+    })
   }
 
   return contractList
@@ -286,7 +305,7 @@ task('verify-all', 'Verify contracts listed in storage')
   .addOptionalParam('clrfund', 'The ClrFund contract address')
   .addFlag('force', 'Ignore verified status')
   .setAction(async ({ clrfund }, hre) => {
-    const { ethers, config, network } = hre
+    const { ethers, network } = hre
 
     const storage = ContractStorage.getInstance()
     const clrfundContractAddress =

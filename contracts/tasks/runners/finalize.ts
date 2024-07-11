@@ -17,6 +17,8 @@ import { EContracts } from '../../utils/types'
 import { ContractStorage } from '../helpers/ContractStorage'
 import { Subtask } from '../helpers/Subtask'
 import { getProofDirForRound, getTalyFilePath } from '../../utils/misc'
+import { getContractAt } from '../../utils/contracts'
+import { Poll } from 'maci-contracts/build/typechain-types'
 
 task('finalize', 'Finalize a funding round')
   .addOptionalParam('clrfund', 'The ClrFund contract address')
@@ -47,9 +49,10 @@ task('finalize', 'Finalize a funding round')
     console.log('Current round', fundingRound.target)
 
     const pollAddress = await fundingRound.poll()
-    const pollContract = await ethers.getContractAt(
+    const pollContract = await getContractAt<Poll>(
       EContracts.Poll,
-      pollAddress
+      pollAddress,
+      ethers
     )
     console.log('Poll', pollAddress)
 

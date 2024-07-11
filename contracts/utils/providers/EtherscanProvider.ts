@@ -3,6 +3,7 @@ import { FetchRequest } from 'ethers'
 import { HardhatConfig } from 'hardhat/types'
 
 const EtherscanApiUrl: Record<string, string> = {
+  sepolia: 'https://api-sepolia.etherscan.io',
   xdai: 'https://api.gnosisscan.io',
   arbitrum: 'https://api.arbiscan.io',
   'arbitrum-goerli': 'https://api-goerli.arbiscan.io',

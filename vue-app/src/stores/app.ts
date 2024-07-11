@@ -9,8 +9,8 @@ import {
   serializeCart,
 } from '@/api/contributions'
 import { getCommittedCart } from '@/api/cart'
-import { operator, chain, ThemeMode, recipientRegistryType, recipientJoinDeadlineConfig, isActiveApp } from '@/api/core'
-import { type RoundInfo, RoundStatus, getRoundInfo, getLeaderboardRoundInfo } from '@/api/round'
+import { operator, chain, ThemeMode, recipientRegistryType, recipientJoinDeadlineConfig } from '@/api/core'
+import { type RoundInfo, RoundStatus, getRoundInfo, getStaticRoundInfo } from '@/api/round'
 import { getTally, type Tally } from '@/api/tally'
 import { type ClrFund, getClrFundInfo, getMatchingFunds } from '@/api/clrFund'
 import { getMACIFactoryInfo, type MACIFactory } from '@/api/maci-factory'
@@ -68,11 +68,6 @@ export const useAppStore = defineStore('app', {
     recipientJoinDeadline: state => {
       if (recipientJoinDeadlineConfig) {
         return recipientJoinDeadlineConfig
-      }
-
-      if (!isActiveApp) {
-        // when running in static mode, do not allow adding recipients
-        return DateTime.now()
       }
 
       const recipientStore = useRecipientStore()
@@ -458,7 +453,7 @@ export const useAppStore = defineStore('app', {
       }
 
       const contributorKeypair = Keypair.createFromSeed(userStore.currentUser.encryptionKey)
-      const stateIndex = await getContributorIndex(this.currentRound.fundingRoundAddress, contributorKeypair.pubKey)
+      const stateIndex = await getContributorIndex(this.currentRound.maciAddress, contributorKeypair.pubKey)
 
       if (!stateIndex) {
         // if no contributor index, user has not contributed
@@ -469,38 +464,6 @@ export const useAppStore = defineStore('app', {
         keypair: contributorKeypair,
         stateIndex,
       }
-    },
-    async loadStaticClrFundInfo() {
-      const rounds = await getRounds()
-      // rounds are sorted in reverse order, first one is the newest round
-      const currentRound = rounds[0]
-
-      let maxRecipients = 0
-      if (currentRound) {
-        const network = currentRound.network || ''
-        const currentRoundInfo = await getLeaderboardRoundInfo(currentRound.address, network)
-        if (currentRoundInfo) {
-          const matchingPool = await getMatchingFunds(currentRoundInfo.nativeTokenAddress)
-          this.clrFund = {
-            nativeTokenAddress: currentRoundInfo.nativeTokenAddress,
-            nativeTokenSymbol: currentRoundInfo.nativeTokenSymbol,
-            nativeTokenDecimals: currentRoundInfo.nativeTokenDecimals,
-            userRegistryAddress: currentRoundInfo.userRegistryAddress,
-            recipientRegistryAddress: currentRoundInfo.recipientRegistryAddress,
-            matchingPool,
-          }
-          this.selectRound(currentRound.address)
-          this.currentRound = currentRoundInfo
-          if (currentRoundInfo.tally) {
-            this.tally = currentRoundInfo.tally
-          }
-          maxRecipients = currentRoundInfo.maxRecipients
-        }
-      }
-      if (!this.clrFund) {
-        this.clrFund = await getClrFundInfo()
-      }
-      await this.loadMACIFactoryInfo(maxRecipients)
     },
     async loadClrFundInfo() {
       const clrFund = await getClrFundInfo()

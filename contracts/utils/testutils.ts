@@ -9,6 +9,7 @@ import { EContracts } from './types'
 import { Libraries } from 'hardhat/types'
 import { MACIFactory, VkRegistry } from '../typechain-types'
 import { ZERO_ADDRESS } from './constants'
+import { EMode } from 'maci-contracts'
 
 /**
  * Deploy a mock contract with the given contract name
@@ -127,8 +128,6 @@ export async function deployMaciFactory({
   const factories = {
     pollFactory: pollFactory.target,
     tallyFactory: tallyFactory.target,
-    // subsidy is not currently used
-    subsidyFactory: ZERO_ADDRESS,
     messageProcessorFactory: messageProcessorFactory.target,
   }
 
@@ -170,13 +169,21 @@ export type DeployTestFundingRoundOutput = {
  * @param deployer singer for the contract deployment
  * @returns all the deployed objects in DeployTestFundingRoundOutput
  */
-export async function deployTestFundingRound(
-  tokenSupply: bigint,
-  coordinatorAddress: string,
-  coordinatorPubKey: PubKey,
-  roundDuration: number,
+export async function deployTestFundingRound({
+  stateTreeDepth,
+  tokenSupply,
+  coordinatorAddress,
+  coordinatorPubKey,
+  roundDuration,
+  deployer,
+}: {
+  stateTreeDepth?: number
+  tokenSupply: bigint
+  coordinatorAddress: string
+  coordinatorPubKey: PubKey
+  roundDuration: number
   deployer: Signer
-): Promise<DeployTestFundingRoundOutput> {
+}): Promise<DeployTestFundingRoundOutput> {
   const token = await ethers.deployContract(
     EContracts.AnyOldERC20Token,
     [tokenSupply],
@@ -209,6 +216,12 @@ export async function deployTestFundingRound(
   })
 
   const maciParameters = MaciParameters.mock()
+
+  // use the stateTreeDepth from input
+  if (stateTreeDepth != undefined) {
+    maciParameters.stateTreeDepth = stateTreeDepth
+  }
+
   const maciFactory = await deployMaciFactory({
     libraries,
     ethers,
@@ -236,7 +249,6 @@ export async function deployTestFundingRound(
       factories.pollFactory,
       factories.messageProcessorFactory,
       factories.tallyFactory,
-      factories.subsidyFactory,
       fundingRound.target,
       fundingRound.target,
       topupToken.target,
@@ -254,8 +266,7 @@ export async function deployTestFundingRound(
     coordinatorPubKey.asContractParam(),
     mockVerifier.target,
     vkRegistry.target,
-    // pass false to not deploy the subsidy contract
-    false
+    EMode.QV
   )
   const pollAddr = await getEventArg(
     deployPollTx,
