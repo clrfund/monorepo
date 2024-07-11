@@ -52,9 +52,9 @@ export interface Project {
 export async function getRecipientRegistryAddress(roundAddress: string | null): Promise<string> {
   if (roundAddress !== null) {
     const fundingRound = new Contract(roundAddress, FundingRound, provider)
-    return await fundingRound.recipientRegistry()
+    return await fundingRound.recipientRegistry().catch(() => null)
   } else {
-    return await clrFundContract.recipientRegistry()
+    return await clrFundContract.recipientRegistry().catch(() => null)
   }
 }
 
