@@ -1,6 +1,6 @@
 <template>
-  <img v-if="isStaticImageBroken" :src="imageSrc" :alt="alt" :class="class" />
-  <img v-else :src="staticImageSrc" :alt="alt" @error="handleBrokenStaticImage" :class="class" />
+  <template v-if="imageType === ImageType.NoImage" />
+  <img v-else @error="handleBrokenImage" :src="imageSrc" :alt="alt" :class="class" />
 </template>
 
 <script setup lang="ts">
@@ -12,14 +12,26 @@ interface Props {
   alt: string
 }
 
-const isStaticImageBroken = ref(false)
+enum ImageType {
+  Ipfs,
+  Static,
+  NoImage,
+}
 
 const props = defineProps<Props>()
 
-const staticImageSrc = computed(() => getStaticUrlByIpfsHash(props.src) || '')
-const imageSrc = computed(() => getIpfsUrl(props.src) || '')
+const imageType = ref(ImageType.Ipfs)
+const imageSrc = ref(getIpfsUrl(props.src) || '')
 
-function handleBrokenStaticImage() {
-  isStaticImageBroken.value = true
+function handleBrokenImage() {
+  switch (imageType.value) {
+    case ImageType.Ipfs:
+      imageType.value = ImageType.Static
+      imageSrc.value = getStaticUrlByIpfsHash(props.src) || ''
+      break
+    default:
+      imageType.value = ImageType.NoImage
+      imageSrc.value = ''
+  }
 }
 </script>
