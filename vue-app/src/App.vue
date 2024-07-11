@@ -8,8 +8,20 @@
       <div v-if="isSidebarShown" id="sidebar" :class="`${showCartPanel ? 'desktop-l' : 'desktop'}`">
         <round-information />
       </div>
-      <active-app v-if="isActiveApp" :is-sidebar-shown="isSidebarShown" :show-bread-crumb="showBreadCrumb" />
-      <static-app v-else :is-sidebar-shown="isSidebarShown" :show-bread-crumb="showBreadCrumb" />
+      <div
+        id="content"
+        :class="{
+          padded: isVerifyStep || (isSidebarShown && !isCartPadding),
+          'mr-cart-open': showCartPanel && isSideCartShown,
+          'mr-cart-closed': !showCartPanel && isSideCartShown,
+        }"
+      >
+        <breadcrumbs v-if="showBreadCrumb" />
+        <router-view :key="route.path" />
+      </div>
+      <div v-if="isSideCartShown" id="cart" :class="`desktop ${showCartPanel ? 'open-cart' : 'closed-cart'}`">
+        <cart-widget />
+      </div>
     </div>
     <mobile-tabs v-if="isMobileTabsShown" />
   </div>
@@ -20,22 +32,29 @@
 <script setup lang="ts">
 import NavBar from '@/components/NavBar.vue'
 import MobileTabs from '@/components/MobileTabs.vue'
-import ActiveApp from './components/ActiveApp.vue'
-import StaticApp from './components/StaticApp.vue'
 
 // @ts-ignore
 import { ModalsContainer } from 'vue-final-modal'
 
 import { getDefaultColorScheme } from '@/utils/theme'
-import { operator, isActiveApp } from '@/api/core'
-import { useAppStore } from '@/stores'
+import { operator } from '@/api/core'
+import { useAppStore, useRecipientStore, useUserStore, useWalletStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import { useMeta } from 'vue-meta'
+import { getCurrentRound } from './api/round'
+import type { WalletUser } from '@/stores'
+import type { BrowserProvider } from 'ethers'
 
 const route = useRoute()
 const appStore = useAppStore()
-const { theme, showCartPanel } = storeToRefs(appStore)
+const { theme, showCartPanel, currentRound } = storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
+const recipientStore = useRecipientStore()
+const wallet = useWalletStore()
+const { user: walletUser } = storeToRefs(wallet)
+const appReady = ref(false)
 
 // https://stackoverflow.com/questions/71785473/how-to-use-vue-meta-with-vue3
 // https://www.npmjs.com/package/vue-meta/v/3.0.0-alpha.7
@@ -99,6 +118,100 @@ const showBreadCrumb = computed(() => {
 watch(theme, () => {
   const savedTheme = theme.value
   document.documentElement.setAttribute('data-theme', savedTheme || getDefaultColorScheme())
+})
+
+const intervals: { [key: string]: any } = {}
+const isUserAndRoundLoaded = computed(() => !!currentUser.value && !!currentRound.value)
+const isSideCartShown = computed(() => isUserAndRoundLoaded.value && isSidebarShown.value && routeName.value !== 'cart')
+const isVerifyStep = computed(() => routeName.value === 'verify-step')
+const isCartPadding = computed(() => {
+  const routes = ['cart']
+  return routes.includes(routeName.value)
+})
+
+function setupLoadIntervals() {
+  intervals.round = setInterval(() => {
+    appStore.loadRoundInfo()
+  }, 60 * 1000)
+  intervals.recipient = setInterval(async () => {
+    recipientStore.loadRecipientRegistryInfo()
+  }, 60 * 1000)
+  intervals.user = setInterval(() => {
+    userStore.loadUserInfo()
+  }, 60 * 1000)
+}
+
+onMounted(async () => {
+  try {
+    await wallet.reconnect()
+  } catch (err) {
+    /* eslint-disable-next-line no-console */
+    console.warn('Unable to reconnect wallet', err)
+  }
+
+  try {
+    const roundAddress = appStore.currentRoundAddress || (await getCurrentRound())
+
+    if (roundAddress) {
+      appStore.selectRound(roundAddress)
+      /* eslint-disable-next-line no-console */
+      console.log('roundAddress', roundAddress)
+    }
+  } catch (err) {
+    /* eslint-disable-next-line no-console */
+    console.warn('Failed to get current round:', err)
+  }
+
+  appReady.value = true
+  try {
+    await appStore.loadClrFundInfo()
+    await appStore.loadMACIFactoryInfo()
+    await appStore.loadRoundInfo()
+    await recipientStore.loadRecipientRegistryInfo()
+    appStore.isAppReady = true
+
+    setupLoadIntervals()
+  } catch (err) {
+    /* eslint-disable-next-line no-console */
+    console.warn('Failed to load application data:', err)
+  }
+})
+
+onBeforeUnmount(() => {
+  for (const interval of Object.keys(intervals)) {
+    clearInterval(intervals[interval])
+  }
+})
+
+watch(walletUser, async () => {
+  try {
+    if (walletUser.value) {
+      const user: WalletUser = {
+        chainId: walletUser.value.chainId,
+        walletAddress: walletUser.value.walletAddress,
+        web3Provider: walletUser.value.web3Provider as BrowserProvider,
+      }
+      // make sure factory is loaded
+      await appStore.loadClrFundInfo()
+      userStore.loginUser(user)
+      await userStore.loadUserInfo()
+      await userStore.loadBrightID()
+    } else {
+      await userStore.logoutUser()
+    }
+  } catch (err) {
+    /* eslint-disable-next-line no-console */
+    console.log('error', err)
+  }
+})
+
+watch(isUserAndRoundLoaded, async () => {
+  if (!isUserAndRoundLoaded.value) {
+    return
+  }
+
+  // load contribution when we get round information
+  await userStore.loadUserInfo()
 })
 </script>
 

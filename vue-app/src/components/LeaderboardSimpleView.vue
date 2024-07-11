@@ -24,9 +24,6 @@
             {{ rank }}
           </div>
         </div>
-        <div class="desktop project-image">
-          <ipfs-image :src="project.thumbnailImageHash" :alt="project.name" />
-        </div>
         <div class="project-name">
           {{ project.name }}
         </div>

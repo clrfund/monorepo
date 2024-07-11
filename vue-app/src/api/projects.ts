@@ -7,8 +7,9 @@ import SimpleRegistry from './recipient-registry-simple'
 import OptimisticRegistry from './recipient-registry-optimistic'
 import KlerosRegistry from './recipient-registry-kleros'
 import sdk from '@/graphql/sdk'
-import { getLeaderboardData } from '@/api/leaderboard'
+import { findStaticRound } from '@/api/round'
 import type { RecipientApplicationData } from '@/api/types'
+import type { GetRecipientByIndexQuery } from '@/graphql/API'
 
 export interface LeaderboardProject {
   id: string // Address or another ID depending on registry implementation
@@ -51,17 +52,33 @@ export interface Project {
 export async function getRecipientRegistryAddress(roundAddress: string | null): Promise<string> {
   if (roundAddress !== null) {
     const fundingRound = new Contract(roundAddress, FundingRound, provider)
-    return await fundingRound.recipientRegistry()
+    return await fundingRound.recipientRegistry().catch(() => null)
   } else {
-    return await clrFundContract.recipientRegistry()
+    return await clrFundContract.recipientRegistry().catch(() => null)
   }
 }
 
-export async function getProjects(registryAddress: string, startTime?: number, endTime?: number): Promise<Project[]> {
+/**
+ * Get all the projects added between the start and end time
+ * @returns List of projects
+ */
+export async function getProjects({
+  registryAddress,
+  fundingRoundAddress,
+  network,
+  startTime,
+  endTime,
+}: {
+  registryAddress: string
+  fundingRoundAddress?: string
+  network?: string
+  startTime?: number
+  endTime?: number
+}): Promise<Project[]> {
   if (recipientRegistryType === 'simple') {
     return await SimpleRegistry.getProjects(registryAddress, startTime, endTime)
   } else if (recipientRegistryType === 'optimistic') {
-    return await OptimisticRegistry.getProjects(registryAddress, startTime, endTime)
+    return await OptimisticRegistry.getProjects({ registryAddress, fundingRoundAddress, network, startTime, endTime })
   } else if (recipientRegistryType === 'kleros') {
     return await KlerosRegistry.getProjects(registryAddress, startTime, endTime)
   } else {
@@ -79,11 +96,21 @@ export async function getProjects(registryAddress: string, startTime?: number, e
  * @param filter filter result by locked or verified status
  * @returns project information
  */
-export async function getProject(registryAddress: string, recipientId: string, filter = true): Promise<Project | null> {
+export async function getProject({
+  registryAddress,
+  fundingRoundAddress,
+  recipientId,
+  filter = true,
+}: {
+  registryAddress: string
+  fundingRoundAddress?: string
+  recipientId: string
+  filter: boolean
+}): Promise<Project | null> {
   if (recipientRegistryType === 'simple') {
     return await SimpleRegistry.getProject(registryAddress, recipientId)
   } else if (recipientRegistryType === 'optimistic') {
-    return await OptimisticRegistry.getProject(recipientId, filter)
+    return await OptimisticRegistry.getProject({ fundingRoundAddress, recipientId, filter })
   } else if (recipientRegistryType === 'kleros') {
     return await KlerosRegistry.getProject(registryAddress, recipientId)
   } else {
@@ -115,10 +142,15 @@ export async function getProjectByIndex(
   registryAddress: string,
   recipientIndex: number,
 ): Promise<Partial<Project> | null> {
-  const result = await sdk.GetRecipientByIndex({
-    registryAddress: registryAddress.toLowerCase(),
-    recipientIndex,
-  })
+  let result: GetRecipientByIndexQuery
+  try {
+    result = await sdk.GetRecipientByIndex({
+      registryAddress: registryAddress.toLowerCase(),
+      recipientIndex,
+    })
+  } catch {
+    return null
+  }
 
   if (!result.recipients.length) {
     return null
@@ -179,7 +211,7 @@ export function toLeaderboardProject(project: any): LeaderboardProject {
   return {
     id: project.id,
     name: project.name,
-    index: getNumber(project.recipientIndex),
+    index: getNumber(project.recipientIndex || 0),
     thumbnailImageHash: project.metadata.thumbnailImageHash || project.metadata.imageHash,
     bannerImageHash: project.metadata.bannerImageHash,
     allocatedAmount: BigInt(project.allocatedAmount || '0'),
@@ -193,7 +225,7 @@ export async function getLeaderboardProject(
   projectId: string,
   network: string,
 ): Promise<Project | null> {
-  const data = await getLeaderboardData(roundAddress, network)
+  const data = await findStaticRound(roundAddress, network)
   if (!data) {
     return null
   }
@@ -263,7 +295,7 @@ export function staticDataToProjectInterface(project: any): Project {
   return {
     id: project.id,
     address: project.recipientAddress,
-    name: project.metadata.name,
+    name: project.metadata.name || project.name,
     tagline: project.metadata.tagline,
     description: project.metadata.description,
     category: project.metadata.category,
@@ -276,26 +308,10 @@ export function staticDataToProjectInterface(project: any): Project {
     websiteUrl: project.metadata.websiteUrl,
     twitterUrl: project.metadata.twitterUrl,
     discordUrl: project.discordUrl,
-    bannerImageHash: project.metadata.bannerImageHash,
-    thumbnailImageHash: project.metadata.thumbnailImageHash,
+    bannerImageHash: project.metadata.bannerImageHash || project.metadata.imageHash,
+    thumbnailImageHash: project.metadata.thumbnailImageHash || project.metadata.imageHash,
     index: project.recipientIndex,
     isHidden: project.state !== 'Accepted',
     isLocked: false,
   }
-}
-
-/**
- * Get the list of projects for a static round
- * @param roundAddress The funding round contract address
- * @param network The network
- * @returns Array of projects
- */
-export async function getProjectsForStaticRound(roundAddress: string, network: string): Promise<Project[]> {
-  const data = await getLeaderboardData(roundAddress, network)
-  if (!data) {
-    return []
-  }
-
-  const projects = data.projects.map(staticDataToProjectInterface)
-  return projects
 }

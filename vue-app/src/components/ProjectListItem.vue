@@ -36,7 +36,6 @@ import { markdown } from '@/utils/markdown'
 import { useRoute, type RouteLocationRaw } from 'vue-router'
 import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
-import { isActiveApp } from '@/api/core'
 import IpfsImage from './IpfsImage.vue'
 
 const route = useRoute()
@@ -65,8 +64,8 @@ const inCart = computed<boolean>(() => {
 })
 
 const isCurrentRound = computed<boolean>(() => {
-  const roundAddress = props.roundAddress || currentRoundAddress.value
-  return appStore.isCurrentRound(props.roundAddress)
+  const roundAddress = props.roundAddress || currentRoundAddress.value || ''
+  return appStore.isCurrentRound(roundAddress)
 })
 
 const shouldShowCartInput = computed<boolean>(() => {
@@ -74,20 +73,12 @@ const shouldShowCartInput = computed<boolean>(() => {
 })
 
 const projectRoute = computed<RouteLocationRaw>(() => {
-  if (isActiveApp) {
-    return route.name === 'round'
-      ? {
-          name: 'round-project',
-          params: { address: props.roundAddress, id: props.project.id },
-        }
-      : { name: 'project', params: { id: props.project.id } }
-  } else {
-    const network = currentRound.value?.network || ''
-    return {
-      name: 'leaderboard-project',
-      params: { address: props.roundAddress, network, id: props.project.id },
-    }
-  }
+  return route.name === 'round'
+    ? {
+        name: 'round-project',
+        params: { address: props.roundAddress, id: props.project.id },
+      }
+    : { name: 'project', params: { id: props.project.id } }
 })
 </script>
 

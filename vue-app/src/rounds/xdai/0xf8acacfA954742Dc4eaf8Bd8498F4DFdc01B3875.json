@@ -1,0 +1,519 @@
+{
+  "round": {
+    "address": "0xf8acacfA954742Dc4eaf8Bd8498F4DFdc01B3875",
+    "nativeTokenAddress": "0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d",
+    "nativeTokenDecimals": 18,
+    "nativeTokenSymbol": "WXDAI",
+    "contributorCount": 2,
+    "matchingPoolSize": "0",
+    "totalSpent": "0",
+    "voiceCreditFactor": "10000000000000",
+    "isFinalized": true,
+    "isCancelled": true,
+    "tallyHash": "",
+    "maciAddress": "0x8c7e970621BcDDE05D4d03303b598E99631eb9fe",
+    "startTime": 1621285100,
+    "endTime": 1621976300,
+    "signUpDuration": 604800,
+    "votingDuration": 86400,
+    "messages": 14,
+    "maxMessages": 8191,
+    "maxRecipients": 124,
+    "userRegistryAddress": "0xe312E958c47b971C250bC1228A11Df1276643e5D",
+    "recipientRegistryAddress": "0x71CD33852D9A3cc452af9D8f93c7EC5249876649"
+  },
+  "projects": [
+    {
+      "id": "0xa2ef9ec5431ff8459f2e38fd71ef479d779d311aedeff51342b5da605a72079a",
+      "state": "Accepted",
+      "recipientAddress": "0xadca3cF41e2e2517F1862b3CA18E8beF561EEded",
+      "requester": "0xA45898Cbb4F01decc7e04654B8Ee40975546b391",
+      "name": "clr.fund",
+      "metadata": {
+        "name": "clr.fund",
+        "description": "Clr.fund is a protocol for efficiently allocating funds to public goods that benefit the Ethereum Ecosystem according to the preferences of the Ethereum Ecosystem. Clr.fund strives for credible neutrality, decentralization, permissionlessness, trustlessness, and pseudonymity. Verification of clr.fund's receiving address: https://twitter.com/clrfund/status/1298695748989722624",
+        "imageHash": "QmV8WRjSX4H3jARcspCuUkqWbkrKZN17B4mf1xK2EX9ZSk"
+      },
+      "createdAt": "2021-03-28T16:15:00.000Z",
+      "recipientIndex": 1
+    },
+    {
+      "id": "0x6c643febd9c65081cf48861237d2741dc9793faccb4649b8d9f35087b68cbd32",
+      "state": "Accepted",
+      "recipientAddress": "0xc8188203Ea1Ea923024b051515CDc6d45910c6d6",
+      "requester": "0xd714Dd60e22BbB1cbAFD0e40dE5Cfa7bBDD3F3C8",
+      "name": "ETHDenver",
+      "metadata": {
+        "name": "ETHDenver",
+        "description": "[ETHDenver](https://www.ethdenver.com/) is the largest Web3 [#BUIDLathon](https://twitter.com/search?q=%23BUIDLathon) (formerly known as a hackathon) in the world, for Ethereum and other blockchain protocol enthusiasts, designers and developers.\n\nThe annual, 7-day, event is open 24 hours a day with a wide variety of activities, including talks and workshops by top blockchain influencers and experts. The purpose is to contribute to the global blockchain ecosystem, whether by #BUIDLing decentralized applications (dApps), contributing to or starting infrastructure level projects, writing documentation/tutorials/white-papers, designing UI/UX, or info-graphics.\n\nSo bring your inner awesomeness and some friends. We’ll provide mentors, resources, and all of the educational content you can consume.\n\nFunds received via clr.fund will go towards prizes and event experiences for each ETHDenver installment. Our ENS ([bufficorn.eth](https://app.ens.domains/name/bufficorn.eth)) name and [ETH address](https://etherscan.io/address/0xc8188203Ea1Ea923024b051515CDc6d45910c6d6) can be confirmed on our Twitter profile, [@EthereumDenver](https://twitter.com/EthereumDenver).",
+        "imageHash": "QmZrVmPPwZCStVNU6zGXL9Uj1s1xrkAfQaGYdbZ9hothE5"
+      },
+      "createdAt": "2021-03-30T12:47:00.000Z",
+      "recipientIndex": 2
+    },
+    {
+      "id": "0x64990e062a89c10bcb160feb9d05c6e457a99ccba6e912ba456752dd2dda9df2",
+      "state": "Accepted",
+      "recipientAddress": "0x587FB98E404A18503a24cf19aBB1887704BeB407",
+      "requester": "0xA7a5A2745f10D5C23d75a6fd228A408cEDe1CAE5",
+      "name": "Hardhat",
+      "metadata": {
+        "name": "Hardhat",
+        "description": "[Hardhat](https://hardhat.org/) is an Ethereum development environment for professionals\n\nETH address can be confirmed on the [Hardhat gitcoin grants page](https://gitcoin.co/grants/99/buidler-evm-solidity-consolelog-stack-traces); note that the project was formerly known as \"Buidler.\"",
+        "imageHash": "Qmd4CFemMm4AtrFEhZtjrsCAcTTD8UGHvw9TpR9r5rgiJU"
+      },
+      "createdAt": "2021-03-30T18:43:25.000Z",
+      "recipientIndex": 3
+    },
+    {
+      "id": "0x4b9b425d8a2e089d2d12a994e121831189db2ea44107ae5cd19febf2283c5075",
+      "state": "Accepted",
+      "recipientAddress": "0x9531C059098e3d194fF87FebB587aB07B30B1306",
+      "requester": "0xd714Dd60e22BbB1cbAFD0e40dE5Cfa7bBDD3F3C8",
+      "name": "Rotki",
+      "metadata": {
+        "name": "Rotki",
+        "description": "[Rotki](https://rotki.com) is the opensource portfolio tracking, analytics and crypto accounting app that protects your privacy.\n\nRotki's receiving address can be verified on [Github](https://github.com/rotki/rotki#donations).",
+        "imageHash": "QmXKrqMsvYCJtBRhkCbpmJ8WwoiCvajomDBCX1d83YGm6H"
+      },
+      "createdAt": "2021-03-30T19:11:35.000Z",
+      "recipientIndex": 5
+    },
+    {
+      "id": "0xd73a6c2430faec99d48f2bed4d5fe6c200118a1cfef93f8a4d5faf85d0b4df6d",
+      "state": "Accepted",
+      "recipientAddress": "0x8BFBB529A9E85fDC4b70A4FCdC0D68Bb298B8816",
+      "requester": "0xd714Dd60e22BbB1cbAFD0e40dE5Cfa7bBDD3F3C8",
+      "name": "Turbo-Geth",
+      "metadata": {
+        "name": "Turbo-Geth",
+        "description": "[Turbo-Geth](https://github.com/ledgerwatch/turbo-geth) is a fork of [Go-Ethereum](https://github.com/ethereum/go-ethereum) with focus on performance.\n\nTurbo-Geth's [Ethereum address](https://etherscan.io/address/0x8BFBB529A9E85fDC4b70A4FCdC0D68Bb298B8816) can be verified on its [Gitcoin Grants profile](https://gitcoin.co/grants/224/turbo-geth).",
+        "imageHash": "QmSiKfqGpgGAxcZe4MqHmmSQKSRvXJaTugpPX3ctcSwQrZ"
+      },
+      "createdAt": "2021-03-30T19:25:15.000Z",
+      "recipientIndex": 7
+    },
+    {
+      "id": "0xb1d18785f8ea69525fb567c64c3b7b76585076854cbbc2c5841ef1877a54ec0b",
+      "state": "Accepted",
+      "recipientAddress": "0xf503017D7baF7FBC0fff7492b751025c6A78179b",
+      "requester": "0xd714Dd60e22BbB1cbAFD0e40dE5Cfa7bBDD3F3C8",
+      "name": "Trueblocks",
+      "metadata": {
+        "name": "Trueblocks",
+        "description": "[Trueblocks](https://trueblocks.io/) is the fastest, fully-decentralized way to access data from any Ethereum address or smart contract. Providing open source software libraries and tools for developers and accounting / auditing / monitoring  solutions for the rest of us.\n\n## FEATURES\n\n* Lightning Fast Data\n    * 75-100 times faster than RPC\n    * Immutable data lends itself to caching\n* Fully Automated\n    * Auto-generated data parsing code\n    * Simply provide your smart contract’s ABI\n* Better Data\n    * Removes extraneous data\n    * Parsed to your smart contract\n* Decentralized data\n    * Runs both locally and remotely\n    * Data optionally delivered through IPFS\n* Live Monitoring\n    * Smart contract monitoring services\n    * Send notifications on abnormal behavior\n* Tokenomics™\n    * Detailed analysis of token sales\n    * Per-block accounting",
+        "imageHash": "QmZ68E5KzHmhQGqJEa79yD6qE4NB1jKM1p9jmBjsv4wDi4"
+      },
+      "createdAt": "2021-03-30T19:49:20.000Z",
+      "recipientIndex": 4
+    },
+    {
+      "id": "0x0575e9fcd90ad4ced73c0d24babac01e055cea0905528ba7b2c9c48d6c791a2b",
+      "state": "Rejected",
+      "recipientAddress": "0xDE798cD9C53F4806B9Cc7dD27aDf7c641540167c",
+      "requester": "0xDE798cD9C53F4806B9Cc7dD27aDf7c641540167c",
+      "name": "Geo Web",
+      "metadata": {
+        "name": "Geo Web",
+        "description": "The [Geo Web](https://www.geoweb.network/) is a set of open protocols with a system of property rights for anchoring digital content to physical land. It's a community-owned AR metaverse with a Harberger Tax digital land market.\n\nIt enables new types of digital art/NFT display, games, data, and commerce by swapping atoms for bits in our shared reality. \n\nVerification of Geo Web's receiving address: https://twitter.com/thegeoweb/status/1337801103371538434",
+        "imageHash": "Qmf9zKNg3rZLPnSzhv1rhmUktpqdhKgjtBqgAG5z6e3Vk6"
+      },
+      "createdAt": "2021-03-30T20:26:35.000Z",
+      "removedAt": "2021-03-30T22:27:00.000Z"
+    },
+    {
+      "id": "0x835ecbaef4478f749801b99adc09ffb96d74c5aab180ef622265c58f83608b4c",
+      "state": "Rejected",
+      "recipientAddress": "0x456098bdd59AD0b87DaC668f73B7C39Fc2953d43",
+      "requester": "0x0a98F2e8eA46AefdA37384D34999Dd277BF479eC",
+      "name": "MetaversalFR",
+      "metadata": {
+        "name": "MetaversalFR",
+        "description": "MetaversalFR is a web3 only newsletter available on IPFS (ipns://metaversal.fr). It is the French version of Metaversal by Bankless. It is about NFT and metavers.\n\nWe are trying to make it work on an open model with free subscriptions, without ads or sponsoring. We only rely on the will of the community to help us finance the project.",
+        "imageHash": "Qmf3vGpdsVMHnAVBKgrUHudwNJmKQkUKDxzjzFG6kmJbY7"
+      },
+      "createdAt": "2021-03-30T22:14:40.000Z",
+      "removedAt": "2021-04-02T01:04:55.000Z"
+    },
+    {
+      "id": "0xeae9349d669abad47bb3adff2cef492247ed50a3eedd6c1d3e5420f66fd53473",
+      "state": "Accepted",
+      "recipientAddress": "0xDE798cD9C53F4806B9Cc7dD27aDf7c641540167c",
+      "requester": "0xDE798cD9C53F4806B9Cc7dD27aDf7c641540167c",
+      "name": "Geo Web",
+      "metadata": {
+        "name": "Geo Web",
+        "description": "The [Geo Web](https://geoweb.network/) is a set of open protocols with a system of property rights for anchoring digital content to physical land. It's a community-owned AR metaverse with a Harberger Tax digital land market.\n\nIt enables new types of digital art/NFT display, games, data, and commerce by swapping atoms for bits in our shared reality.\n\nVerification of Geo Web's receiving address: https://twitter.com/thegeoweb/status/1337801103371538434",
+        "imageHash": "QmQxd7T4Wpi5qfjvURhF1t1CkW5dSY4xp2HbJzCuvdsCRe"
+      },
+      "createdAt": "2021-03-30T22:51:10.000Z",
+      "recipientIndex": 6
+    },
+    {
+      "id": "0x65d5b5166a15b2c0158a61d71e392a2a8c652a6b3bb344bf327a7a730b27dd70",
+      "state": "Accepted",
+      "recipientAddress": "0x7B187f598B910374109222BaC494F508a49bD209",
+      "requester": "0x0a98F2e8eA46AefdA37384D34999Dd277BF479eC",
+      "name": "Ethereum in french : BanklessFR TheDailyGweiFR MetaversalFR",
+      "metadata": {
+        "name": "Ethereum in french : BanklessFR TheDailyGweiFR MetaversalFR",
+        "description": "All these newsletters are translated in French and are offering some original additional content.\n\nBanklessFR provides a program designed to help people understand the fundamental theories and mechanisms governing decentralized finance. To make DeFi more accessible, BanklessFR publications are entirely in French.\n\nBanklessFR adapts the model of BanklessHQ to offer a pedagogic discovery of DeFi and Open Finance. BanklessHQ's main concepts were adapted.\n\nMetaversalFR is the Bankless newsletter which is focused on NFTs. The newsletter is accessible from IPFS at ipns://metaversal.fr (we are sharing a pdf for each newsletter on the DeFi France Discord too).\n\nThe Daily Gwei FR includes the original content of the The Daily Gwei by Anthony Sassano, in French. For each article, we add a little bit of context to introduce his thoughts of the day.\n\nHere is the proof of ownership and more details about the project:\nhttps://gitcoin.co/grants/1274/banklessfr-the-daily-gwei-fr",
+        "imageHash": "QmPAyLMQAdn9Liv1hPdZk6zP33KwtqRcRyhycEirqQvm5G"
+      },
+      "createdAt": "2021-04-01T15:39:45.000Z",
+      "recipientIndex": 8
+    },
+    {
+      "id": "0x1f3a5920d2f97d82c7f8e9e026432eadb5d382ee5332c01a17f7a63c5368e0ef",
+      "state": "Accepted",
+      "recipientAddress": "0x327a29fcE0a6490E4236240Be176dAA282EcCfdF",
+      "requester": "0x4a9A2F31E2009045950DF5aAb36950609DE93c78",
+      "name": "Proof of Humanity",
+      "metadata": {
+        "name": "Proof of Humanity",
+        "description": "**[Proof of Humanity](https://proofofhumanity.id/)** is a system combining social verification with video submission in order to create a Sybil-proof list of humans. It is meant to be used by individuals as a point-of-entry to a myriad of new use cases that require users to prove they are not real humans and not duplicate/fake/bot accounts. It will be plugged into a variety of existing and new applications in need for such identity systems.\n\nThe use cases of this open registry are numerous:\n\n - Universal Basic Income *(Live)*\n - One person, One vote DAOs\n - Sybil-Resistant Quadratic Funding\n - Universal Identifiers\n - Reputation Systems\n - Decentralized Login Systems\n - Anti-Spam tools\n - and more....\n\n[Verification of Proof of Humanity DAO's recipient address](https://twitter.com/Kleros_io/status/1379365873794842625)",
+        "imageHash": "QmZqtoRSvUGBFK6Cx5NaUo1V4NmwBVRPtgqZjWzoTrejzF"
+      },
+      "createdAt": "2021-04-06T12:37:55.000Z",
+      "recipientIndex": 9
+    },
+    {
+      "id": "0x0c4ed3c755b2a7de9802cf8a8c51892051123874802da052ba8bdb9329e334dc",
+      "state": "Accepted",
+      "recipientAddress": "0x32cEfb2dC869BBfe636f7547CDa43f561Bf88d5A",
+      "requester": "0x32cEfb2dC869BBfe636f7547CDa43f561Bf88d5A",
+      "name": "Shir Ya Khat - Persian Blockchain Podcast",
+      "metadata": {
+        "name": "Shir Ya Khat - Persian Blockchain Podcast",
+        "description": "We are a non-profit educational group founded in 2015 to educate Farsi\\* speakers on blockchain technology, and remove the language barrier into developing applications using distributed technologies. One of the main limitations to access such technology, financial freedom and bank the unbanked are lack of resources and language barrier; we are trying to close that gap for Farsi speakers.\n\n  \n\nOur team has been operating\n\n*   [CoinIran](https://coiniran.com/): Independent Persian Publication covering Cryptocurrency, blockchain and Dapps news and documentations\n*   [Shir Ya Khat](https://shiryakhat.net) : Community-driven Farsi podcast on the topic of blockchain technology, discussing the recent trends to social pathology in developing countries\n*   [MiningBox](http://qa.miningbox.com/): Stack-over-flow style question and answer platform for mining discussions\n*   Digiarz : Price standardization and cryptocurrency exchange listings \\[currently down\\]\n*   [Smartcontract Development Forum](http://smartcontract.coiniran.com/): Technical forum to teach and discuss smart contract developments on all platforms\n*   [Script.tube](http://script.tube/): Videocast, Interviews with active participants in the community (Exchange CEO, developers, etc), New tech introductory videos, and market analysis\n\n  \n\n  \n\nOther than the management, maintenance and materials on the above resources, we have been trying to localize the eco-system:\n\n*   [**Ethereum.org Farsi version**](https://ethereum.org/fa/): Translation and addition of resources \\[[PR](https://github.com/ethereum/ethereum-org-website/pull/323)\\] - MERGED\n*   **MyEtherWallet** : Translation and localization of the interface \\[[PR](https://github.com/kvhnuke/etherwallet/pull/1093)\\] - MERGED\n*   **iearn-finance** : Translation of the UI \\[[PR](https://github.com/iearn-finance/iearn-finance/pull/61)\\]\n*   **WalletConnect**: Open protocol for connecting Wallets to Dapps \\[[PR](https://github.com/WalletConnect/walletconnect-monorepo/pull/326)\\] - MERGED\n*   **defi18n**: Decentralized Finance Internationalization \\[[PR](https://github.com/nanexcool/defi18n/pull/22)\\] - MERGED\n*   CryptoZombie - Learn to Code Blockchain DApps By Building Simple Games \\[[PR](https://github.com/loomnetwork/cryptozombie-lessons/pull/472)\\]\n\n  \n\nThe funds will help us to continue and improve the work to bring Blockchain and Ethereum knowledge to more people and remove the language barrier of entering web 3.0. We will publish anonymized expense reports to show where the funds are being spent.\n\n  \n\nNew Content:\n\n*   Podcast Series on Defi, Covering from StableCoins, to Liquidity Pools and AMM:\n*   Spotify: [https://open.spotify.com/show/7AQ3C6yGz4haADinqtP63N?si=zyzIguyIS9K6Ev9rFOEhVQ](https://open.spotify.com/show/7AQ3C6yGz4haADinqtP63N?si=zyzIguyIS9K6Ev9rFOEhVQ)\n*   Youtube: [https://www.youtube.com/channel/UC76G0qCSMfXK0btBdXYm1kw](https://www.youtube.com/channel/UC76G0qCSMfXK0btBdXYm1kw)\n\n  \n\n*   Many articles on Coiniran.com (average 1 a day educational articles, and many news articles)\n\n  \n\n*   Translation of CryptoZombie in progress: [https://gitcoin.co/issue/loomnetwork/cryptozombie-lessons/457/100024551](https://gitcoin.co/issue/loomnetwork/cryptozombie-lessons/457/100024551)\n\n  \n\n*   Women In Blockchain Farsi was founded\n*   CoinDesk Article: [https://www.coindesk.com/iranian-women-learn-solidity-with-grants-from-consensys](https://www.coindesk.com/iranian-women-learn-solidity-with-grants-from-consensys)\n*   Original Announcement: - [https://coiniran.com/empowering-iranian-women-with-blockchain/](https://coiniran.com/empowering-iranian-women-with-blockchain/)\n\n  \n\nWe are also in the process of gathering a team of professional translators to work on translating **Mastering Ethereum** book to be distributed in the schools in Iran and Afghanistan. Although this really depends on the resources we will have access to in the coming year.\n\n  \n\n\\----------------------------------------------------------\n\n*   Also known as **Persian**, **Farsi** is spoken by an estimated **110 million speakers** mostly in Iran, Tajikistan, Uzbekistan, Iraq, Russia, Azerbaijan and Afghanistan. In some of these countries, the language has other official names such as Dari in Afghanistan and Tajik in Tajikistan.\n\nProof:\n- https://gitcoin.co/grants/152/ethereum-for-farsi-speaking-population\n- https://twitter.com/shiryakhat/status/1314680726013521920",
+        "imageHash": "QmWcYjefNzDKVJpDXsSBiRcBKSkdugynWDPk5cMvhfAMWz"
+      },
+      "createdAt": "2021-04-07T01:12:20.000Z",
+      "recipientIndex": 10
+    },
+    {
+      "id": "0xd5087b65a577544139c32f50af0c7411cc355a641da4c5a0dcf8c808638f3215",
+      "state": "Accepted",
+      "recipientAddress": "0x4B8810b079eb22ecF2D1f75E08E0AbbD6fD87dbF",
+      "requester": "0x4B8810b079eb22ecF2D1f75E08E0AbbD6fD87dbF",
+      "name": "BrightID",
+      "metadata": {
+        "name": "BrightID",
+        "description": "BrightID is a social identity network that allows you to prove they are only using one account. It is built to be a permissionless, non-invasive, open source, and decentralized public good protocol.\n\nURL: \t\thttps://www.brightid.org/\nTwitter:\t\t@BrightIDProject\n",
+        "imageHash": "bafybeialdwrjgjryxanuaop6vvd4lrj5rfkksyvv535pf3zr2egjdnpuaq"
+      },
+      "createdAt": "2021-04-08T20:11:30.000Z",
+      "recipientIndex": 11
+    },
+    {
+      "id": "0x87400cc3c02b6d23910700662f48a4d58cc9c792021398ae322bce0300f0f6f0",
+      "state": "Accepted",
+      "recipientAddress": "0xb2e361C338AA028668CC6327eFd6799518C3C5D4",
+      "requester": "0xb2e361C338AA028668CC6327eFd6799518C3C5D4",
+      "name": "Minerva Wallet",
+      "metadata": {
+        "name": "Minerva Wallet",
+        "description": "Minerva Wallet is a user friendly, open-source, mobile wallet for self-sovereign identities and moneys.   \n\n*Website:* https://minerva.digital\n*Google Play Store:* [Minerva Wallet](https://play.google.com/store/apps/details?id=digital.minerva)\n*Twitter:* @MinervaWallet   \n\nHuman-centricity, GDPR compliance and privacy-by-design are the design goals we pursue and the users have always full control over their keys, data and money. The unique 'Multi-Account-Multi-Network' user interface simplifies keeping addresses private and avoiding all sorts of linkages between your accounts. Create a new account on any supported network with just 3 clicks in less than 5 seconds. No switching between networks in the settings, no restart of the app, no new wallet - all accounts on one 'Values' screen. ",
+        "imageHash": "QmRpfQhp4QAkLvPRYbLLooAisBuuzxD63XtT4DX1rpJoXn"
+      },
+      "createdAt": "2021-04-29T13:33:10.000Z",
+      "recipientIndex": 12
+    },
+    {
+      "id": "0x2bbdf92a8a8b90ff55fbbf76d909fb0ef9218969ddf6a0eb7eeb419693aabb39",
+      "state": "Removed",
+      "recipientAddress": "0xcBec15583A21C3ddAD5fab658be5b4FE85Df730b",
+      "requester": "0xd714Dd60e22BbB1cbAFD0e40dE5Cfa7bBDD3F3C8",
+      "name": "WalletConnet",
+      "metadata": {
+        "name": "WalletConnet",
+        "description": "\n[WalletConnect](https://walletconnect.org/) is an open source protocol for connecting decentralised applications to mobile wallets with QR code scanning or deep linking. A user can interact securely with any Dapp from their mobile phone, making WalletConnect wallets a safer choice compared to desktop or browser extension wallets.\n\n**How does it work?**\n\nWalletConnect connects web applications to supported [mobile wallets](https://registry.walletconnect.org/wallets) WalletConnect session is started by a scanning a QR code (desktop) or by clicking an application deep link (mobile).",
+        "imageHash": "QmPKst6UNiW3V7C3e2mNQcLWP4oRnDAjpJ65d6KDACNAf1"
+      },
+      "createdAt": "2021-05-16T16:43:10.000Z",
+      "removedAt": "2021-05-30T02:18:30.000Z",
+      "recipientIndex": 13
+    },
+    {
+      "id": "0xaa1360bdb504f23f743ddf7103f99b61674afd05332ac55e03077d017c622b29",
+      "state": "Accepted",
+      "recipientAddress": "0xddB1CB4EdBCD83066Abf26E7102dc0e88009DEAB",
+      "requester": "0xd714Dd60e22BbB1cbAFD0e40dE5Cfa7bBDD3F3C8",
+      "name": "Upala - Digital Identity",
+      "metadata": {
+        "name": "Upala - Digital Identity",
+        "description": "Upala is a Proof of personhood system that provides human uniqueness score. User account score is measured in dollars and represents the price of forgery - the price of efforts needed to forge the account. Which is a very reliable metrics for DApps to asses trustworthiness of an account. Your contributions will help us fund our further research, proof-of-concept, and MVP.\n\nMore info here:\n* [Upala dashboard](https://www.notion.so/Upala-dashboard-a46d88209ecb4a4cabf1560acc8673a2)\n* [Short intro video](https://www.youtube.com/watch?v=u_jAXgcvjyg&t=1s)\n* [Telegram group](https://t.me/cherish_the_difference_Upala)\n\n\nLet the bots explode!\nNo fake accounts!\nViva la Sybil-resistance!\n\n[Proof of address](https://twitter.com/TheUpala/status/1334064286235299840)",
+        "imageHash": "QmSNX57qKxh6CQ8Lrn9Efr2orN1SqeU7UiDgssbgng8bdJ"
+      },
+      "createdAt": "2021-05-16T16:49:45.000Z",
+      "recipientIndex": 23
+    },
+    {
+      "id": "0x8e3a9b59d5b801ea65574eaee98619532be810daa4114e7f16d79b5737adddca",
+      "state": "Accepted",
+      "recipientAddress": "0x7143A40f2cbD8321aDA641828f34ac707B657eF6",
+      "requester": "0xd714Dd60e22BbB1cbAFD0e40dE5Cfa7bBDD3F3C8",
+      "name": "Giveth",
+      "metadata": {
+        "name": "Giveth",
+        "description": "# Welcome to the future of giving\n**Donate directly to social good projects with zero added fees.**\n\nGiveth is Decentralized Altruistic Community using blockchain technology to make the world a better place.\n\nFunds will go to Giveth's multisig address to be used to fund development of the [Giveth platform](https://giveth.io).",
+        "imageHash": "QmPE4Np3HQkYWr16LSUk5TaSeQqRD8sH9TteMdCuC7x8rK"
+      },
+      "createdAt": "2021-05-17T01:41:50.000Z",
+      "recipientIndex": 22
+    },
+    {
+      "id": "0x5786672ddaa30296703fe44b61d2d4c93c071c0136e21d8694c380c810834f6e",
+      "state": "Accepted",
+      "recipientAddress": "0x02Cb3C150BEdca124d0aE8CcCb72fefbe705c953",
+      "requester": "0xd714Dd60e22BbB1cbAFD0e40dE5Cfa7bBDD3F3C8",
+      "name": "Ethereum Cat Herders",
+      "metadata": {
+        "name": "Ethereum Cat Herders",
+        "description": "[The Ethereum Cat Herders’](https://www.ethereumcatherders.com/) is go-to place to get the latest news on Ethereum Improvement Proposals (EIP), core clients’ updates, testnets updates, and other processes around the network upgrade.\n\n**Our aim is to bring the minimum amount of order that chaos needs to move Ethereum forward.**",
+        "imageHash": "QmPU7RZH2ogRAgEa761SAHWuyWLyGDSKmZPqst9EczquYf"
+      },
+      "createdAt": "2021-05-17T01:48:40.000Z",
+      "recipientIndex": 21
+    },
+    {
+      "id": "0x1e436ba626bb99fe80e3da84df8ef7fc25a72fcc889205cfe3428cd3d43ea097",
+      "state": "Accepted",
+      "recipientAddress": "0x073Ab1C0CAd3677cDe9BDb0cDEEDC2085c029579",
+      "requester": "0xd714Dd60e22BbB1cbAFD0e40dE5Cfa7bBDD3F3C8",
+      "name": "Vyper.fun",
+      "metadata": {
+        "name": "Vyper.fun",
+        "description": "[Vyper.fun](http://vyper.fun/) create interactive tutorials for the Vyper programming language.\n\nAddress can be checked against the address on the [gitcoin grants page](https://gitcoin.co/grants/1122/vyperfun)",
+        "imageHash": "QmSPTohD9wJWSZXBPNwwXyraTFFqJt3NZjRcyqhsFudvc3"
+      },
+      "createdAt": "2021-05-17T01:55:35.000Z",
+      "recipientIndex": 20
+    },
+    {
+      "id": "0x0d3f285865ed8484bf8106d9050c138162c351c8c55547cbcff35bd634a4f701",
+      "state": "Accepted",
+      "recipientAddress": "0x74D8967e812de34702eCD3D453a44bf37440b10b",
+      "requester": "0xd714Dd60e22BbB1cbAFD0e40dE5Cfa7bBDD3F3C8",
+      "name": "Vocdoni",
+      "metadata": {
+        "name": "Vocdoni",
+        "description": "Vocdoni provides easy and secure solutions for all your governance needs.\nPowered by an auditable, censorship-resistant and anonymous digital voting protocol.\n\n**Secure voting**\nThe most flexible and secure voting protocol to organize any kind of voting process: single-choice, multiple-choice, weighted, quadratic voting and much more.\n\n**Reliable communications**\nAlgorithm-free, origin-verified and direct communication between organizations and their social base.\n\n**Coordination tools**\nFar beyond voting, Vocdoni is a set of tools for governance, membership management, fundraising and more.",
+        "imageHash": "QmRA4dJ9kG9S6xLTM66DEJ7ZkNDHpzVdELGgjSAncHBprx"
+      },
+      "createdAt": "2021-05-17T02:00:15.000Z",
+      "recipientIndex": 19
+    },
+    {
+      "id": "0xd9de535dc1c7053aad025163738551c2bf394b1148c31ae169f91c94e8b54c7c",
+      "state": "Accepted",
+      "recipientAddress": "0x3C5c2F4bCeC51a36494682f91Dbc6cA7c63B514C",
+      "requester": "0xd714Dd60e22BbB1cbAFD0e40dE5Cfa7bBDD3F3C8",
+      "name": "Rekt",
+      "metadata": {
+        "name": "Rekt",
+        "description": "The dark web of DeFi journalism.",
+        "imageHash": "QmQchwYJ5G9yQdG7Yf18hHewUacstN5zuwPV4QhANFdF4E"
+      },
+      "createdAt": "2021-05-17T02:02:20.000Z",
+      "recipientIndex": 18
+    },
+    {
+      "id": "0x24385f0d9811defee02c7e9d7cdc89230258bd7ad9c9cf10010bef6fef553806",
+      "state": "Accepted",
+      "recipientAddress": "0x3945D766185E2264900C84faC10958B3619C2bD4",
+      "requester": "0xd714Dd60e22BbB1cbAFD0e40dE5Cfa7bBDD3F3C8",
+      "name": "RadicalxChange",
+      "metadata": {
+        "name": "RadicalxChange",
+        "description": "[RadicalxChange](https://www.radicalxchange.org/) is a global movement for next-generation political economies. It advances plurality, equality, community and decentralization through upgrades of democracy, markets, property rights, the data economy, the commons and collective intelligence governance. Founded by E. Glen Weyl in the wake of public discussion about the publication of his book Radical Markets in 2018, the RadicalxChange Foundation is a non-profit organization dedicated to that cause.",
+        "imageHash": "QmTQQoCMmiGt5QPqZoJEc8sH3GbU89Vjiy1GRY8S5KmsMh"
+      },
+      "createdAt": "2021-05-17T02:05:55.000Z",
+      "recipientIndex": 17
+    },
+    {
+      "id": "0xda68442202086b007421247cd5e65048724bd8ffdc6eb55a814b1fb44630c7b2",
+      "state": "Accepted",
+      "recipientAddress": "0x7A369245AD5E44018d677B60d5Bd4FF904da180E",
+      "requester": "0xd714Dd60e22BbB1cbAFD0e40dE5Cfa7bBDD3F3C8",
+      "name": "OpenEthereum",
+      "metadata": {
+        "name": "OpenEthereum",
+        "description": "[OpenEthereum](https://openethereum.github.io/) is a community project building the Ethereum client on Rust. We add resilience to the Ethereum network by maintaining 15-20% of its nodes.",
+        "imageHash": "QmZdcknPVWGiSgcQzRcmT9yGKsviYSxZF4YUPgczHn1vui"
+      },
+      "createdAt": "2021-05-17T02:10:55.000Z",
+      "recipientIndex": 16
+    },
+    {
+      "id": "0x417550e433ab567cc63b499654e41c4cddf692b52379f592f631e0f748a56222",
+      "state": "Accepted",
+      "recipientAddress": "0x66b1De0f14a0ce971F7f248415063D44CAF19398",
+      "requester": "0xd714Dd60e22BbB1cbAFD0e40dE5Cfa7bBDD3F3C8",
+      "name": "WhalerDAO",
+      "metadata": {
+        "name": "WhalerDAO",
+        "description": "# What is WhalerDAO?\n**We fight DeFi whales to save the world.**\n\nWhalerDAO is a community of builders, researchers, legal experts, and community influencers who are dedicated to help solve the plethora of problems that the world is facing, using the power of blockchain and decentralized finance (DeFi).\nWe call ourselves whalers, because we intend to take the control of DeFi protocols away from the rich & powerful “whales” and give it into the hands of the people, which is necessary for preventing DeFi from becoming just another tool for the rich to get even richer.\n\n[WhalerDAO Manifesto](https://whalerdao.org/manifesto/)\n[WhalerDAO Blog](https://whalerdao.org/post/)\n[WhalerDAO Discord community](https://discord.gg/CHxxasF)\n\n# What we do?\n**Influence** - We collaborate with the various DeFi protocols to use governance as an agent for positive sum impact, transitioning from plutocracy to democracy and convincing the communities that DeFi should be used for funding charitable causes.\n\n**Develop** - We develop useful tools for the DeFi community to understand how governance power is distributed and how votes are decided.\n\n**Research** - We do research into novel models of governance and token distribution that prevent the domination of rich & powerful groups and individuals, such as Conviction Voting, Quadratic Voting, Quadratic Funding, and the Windfall Clause 2.\n\n## Tree\nTREE is the first initiative of WhalerDAO to create a DeFi protocol that benefits charitable causes. The value created by TREE will is allocated to several pools, one being a Charity Pool. TREE also serves as the Governance Token of the TREE Charity Pool, meaning TREE holders receive a vote in how the Charity Fund is allocated to each Charity.\n\n**Resource on TREE:**\n* Intro Blog Post\n* Smart Contracts\n \n## Goals of our Grant\nSo far we are completely self funding. We have launched a DAO on IDChain and have built the Smart Contracts for TREE. WhalerDAO plans for utilizing funding: Our plan is to use the donations to help pay for a security audit of the smart contracts used in our first project TREE, an elastic supply token that generates funding for charities. The donations we receive in excess will directly fund the charity treasury used by TREE, and will eventually be paid out to charities as decided by TREE holders using Conviction Voting. If you also believe that we should be working towards how to use DeFi for good, help the ecosystem and fund our grant. This is a community driven project, so we're reaching out to you the community for help.",
+        "imageHash": "Qmbm141sQbtqewsuSpFR278TxiatZFRktdT56RciqDgiWk"
+      },
+      "createdAt": "2021-05-17T02:19:10.000Z",
+      "recipientIndex": 15
+    },
+    {
+      "id": "0x12b8e6448644da4b826c57bba33880fdc6a82d1a3d9082c01b87337a6c066bc7",
+      "state": "Accepted",
+      "recipientAddress": "0xcBec15583A21C3ddAD5fab658be5b4FE85Df730b",
+      "requester": "0xd714Dd60e22BbB1cbAFD0e40dE5Cfa7bBDD3F3C8",
+      "name": "WalletConnect",
+      "metadata": {
+        "name": "WalletConnect",
+        "description": "[WalletConnect](https://walletconnect.org/) is an open source protocol for connecting decentralised applications to mobile wallets with QR code scanning or deep linking. A user can interact securely with any Dapp from their mobile phone, making [WalletConnect wallets](https://registry.walletconnect.org/wallets) a safer choice compared to desktop or browser extension wallets.\n\n**How does it work?**\n\n[WalletConnect](https://walletconnect.org/) connects web applications to supported mobile wallets WalletConnect session is started by a scanning a QR code (desktop) or by clicking an application deep link (mobile).",
+        "imageHash": "QmPKst6UNiW3V7C3e2mNQcLWP4oRnDAjpJ65d6KDACNAf1"
+      },
+      "createdAt": "2021-05-19T01:29:05.000Z",
+      "recipientIndex": 14
+    },
+    {
+      "id": "0xa7d9077e9852b5f147592fb3ae5a763d37c6bbf073342da5251170f49ab53f62",
+      "state": "Accepted",
+      "recipientAddress": "0x097F16e2931a86107dD0F900c0b5f060889F65a2",
+      "requester": "0x52eB606f94091A2BA4f985D98C62880a9BA591B6",
+      "name": "SNAFU Collective",
+      "metadata": {
+        "name": "SNAFU Collective",
+        "description": "SNAFU is an Italian collective of artists composed of cyberpunks, painters, graphic designers, programmers, photographers, musicians, art lovers\nwho try to create a unique point of view regarding what can be conceived like Art in an era where everything is digital and unsubstantial.\n\nAt the same time, we are driven by the desire of creating a new form of sustenance for emerging artists exploiting new paradigms that blockchain and cryptocurrencies had brought.",
+        "imageHash": "QmaEPqRKrJDN8iNKVSFj19rbHzZSyWENdj241oek3EJYn7"
+      },
+      "createdAt": "2021-05-26T14:34:30.000Z",
+      "removedAt": "2021-05-30T02:24:35.000Z",
+      "recipientIndex": 24
+    },
+    {
+      "id": "0xe105aa8dc65da08e0243716fbc89b8d3d2677f589cf57062cb8cb755746dc042",
+      "state": "Accepted",
+      "recipientAddress": "0x04d63662227e4742236A46399d005f988e0883Cf",
+      "requester": "0x04d63662227e4742236A46399d005f988e0883Cf",
+      "name": "DAO Deep Dive | Research & Education",
+      "metadata": {
+        "name": "DAO Deep Dive | Research & Education",
+        "description": "DAO adoption and usage have sky-rocketed over the past months. Nearly a dozen different DAO/Governance technologies have emerged - yet very few people know all of them, and even fewer understand the tradeoffs between these solutions.\n\nWe are convinced DAOs are already redefining coordination but see a lot of room for improvement in helping new and existing DAO contributors understand the space and available technology.\n\nPrimeDAO & DeepDAO are kickstarting a working group to research and create media resources that will help anyone better understand the what's and how's about DAOs.\n\nThe working group is open for contributors (researchers & creators) and partners (organizations & donators). Simple shoot any of the two DAOs a Twitter DM if you want to get connected.",
+        "imageHash": "QmNxcV8TUoq3Jrynx5BxxH2rLPdGMiudE1kJn7Ckh6MHfu"
+      },
+      "createdAt": "2021-05-30T08:14:20.000Z",
+      "recipientIndex": 25
+    },
+    {
+      "id": "0x1d5f48a75e39aa8f9576623a6bb5cf59cf909c27fb24283f126eeb503a7d395f",
+      "state": "Accepted",
+      "recipientAddress": "0xFc756d8632A19CEbd76560CE0A6967279E32131b",
+      "requester": "0xAC993a2cAc36A17839D9D8F2642e7c506b193015",
+      "name": "Prettier Solidity",
+      "metadata": {
+        "name": "Prettier Solidity",
+        "description": "Prettier Solidity is a formatter for the Solidity language.",
+        "imageHash": "QmQKsft9kpjYR5yqoAzwxE32sSby3sqrDVb57ANhTNcCah"
+      },
+      "createdAt": "2021-05-31T23:02:40.000Z",
+      "recipientIndex": 26
+    },
+    {
+      "id": "0x376e972c13f30141b5cac2352fcf121b39176903d92f84e6975733f9b799a317",
+      "state": "Accepted",
+      "recipientAddress": "0xD3655dBabA39e118C3998d11114b8f7268beF98e",
+      "requester": "0xD3655dBabA39e118C3998d11114b8f7268beF98e",
+      "name": "GreenEarthNFT",
+      "metadata": {
+        "name": "GreenEarthNFT",
+        "description": "Greenearth NFT is the NFT trading platform for animal and plant photos\n\nOriginal: take photos of animals and plants with mobile phone chip + cloud storage + app, record time, geographical location and digital ID of photos on the blockchain, and solve the original problem of NFT\n\nScientific research: real time photos of animals and plants around the world\n\nSocial: global users upload NFT with their own latitude and longitude\n\nCard game: NFT can be made into a card game to increase interest\n\nPublic welfare activities: the NFT competition is held every year to promote the protection of animals and the protection of the earth.\n\nEconomic model: defi",
+        "imageHash": "QmeknbfQUWc8LetWNUzL4cX62Av4xBSG3ZNdYPDDeutZyP"
+      },
+      "createdAt": "2021-06-17T07:10:55.000Z",
+      "recipientIndex": 27
+    },
+    {
+      "id": "0xc983982503469d52bc682d92b20207a24b57f4f843761f00b8333eb613873f8d",
+      "state": "Accepted",
+      "recipientAddress": "0x7572FCA2D62Cb323e9c14c7630f42932B3934724",
+      "requester": "0x5F9622322060f59cc6CACA044156992d39fcd530",
+      "name": "Orbiter Finance",
+      "metadata": {
+        "name": "Orbiter Finance",
+        "description": "With the adoption of more ETH developers, the rollup is becoming the mainstream solution. However, **in the rollup solution of Layer 2, there is no direct transfer between Rollups**. \n\nTransfer from Rollup A to Rollup B needs to be transferred to the mainnet first and then to the target rollup, **which not only costs $4–10 in gas fee, but also takes 10 minutes or even a week to withdraw.** So far, the cross-rollup transfer solution and account are centralized.\n\n**Orbiter Finance** **solves this problem in a decentralized manner and aims to have smart contracts only on the destination side. Users can transfer tokens in a single contract within 1 block time.**\n\nKey features :\n\n**1.** **Support fully decentralized transfers between rollups**\n\nThere are some bridges now. We all know ZKSync, Optimistic and Arbitrum have communication bridges between Layer2 and Layer1 ( but there is no bridge between Rollups ). The most different point between Orbiter Finance and the existing bridges is that Orbiter Finance is a fully decentralized bridging protocol between Rollups, In other words，Orbiter Finance connects separated Rollups.\n\n**2. No withdraw time. Only need one block time.**\n\nSince Rollups requires proof of fraud or proof of validity to secure the block, these “proof” processes give us the withdraw time. The withdraw time of ZKSync is 10 minutes, Optimistic and Arbitrum take 7 days at least. As a result, there may be a large price differentials for the same assets on different rollups. Transfers between Rollups can be done in one block time.\n\n**3. Smart contract on destination side to ensure safety**\n\nAs we all know, Rollups cannot read each other’s data. They have to wait for the end of withdraw time, and then read the data on other Rollups via mainnet. Therefore, there is no real-time interoperability between the contracts on the different Rollups. And if you need to secure the real-time transaction, you can only validate the contracts on one of the Rollups to prevent data read errors. For each transaction transferred across Rollups in Orbiter Finance, the user will only interact with the contract on the destination side.\n\n**4. Extended to the POA sidechain and freely access by developers**\n\nSidechains such as BSC and xDAI also have lots of assets and users, and the need to transfer assets between Sidechains and Layer2 will also increase. Just implementing the light client of the POA chain on the ETH mainnet, Orbiter Finance can get block status on the target network to verify transfers occurring on these POA chains.\n\n**5. To be a DEX of cross-rollup and connect the separated liquidity**\n\nOrbiter Finance will serve as the infrastructure for real-time interoperability between rollups of Layer 2 in future development, that is, cross-rollup DEX. In addition, Orbiter Finance will try more extended use cases, such as liquidity pool reuse, mixed-currency protocol on Layer2…\n\n**6. Tokens will incentivize market makers, transaction users, and developers to accelerate the development of Orbiter Finance**\n\nIn Orbiter Finance’s decentralized settlement agreement, market makers and traders are required to work together to complete transactions. There are two roles running in the system:\n\n1. User: Replace your USDT in the RollupsA account with the USDT in the RollupsB account at a ratio of 1:1.\n2. Market maker: Own the USDT on RollupsB and also had a RollupsA account to receive the USDT on RollupsA, you opened a RollupsA block browser and could see who had transferred to you on rollups. Registers a market maker on the Orbiter Finance platform (which can only control the USDT on the RollupsB，but cannot control and check the RollupsA account in real time) and transfers the USDT on the RollupsB to the platform.\n\nTo meet the needs of these two roles and to protect their assets, Orbiter Finance, which only handles assets on RollupsA but not on RollupsB, has the following features:\n\n+ Market Makers’ order: Deposit the USDT on the RollupsB to Orbiter Finance platform. When the Market Maker is operating, there is no withdrawal permission.\n+ Users’ order: Users place orders on Orbiter Finance platform and register their purchase intention with a market maker. Then freezes the market maker’s operating funds, and the amount of orders available to the market maker is reduced.\n+ Token release: The market maker confirms that the user has transferred the same amount to the bank account and allow the user to withdraw the frozen funds.\n+ Dispute resolution: Market maker has not received the user’s transfer message in the bank account, or the transfer amount is wrong, or user has completed USDT transfer in RollupsA but does not receive payment from market maker in RollupsB. In any of the above cases, the participants can submit the evidence of transfer to the platform, and the platform will decide the direction of the frozen funds after verification (unfreezing and returning to the market maker’s account, or transferring money to the user’s account). The decision process is handled by the smart contract by verifying the Merkel tree transfer proof.\n\nVisit us at [Orbiter.finance](https://www.orbiter.finance/), follow us on [Twitter](https://twitter.com/Orbiter_Finance), join us on [Telegram](http://t.me/orbiterfi).\n\nhttps://twitter.com/Orbiter_Finance/status/1406147597505495042?s=20 ",
+        "imageHash": "QmPgcYU452Jn36op47zHEkdn14PyC7TrP9TWZk5HrYVqN7"
+      },
+      "createdAt": "2021-06-19T16:06:50.000Z",
+      "recipientIndex": 28
+    },
+    {
+      "id": "0x483418b48e8b1ff7c354d61be25d99427ce5554f0dfd496ab0c596a6137573bc",
+      "state": "Accepted",
+      "recipientAddress": "0x7572FCA2D62Cb323e9c14c7630f42932B3934724",
+      "requester": "0x5F9622322060f59cc6CACA044156992d39fcd530",
+      "name": "Orbiter Finance",
+      "metadata": {
+        "name": "Orbiter Finance",
+        "description": "With the adoption of more ETH developers, the rollup is becoming the mainstream solution. However, in the rollup solution of Layer 2, there is no direct transfer between Rollups.\n\nTransfer from Rollup A to Rollup B needs to be transferred to the mainnet first and then to the target rollup, which not only costs $4–10 in gas fee, but also takes 10 minutes or even a week to withdraw. So far, the cross-rollup transfer solution and account are centralized.\n\nOrbiter Finance solves this problem in a decentralized manner and aims to have smart contracts only on the destination side. Users can transfer tokens in a single contract within 1 block time.\n\nKey features :\n\n1. Support fully decentralized transfers between rollups\n\nThere are some bridges now. We all know ZKSync, Optimistic and Arbitrum have communication bridges between Layer2 and Layer1 ( but there is no bridge between Rollups ). The most different point between Orbiter Finance and the existing bridges is that Orbiter Finance is a fully decentralized bridging protocol between Rollups, In other words，Orbiter Finance connects separated Rollups.\n\n2. No withdraw time. Only need one block time.\n\nSince Rollups requires proof of fraud or proof of validity to secure the block, these “proof” processes give us the withdraw time. The withdraw time of ZKSync is 10 minutes, Optimistic and Arbitrum take 7 days at least. As a result, there may be a large price differentials for the same assets on different rollups. Transfers between Rollups can be done in one block time.\n\n3. Smart contract on destination side to ensure safety\n\nAs we all know, Rollups cannot read each other’s data. They have to wait for the end of withdraw time, and then read the data on other Rollups via mainnet. Therefore, there is no real-time interoperability between the contracts on the different Rollups. And if you need to secure the real-time transaction, you can only validate the contracts on one of the Rollups to prevent data read errors. For each transaction transferred across Rollups in Orbiter Finance, the user will only interact with the contract on the destination side.\n\n4. Extended to the POA sidechain and freely access by developers\n\nSidechains such as BSC and xDAI also have lots of assets and users, and the need to transfer assets between Sidechains and Layer2 will also increase. Just implementing the light client of the POA chain on the ETH mainnet, Orbiter Finance can get block status on the target network to verify transfers occurring on these POA chains.\n\n5. To be a DEX of cross-rollup and connect the separated liquidity\n\nOrbiter Finance will serve as the infrastructure for real-time interoperability between rollups of Layer 2 in future development, that is, cross-rollup DEX. In addition, Orbiter Finance will try more extended use cases, such as liquidity pool reuse, mixed-currency protocol on Layer2…\n\n6. Tokens will incentivize market makers, transaction users, and developers to accelerate the development of Orbiter Finance\n\nIn Orbiter Finance’s decentralized settlement agreement, market makers and traders are required to work together to complete transactions. There are two roles running in the system:\n\nUser: Replace your USDT in the RollupsA account with the USDT in the RollupsB account at a ratio of 1:1.\nMarket maker: Own the USDT on RollupsB and also had a RollupsA account to receive the USDT on RollupsA, you opened a RollupsA block browser and could see who had transferred to you on rollups. Registers a market maker on the Orbiter Finance platform (which can only control the USDT on the RollupsB，but cannot control and check the RollupsA account in real time) and transfers the USDT on the RollupsB to the platform.\nTo meet the needs of these two roles and to protect their assets, Orbiter Finance, which only handles assets on RollupsA but not on RollupsB, has the following features:\n\nMarket Makers’ order: Deposit the USDT on the RollupsB to Orbiter Finance platform. When the Market Maker is operating, there is no withdrawal permission.\nUsers’ order: Users place orders on Orbiter Finance platform and register their purchase intention with a market maker. Then freezes the market maker’s operating funds, and the amount of orders available to the market maker is reduced.\nToken release: The market maker confirms that the user has transferred the same amount to the bank account and allow the user to withdraw the frozen funds.\nDispute resolution: Market maker has not received the user’s transfer message in the bank account, or the transfer amount is wrong, or user has completed USDT transfer in RollupsA but does not receive payment from market maker in RollupsB. In any of the above cases, the participants can submit the evidence of transfer to the platform, and the platform will decide the direction of the frozen funds after verification (unfreezing and returning to the market maker’s account, or transferring money to the user’s account). The decision process is handled by the smart contract by verifying the Merkel tree transfer proof.\nVisit us at Orbiter.finance, follow us on Twitter, join us on Telegram.\n\nhttps://twitter.com/Orbiter_Finance/status/1406147597505495042?s=20",
+        "imageHash": "QmbPJYcVShrPy3P1Yix8LGhZQmN5DMobe44s5XRxFZTPNv"
+      },
+      "createdAt": "2021-06-23T11:53:55.000Z",
+      "recipientIndex": 29
+    },
+    {
+      "id": "0x15fa71dd860a932b309fc3c13a9d399d65c3da26d016e5ce02b848e5fa8eec13",
+      "state": "Accepted",
+      "recipientAddress": "0xA230a1c91C640dA7A947C23a889a3bD68A171915",
+      "requester": "0xA230a1c91C640dA7A947C23a889a3bD68A171915",
+      "name": "xDAI DAO",
+      "metadata": {
+        "name": "xDAI DAO",
+        "description": "xDAI Innovation Studio DAO, encouraging xDAI's traction as a scaling EVM platform, fostering use case innovations.",
+        "imageHash": "QmPjcyLNF6aY9bxVq7Tgkn1Lk9Sv8PnRdHnirKCyFWz3r5"
+      },
+      "createdAt": "2021-07-24T20:04:45.000Z",
+      "recipientIndex": 30
+    },
+    {
+      "id": "0xc4db15ef6ee54713574125f25fd16cd6804e9d8f72d56b9e1ab857aa3f621967",
+      "state": "Accepted",
+      "recipientAddress": "0xF78cD306b23031dE9E739A5BcDE61764e82AD5eF",
+      "requester": "0xF78cD306b23031dE9E739A5BcDE61764e82AD5eF",
+      "name": "hardhat-deploy and jolly-roger",
+      "metadata": {
+        "name": "hardhat-deploy and jolly-roger",
+        "description": "hardat-deploy is a hardhat plugin adds a mechanism to deploy contracts to any network, keeping track of them and replicating the same environment for testing.\n\n\n\nBut the list of features is actually quite long, see repo: https://github.com/wighawag/hardhat-deploy\n\n\njolly-roger.eth is a template build on top of hardhat-deploy to provide best-in class developer experience to build decentralised application on the dweb. It combines hardhat-deploy with svelte-kit and thegraph and provide full hot reload including Hot Contract Replacement (HCR) thanks to hardhat-deploy proxy handling.\n\nSee project website : https://jolly-roger.eth.link/",
+        "imageHash": "QmP7WM1K7vjwCo4vZyKKZmwuiZU4uUPybgVYg1JbzLCqeP"
+      },
+      "createdAt": "2021-08-26T11:08:35.000Z",
+      "recipientIndex": 31
+    },
+    {
+      "id": "0x1c7f6c03ff9af035654de98618b4f14f563986be2778256c2e18261b49364d47",
+      "state": "Accepted",
+      "recipientAddress": "0xC96e67F8e69776Cd9E3Fa3c09Ae14Bfb517127dd",
+      "requester": "0xC96e67F8e69776Cd9E3Fa3c09Ae14Bfb517127dd",
+      "name": "Thaicondodefi",
+      "metadata": {
+        "name": "Thaicondodefi",
+        "description": "Thaicondonft is a real estate trading platform based on blockchain technology. It turns Thailand's real estate into NFT, \nwhich can be bought and sold, corresponding to the ownership of houses. \nAt the same time, it uses defi technology to realize mortgage loan. \nEconomic model: defi ",
+        "imageHash": "QmcrwPTefYjQCRcUbxVN7ZrctKu5jzkq1gxL4ni9RkcASr"
+      },
+      "createdAt": "2021-09-18T03:33:55.000Z",
+      "recipientIndex": 32
+    },
+    {
+      "id": "0x11087d5a4bf2b577e3964a04777950a3436854c86680a9b744d391315ecd24cf",
+      "state": "Accepted",
+      "recipientAddress": "0xAA005dB308cAB6C88f9F5543a5189b30f4e9Aa38",
+      "requester": "0xAA005dB308cAB6C88f9F5543a5189b30f4e9Aa38",
+      "name": "clr.fund zk circuit trusted setup",
+      "metadata": {
+        "name": "clr.fund zk circuit trusted setup",
+        "description": "The ZK circuits behind clr.fund help to keep the platform honest. They require a trusted setup ceremony, which hash now completed successfully. That naturally incurred server expenses, so we're seeking the assistance of the community to help recover those expenses. ",
+        "imageHash": "QmZJHP93r6ifoSFbrG9NXsqAdRjo8VNAX1DCVSUfrN6B86"
+      },
+      "createdAt": "2021-10-13T05:56:20.000Z",
+      "recipientIndex": 33
+    }
+  ]
+}

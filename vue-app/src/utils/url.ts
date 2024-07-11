@@ -9,5 +9,8 @@ export function getStaticUrlByIpfsHash(hash): string | null {
 }
 
 export function getIpfsUrl(hash): string | null {
-  return ipfsGatewayUrl ? `${ipfsGatewayUrl}/ipfs/${hash}` : null
+  if (!hash || !ipfsGatewayUrl) {
+    return null
+  }
+  return `${ipfsGatewayUrl}/ipfs/${hash}`
 }

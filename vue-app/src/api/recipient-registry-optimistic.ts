@@ -1,16 +1,18 @@
 import { Contract, toNumber, isHexString, ContractTransactionResponse } from 'ethers'
-import type { TransactionResponse, TransactionReceipt, Signer } from 'ethers'
+import type { TransactionResponse, Signer } from 'ethers'
 import { DateTime } from 'luxon'
-import { chain } from '@/api/core'
+import { chain, clrFundContract } from '@/api/core'
 
 import { OptimisticRecipientRegistry } from './abi'
 import { provider, ipfsGatewayUrl } from './core'
-import type { Project } from './projects'
+import { staticDataToProjectInterface, type Project } from './projects'
 import sdk from '@/graphql/sdk'
-import type { Recipient } from '@/graphql/API'
+import type { GetProjectQuery, GetRecipientsQuery, Recipient } from '@/graphql/API'
 import { hasDateElapsed } from '@/utils/dates'
 import type { RegistryInfo, RecipientApplicationData } from './types'
 import { formToRecipientData } from './recipient'
+import { isSameAddress } from '@/utils/accounts'
+import { findStaticRound, getStaticRoundInfo } from './round'
 
 async function getRegistryInfo(registryAddress: string): Promise<RegistryInfo> {
   const registry = new Contract(registryAddress, OptimisticRecipientRegistry, provider)
@@ -129,10 +131,73 @@ function mapRequestStatus(request: RecipientRequestData): RequestStatus {
   return status
 }
 
+/**
+ * Map the recipient state from static round data to request status
+ * @param state Recipient state: Active, Rejected, Removed
+ * @returns Request status
+ */
+function staticStateToRequestStatus(state: string): RequestStatus {
+  switch (state) {
+    case 'Accepted':
+      return RequestStatus.Executed
+    case 'Rejected':
+      return RequestStatus.Rejected
+    default:
+      return RequestStatus.Removed
+  }
+}
+
+/**
+ * Try to get the recipients from the static round data
+ * @param registryAddress The recipient registry address
+ * @returns The recipient application requests
+ */
+async function tryGetRecipientsStatically(registryAddress: string): Promise<Request[]> {
+  let requests: Request[] = []
+
+  try {
+    const fundingRoundAddress = await clrFundContract.getCurrentRound()
+    const fundingRoundInfo = await findStaticRound(fundingRoundAddress)
+    if (isSameAddress(fundingRoundInfo?.round?.recipientRegistryAddress, registryAddress)) {
+      if (fundingRoundInfo?.projects) {
+        requests = fundingRoundInfo.projects.map(project => {
+          let metadata = project.metadata
+          try {
+            if (typeof metadata === 'string') {
+              metadata = JSON.parse(project.metadata || '{}')
+            }
+          } catch (e) {
+            metadata = { name: project.name }
+          }
+          return {
+            transactionHash: '', // transaction hash not available in the static data
+            type: RequestType.Registration,
+            status: staticStateToRequestStatus(project.state),
+            acceptanceDate: DateTime.fromISO(project.createdAt),
+            recipientId: project.id,
+            recipient: project.recipientAddress,
+            metadata,
+            requester: project.requester,
+          }
+        })
+      }
+    }
+  } catch {
+    requests = []
+  }
+
+  return requests
+}
+
 export async function getRequests(registryInfo: RegistryInfo, registryAddress: string): Promise<Request[]> {
-  const data = await sdk.GetRecipients({
-    registryAddress: registryAddress.toLowerCase(),
-  })
+  let data: GetRecipientsQuery
+  try {
+    data = await sdk.GetRecipients({
+      registryAddress: registryAddress.toLowerCase(),
+    })
+  } catch {
+    return tryGetRecipientsStatically(registryAddress)
+  }
 
   if (!data.recipients.length) {
     return []
@@ -245,10 +310,37 @@ function decodeProject(recipient: Partial<Recipient>): Project {
   }
 }
 
-export async function getProjects(registryAddress: string, startTime?: number, endTime?: number): Promise<Project[]> {
-  const data = await sdk.GetRecipients({
-    registryAddress: registryAddress.toLowerCase(),
-  })
+/**
+ * Get a list of projects created between the start time and end time
+ * @param registryAddress The recipient registry address
+ * @param fundingRoundAddress The funding round address to search in the static rounds
+ * @returns List of projects
+ */
+export async function getProjects({
+  registryAddress,
+  fundingRoundAddress,
+  network,
+  startTime,
+  endTime,
+}: {
+  registryAddress: string
+  fundingRoundAddress?: string
+  network?: string
+  startTime?: number
+  endTime?: number
+}): Promise<Project[]> {
+  let data: GetRecipientsQuery
+  try {
+    data = await sdk.GetRecipients({
+      registryAddress: registryAddress.toLowerCase(),
+    })
+  } catch {
+    if (!fundingRoundAddress) {
+      return []
+    }
+    const _round = await getStaticRoundInfo(fundingRoundAddress, network)
+    return _round?.projects || []
+  }
 
   if (!data.recipients.length) {
     return []
@@ -311,20 +403,70 @@ export async function getProjects(registryAddress: string, startTime?: number, e
 }
 
 /**
+ * Find the project from the static round file
+ * @param projectId The project id
+ * @param fundingRoundAddress The funding round address
+ * @param filter Filter the project if it's deleted
+ */
+async function findStaticProject({
+  projectId,
+  fundingRoundAddress,
+  filter,
+}: {
+  fundingRoundAddress?: string
+  projectId: string
+  filter: boolean
+}): Promise<Project | null> {
+  let project: Project | null = null
+  try {
+    const roundAddress = fundingRoundAddress ?? (await clrFundContract.getCurrentRound())
+    const round = await findStaticRound(roundAddress)
+    if (round?.projects) {
+      const staticProject = round.projects.find(project => project.id === projectId)
+      if (staticProject) {
+        project = staticDataToProjectInterface(staticProject)
+        if (filter && project.isHidden) {
+          project = null
+        }
+      }
+    }
+  } catch {
+    // return not found on error
+    return null
+  }
+
+  return project
+}
+
+/**
  * Get project information
  *
  * @param recipientId recipient id
+ * @param fundingRoundAddress The funding round address
  * @param filter default to always filter result by locked or verified status
  * @returns project
  */
-export async function getProject(recipientId: string, filter = true): Promise<Project | null> {
+export async function getProject({
+  recipientId,
+  fundingRoundAddress,
+  filter = true,
+}: {
+  recipientId: string
+  fundingRoundAddress?: string
+  filter: boolean
+}): Promise<Project | null> {
   if (!isHexString(recipientId, 32)) {
     return null
   }
 
-  const data = await sdk.GetProject({
-    recipientId,
-  })
+  let data: GetProjectQuery
+  try {
+    data = await sdk.GetProject({
+      recipientId,
+    })
+  } catch {
+    return findStaticProject({ projectId: recipientId, fundingRoundAddress, filter })
+  }
 
   if (!data.recipients.length) {
     // Project does not exist
