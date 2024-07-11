@@ -22,15 +22,15 @@
       </div>
       <div class="project-section">
         <h2>{{ $t('projectProfile.h2_1') }}</h2>
-        <markdown :raw="recipient.description" />
+        <markdown v-if="recipient.description" :raw="recipient.description" />
       </div>
       <div v-if="recipient.problemSpace" class="project-section">
         <h2>{{ $t('projectProfile.h2_2') }}</h2>
-        <markdown :raw="recipient.problemSpace" />
+        <markdown v-if="recipient.problemSpace" :raw="recipient.problemSpace" />
       </div>
       <div v-if="recipient.plans" class="project-section">
         <h2>{{ $t('projectProfile.h2_3') }}</h2>
-        <markdown :raw="recipient.plans" />
+        <markdown v-if="recipient.plans" :raw="recipient.plans" />
       </div>
       <div
         :class="{

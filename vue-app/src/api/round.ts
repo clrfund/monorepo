@@ -3,14 +3,20 @@ import { DateTime } from 'luxon'
 import { PubKey, type Tally, getMaxContributors } from '@clrfund/common'
 
 import { FundingRound, Poll } from './abi'
-import { provider, clrFundContract, isActiveApp } from './core'
+import { provider, clrFundContract } from './core'
 import { getTotalContributed } from './contributions'
 import { isVoidedRound } from './rounds'
 import sdk from '@/graphql/sdk'
 
 import { isSameAddress } from '@/utils/accounts'
 import { Keypair } from '@clrfund/common'
-import { getLeaderboardData } from '@/api/leaderboard'
+import { staticDataToProjectInterface } from './projects'
+import staticRounds from '@/rounds/rounds.json'
+
+type StaticRoundRecord = {
+  address: string
+  network: string
+}
 
 export interface RoundInfo {
   fundingRoundAddress: string
@@ -39,6 +45,7 @@ export interface RoundInfo {
   blogUrl?: string
   network?: string
   tally?: Tally
+  projects?: any
 }
 
 export interface TimeLeft {
@@ -55,6 +62,37 @@ export enum RoundStatus {
   Finalized = 'Finalized',
   Cancelled = 'Cancelled',
 }
+
+function isSameNetwork(network1 = '', network2 = ''): boolean {
+  return network1.toLowerCase() === network2.toLowerCase()
+}
+
+/**
+ * Find the funding round address from the static round index file
+ * @param roundAddress The funding round address
+ * @param network The network name
+ * @returns The static round data
+ */
+export async function findStaticRound(roundAddress: string, network?: string) {
+  const rounds = staticRounds as StaticRoundRecord[]
+  const checkNetwork = Boolean(network)
+
+  const found = rounds.find((r: StaticRoundRecord) => {
+    return isSameAddress(r.address, roundAddress) && (!checkNetwork || isSameNetwork(network, r.network))
+  })
+
+  if (!found) {
+    return null
+  }
+
+  const data = await import(`../rounds/${found.network}/${found.address}.json`)
+  if (!data.round) {
+    data.round = {}
+  }
+  data.round.network = found.network
+  return data
+}
+
 //TODO: update to take ClrFund address as a parameter, default to env. variable
 export async function getCurrentRound(): Promise<string | null> {
   const fundingRoundAddress = await clrFundContract.getCurrentRound()
@@ -65,7 +103,7 @@ export async function getCurrentRound(): Promise<string | null> {
   return isVoidedRound(fundingRoundAddress) ? null : fundingRoundAddress
 }
 
-export function toRoundInfo(data: any, network: string): RoundInfo {
+export function toRoundInfo(data: any): RoundInfo {
   const nativeTokenDecimals = Number(data.nativeTokenDecimals)
   // leaderboard does not need coordinator key, generate a dummy number
   const keypair = Keypair.createFromSeed(hexlify(randomBytes(32)))
@@ -109,28 +147,34 @@ export function toRoundInfo(data: any, network: string): RoundInfo {
     contributors: data.contributorCount,
     messages: Number(data.messages),
     blogUrl: data.blogUrl,
-    network,
+    network: data.network,
   }
 }
 
-export async function getLeaderboardRoundInfo(fundingRoundAddress: string, network: string): Promise<RoundInfo | null> {
-  const data = await getLeaderboardData(fundingRoundAddress, network)
+export async function getStaticRoundInfo(fundingRoundAddress: string, network?: string): Promise<RoundInfo | null> {
+  const data = await findStaticRound(fundingRoundAddress, network)
   if (!data) {
     return null
   }
 
   let round: RoundInfo | null = null
   try {
-    round = toRoundInfo(data.round, network)
+    round = toRoundInfo(data.round)
 
-    round.tally = {
-      provider: data.tally.provider,
-      maci: data.tally.maci,
-      pollId: data.pollId,
-      newTallyCommitment: data.tally.newTallyCommitment,
-      results: data.tally.results,
-      totalSpentVoiceCredits: data.tally.totalSpentVoiceCredits ?? data.tally.totalVoiceCredits,
-      perVOSpentVoiceCredits: data.tally.perVOSpentVoiceCredits ?? data.tally.totalVoiceCreditsPerVoteOption,
+    if (data.tally) {
+      round.tally = {
+        provider: data.tally.provider,
+        maci: data.tally.maci,
+        pollId: data.pollId,
+        newTallyCommitment: data.tally.newTallyCommitment,
+        results: data.tally.results,
+        totalSpentVoiceCredits: data.tally.totalSpentVoiceCredits ?? data.tally.totalVoiceCredits,
+        perVOSpentVoiceCredits: data.tally.perVOSpentVoiceCredits ?? data.tally.totalVoiceCreditsPerVoteOption,
+      }
+    }
+
+    if (data.projects) {
+      round.projects = data.projects.map(staticDataToProjectInterface)
     }
   } catch (err) {
     /* eslint-disable-next-line no-console */
@@ -151,9 +195,9 @@ export async function getRoundInfo(
     return cachedRound
   }
 
-  if (!isActiveApp) {
-    // static app should use the exported round information from rounds.json
-    return null
+  const staticRoundInfo = await getStaticRoundInfo(fundingRoundAddress)
+  if (staticRoundInfo) {
+    return staticRoundInfo
   }
 
   const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)

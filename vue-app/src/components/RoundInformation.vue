@@ -265,7 +265,7 @@
               >
                 <img width="16" src="@/assets/info.svg" />
               </div>
-              <div v-if="isActiveApp" v-tooltip="$t('roundInfo.tooltip9')" class="add-link" @click="addMatchingFunds">
+              <div v-tooltip="$t('roundInfo.tooltip9')" class="add-link" @click="addMatchingFunds">
                 <img src="@/assets/add.svg" width="16px" />
                 <span class="add-funds-link">{{ $t('roundInfo.span1') }}</span>
               </div>
@@ -288,8 +288,8 @@
 import { ref, onMounted, computed, watch } from 'vue'
 import { DateTime } from 'luxon'
 import { hasDateElapsed } from '@/utils/dates'
-import { type RoundInfo, getRoundInfo, getLeaderboardRoundInfo } from '@/api/round'
-import { chain, isActiveApp } from '@/api/core'
+import { type RoundInfo, getRoundInfo, getStaticRoundInfo } from '@/api/round'
+import { chain } from '@/api/core'
 import { lsGet, lsSet } from '@/utils/localStorage'
 import { formatAmount as _formatAmount } from '@/utils/amounts'
 import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
@@ -370,7 +370,7 @@ async function loadRoundInfo() {
     try {
       if (routeName.startsWith('leaderboard')) {
         const network = getRouteParamValue(route.params.network)
-        roundInfo.value = await getLeaderboardRoundInfo(roundAddress.value, network)
+        roundInfo.value = await getStaticRoundInfo(roundAddress.value, network)
       } else {
         roundInfo.value = await getRoundInfo(roundAddress.value, currentRound.value)
       }
