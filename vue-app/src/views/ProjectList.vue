@@ -137,7 +137,7 @@ async function loadProjectRoundInfo(roundAddress: string) {
   let startTime = 0
   let votingDeadline = DateTime.local().toSeconds()
   let network = ''
-  let roundProjects: Project[] | undefined = undefined
+  let fundingRoundAddress = ''
 
   if (roundAddress) {
     const round = await getRoundInfo(roundAddress, currentRound.value)
@@ -146,9 +146,7 @@ async function loadProjectRoundInfo(roundAddress: string) {
       startTime = round.startTime.toSeconds()
       votingDeadline = round.votingDeadline.toSeconds()
       network = round.network || ''
-      if (round.projects) {
-        roundProjects = round.projects
-      }
+      fundingRoundAddress = round.fundingRoundAddress
     }
   }
 
@@ -157,11 +155,14 @@ async function loadProjectRoundInfo(roundAddress: string) {
     recipientRegistryAddress = await getRecipientRegistryAddress(null)
   }
 
-  if (!roundProjects) {
-    roundProjects = await getProjects(recipientRegistryAddress, startTime, votingDeadline)
-  }
-
-  const visibleProjects = roundProjects.filter(project => {
+  const _projects = await getProjects({
+    registryAddress: recipientRegistryAddress,
+    fundingRoundAddress,
+    network,
+    startTime,
+    endTime: votingDeadline,
+  })
+  const visibleProjects = _projects.filter(project => {
     return !project.isHidden && !project.isLocked
   })
   shuffleArray(visibleProjects)

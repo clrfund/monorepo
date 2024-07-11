@@ -69,8 +69,8 @@
       <div class="projects-section">
         <h2>{{ $t('profile.h2_3') }}</h2>
         <div v-if="projects.length > 0" class="project-list">
-          <div class="project-item" v-for="{ id, name, thumbnailImageUrl, isHidden, isLocked } of projects" :key="id">
-            <img :src="thumbnailImageUrl" alt="thumbnail" class="project-thumbnail" />
+          <div class="project-item" v-for="{ id, name, thumbnailImageHash, isHidden, isLocked } of projects" :key="id">
+            <ipfs-image :src="thumbnailImageHash" alt="thumbnail" class="project-thumbnail" />
             <div class="project-details">
               <div class="project-name">
                 {{ name }}
@@ -182,21 +182,13 @@ async function loadProjects(): Promise<void> {
 
   if (!recipientRegistryAddress.value) return
 
-  const currentRoundAddress = currentRound.value?.fundingRoundAddress
-  if (currentRoundAddress) {
-    const round = await getRoundInfo(currentRoundAddress, currentRound.value)
-    if (round?.projects) {
-      _projects = round.projects
-    }
-  }
-
-  if (!_projects) {
-    _projects = await getProjects(
-      recipientRegistryAddress.value,
-      currentRound.value?.startTime.toSeconds(),
-      currentRound.value?.votingDeadline.toSeconds(),
-    )
-  }
+  _projects = await getProjects({
+    registryAddress: recipientRegistryAddress.value,
+    fundingRoundAddress: currentRound.value?.fundingRoundAddress,
+    network: currentRound.value?.network,
+    startTime: currentRound.value?.startTime.toSeconds(),
+    endTime: currentRound.value?.votingDeadline.toSeconds(),
+  })
 
   const userProjects: Project[] = _projects.filter(
     ({ address, requester }) =>

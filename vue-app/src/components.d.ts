@@ -8,7 +8,6 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     Accordion: typeof import('./components/Accordion.vue')['default']
-    ActiveApp: typeof import('./components/ActiveApp.vue')['default']
     AddToCartButton: typeof import('./components/AddToCartButton.vue')['default']
     BackLink: typeof import('./components/BackLink.vue')['default']
     BalanceItem: typeof import('./components/BalanceItem.vue')['default']
@@ -36,6 +35,7 @@ declare module '@vue/runtime-core' {
     Info: typeof import('./components/Info.vue')['default']
     InputButton: typeof import('./components/InputButton.vue')['default']
     IpfsCopyWidget: typeof import('./components/IpfsCopyWidget.vue')['default']
+    IpfsImage: typeof import('./components/IpfsImage.vue')['default']
     IpfsImageUpload: typeof import('./components/IpfsImageUpload.vue')['default']
     LayoutSteps: typeof import('./components/LayoutSteps.vue')['default']
     LeaderboardDetailView: typeof import('./components/LeaderboardDetailView.vue')['default']
@@ -57,7 +57,6 @@ declare module '@vue/runtime-core' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SignatureModal: typeof import('./components/SignatureModal.vue')['default']
-    StaticApp: typeof import('./components/StaticApp.vue')['default']
     TimeLeft: typeof import('./components/TimeLeft.vue')['default']
     Transaction: typeof import('./components/Transaction.vue')['default']
     TransactionModal: typeof import('./components/TransactionModal.vue')['default']

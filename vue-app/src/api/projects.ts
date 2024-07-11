@@ -15,9 +15,8 @@ export interface LeaderboardProject {
   id: string // Address or another ID depending on registry implementation
   name: string
   index: number
-  bannerImageUrl?: string
-  thumbnailImageUrl?: string
-  imageUrl?: string
+  bannerImageHash?: string
+  thumbnailImageHash?: string
   allocatedAmount: bigint
   votes: bigint
   donation: bigint
@@ -40,9 +39,8 @@ export interface Project {
   websiteUrl?: string
   twitterUrl?: string
   discordUrl?: string
-  bannerImageUrl?: string
-  thumbnailImageUrl?: string
-  imageUrl?: string // TODO remove
+  bannerImageHash?: string
+  thumbnailImageHash?: string
   index: number
   isHidden: boolean // Hidden from the list (does not participate in round)
   isLocked: boolean // Visible, but contributions are not allowed
@@ -54,17 +52,33 @@ export interface Project {
 export async function getRecipientRegistryAddress(roundAddress: string | null): Promise<string> {
   if (roundAddress !== null) {
     const fundingRound = new Contract(roundAddress, FundingRound, provider)
-    return await fundingRound.recipientRegistry()
+    return await fundingRound.recipientRegistry().catch(() => null)
   } else {
-    return await clrFundContract.recipientRegistry()
+    return await clrFundContract.recipientRegistry().catch(() => null)
   }
 }
 
-export async function getProjects(registryAddress: string, startTime?: number, endTime?: number): Promise<Project[]> {
+/**
+ * Get all the projects added between the start and end time
+ * @returns List of projects
+ */
+export async function getProjects({
+  registryAddress,
+  fundingRoundAddress,
+  network,
+  startTime,
+  endTime,
+}: {
+  registryAddress: string
+  fundingRoundAddress?: string
+  network?: string
+  startTime?: number
+  endTime?: number
+}): Promise<Project[]> {
   if (recipientRegistryType === 'simple') {
     return await SimpleRegistry.getProjects(registryAddress, startTime, endTime)
   } else if (recipientRegistryType === 'optimistic') {
-    return await OptimisticRegistry.getProjects(registryAddress, startTime, endTime)
+    return await OptimisticRegistry.getProjects({ registryAddress, fundingRoundAddress, network, startTime, endTime })
   } else if (recipientRegistryType === 'kleros') {
     return await KlerosRegistry.getProjects(registryAddress, startTime, endTime)
   } else {
@@ -82,11 +96,21 @@ export async function getProjects(registryAddress: string, startTime?: number, e
  * @param filter filter result by locked or verified status
  * @returns project information
  */
-export async function getProject(registryAddress: string, recipientId: string, filter = true): Promise<Project | null> {
+export async function getProject({
+  registryAddress,
+  fundingRoundAddress,
+  recipientId,
+  filter = true,
+}: {
+  registryAddress: string
+  fundingRoundAddress?: string
+  recipientId: string
+  filter: boolean
+}): Promise<Project | null> {
   if (recipientRegistryType === 'simple') {
     return await SimpleRegistry.getProject(registryAddress, recipientId)
   } else if (recipientRegistryType === 'optimistic') {
-    return await OptimisticRegistry.getProject(recipientId, filter)
+    return await OptimisticRegistry.getProject({ fundingRoundAddress, recipientId, filter })
   } else if (recipientRegistryType === 'kleros') {
     return await KlerosRegistry.getProject(registryAddress, recipientId)
   } else {
@@ -140,17 +164,13 @@ export async function getProjectByIndex(
     metadata = {}
   }
 
-  const thumbnailImageUrl = metadata.thumbnailImageHash
-    ? `${ipfsGatewayUrl}/ipfs/${metadata.thumbnailImageHash}`
-    : `${ipfsGatewayUrl}/ipfs/${metadata.imageUrl}`
-
   return {
     id: recipient.id,
     address: recipient.recipientAddress || '',
     name: metadata.name,
     description: metadata.description,
     tagline: metadata.tagline,
-    thumbnailImageUrl,
+    thumbnailImageHash: metadata.thumbnailImageHash || metadata.imageHash,
     index: recipient.recipientIndex,
   }
 }
@@ -188,12 +208,12 @@ export async function getRecipientIdByHash(transactionHash: string): Promise<str
 }
 
 export function toLeaderboardProject(project: any): LeaderboardProject {
-  const imageUrl = `${ipfsGatewayUrl}/ipfs/${project.metadata.imageHash || project.metadata.thumbnailImageHash}`
   return {
     id: project.id,
     name: project.name,
     index: getNumber(project.recipientIndex || 0),
-    imageUrl,
+    thumbnailImageHash: project.metadata.thumbnailImageHash || project.metadata.imageHash,
+    bannerImageHash: project.metadata.bannerImageHash,
     allocatedAmount: BigInt(project.allocatedAmount || '0'),
     votes: BigInt(project.tallyResult || '0'),
     donation: BigInt(project.spentVoiceCredits || '0'),
@@ -213,10 +233,8 @@ export async function getLeaderboardProject(
   const project = data.projects.find(project => project.id === projectId)
 
   const metadata = project.metadata
-  const thumbnailHash = metadata.thumbnailImageHash || metadata.imageHash
-  const thumbnailImageUrl = thumbnailHash ? `${ipfsGatewayUrl}/ipfs/${thumbnailHash}` : undefined
-  const bannerHash = metadata.bannerImageHash || metadata.imageHash
-  const bannerImageUrl = bannerHash ? `${ipfsGatewayUrl}/ipfs/${bannerHash}` : undefined
+  const thumbnailImageHash = metadata.thumbnailImageHash || metadata.imageHash
+  const bannerImageHash = metadata.bannerImageHash || metadata.imageHash
 
   return {
     id: project.id,
@@ -234,8 +252,8 @@ export async function getLeaderboardProject(
     websiteUrl: metadata.websiteUrl,
     twitterUrl: metadata.twitterUrl,
     discordUrl: metadata.discordUrl,
-    thumbnailImageUrl,
-    bannerImageUrl,
+    thumbnailImageHash,
+    bannerImageHash,
     index: project.recipientIndex,
     isHidden: false, // always show leaderboard project
     isLocked: true, // Visible, but contributions are not allowed
@@ -260,8 +278,8 @@ export function formToProjectInterface(data: RecipientApplicationData): Project 
     websiteUrl: links.website,
     twitterUrl: links.twitter,
     discordUrl: links.discord,
-    bannerImageUrl: `${ipfsGatewayUrl}/ipfs/${image.bannerHash}`,
-    thumbnailImageUrl: `${ipfsGatewayUrl}/ipfs/${image.thumbnailHash}`,
+    bannerImageHash: image.bannerHash,
+    thumbnailImageHash: image.thumbnailHash,
     index: 0,
     isHidden: false,
     isLocked: true,
@@ -290,9 +308,8 @@ export function staticDataToProjectInterface(project: any): Project {
     websiteUrl: project.metadata.websiteUrl,
     twitterUrl: project.metadata.twitterUrl,
     discordUrl: project.discordUrl,
-    imageUrl: `${ipfsGatewayUrl}/ipfs/${project.metadata.imageHash}`,
-    bannerImageUrl: `${ipfsGatewayUrl}/ipfs/${project.metadata.bannerImageHash}`,
-    thumbnailImageUrl: `${ipfsGatewayUrl}/ipfs/${project.metadata.thumbnailImageHash}`,
+    bannerImageHash: project.metadata.bannerImageHash || project.metadata.imageHash,
+    thumbnailImageHash: project.metadata.thumbnailImageHash || project.metadata.imageHash,
     index: project.recipientIndex,
     isHidden: project.state !== 'Accepted',
     isLocked: false,
