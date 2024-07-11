@@ -182,21 +182,13 @@ async function loadProjects(): Promise<void> {
 
   if (!recipientRegistryAddress.value) return
 
-  const currentRoundAddress = currentRound.value?.fundingRoundAddress
-  if (currentRoundAddress) {
-    const round = await getRoundInfo(currentRoundAddress, currentRound.value)
-    if (round?.projects) {
-      _projects = round.projects
-    }
-  }
-
-  if (!_projects) {
-    _projects = await getProjects(
-      recipientRegistryAddress.value,
-      currentRound.value?.startTime.toSeconds(),
-      currentRound.value?.votingDeadline.toSeconds(),
-    )
-  }
+  _projects = await getProjects({
+    registryAddress: recipientRegistryAddress.value,
+    fundingRoundAddress: currentRound.value?.fundingRoundAddress,
+    network: currentRound.value?.network,
+    startTime: currentRound.value?.startTime.toSeconds(),
+    endTime: currentRound.value?.votingDeadline.toSeconds(),
+  })
 
   const userProjects: Project[] = _projects.filter(
     ({ address, requester }) =>

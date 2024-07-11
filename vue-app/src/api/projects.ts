@@ -58,11 +58,27 @@ export async function getRecipientRegistryAddress(roundAddress: string | null): 
   }
 }
 
-export async function getProjects(registryAddress: string, startTime?: number, endTime?: number): Promise<Project[]> {
+/**
+ * Get all the projects added between the start and end time
+ * @returns List of projects
+ */
+export async function getProjects({
+  registryAddress,
+  fundingRoundAddress,
+  network,
+  startTime,
+  endTime,
+}: {
+  registryAddress: string
+  fundingRoundAddress?: string
+  network?: string
+  startTime?: number
+  endTime?: number
+}): Promise<Project[]> {
   if (recipientRegistryType === 'simple') {
     return await SimpleRegistry.getProjects(registryAddress, startTime, endTime)
   } else if (recipientRegistryType === 'optimistic') {
-    return await OptimisticRegistry.getProjects(registryAddress, startTime, endTime)
+    return await OptimisticRegistry.getProjects({ registryAddress, fundingRoundAddress, network, startTime, endTime })
   } else if (recipientRegistryType === 'kleros') {
     return await KlerosRegistry.getProjects(registryAddress, startTime, endTime)
   } else {
@@ -80,11 +96,21 @@ export async function getProjects(registryAddress: string, startTime?: number, e
  * @param filter filter result by locked or verified status
  * @returns project information
  */
-export async function getProject(registryAddress: string, recipientId: string, filter = true): Promise<Project | null> {
+export async function getProject({
+  registryAddress,
+  fundingRoundAddress,
+  recipientId,
+  filter = true,
+}: {
+  registryAddress: string
+  fundingRoundAddress?: string
+  recipientId: string
+  filter: boolean
+}): Promise<Project | null> {
   if (recipientRegistryType === 'simple') {
     return await SimpleRegistry.getProject(registryAddress, recipientId)
   } else if (recipientRegistryType === 'optimistic') {
-    return await OptimisticRegistry.getProject(recipientId, filter)
+    return await OptimisticRegistry.getProject({ fundingRoundAddress, recipientId, filter })
   } else if (recipientRegistryType === 'kleros') {
     return await KlerosRegistry.getProject(registryAddress, recipientId)
   } else {

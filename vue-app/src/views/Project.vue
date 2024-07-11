@@ -60,8 +60,14 @@ onMounted(async () => {
 
   roundAddress.value = (route.params.address as string) || currentRoundAddress || ''
 
+  const recipientId = route.params.id as string
   const registryAddress = await getRecipientRegistryAddress(roundAddress.value || null)
-  const _project = await getProject(registryAddress, route.params.id as string)
+  const _project = await getProject({
+    registryAddress,
+    fundingRoundAddress: roundAddress.value || undefined,
+    recipientId,
+    filter: false,
+  })
   if (_project === null || _project.isHidden) {
     // Project not found
     router.push({ name: 'projects' })

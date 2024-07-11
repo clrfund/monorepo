@@ -91,8 +91,12 @@ onMounted(async () => {
   const recipientRegistryAddress = await getRecipientRegistryAddress(currentRoundAddress)
 
   // retrieve the project information without filtering by the locked or verified status
-  const filter = false
-  recipient.value = await getProject(recipientRegistryAddress, recipientId, filter)
+  recipient.value = await getProject({
+    registryAddress: recipientRegistryAddress,
+    fundingRoundAddress: currentRoundAddress || undefined,
+    recipientId,
+    filter: false,
+  })
   if (recipient.value?.address) {
     ens.value = await ensLookup(recipient.value.address)
   }
