@@ -18,6 +18,14 @@ export async function getTally(fundingRoundAddress: string): Promise<Tally | nul
     const round = await findStaticRound(fundingRoundAddress, chain.name)
     if (round?.tally) {
       tally = round.tally
+
+      // field name changes from MACI v0 to v1
+      if (tally.totalVoiceCredits) {
+        tally.totalSpentVoiceCredits = tally.totalVoiceCredits
+      }
+      if (tally.totalVoiceCreditsPerVoteOption) {
+        tally.perVOSpentVoiceCredits = tally.totalVoiceCreditsPerVoteOption
+      }
     }
   } catch {
     // ignore error and try to get the tally file from Ipfs gateway
