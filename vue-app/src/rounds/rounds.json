@@ -1,1 +1,9 @@
-[]
+[
+  {
+    "network": "arbitrum",
+    "address": "0x4b296D6e04F4F20E9cb564EE46Bc31FB1cef6EB2",
+    "startTime": 1718033649,
+    "votingDeadline": 1720798449,
+    "isFinalized": true
+  }
+]
