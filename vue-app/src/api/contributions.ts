@@ -8,6 +8,7 @@ import { clrFundContract, provider } from './core'
 import type { Project } from './projects'
 import sdk from '@/graphql/sdk'
 import { Transaction } from '@/utils/transaction'
+import type { GetContributorIndexQuery, GetContributorMessagesQuery, GetTotalContributedQuery } from '@/graphql/API'
 
 export const DEFAULT_CONTRIBUTION_AMOUNT = 5
 export const MAX_CONTRIBUTION_AMOUNT = 10000 // See FundingRound.sol
@@ -99,9 +100,14 @@ export async function getTotalContributed(fundingRoundAddress: string): Promise<
   const nativeToken = new Contract(nativeTokenAddress, ERC20, provider)
   const balance = await nativeToken.balanceOf(fundingRoundAddress)
 
-  const data = await sdk.GetTotalContributed({
-    fundingRoundAddress: fundingRoundAddress.toLowerCase(),
-  })
+  let data: GetTotalContributedQuery
+  try {
+    data = await sdk.GetTotalContributed({
+      fundingRoundAddress: fundingRoundAddress.toLowerCase(),
+    })
+  } catch {
+    return { count: 0, amount: 0n }
+  }
 
   if (!data.fundingRound?.contributorCount) {
     return { count: 0, amount: 0n }
@@ -149,10 +155,16 @@ export async function getContributorIndex(maciAddress: string, pubKey: PubKey): 
   if (!maciAddress) {
     return null
   }
-  const id = getPubKeyId(maciAddress, pubKey)
-  const data = await sdk.GetContributorIndex({
-    publicKeyId: id,
-  })
+
+  let data: GetContributorIndexQuery
+  try {
+    const id = getPubKeyId(maciAddress, pubKey)
+    data = await sdk.GetContributorIndex({
+      publicKeyId: id,
+    })
+  } catch {
+    return null
+  }
 
   if (data.publicKeys.length === 0) {
     return null
@@ -197,11 +209,16 @@ export async function getContributorMessages({
     return []
   }
 
-  const key = getPubKeyId(maciAddress, contributorKey.pubKey)
-  const result = await sdk.GetContributorMessages({
-    pubKey: key,
-    contributorAddress: contributorAddress.toLowerCase(),
-  })
+  let result: GetContributorMessagesQuery
+  try {
+    const key = getPubKeyId(maciAddress, contributorKey.pubKey)
+    result = await sdk.GetContributorMessages({
+      pubKey: key,
+      contributorAddress: contributorAddress.toLowerCase(),
+    })
+  } catch {
+    return []
+  }
 
   if (!(result.messages && result.messages.length)) {
     return []
