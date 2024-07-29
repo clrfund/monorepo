@@ -24,9 +24,6 @@
             {{ rank }}
           </div>
         </div>
-        <div class="desktop project-image">
-          <img v-if="projectImageUrl" :src="projectImageUrl" :alt="project.name" />
-        </div>
         <div class="project-name">
           {{ project.name }}
         </div>
@@ -78,14 +75,6 @@ function formatAllocationAmount(amount?: bigint): string {
   const tokenDecimals = props.round.nativeTokenDecimals
   return amount ? formatAmount(amount, tokenDecimals, null, 0) : '0'
 }
-
-const projectImageUrl = computed(() => {
-  if (typeof props.project.imageUrl !== 'undefined') {
-    return props.project.imageUrl
-  }
-
-  return null
-})
 
 const tokenSymbol = computed(() => {
   return props.round.nativeTokenSymbol

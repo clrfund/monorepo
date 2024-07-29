@@ -2,7 +2,7 @@
   <div>
     <loader v-if="isLoading"></loader>
     <div :class="`grid ${showCartPanel ? 'cart-open' : 'cart-closed'}`" v-if="project">
-      <img class="project-image banner" :src="project.bannerImageUrl" :alt="project.name" />
+      <ipfs-image class="project-image banner" :src="project.bannerImageHash" :alt="project.name" />
       <project-profile class="details" :project="project" :previewMode="false" />
       <div class="sticky-column">
         <div class="desktop">
@@ -60,8 +60,14 @@ onMounted(async () => {
 
   roundAddress.value = (route.params.address as string) || currentRoundAddress || ''
 
+  const recipientId = route.params.id as string
   const registryAddress = await getRecipientRegistryAddress(roundAddress.value || null)
-  const _project = await getProject(registryAddress, route.params.id as string)
+  const _project = await getProject({
+    registryAddress,
+    fundingRoundAddress: roundAddress.value || undefined,
+    recipientId,
+    filter: false,
+  })
   if (_project === null || _project.isHidden) {
     // Project not found
     router.push({ name: 'projects' })

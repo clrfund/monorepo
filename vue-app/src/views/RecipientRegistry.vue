@@ -24,9 +24,11 @@
           <tr v-for="request in requests.slice().reverse()" :key="request.recipientId">
             <td>
               <div class="project-name">
-                <links v-if="request.metadata.thumbnailImageUrl" :to="request.metadata.thumbnailImageUrl">
-                  <img class="project-image" :src="request.metadata.thumbnailImageUrl" />
-                </links>
+                <ipfs-image
+                  class="project-image"
+                  :src="request.metadata.thumbnailImageHash"
+                  :alt="request.metadata.name"
+                />
                 {{ request.metadata.name }}
                 <links
                   v-if="hasProjectLink(request)"
@@ -181,10 +183,6 @@ function isPending(request: Request): boolean {
 
 function isAccepted(request: Request): boolean {
   return request.status === RequestStatus.Accepted
-}
-
-function isRejected(request: Request): boolean {
-  return request.status === RequestStatus.Rejected
 }
 
 function isExecuted(request: Request): boolean {

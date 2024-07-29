@@ -46,10 +46,9 @@
 import { useAppStore } from '@/stores'
 import { useRouter, useRoute } from 'vue-router'
 import type { RoundInfo } from '@/api/round'
-import { toRoundInfo } from '@/api/round'
+import { toRoundInfo, findStaticRound } from '@/api/round'
 import type { LeaderboardProject } from '@/api/projects'
 import { toLeaderboardProject } from '@/api/projects'
-import { getLeaderboardData } from '@/api/leaderboard'
 import { getRouteParamValue } from '@/utils/route'
 
 const router = useRouter()
@@ -63,7 +62,7 @@ const appStore = useAppStore()
 const { showSimpleLeaderboard } = storeToRefs(appStore)
 
 async function loadLeaderboard(address: string, network: string) {
-  const data = await getLeaderboardData(address, network)
+  const data = await findStaticRound(address, network)
   return data
 }
 
@@ -77,9 +76,9 @@ onMounted(async () => {
   const network = getRouteParamValue(route.params.network)
   const data = await loadLeaderboard(address, network)
 
-  // redirect to projects view if not finalized or no static round data for leaderboard
-  if (!data?.projects) {
-    router.push({ name: 'round' })
+  // redirect to projects view if no tally data or no static round data for leaderboard
+  if (!data?.projects || !data?.tally) {
+    router.push({ name: 'round', params: { address } })
     return
   }
 
@@ -88,7 +87,7 @@ onMounted(async () => {
       .filter(project => project.state != 'Removed')
       .map(project => toLeaderboardProject(project))
       .sort((p1: LeaderboardProject, p2: LeaderboardProject) => {
-        const diff = p2.allocatedAmount - p1.allocatedAmount
+        const diff = BigInt(p2.allocatedAmount || 0) - BigInt(p1.allocatedAmount || 0)
         if (diff === BigInt(0)) return 0
         if (diff > BigInt(0)) return 1
         return -1
@@ -98,7 +97,7 @@ onMounted(async () => {
   }
 
   try {
-    round.value = toRoundInfo(data.round, network)
+    round.value = toRoundInfo(data.round)
   } catch (e) {
     console.log('Error converting to round info', e)
   }

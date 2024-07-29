@@ -10,7 +10,7 @@
     >
       <div class="project">
         <links :to="{ name: 'project', params: { id: item.id } }">
-          <img class="project-image" :src="item.thumbnailImageUrl" :alt="item.name" />
+          <ipfs-image class="project-image" :src="item.thumbnailImageHash" :alt="item.name" />
         </links>
         <links class="project-name" :to="{ name: 'project', params: { id: item.id } }">
           {{ item.name }}

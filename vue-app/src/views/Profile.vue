@@ -69,8 +69,8 @@
       <div class="projects-section">
         <h2>{{ $t('profile.h2_3') }}</h2>
         <div v-if="projects.length > 0" class="project-list">
-          <div class="project-item" v-for="{ id, name, thumbnailImageUrl, isHidden, isLocked } of projects" :key="id">
-            <img :src="thumbnailImageUrl" alt="thumbnail" class="project-thumbnail" />
+          <div class="project-item" v-for="{ id, name, thumbnailImageHash, isHidden, isLocked } of projects" :key="id">
+            <ipfs-image :src="thumbnailImageHash" alt="thumbnail" class="project-thumbnail" />
             <div class="project-details">
               <div class="project-name">
                 {{ name }}
@@ -103,19 +103,18 @@ import CopyButton from '@/components/CopyButton.vue'
 import Loader from '@/components/Loader.vue'
 import FundsNeededWarning from '@/components/FundsNeededWarning.vue'
 
-import { userRegistryType, UserRegistryType, chain, isActiveApp } from '@/api/core'
-import { type Project, getProjects, getProjectsForStaticRound } from '@/api/projects'
+import { userRegistryType, UserRegistryType, chain } from '@/api/core'
+import { type Project, getProjects } from '@/api/projects'
 import { isSameAddress } from '@/utils/accounts'
 import { getTokenLogo } from '@/utils/tokens'
 import { useAppStore, useUserStore, useRecipientStore, useWalletStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
-import { getLeaderboardData } from '@/api/leaderboard'
 import { formatAmount } from '@/utils/amounts'
 
 import WithdrawalModal from '@/components/WithdrawalModal.vue'
 import { useModal } from 'vue-final-modal'
-import { RoundStatus } from '@/api/round'
+import { RoundStatus, getRoundInfo } from '@/api/round'
 
 interface Props {
   balance: string
@@ -179,20 +178,17 @@ watch(recipientRegistryAddress, () => loadProjects())
 
 async function loadProjects(): Promise<void> {
   isLoading.value = true
-  let _projects: Project[] = []
+  let _projects: Project[] | undefined = undefined
 
-  if (isActiveApp) {
-    if (!recipientRegistryAddress.value) return
-    _projects = await getProjects(
-      recipientRegistryAddress.value,
-      currentRound.value?.startTime.toSeconds(),
-      currentRound.value?.votingDeadline.toSeconds(),
-    )
-  } else {
-    const currentRoundAddress = currentRound.value?.fundingRoundAddress || ''
-    const network = currentRound.value?.network || ''
-    _projects = await getProjectsForStaticRound(currentRoundAddress, network)
-  }
+  if (!recipientRegistryAddress.value) return
+
+  _projects = await getProjects({
+    registryAddress: recipientRegistryAddress.value,
+    fundingRoundAddress: currentRound.value?.fundingRoundAddress,
+    network: currentRound.value?.network,
+    startTime: currentRound.value?.startTime.toSeconds(),
+    endTime: currentRound.value?.votingDeadline.toSeconds(),
+  })
 
   const userProjects: Project[] = _projects.filter(
     ({ address, requester }) =>

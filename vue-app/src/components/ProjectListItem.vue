@@ -3,7 +3,7 @@
     <div>
       <links :to="projectRoute">
         <div class="project-image">
-          <img :src="projectImageUrl || ''" :alt="project.name" />
+          <ipfs-image :src="props.project.bannerImageHash || ''" :alt="project.name" />
           <div v-if="project.category" class="tag">
             {{ $t(categoryLocaleKey(project.category)) }}
           </div>
@@ -36,7 +36,7 @@ import { markdown } from '@/utils/markdown'
 import { useRoute, type RouteLocationRaw } from 'vue-router'
 import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
-import { isActiveApp } from '@/api/core'
+import IpfsImage from './IpfsImage.vue'
 
 const route = useRoute()
 const appStore = useAppStore()
@@ -55,16 +55,6 @@ const descriptionHtml = computed<string>(() => {
   return markdown.renderInline(props.project.description)
 })
 
-const projectImageUrl = computed<string | null>(() => {
-  if (typeof props.project.bannerImageUrl !== 'undefined') {
-    return props.project.bannerImageUrl
-  }
-  if (typeof props.project.imageUrl !== 'undefined') {
-    return props.project.imageUrl
-  }
-  return null
-})
-
 const inCart = computed<boolean>(() => {
   const index = appStore.cart.findIndex((item: CartItem) => {
     // Ignore cleared items
@@ -74,8 +64,8 @@ const inCart = computed<boolean>(() => {
 })
 
 const isCurrentRound = computed<boolean>(() => {
-  const roundAddress = props.roundAddress || currentRoundAddress.value
-  return appStore.isCurrentRound(props.roundAddress)
+  const roundAddress = props.roundAddress || currentRoundAddress.value || ''
+  return appStore.isCurrentRound(roundAddress)
 })
 
 const shouldShowCartInput = computed<boolean>(() => {
@@ -83,20 +73,12 @@ const shouldShowCartInput = computed<boolean>(() => {
 })
 
 const projectRoute = computed<RouteLocationRaw>(() => {
-  if (isActiveApp) {
-    return route.name === 'round'
-      ? {
-          name: 'round-project',
-          params: { address: props.roundAddress, id: props.project.id },
-        }
-      : { name: 'project', params: { id: props.project.id } }
-  } else {
-    const network = currentRound.value?.network || ''
-    return {
-      name: 'leaderboard-project',
-      params: { address: props.roundAddress, network, id: props.project.id },
-    }
-  }
+  return route.name === 'round'
+    ? {
+        name: 'round-project',
+        params: { address: props.roundAddress, id: props.project.id },
+      }
+    : { name: 'project', params: { id: props.project.id } }
 })
 </script>
 
