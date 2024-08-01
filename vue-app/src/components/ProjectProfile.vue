@@ -1,7 +1,7 @@
 <template>
   <div v-if="project" class="project-page">
     <info v-if="previewMode" class="info" :message="$t('projectProfile.info1')" />
-    <img v-if="previewMode" class="project-image" :src="project.bannerImageUrl" :alt="project.name" />
+    <ipfs-image v-if="previewMode" class="project-image" :src="project.bannerImageHash" :alt="project.name" />
     <div class="about">
       <h1 class="project-name" :title="addressName" :project-index="project.index">
         <links v-if="klerosCurateUrl" :to="klerosCurateUrl">{{ project.name }}</links>

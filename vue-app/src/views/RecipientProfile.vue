@@ -4,7 +4,7 @@
     {{ $t('recipientProfile.not_found') }}
   </div>
   <div v-else class="project-page">
-    <img class="project-image" :src="recipient.bannerImageUrl" :alt="recipient.name" />
+    <ipfs-image class="project-image" :src="recipient.bannerImageHash" :alt="recipient.name" />
     <div class="about">
       <h1 class="project-name" :title="addressName" :project-index="recipient.index">
         <span> {{ recipient.name }} </span>
@@ -22,15 +22,15 @@
       </div>
       <div class="project-section">
         <h2>{{ $t('projectProfile.h2_1') }}</h2>
-        <markdown :raw="recipient.description" />
+        <markdown v-if="recipient.description" :raw="recipient.description" />
       </div>
       <div v-if="recipient.problemSpace" class="project-section">
         <h2>{{ $t('projectProfile.h2_2') }}</h2>
-        <markdown :raw="recipient.problemSpace" />
+        <markdown v-if="recipient.problemSpace" :raw="recipient.problemSpace" />
       </div>
       <div v-if="recipient.plans" class="project-section">
         <h2>{{ $t('projectProfile.h2_3') }}</h2>
-        <markdown :raw="recipient.plans" />
+        <markdown v-if="recipient.plans" :raw="recipient.plans" />
       </div>
       <div
         :class="{
@@ -91,8 +91,12 @@ onMounted(async () => {
   const recipientRegistryAddress = await getRecipientRegistryAddress(currentRoundAddress)
 
   // retrieve the project information without filtering by the locked or verified status
-  const filter = false
-  recipient.value = await getProject(recipientRegistryAddress, recipientId, filter)
+  recipient.value = await getProject({
+    registryAddress: recipientRegistryAddress,
+    fundingRoundAddress: currentRoundAddress || undefined,
+    recipientId,
+    filter: false,
+  })
   if (recipient.value?.address) {
     ens.value = await ensLookup(recipient.value.address)
   }

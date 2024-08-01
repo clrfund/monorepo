@@ -60,7 +60,7 @@
 import { ref, computed, onMounted } from 'vue'
 
 import { getCurrentRound, getRoundInfo } from '@/api/round'
-import { type Project, getProjects, getRecipientRegistryAddress, getProjectsForStaticRound } from '@/api/projects'
+import { type Project, getProjects, getRecipientRegistryAddress } from '@/api/projects'
 
 import CallToActionCard from '@/components/CallToActionCard.vue'
 import ProjectListItem from '@/components/ProjectListItem.vue'
@@ -70,7 +70,6 @@ import { useRoute } from 'vue-router'
 import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { DateTime } from 'luxon'
-import { isActiveApp } from '@/api/core'
 import { getSecondsFromNow } from '@/utils/dates'
 
 type ProjectRoundInfo = {
@@ -124,10 +123,7 @@ onMounted(async () => {
     roundAddress.value =
       (route.params.address as string) || currentRoundAddress.value || (await getCurrentRound()) || ''
 
-    const round = isActiveApp
-      ? await loadProjectRoundInfo(roundAddress.value)
-      : await loadStaticRoundInfo(roundAddress.value)
-    await loadProjects(round)
+    await loadProjectRoundInfo(roundAddress.value)
   } catch (err) {
     /* eslint-disable-next-line no-console */
     console.error('Error loading projects', err)
@@ -135,11 +131,13 @@ onMounted(async () => {
   isLoading.value = false
 })
 
-async function loadProjectRoundInfo(roundAddress: string): Promise<ProjectRoundInfo> {
+async function loadProjectRoundInfo(roundAddress: string) {
   // defaults when a round has not been created yet
   let recipientRegistryAddress = ''
   let startTime = 0
   let votingDeadline = DateTime.local().toSeconds()
+  let network = ''
+  let fundingRoundAddress = ''
 
   if (roundAddress) {
     const round = await getRoundInfo(roundAddress, currentRound.value)
@@ -147,6 +145,8 @@ async function loadProjectRoundInfo(roundAddress: string): Promise<ProjectRoundI
       recipientRegistryAddress = round.recipientRegistryAddress
       startTime = round.startTime.toSeconds()
       votingDeadline = round.votingDeadline.toSeconds()
+      network = round.network || ''
+      fundingRoundAddress = round.fundingRoundAddress
     }
   }
 
@@ -155,27 +155,13 @@ async function loadProjectRoundInfo(roundAddress: string): Promise<ProjectRoundI
     recipientRegistryAddress = await getRecipientRegistryAddress(null)
   }
 
-  return { recipientRegistryAddress, startTime, votingDeadline, fundingRoundAddress: roundAddress, network: '' }
-}
-
-/**
- * Get the round information from static file rounds.json
- * @param roundAddress The funding round address
- * @returns The project round information
- */
-async function loadStaticRoundInfo(roundAddress: string): Promise<ProjectRoundInfo> {
-  await appStore.loadClrFundInfo()
-  const network = currentRound.value?.network || ''
-  const recipientRegistryAddress = currentRound.value?.recipientRegistryAddress || ''
-  const startTime = getSecondsFromNow(currentRound.value?.startTime || DateTime.now())
-  const votingDeadline = getSecondsFromNow(currentRound.value?.votingDeadline || DateTime.now())
-  return { recipientRegistryAddress, startTime, votingDeadline, fundingRoundAddress: roundAddress, network }
-}
-
-async function loadProjects(round: ProjectRoundInfo) {
-  const _projects = isActiveApp
-    ? await getProjects(round.recipientRegistryAddress, round.startTime, round.votingDeadline)
-    : await getProjectsForStaticRound(roundAddress.value, round.network)
+  const _projects = await getProjects({
+    registryAddress: recipientRegistryAddress,
+    fundingRoundAddress,
+    network,
+    startTime,
+    endTime: votingDeadline,
+  })
   const visibleProjects = _projects.filter(project => {
     return !project.isHidden && !project.isLocked
   })

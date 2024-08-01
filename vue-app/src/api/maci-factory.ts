@@ -12,8 +12,13 @@ export async function getMACIFactoryInfo(maxRecipients?: number): Promise<MACIFa
 
   if (maxRecipients === undefined) {
     const maciFactory = new Contract(maciFactoryAddress, MACIFactoryABI, provider)
-    const treeDepths = await maciFactory.treeDepths()
-    maxRecipients = 5 ** getNumber(treeDepths.voteOptionTreeDepth) - 1
+    try {
+      const treeDepths = await maciFactory.treeDepths()
+      maxRecipients = 5 ** getNumber(treeDepths.voteOptionTreeDepth) - 1
+    } catch {
+      // treeDepths doesn't exist on older version of maciFactory
+      maxRecipients = 124
+    }
   }
 
   return {
